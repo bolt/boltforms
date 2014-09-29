@@ -1,0 +1,14 @@
+<p>Hi,</p>
+
+<p>Somebody used the form on {{ paths.currenturl }}
+to send you a message. The posted data is as follows:</p>
+
+<hr>
+
+{% for label, value in form %}
+<p>{{ label }}: {{ value }}</p>
+
+{% endfor %}
+
+-- <br>
+Sent by Forms, an Extension for Bolt.
