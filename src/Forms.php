@@ -70,8 +70,8 @@ class Forms
      */
     public function addFieldArray($formname, array $fields)
     {
-        foreach ($fields as $field) {
-            $this->forms[$formname]->add($formname, $field['type'], $field['options']);
+        foreach ($fields as $fieldname => $field) {
+            $this->forms[$formname]->add($fieldname, $field['type'], $field['options']);
         }
     }
 
@@ -93,8 +93,11 @@ class Forms
             $renderdata[$twigname] = $data;
         }
 
+        //
+        $this->app['twig.loader.filesystem']->addPath(dirname(__DIR__) . '/assets');
+
         // Pray and do the render
-        $html = $this->app['render']->render($template, $formname, $renderdata);
+        $html = $this->app['render']->render($template, $renderdata);
 
         // Return the result
         return new \Twig_Markup($html, 'UTF-8');

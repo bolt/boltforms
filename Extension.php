@@ -65,12 +65,7 @@ class Extension extends \Bolt\BaseExtension
     }
 
     /**
-     * Set the defaults for configuration parameters you want to use. These will
-     * be overriden by whatever is in the extensions configuration file
-     *
-     * This is called by Bolt internally during extension initialisation
-     *
-     * These example below will be available as $this->config['foo']
+     * Set the defaults for configuration parameters
      *
      * @return array
      */
@@ -79,11 +74,16 @@ class Extension extends \Bolt\BaseExtension
         return array(
             'csrf' => true,
             'recaptcha' => array(
-                'enabled' => false,
-                'public_key' => '',
-                'private_key' => '',
+                'enabled'       => false,
+                'public_key'    => '',
+                'private_key'   => '',
                 'error_message' => "The CAPTCHA wasn't entered correctly. Please try again.",
-                'theme' => 'clean'
+                'theme'         => 'clean'
+            ),
+            'templates' => array(
+                'fields' => 'boltforms_fields.twig',
+                'form'   => 'boltforms_form.twig',
+                'email'  => 'boltforms_email.twig'
             )
         );
     }
