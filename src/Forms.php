@@ -78,17 +78,15 @@ class Forms
     /**
      * Render our form into HTML
      *
-     * @param  string       $formname
-     * @param  array        $twigvalues
+     * @param  string       $template   A Twig template file name in Twig's path
+     * @param  string       $formname   Name of the form
+     * @param  array        $twigvalues Associative array of key/value pairs to pass to Twig's render of $template
      * @return \Twig_Markup
      */
-    public function renderForm($formname, $twigvalues)
+    public function renderForm($template, $formname, array $twigvalues = array())
     {
-        // Get the form with all it's addtions
-        $this->forms[$formname]->getForm();
-
         // Add the form object for use in the template
-        $renderdata = array('form' => $this->forms[$formname]>createView());
+        $renderdata = array('form' => $this->forms[$formname]->getForm()->createView());
 
         // Add out passed values to the array to be given to render()
         foreach ($twigvalues as $twigname => $data) {
@@ -96,7 +94,7 @@ class Forms
         }
 
         // Pray and do the render
-        $html = $this->app['render']->render($formname, $renderdata);
+        $html = $this->app['render']->render($template, $formname, $renderdata);
 
         // Return the result
         return new \Twig_Markup($html, 'UTF-8');
