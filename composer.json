@@ -1,0 +1,33 @@
+{
+	"name" : "bolt/forms",
+	"description" : "Symfony forms API for bolt",
+	"type" : "bolt-extension",
+	"keywords" : [
+		""
+	],
+	"require" : {
+		"bolt/bolt" : ">=2.0.0,<3.0.0"
+	},
+	"license" : "MIT",
+	"authors" : [{
+			"name" : "Gawain Lynch",
+			"email" : "gawain.lynch@gmail.com"
+		}
+	],
+	"autoload" : {
+		"files" : [
+			"init.php"
+		],
+		"psr-4" : {
+			"Bolt\\Extension\\Bolt\\Forms\\" : [
+				"",
+				"src/"
+			]
+		}
+	},
+    "extra" : {
+        "branch-alias" : {
+            "dev-master" : "2.0.*-dev"
+        }
+    }
+}
