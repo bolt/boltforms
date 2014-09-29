@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Forms;
 
 use Bolt;
+use Bolt\Application;
 use Symfony\Component\HttpFoundation\Request;
 
 class Forms
@@ -23,7 +24,11 @@ class Forms
      */
     private $forms;
 
-    public function __construct(Silex\Application $app)
+    /**
+     *
+     * @param Bolt\Application $app
+     */
+    public function __construct(Application $app)
     {
         $this->app = $this->config = $app;
         $this->config = $app[Extension::CONTAINER]->config;
