@@ -83,7 +83,7 @@ class Extension extends \Bolt\BaseExtension
                 'public_key' => '',
                 'private_key' => '',
                 'error_message' => "The CAPTCHA wasn't entered correctly. Please try again.",
-                'theme' => 'clean''
+                'theme' => 'clean'
             )
         );
     }

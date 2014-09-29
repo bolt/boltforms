@@ -59,15 +59,14 @@ class Forms
     /**
      * Add an array of fields to the form
      *
-     * @param string $formname - Name of the form
-     * @param string $type
-     * @param array  $fields   - Associative array where the key is the type, and values
-     *                           are an array as would be passed to addField()
+     * @param  string $formname - Name of the form
+     * @param  array  $fields   - Associative array keyed on field name => array('type' => '', 'options => array())
+     * @return void
      */
-    public function addFieldArray($formname, $type, array $fields)
+    public function addFieldArray($formname, array $fields)
     {
-        foreach ($fields as $type => $options) {
-            $this->forms[$formname]->add($formname, $type, $options);
+        foreach ($fields as $field) {
+            $this->forms[$formname]->add($formname, $field['type'], $field['options']);
         }
     }
 
