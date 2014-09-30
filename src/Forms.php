@@ -46,19 +46,20 @@ class Forms
         // FormBuilder	The form builder
 
         $options['csrf_protection'] = $this->config['csrf'];
-        $this->forms[$formname] = $this->app['form.factory']->createNamedBuilder($formname, $type, $data, $options);
+        $this->forms[$formname] = $this->app['form.factory']->createNamedBuilder($formname, $type, $data, $options)
+                                                            ->getForm();
     }
 
     /**
      * Add a field to the form
      *
-     * @param string                                     $formname - Name of the form
-     * @param string|Symfony\Component\Form\AbstractType $type
-     * @param array                                      $options
+     * @param string $formname - Name of the form
+     * @param string $type
+     * @param array  $options
      */
-    public function addField($formname, $type, array $options)
+    public function addField($formname, $fieldname, $type, array $options)
     {
-        $this->forms[$formname]->add($formname, $type, $options);
+        $this->forms[$formname]->add($fieldname, $type, $options);
     }
 
     /**
@@ -71,6 +72,7 @@ class Forms
     public function addFieldArray($formname, array $fields)
     {
         foreach ($fields as $fieldname => $field) {
+            $field['options'] = empty($field['options']) ? array() : $field['options'];
             $this->addField($fieldname, $field['type'], $field['options']);
         }
     }
@@ -78,15 +80,19 @@ class Forms
     /**
      * Render our form into HTML
      *
-     * @param  string       $template   A Twig template file name in Twig's path
      * @param  string       $formname   Name of the form
+     * @param  string       $template   A Twig template file name in Twig's path
      * @param  array        $twigvalues Associative array of key/value pairs to pass to Twig's render of $template
      * @return \Twig_Markup
      */
-    public function renderForm($template, $formname, array $twigvalues = array())
+    public function renderForm($formname, $template = '', array $twigvalues = array())
     {
+        if (empty($template)) {
+            $template = $this->config['templates']['form'];
+        }
+
         // Add the form object for use in the template
-        $renderdata = array('form' => $this->forms[$formname]->getForm()->createView());
+        $renderdata = array('form' => $this->forms[$formname]->createView());
 
         // Add out passed values to the array to be given to render()
         foreach ($twigvalues as $twigname => $data) {
@@ -105,44 +111,47 @@ class Forms
 
     /**
      *
-     * @param string  $formname
-     * @param Request $request
+     * @param  string  $formname
+     * @param  Request $request
      * @return void
      */
-    public function handleRequest($formname, Request $request)
+    public function handleRequest($formname)
     {
         //
-        if(! $this->app['request']->request->has($formname)) {
+        if (! $this->app['request']->request->has($formname)) {
             die();
         }
 
-        $this->forms[$formname]->handleRequest($request);
+        //$this->forms[$formname]->handleRequest($this->app['request']->request);
+        $this->forms[$formname]->submit($this->app['request']);
     }
 
     /**
      *
-     * @param string  $formname
-     * @param Request $request
+     * @param  string   $formname  The name of the form
+     * @param  callable $callback  A PHP callable to call on success
+     * @param  mixed    $arguments Arguments to pass to the PHP callable
      * @return boolean
      */
-    public function handleIsValid($formname, Request $request)
+    public function handleIsValid($formname, callable $callback, $arguments = array())
     {
         //
-        if(! $this->app['request']->request->has($formname)) {
+        if (! $this->app['request']->request->has($formname)) {
             die();
         }
 
         // Test if form, as submitted, passes validation
         if ($this->forms[$formname]->isValid()) {
+            // Pre-processing event dispatcher
+            if ($this->app['dispatcher']->hasListeners('boltforms.FormSubmission')) {
+                $event = new FormsEvent($formname, $formconfig, $data);
+                try {
+                    $this->app['dispatcher']->dispatch('boltforms.FormSubmission', $event);
+                } catch (\Exception $e) {
+                }
+            }
 
-            // Get the array of form response values
-            $response = $request->get($formname);
-
-            //$x = $response['x'];
-            //$y = $response['y'];
-
-            //simpleredirect($app['paths']['hosturl']);
-            return true;
+            return call_user_func_array($callback, $arguments);
         }
 
         return false;
