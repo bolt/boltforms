@@ -6,6 +6,7 @@ use Bolt;
 use Bolt\Application;
 use Bolt\Extension\Bolt\Forms\FormsEvent;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Forms
 {
@@ -60,6 +61,15 @@ class Forms
      */
     public function addField($formname, $fieldname, $type, array $options)
     {
+        if (isset($options['constraints'])) {
+            if (gettype($options['constraints']) == 'string') {
+                $options['constraints'] = new $options['constraints'];
+            } else {
+                foreach ($options['constraints'] as $key => $constraint) {
+                    $options['constraints'][$key] = new $constraint;
+                }
+            }
+        }
         $this->forms[$formname]->add($fieldname, $type, $options);
     }
 
@@ -74,7 +84,7 @@ class Forms
     {
         foreach ($fields as $fieldname => $field) {
             $field['options'] = empty($field['options']) ? array() : $field['options'];
-            $this->addField($fieldname, $field['type'], $field['options']);
+            $this->addField($formname, $fieldname, $field['type'], $field['options']);
         }
     }
 

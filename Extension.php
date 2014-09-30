@@ -51,6 +51,9 @@ class Extension extends \Bolt\BaseExtension
             if ($this->config['recaptcha']['enabled'] && ! function_exists('recaptcha_check_answer')) {
                 require_once 'recaptcha-php-1.11/recaptchalib.php';
             }
+
+            // Twig functions
+            $this->app['twig']->addExtension(new Twig\FormsExtension($this->app));
         }
     }
 
