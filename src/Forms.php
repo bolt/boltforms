@@ -52,9 +52,9 @@ class Forms
     /**
      * Add a field to the form
      *
-     * @param string $formname - Name of the form
-     * @param string $type
-     * @param array  $options
+     * @param string                                     $formname - Name of the form
+     * @param string|Symfony\Component\Form\AbstractType $type
+     * @param array                                      $options
      */
     public function addField($formname, $type, array $options)
     {
@@ -71,7 +71,7 @@ class Forms
     public function addFieldArray($formname, array $fields)
     {
         foreach ($fields as $fieldname => $field) {
-            $this->forms[$formname]->add($fieldname, $field['type'], $field['options']);
+            $this->addField($fieldname, $field['type'], $field['options']);
         }
     }
 
@@ -112,6 +112,10 @@ class Forms
     public function handleRequest($formname, Request $request)
     {
         //
+        if(! $this->app['request']->request->has($formname)) {
+            die();
+        }
+
         $this->forms[$formname]->handleRequest($request);
     }
 
@@ -123,6 +127,11 @@ class Forms
      */
     public function handleIsValid($formname, Request $request)
     {
+        //
+        if(! $this->app['request']->request->has($formname)) {
+            die();
+        }
+
         // Test if form, as submitted, passes validation
         if ($this->forms[$formname]->isValid()) {
 
