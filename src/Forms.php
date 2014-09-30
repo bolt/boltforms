@@ -63,14 +63,40 @@ class Forms
     {
         if (isset($options['constraints'])) {
             if (gettype($options['constraints']) == 'string') {
-                $options['constraints'] = new $options['constraints'];
+                $options['constraints'] = $this->getConstraint($options['constraints']);
             } else {
                 foreach ($options['constraints'] as $key => $constraint) {
-                    $options['constraints'][$key] = new $constraint;
+                    $options['constraints'][$key] = $this->getConstraint(array($key => $constraint));
                 }
             }
         }
         $this->forms[$formname]->add($fieldname, $type, $options);
+    }
+
+    /**
+     *
+     * @param  mixed $input
+     * @return Symfony\Component\Validator\Constraint
+     */
+    private function getConstraint($input)
+    {
+        $params = null;
+
+        $namespace = "\\Symfony\\Component\\Validator\\Constraints\\";
+
+        if (gettype($input) == 'string') {
+            $class = $namespace . $input;
+        } elseif (gettype($input) == 'array') {
+            $input = current($input);
+            if (gettype($input) == 'string') {
+                $class = $namespace . $input;
+            } elseif (gettype($input) == 'array') {
+                $class = $namespace . key($input);
+                $params = array_pop($input);
+            }
+        }
+
+        return new $class($params);
     }
 
     /**
@@ -122,11 +148,13 @@ class Forms
 
     /**
      *
-     * @param  string  $formname
-     * @param  Request $request
-     * @return void
+     * @param  string   $formname  The name of the form
+     * @param  Request  $request
+     * @param  callable $callback  A PHP callable to call on success
+     * @param  mixed    $arguments Arguments to pass to the PHP callable
+     * @return boolean
      */
-    public function handleRequest($formname, $request = null)
+    public function handleRequest($formname, $request = null, $callback = null, $arguments = array())
     {
         //
         if (! $this->app['request']->request->has($formname)) {
@@ -138,25 +166,11 @@ class Forms
         }
 
         $this->forms[$formname]->handleRequest($request);
-    }
-
-    /**
-     *
-     * @param  string   $formname  The name of the form
-     * @param  callable $callback  A PHP callable to call on success
-     * @param  mixed    $arguments Arguments to pass to the PHP callable
-     * @return boolean
-     */
-    public function handleIsValid($formname, $callback = null, $arguments = array())
-    {
-        //
-        if (! $this->app['request']->request->has($formname)) {
-            die();
-        }
 
         // Test if form, as submitted, passes validation
         if ($this->forms[$formname]->isValid()) {
-            // Pre-processing event dispatcher
+
+            // Form submission event dispatcher
             if ($this->app['dispatcher']->hasListeners('boltforms.FormSubmission')) {
                 $event = new FormsEvent($formname, $formconfig, $data);
                 try {
@@ -165,10 +179,11 @@ class Forms
                 }
             }
 
+            // If passed a callback, call it.  Else return the form data
             if (is_callable($callback)) {
                 return call_user_func_array($callback, $arguments);
             } else {
-                return true;
+                return $this->app['request']->request->get($formname);
             }
         }
 

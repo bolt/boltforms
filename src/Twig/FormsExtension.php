@@ -89,9 +89,7 @@ class FormsExtension extends \Twig_Extension
             $this->forms->addFieldArray($formname, $fields);
 
             if ($this->app['request']->getMethod() == 'POST') {
-                // Request
-                $this->forms->handleRequest($formname);
-                $sent = $this->forms->handleIsValid($formname);
+                $sent = $this->forms->handleRequest($formname);
             }
 
             // Get our values to be passed to Twig
