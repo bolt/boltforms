@@ -1,10 +1,10 @@
 {% form_theme form 'boltforms_fields.twig' %}
 
 {% if error %}
-    <p class="simpleform-error">{{ error }}</p>
+    <p class="boltform-error">{{ error }}</p>
 {% endif %}
 {% if message %}
-    <p class="simpleform-message">{{ message }}</p>
+    <p class="boltform-message">{{ message }}</p>
 {% endif %}
 {% if not sent %}
 {% if recaptcha_theme %}
@@ -14,15 +14,15 @@
     };
 </script>
 {% endif %}
-<form action="#" method="post" class="simpleform simpleform-{{ formname }}" enctype="multipart/form-data">
+<form action="#" method="post" class="boltform boltform-{{ formname }}" enctype="multipart/form-data">
     {{ form_widget(form) }}
 
     {% if recaptcha_html %}
-    <div class="simpleform-row">
+    <div class="boltform-row">
         <label for="form_message" class="required">ReCaptcha</label>
         {{ recaptcha_html|raw }}
     </div>
     {% endif %}
-    <input type="submit" name="submit" value="{{ button_text }}" class="simpleform-submit" />
+    <input type="submit" name="submit" value="{{ button_text }}" class="boltform-submit" />
 </form>
 {% endif %}
