@@ -103,7 +103,7 @@ class FormsExtension extends \Twig_Extension
 
                     //
                     if (isset($this->config[$formname]['database']['table'])) {
-                        //
+                        $this->database->writeToTable($this->config[$formname]['database']['table'], $sent);
                     }
 
                     //
