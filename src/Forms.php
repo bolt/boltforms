@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Forms;
 
 use Bolt;
 use Bolt\Application;
+use Bolt\Extension\Bolt\Forms\FormsEvent;
 use Symfony\Component\HttpFoundation\Request;
 
 class Forms
@@ -115,15 +116,18 @@ class Forms
      * @param  Request $request
      * @return void
      */
-    public function handleRequest($formname)
+    public function handleRequest($formname, $request = null)
     {
         //
         if (! $this->app['request']->request->has($formname)) {
             die();
         }
 
-        //$this->forms[$formname]->handleRequest($this->app['request']->request);
-        $this->forms[$formname]->submit($this->app['request']);
+        if (! $request) {
+            $request = Request::createFromGlobals();
+        }
+
+        $this->forms[$formname]->handleRequest($request);
     }
 
     /**
@@ -133,7 +137,7 @@ class Forms
      * @param  mixed    $arguments Arguments to pass to the PHP callable
      * @return boolean
      */
-    public function handleIsValid($formname, callable $callback, $arguments = array())
+    public function handleIsValid($formname, $callback = null, $arguments = array())
     {
         //
         if (! $this->app['request']->request->has($formname)) {
@@ -151,7 +155,11 @@ class Forms
                 }
             }
 
-            return call_user_func_array($callback, $arguments);
+            if (is_callable($callback)) {
+                return call_user_func_array($callback, $arguments);
+            } else {
+                return true;
+            }
         }
 
         return false;
