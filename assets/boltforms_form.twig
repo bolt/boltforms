@@ -3,9 +3,11 @@
 {% if error %}
     <p class="boltform-error">{{ error }}</p>
 {% endif %}
+
 {% if message %}
     <p class="boltform-message">{{ message }}</p>
 {% endif %}
+
 {% if not sent %}
 {% if recaptcha_theme %}
 <script>
@@ -23,6 +25,5 @@
         {{ recaptcha_html|raw }}
     </div>
     {% endif %}
-    <input type="submit" name="submit" value="{{ button_text }}" class="boltform-submit" />
 </form>
 {% endif %}
