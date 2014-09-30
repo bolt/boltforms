@@ -175,7 +175,7 @@ class Forms
 
             // Form submission event dispatcher
             if ($this->app['dispatcher']->hasListeners('boltforms.FormSubmission')) {
-                $event = new FormsEvent($formname, $formconfig, $data);
+                $event = new FormsEvent($formname, $this->config[$formname], $data);
                 try {
                     $this->app['dispatcher']->dispatch('boltforms.FormSubmission', $event);
                 } catch (\Exception $e) {
