@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Forms;
 
 use Bolt;
+use Silex\Application;
 
 class Database
 {
@@ -17,7 +18,7 @@ class Database
      */
     private $config;
 
-    public function __construct(Silex\Application $app)
+    public function __construct(Application $app)
     {
         $this->app = $this->config = $app;
         $this->config = $app[Extension::CONTAINER]->config;

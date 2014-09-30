@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Forms\Twig;
 
+use Bolt\Extension\Bolt\Forms\Database;
 use Bolt\Extension\Bolt\Forms\Extension;
 use Bolt\Extension\Bolt\Forms\Forms;
 
@@ -49,6 +50,7 @@ class FormsExtension extends \Twig_Extension
         $this->app = $app;
         $this->config = $this->app[Extension::CONTAINER]->config;
         $this->forms = new Forms($app);
+        $this->database = new Database($app);
     }
 
     public function initRuntime(\Twig_Environment $environment)
@@ -90,6 +92,25 @@ class FormsExtension extends \Twig_Extension
 
             if ($this->app['request']->getMethod() == 'POST') {
                 $sent = $this->forms->handleRequest($formname);
+
+                if ($sent) {
+                    unset ($sent['_token']);
+
+                    //
+                    if (isset($this->config[$formname]['database']['contenttype'])) {
+                        $this->database->writeToContentype($this->config[$formname]['database']['contenttype'], $sent);
+                    }
+
+                    //
+                    if (isset($this->config[$formname]['database']['table'])) {
+                        //
+                    }
+
+                    //
+                    if (isset($this->config[$formname]['notification']['to_email'])) {
+                        //
+                    }
+                }
             }
 
             // Get our values to be passed to Twig

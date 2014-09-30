@@ -4,9 +4,7 @@ namespace Bolt\Extension\Bolt\Forms;
 
 use Bolt;
 use Bolt\Application;
-use Bolt\Extension\Bolt\Forms\FormsEvent;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class Forms
 {
@@ -75,7 +73,7 @@ class Forms
 
     /**
      *
-     * @param  mixed $input
+     * @param  mixed                                  $input
      * @return Symfony\Component\Validator\Constraint
      */
     private function getConstraint($input)
@@ -152,23 +150,28 @@ class Forms
      * @param  Request  $request
      * @param  callable $callback  A PHP callable to call on success
      * @param  mixed    $arguments Arguments to pass to the PHP callable
-     * @return boolean
+     * @return mixed    Success - Submitted form parameters, or passed callback function return value
+     *                  Failure - false
      */
     public function handleRequest($formname, $request = null, $callback = null, $arguments = array())
     {
         //
         if (! $this->app['request']->request->has($formname)) {
-            die();
+            return false;
         }
 
         if (! $request) {
             $request = Request::createFromGlobals();
         }
 
+        //
         $this->forms[$formname]->handleRequest($request);
 
         // Test if form, as submitted, passes validation
         if ($this->forms[$formname]->isValid()) {
+
+            // Submitted data
+            $data = $this->app['request']->request->get($formname);
 
             // Form submission event dispatcher
             if ($this->app['dispatcher']->hasListeners('boltforms.FormSubmission')) {
@@ -183,7 +186,7 @@ class Forms
             if (is_callable($callback)) {
                 return call_user_func_array($callback, $arguments);
             } else {
-                return $this->app['request']->request->get($formname);
+                return $data;
             }
         }
 
