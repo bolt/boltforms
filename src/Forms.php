@@ -73,6 +73,7 @@ class Forms
     }
 
     /**
+     * Extract, expand and set & create validator instance array(s)
      *
      * @param  mixed                                  $input
      * @return Symfony\Component\Validator\Constraint
@@ -146,6 +147,7 @@ class Forms
     }
 
     /**
+     * Handle the request.  Caller must test for POST
      *
      * @param  string   $formname  The name of the form
      * @param  Request  $request
