@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Forms;
 
 use Bolt;
+use Silex\Application;
 
 class Email
 {
@@ -16,50 +17,36 @@ class Email
      */
     private $config;
 
-    public function __construct(Silex\Application $app)
+    /**
+     * \Swift_Message
+     */
+    private $message;
+
+    public function __construct(Application $app)
     {
         $this->app = $this->config = $app;
         $this->config = $app[Extension::CONTAINER]->config;
-
-        $this->debug = $this->config['notifications']['debug'];
-        $this->debug_address = $this->config['notifications']['debug_address'];
-        $this->from_address = $this->config['notifications']['from_address'];
     }
 
     /**
      *
      */
-    public function doNotification()
+    public function doNotification($formconfig, $emailconfig, $postdata)
     {
-        // Sort out the "to whom" list
-        if ($this->debug) {
-            $this->recipients = array(
-                array(
-                    'firstName' => 'Test',
-                    'lastName' => 'Notifier',
-                    'displayName' => 'Test Notifier',
-                    'email' => $this->debug_address
-                ));
+        //
+        $this->doCompose($formconfig, $emailconfig, $postdata);
 
-        } else {
-            // Get the subscribers to the topic and it's forum
-            $subscriptions = new Subscriptions($this->app);
-            $this->recipients = $subscriptions->getSubscribers($this->record->values['topic']);
-        }
+        //
+        $this->doAddress($emailconfig);
 
-        // Get the email template
-        $this->doCompose();
-
-        // Get the email template
-        foreach ($this->recipients as $recipient) {
-            $this->doSend($this->message, $recipient);
-        }
+        //
+        $this->doSend($emailconfig);
     }
 
     /**
      * Compose the email data to be sent
      */
-    private function doCompose()
+    private function doCompose($formconfig, $emailconfig, $postdata)
     {
         // Set our Twig lookup path
         $this->addTwigPath();
@@ -67,58 +54,111 @@ class Email
         /*
          * Subject
          */
-        $html = $this->app['render']->render($this->config['templates']['email']['subject'], array(
-            'forum'       => $forum['title'],
-            'contenttype' => $this->record->contenttype['singular_name'],
-            'title'       => $title,
-            'author'      => $this->record->values['authorprofile']['displayname']
+        $html = $this->app['render']->render($this->config['templates']['subject'], array(
+            'subject' => $formconfig['notification']['subject'],
+            'config'  => $emailconfig,
+            'data'    => $postdata
         ));
 
         $subject = new \Twig_Markup($html, 'UTF-8');
 
         /*
          * Body
-        */
-        $html = $this->app['render']->render($this->config['templates']['email']['body'], array(
-            'forum'       => $forum['title'],
-            'contenttype' => $this->record->contenttype['singular_name'],
-            'title'       => $title,
-            'author'      => $this->record->values['authorprofile']['displayname'],
-            'uri'         => $uri,
-            'body'        => $this->record->values['body']
+         */
+        $html = $this->app['render']->render($this->config['templates']['email'], array(
+            'fields' => $formconfig['fields'],
+            'config' => $emailconfig,
+            'data'   => $postdata
         ));
 
         $body = new \Twig_Markup($html, 'UTF-8');
 
         /*
          * Build email
-        */
+         */
         $this->message = \Swift_Message::newInstance()
                 ->setSubject($subject)
-                ->setFrom($this->from_address)
                 ->setBody(strip_tags($body))
                 ->addPart($body, 'text/html');
-        // SwiftMail barfs on this, despite it being documented to work!
-        //->setFrom(array($this->from_address, $this->config['boltbb']['title']))
+    }
+
+    /**
+     * Set the addresses
+     *
+     * @param array $emailconfig
+     */
+    private function doAddress($emailconfig)
+    {
+        /*
+         * From
+         */
+        if (! empty($emailconfig['from_email'])) {
+            $recipient = array(
+                'from_email'   => $emailconfig['from_email'],
+                'from_name' => isset($emailconfig['from_name']) ? $emailconfig['from_name'] : ''
+            );
+        }
+
+        $this->message->setFrom(array(
+            $recipient['from_email'] => $recipient['from_name']
+        ));
+
+
+        /*
+         * To
+         */
+        if (! empty($emailconfig['to_email'])) {
+            $recipient = array(
+                'to_email'   => $emailconfig['to_email'],
+                'to_name' => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : ''
+            );
+        }
+
+        $this->message->setTo(array(
+            $recipient['to_email'] => $recipient['to_name']
+        ));
+
+        /*
+         * CC
+         */
+        if (! empty($emailconfig['cc_email'])) {
+            $recipient = array(
+                'cc_email'   => $emailconfig['cc_email'],
+                'cc_name' => isset($emailconfig['cc_name']) ? $emailconfig['cc_name'] : ''
+            );
+
+            if (isset($emailconfig['cc_email'])) {
+                $this->message->setCc($emailconfig['cc_email']);
+            }
+        }
+
+        /*
+         * BCC
+         */
+        if (! empty($emailconfig['bcc_email'])) {
+            $recipient = array(
+                'bcc_email'   => $emailconfig['bcc_email'],
+                'bcc_name' => isset($emailconfig['bcc_name']) ? $emailconfig['bcc_name'] : ''
+            );
+
+            if (isset($emailconfig['bcc_email'])) {
+                $this->message->setBcc($emailconfig['bcc_email']);
+            }
+        }
+
     }
 
     /**
      * Send a notification
      *
-     * @param \Swift_Message $message
-     * @param array          $recipient
+     * @param array $emailconfig
      */
-    private function doSend(\Swift_Message $message, $recipient)
+    private function doSend($emailconfig)
     {
-        // Set the recipient for *this* message
-        $message->setTo(array(
-            $recipient['email'] => $recipient['displayName']
-        ));
-
-        if ($this->app['mailer']->send($message)) {
-            $this->app['log']->add("Sent Bolt Forms notification to {$recipient['displayName']} <{$recipient['email']}>", 3);
+        if ($this->app['mailer']->send($this->message)) {
+            $this->app['log']->add("Sent Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", 3);
         } else {
-            $this->app['log']->add("Failed Bolt Forms notification to {$recipient['displayName']} <{$recipient['email']}>", 3);
+            $this->app['log']->add("Failed Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", 3);
         }
     }
 

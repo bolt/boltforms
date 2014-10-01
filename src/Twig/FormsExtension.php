@@ -3,8 +3,10 @@
 namespace Bolt\Extension\Bolt\Forms\Twig;
 
 use Bolt\Extension\Bolt\Forms\Database;
+use Bolt\Extension\Bolt\Forms\Email;
 use Bolt\Extension\Bolt\Forms\Extension;
 use Bolt\Extension\Bolt\Forms\Forms;
+use Silex\Application;
 
 /**
  * Twig functions for Forms
@@ -45,12 +47,23 @@ class FormsExtension extends \Twig_Extension
      */
     private $twig = null;
 
-    public function __construct(\Silex\Application $app)
+    /**
+     * @var Bolt\Extension\Bolt\Forms\Database
+     */
+    private $database;
+
+    /**
+     * @var Bolt\Extension\Bolt\Forms\Email
+     */
+    private $email;
+
+    public function __construct(Application $app)
     {
-        $this->app = $app;
-        $this->config = $this->app[Extension::CONTAINER]->config;
-        $this->forms = new Forms($app);
+        $this->app      = $app;
+        $this->config   = $this->app[Extension::CONTAINER]->config;
+        $this->forms    = new Forms($app);
         $this->database = new Database($app);
+        $this->email    = new Email($app);
     }
 
     public function initRuntime(\Twig_Environment $environment)
@@ -76,12 +89,18 @@ class FormsExtension extends \Twig_Extension
         );
     }
 
+    /**
+     * Twig function for form generation
+     *
+     * @param string $formname
+     * @return Twig_Markup
+     */
     public function twigForms($formname)
     {
         if (isset($this->config[$formname])) {
             $message = '';
             $error = '';
-            $sent = false;
+            $postdata = false;
 
             $this->forms->makeForm($formname, 'form', $options, $data);
 
@@ -91,40 +110,83 @@ class FormsExtension extends \Twig_Extension
             $this->forms->addFieldArray($formname, $fields);
 
             if ($this->app['request']->getMethod() == 'POST') {
-                $sent = $this->forms->handleRequest($formname);
+                $postdata = $this->forms->handleRequest($formname);
 
-                if ($sent) {
-                    unset ($sent['_token']);
+                if ($postdata) {
+                    // Don't keep token data around where not needed
+                    unset ($postdata['_token']);
 
-                    //
+                    // Write to a Contenttype
                     if (isset($this->config[$formname]['database']['contenttype'])) {
-                        $this->database->writeToContentype($this->config[$formname]['database']['contenttype'], $sent);
+                        $this->database->writeToContentype($this->config[$formname]['database']['contenttype'], $postdata);
                     }
 
-                    //
+                    // Write to a normal database table
                     if (isset($this->config[$formname]['database']['table'])) {
-                        $this->database->writeToTable($this->config[$formname]['database']['table'], $sent);
+                        $this->database->writeToTable($this->config[$formname]['database']['table'], $postdata);
                     }
 
-                    //
-                    if (isset($this->config[$formname]['notification']['to_email'])) {
-                        //
+                    // Send notification email
+                    if (isset($this->config[$formname]['notification']['enabled'])) {
+                        $emailconfig = $this->getEmailConfig($formname, $postdata);
+                        $this->email->doNotification($this->config[$formname], $emailconfig, $postdata);
                     }
                 }
             }
 
             // Get our values to be passed to Twig
             $twigvalues = array(
-                'error'           => $error,
-                'message'         => $message,
-                'sent'            => $sent,
-                'recaptcha_html'  => ($this->config['recaptcha']['enabled'] ? recaptcha_get_html($this->config['recaptcha']['public_key']) : ''),
-                'recaptcha_theme' => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['theme'] : ''),
-                'formname'        => $formname
+                'error'     => $error,
+                'message'   => $message,
+                'sent'      => $this->forms($formname)->isSubmitted(),
+                'recaptcha' => array(
+                    'html'  => ($this->config['recaptcha']['enabled'] ? recaptcha_get_html($this->config['recaptcha']['public_key']) : ''),
+                    'theme' => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['theme'] : ''),
+                ),
+                'formname'  => $formname
             );
 
             // Render the Twig_Markup
             return $this->forms->renderForm($formname, $this->config['templates']['form'], $twigvalues);
         }
+    }
+
+    /**
+     * Get a usable email configuration array
+     *
+     * @param string $formname
+     * @param array  $postdata
+     */
+    private function getEmailConfig($formname, $postdata)
+    {
+        $notify_form = $this->config[$formname]['notification'];
+
+        // Global debug enabled  - takes preference over form specific settings
+        // Global debug disabled - form specfic setting used
+        $emailconfig = array(
+            'debug'         => $this->config['debug']['enabled'] === false && isset($notify_form['debug']) ? $notify_form['debug'] : $this->config['debug']['enabled'],
+            'debug_address' => $this->config['debug']['address'],
+            'to_name'       => isset($notify_form['to_name'])    ? $notify_form['to_name']    : '',
+            'to_email'      => isset($notify_form['to_email'])   ? $notify_form['to_email']   : '',
+            'from_name'     => isset($notify_form['from_name'])  ? $notify_form['from_name']  : '',
+            'from_email'    => isset($notify_form['from_email']) ? $notify_form['from_email'] : '',
+            'cc_name'       => isset($notify_form['cc_name'])    ? $notify_form['cc_name']    : '',
+            'cc_email'      => isset($notify_form['cc_email'])   ? $notify_form['cc_email']   : '',
+            'bcc_name'      => isset($notify_form['bcc_name'])   ? $notify_form['bcc_name']   : '',
+            'bcc_email'     => isset($notify_form['bcc_email'])  ? $notify_form['bcc_email']  : ''
+        );
+
+        // If any fields rely on posted data populate them now
+        foreach ($emailconfig as $key => $value) {
+            if ($key == 'debug' || $key == 'debug_address') {
+                continue;
+            }
+
+            if (isset($postdata[$value])) {
+                $emailconfig[$key] = $postdata[$value];
+            }
+        }
+
+        return $emailconfig;
     }
 }

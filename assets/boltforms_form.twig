@@ -9,21 +9,22 @@
 {% endif %}
 
 {% if not sent %}
-{% if recaptcha_theme %}
-<script>
-    var RecaptchaOptions = {
-        theme : '{{ recaptcha_theme }}'
-    };
-</script>
-{% endif %}
-<form action="#" method="post" class="boltform boltform-{{ formname }}" enctype="multipart/form-data">
-    {{ form_widget(form) }}
-
-    {% if recaptcha_html %}
-    <div class="boltform-row">
-        <label for="form_message" class="required">ReCaptcha</label>
-        {{ recaptcha_html|raw }}
-    </div>
+    {% if recaptcha.theme|default('clean') %}
+    <script>
+        var RecaptchaOptions = {
+            theme : '{{ recaptcha.theme }}'
+        };
+    </script>
     {% endif %}
-</form>
+
+    <form action="#" method="post" class="boltform boltform-{{ formname }}" enctype="multipart/form-data">
+        {{ form_widget(form) }}
+
+        {% if recaptcha.html|default(false) %}
+        <div class="boltform-row">
+            <label for="form_message" class="required">ReCaptcha</label>
+            {{ recaptcha.html|raw }}
+        </div>
+        {% endif %}
+    </form>
 {% endif %}

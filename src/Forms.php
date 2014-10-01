@@ -36,6 +36,17 @@ class Forms
     }
 
     /**
+     * Get a particular form
+     *
+     * @param string               $formname
+     * @return FormConfigInterface
+     */
+    public function getForm($formname)
+    {
+        return $this->forms[$formname];
+    }
+
+    /**
      *
      * @param string                   $formname
      * @param string|FormTypeInterface $type

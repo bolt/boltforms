@@ -10,3 +10,138 @@ recaptcha:
   private_key: ''
   error_message: "The CAPTCHA wasn't entered correctly. Please try again."
   theme: clean
+
+## CSRF protection
+#
+# Enable CSRF protection for forms. You should leave this set to 'true', unless
+# you know what you're doing.
+csrf: true
+
+## Debugging
+#
+# Global debugging on/off switch
+#
+# If enabled, ALL forms will go into debug mode.  However, when disabled an individual
+# form can still enable it's own debug — specific for and to that form
+debug:
+  enabled: true  
+  debug_address: noreply@example.com
+
+## Example 1
+#
+# Contact Form
+contact:
+  notification:
+    enabled: true
+    debug: false
+    subject: Your contact form was submitted 
+    # Name and email address can be either predefined values or fieldnames
+    to_name: name
+    to_email: email
+    from_name: My Site
+    from_email: noreply@example.com
+    cc_name: Info Person
+    cc_email: info@example.com
+    bcc_name: Manager Person
+    bcc_email: manager@example.com
+    attach_files: false
+#  database:
+#    contenttype: mycontenttype  # Contenttype to create
+#    table: bolt_secret_table    # Specific database table to write to
+  fields:
+    name:
+      type: text
+      required: true
+      options:
+        label: Name
+        attr:
+          placeholder: Your name...
+        constraints: [ NotBlank, {Length: {'min': 3}} ]
+    email:
+      type: email
+      options:
+        required: true
+        label: Email address
+        attr:
+          placeholder: Your email...
+        constraints: [ NotBlank, Email ]
+    message:
+      type: textarea
+      options:
+        required: true
+        label: Your message
+        attr:
+          placeholder: Your message...
+          class: myclass
+    needreply:
+      type: choice
+      options:
+        required: false
+        label: Do you want us to contact you back?
+        choices: [ Yes, No ]
+        multiple: false
+    submit:
+      type: submit
+
+## Example 2
+#
+# Example Showcase Form
+Showcase:
+  notification:
+    enabled: true
+    debug: false
+    subject: [TESTING] A showcase form was just submitted 
+    # Name and email address can be either predefined values or fieldnames
+    to_name: name
+    to_email: email
+    from_name: My Site
+    from_email: noreply@example.com
+    cc_name: Info Person
+    cc_email: info@example.com
+    bcc_name: Manager Person
+    bcc_email: manager@example.com
+    attach_files: false
+#  database:
+#    contenttype: mycontenttype  # Contenttype to create
+#    table: bolt_secret_table    # Specific database table to write to
+  fields:
+    subject:
+      type: text
+      required: true
+      options:
+        label: Subject of your message
+        attr:
+          placeholder: Just a quick message...
+        constraints: [ NotBlank, {Length: {'min': 3, 'max': 30}} ]
+    name:
+      type: text
+      required: true
+      options:
+        label: Name
+        attr:
+          placeholder: Your name...
+        constraints: [ NotBlank, {Length: {'min': 3}} ]
+    email:
+      type: email
+      options:
+        required: true
+        label: Email address
+        attr:
+          placeholder: Your email...
+          class: myclass-email
+        constraints: [ NotBlank, Email ]
+    message:
+      type: textarea
+      options:
+        required: true
+        label: Your message
+        attr:
+          placeholder: Well, the other day I was thinking that maybe you ought to improve your website by adding...
+          class: myclass-message
+    needreply:
+      type: choice
+      options:
+        required: false
+        label: Do you want us to contact you back?
+        choices: [ Yes, No ]
+        multiple: false

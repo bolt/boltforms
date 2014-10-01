@@ -84,13 +84,14 @@ class Extension extends \Bolt\BaseExtension
                 'theme'         => 'clean'
             ),
             'templates' => array(
-                'fields' => 'boltforms_fields.twig',
-                'form'   => 'boltforms_form.twig',
-                'email'  => 'boltforms_email.twig'
+                'fields'  => 'boltforms_fields.twig',
+                'form'    => 'boltforms_form.twig',
+                'email'   => 'boltforms_email.twig',
+                'subject' => 'boltforms_email_subject.twig'
             ),
             'debug' => array(
-                'enabled'       => true,
-                'debug_address' => ''
+                'enabled' => false,
+                'address' => ''
             )
         );
     }

@@ -1,14 +1,25 @@
+{#
+ # Passed in variables:
+ #   fields     - Field data fron the form configuration
+ #   config     - Email configuration date
+ #   data       - The posted data
+ #}
 <p>Hi,</p>
 
-<p>Somebody used the form on {{ paths.currenturl }}
-to send you a message. The posted data is as follows:</p>
+<p>Somebody used the form on {{ paths.currenturl }} to send you a message. The posted data is as follows:</p>
 
 <hr>
 
-{% for label, value in form %}
-<p>{{ label }}: {{ value }}</p>
+{% for label, value in data %}
+
+    {% set field = fields[label] %}
+    {% if field.options.label|default('') is empty %}
+        <p>{{ label }}: {{ value }}</p>
+    {% else %}
+        <p>{{ field.options.label }}: {{ value }}</p>
+    {% endif %}
 
 {% endfor %}
 
 -- <br>
-Sent by Forms, an Extension for Bolt.
+Sent by the Forms, an Extension for Bolt.
