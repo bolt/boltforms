@@ -87,6 +87,10 @@ class Extension extends \Bolt\BaseExtension
                 'fields' => 'boltforms_fields.twig',
                 'form'   => 'boltforms_form.twig',
                 'email'  => 'boltforms_email.twig'
+            ),
+            'debug' => array(
+                'enabled'       => true,
+                'debug_address' => ''
             )
         );
     }
