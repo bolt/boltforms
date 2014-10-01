@@ -180,6 +180,8 @@ class Forms
                 try {
                     $this->app['dispatcher']->dispatch('boltforms.FormSubmission', $event);
                 } catch (\Exception $e) {
+                    // Log the error
+                    $this->app['log']->add('Dispatcher error for boltforms.FormSubmission: ' . $e->getMessage(), 2);
                 }
             }
 
