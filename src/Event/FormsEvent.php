@@ -33,6 +33,9 @@ class FormsEvent extends Event
         $this->formname   = $formname;
         $this->formconfig = $formconfig;
         $this->formdata   = $formdata;
+
+        // Paranoia
+        unset ($this->formdata['_token']);
     }
 
     /**
