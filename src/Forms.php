@@ -187,6 +187,7 @@ class Forms
 
             // If passed a callback, call it.  Else return the form data
             if (is_callable($callback)) {
+                $arguments[] = $data;
                 return call_user_func_array($callback, $arguments);
             } else {
                 return $data;
