@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Forms;
+namespace Bolt\Extension\Bolt\Forms\Event;
 
 use Bolt;
 use Symfony\Component\EventDispatcher\Event;
