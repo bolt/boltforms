@@ -47,7 +47,7 @@ class Database
         }
 
         // Don't try to insert NULLs
-        foreach($savedata as $key => $value) {
+        foreach ($savedata as $key => $value) {
             if ($value === null) {
                 $savedata[$key] = '';
             }

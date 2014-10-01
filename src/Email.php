@@ -103,7 +103,6 @@ class Email
             $recipient['from_email'] => $recipient['from_name']
         ));
 
-
         /*
          * To
          */

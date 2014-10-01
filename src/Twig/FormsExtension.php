@@ -92,7 +92,7 @@ class FormsExtension extends \Twig_Extension
     /**
      * Twig function for form generation
      *
-     * @param string $formname
+     * @param  string      $formname
      * @return Twig_Markup
      */
     public function twigForms($formname)

@@ -21,7 +21,7 @@ class Forms
     private $config;
 
     /**
-     * @var array  FormBuilder - The form builder for each form
+     * @var array
      */
     private $forms;
 
@@ -38,7 +38,7 @@ class Forms
     /**
      * Get a particular form
      *
-     * @param string               $formname
+     * @param  string              $formname
      * @return FormConfigInterface
      */
     public function getForm($formname)
@@ -165,7 +165,7 @@ class Forms
      * @param  callable $callback  A PHP callable to call on success
      * @param  mixed    $arguments Arguments to pass to the PHP callable
      * @return mixed    Success - Submitted form parameters, or passed callback function return value
-     *                  Failure - false
+     *                            Failure - false
      */
     public function handleRequest($formname, $request = null, $callback = null, $arguments = array())
     {
@@ -201,6 +201,7 @@ class Forms
             // If passed a callback, call it.  Else return the form data
             if (is_callable($callback)) {
                 $arguments[] = $data;
+
                 return call_user_func_array($callback, $arguments);
             } else {
                 return $data;
