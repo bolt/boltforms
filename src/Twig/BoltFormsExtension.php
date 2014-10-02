@@ -76,7 +76,7 @@ class BoltFormsExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'forms.extension';
+        return 'boltforms.extension';
     }
 
     /**
@@ -85,7 +85,7 @@ class BoltFormsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'forms' => new \Twig_Function_Method($this, 'twigBoltForms')
+            'boltforms' => new \Twig_Function_Method($this, 'twigBoltForms')
         );
     }
 

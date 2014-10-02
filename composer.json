@@ -19,7 +19,7 @@
 			"init.php"
 		],
 		"psr-4" : {
-			"Bolt\\Extension\\Bolt\\Forms\\" : [
+			"Bolt\\Extension\\Bolt\\BoltForms\\" : [
 				"",
 				"src/"
 			]
