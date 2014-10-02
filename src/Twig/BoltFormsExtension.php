@@ -43,6 +43,11 @@ class BoltFormsExtension extends \Twig_Extension
     private $config;
 
     /**
+     * @var Bolt\Extension\Bolt\BoltForms\BoltForms
+     */
+    private $forms;
+
+    /**
      * @var \Twig_Environment
      */
     private $twig = null;
@@ -100,7 +105,7 @@ class BoltFormsExtension extends \Twig_Extension
         if (isset($this->config[$formname])) {
             $message = '';
             $error = '';
-            $postdata = false;
+            $formdata = false;
 
             $this->forms->makeForm($formname, 'form', $options, $data);
 
@@ -110,26 +115,26 @@ class BoltFormsExtension extends \Twig_Extension
             $this->forms->addFieldArray($formname, $fields);
 
             if ($this->app['request']->getMethod() == 'POST') {
-                $postdata = $this->forms->handleRequest($formname);
+                $formdata = $this->forms->handleRequest($formname);
 
-                if ($postdata) {
+                if ($formdata) {
                     // Don't keep token data around where not needed
-                    unset ($postdata['_token']);
+                    unset ($formdata['_token']);
 
                     // Write to a Contenttype
                     if (isset($this->config[$formname]['database']['contenttype'])) {
-                        $this->database->writeToContentype($this->config[$formname]['database']['contenttype'], $postdata);
+                        $this->database->writeToContentype($this->config[$formname]['database']['contenttype'], $formdata);
                     }
 
                     // Write to a normal database table
                     if (isset($this->config[$formname]['database']['table'])) {
-                        $this->database->writeToTable($this->config[$formname]['database']['table'], $postdata);
+                        $this->database->writeToTable($this->config[$formname]['database']['table'], $formdata);
                     }
 
                     // Send notification email
                     if (isset($this->config[$formname]['notification']['enabled'])) {
-                        $emailconfig = $this->getEmailConfig($formname, $postdata);
-                        $this->email->doNotification($this->config[$formname], $emailconfig, $postdata);
+                        $emailconfig = $this->getEmailConfig($formname, $formdata);
+                        $this->email->doNotification($this->config[$formname], $emailconfig, $formdata);
                     }
                 }
             }
