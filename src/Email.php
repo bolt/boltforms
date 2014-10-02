@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Forms;
+namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 use Silex\Application;

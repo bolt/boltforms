@@ -1,15 +1,15 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Forms\Twig;
+namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
-use Bolt\Extension\Bolt\Forms\Database;
-use Bolt\Extension\Bolt\Forms\Email;
-use Bolt\Extension\Bolt\Forms\Extension;
-use Bolt\Extension\Bolt\Forms\Forms;
+use Bolt\Extension\Bolt\BoltForms\Database;
+use Bolt\Extension\Bolt\BoltForms\Email;
+use Bolt\Extension\Bolt\BoltForms\Extension;
+use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Silex\Application;
 
 /**
- * Twig functions for Forms
+ * Twig functions for BoltForms
  *
  * Copyright (C) 2014  Gawain Lynch
  *
@@ -30,7 +30,7 @@ use Silex\Application;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class FormsExtension extends \Twig_Extension
+class BoltFormsExtension extends \Twig_Extension
 {
     /**
      * @var Application
@@ -48,12 +48,12 @@ class FormsExtension extends \Twig_Extension
     private $twig = null;
 
     /**
-     * @var Bolt\Extension\Bolt\Forms\Database
+     * @var Bolt\Extension\Bolt\BoltForms\Database
      */
     private $database;
 
     /**
-     * @var Bolt\Extension\Bolt\Forms\Email
+     * @var Bolt\Extension\Bolt\BoltForms\Email
      */
     private $email;
 
@@ -61,7 +61,7 @@ class FormsExtension extends \Twig_Extension
     {
         $this->app      = $app;
         $this->config   = $this->app[Extension::CONTAINER]->config;
-        $this->forms    = new Forms($app);
+        $this->forms    = new BoltForms($app);
         $this->database = new Database($app);
         $this->email    = new Email($app);
     }
@@ -85,7 +85,7 @@ class FormsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'forms' => new \Twig_Function_Method($this, 'twigForms')
+            'forms' => new \Twig_Function_Method($this, 'twigBoltForms')
         );
     }
 
@@ -95,7 +95,7 @@ class FormsExtension extends \Twig_Extension
      * @param  string      $formname
      * @return Twig_Markup
      */
-    public function twigForms($formname)
+    public function twigBoltForms($formname)
     {
         if (isset($this->config[$formname])) {
             $message = '';

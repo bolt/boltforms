@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Forms;
+namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 
@@ -14,14 +14,14 @@ class Extension extends \Bolt\BaseExtension
     /**
      * @var Extension name
      */
-    const NAME = "Forms";
+    const NAME = "BoltForms";
 
     /**
      * Extension's container
      *
      * @var string
      */
-    const CONTAINER = 'extensions.Forms';
+    const CONTAINER = 'extensions.BoltForms';
 
     public function getName()
     {
@@ -53,7 +53,7 @@ class Extension extends \Bolt\BaseExtension
             }
 
             // Twig functions
-            $this->app['twig']->addExtension(new Twig\FormsExtension($this->app));
+            $this->app['twig']->addExtension(new Twig\BoltFormsExtension($this->app));
         }
     }
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Forms;
+namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 use Bolt\Application;
-use Bolt\Extension\Bolt\Forms\Event\FormsEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvent;
 use Symfony\Component\HttpFoundation\Request;
 
-class Forms
+class BoltForms
 {
 
     /**
@@ -185,11 +185,11 @@ class Forms
         if ($this->forms[$formname]->isValid()) {
 
             // Submitted data
-            $data = $this->app['request']->request->get($formname);
+            $data = $this->forms[$formname]->getData();
 
             // Form submission event dispatcher
             if ($this->app['dispatcher']->hasListeners('boltforms.FormSubmission')) {
-                $event = new FormsEvent($formname, $this->config[$formname], $data);
+                $event = new BoltFormsEvent($formname, $this->config[$formname], $data);
                 try {
                     $this->app['dispatcher']->dispatch('boltforms.FormSubmission', $event);
                 } catch (\Exception $e) {

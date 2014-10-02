@@ -1,6 +1,6 @@
 {
-	"name" : "bolt/forms",
-	"description" : "Symfony forms API for bolt",
+	"name" : "bolt/boltforms",
+	"description" : "Symfony Forms API for bolt",
 	"type" : "bolt-extension",
 	"keywords" : [
 		""
@@ -25,9 +25,9 @@
 			]
 		}
 	},
-    "extra" : {
-        "branch-alias" : {
-            "dev-master" : "2.0.*-dev"
-        }
-    }
+	"extra" : {
+		"branch-alias" : {
+			"dev-master" : "2.0.*-dev"
+		}
+	}
 }
