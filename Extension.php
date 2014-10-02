@@ -12,12 +12,14 @@ use Bolt;
 class Extension extends \Bolt\BaseExtension
 {
     /**
-     * @var Extension name
+     * Extension name
+     *
+     * @var string
      */
     const NAME = "BoltForms";
 
     /**
-     * Extension's container
+     * Extension's service container
      *
      * @var string
      */
