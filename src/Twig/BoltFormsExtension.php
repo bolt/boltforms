@@ -138,7 +138,7 @@ class BoltFormsExtension extends \Twig_Extension
             $twigvalues = array(
                 'error'     => $error,
                 'message'   => $message,
-                'sent'      => $this->forms($formname)->isSubmitted(),
+                'sent'      => $this->forms->getForm($formname)->isSubmitted(),
                 'recaptcha' => array(
                     'html'  => ($this->config['recaptcha']['enabled'] ? recaptcha_get_html($this->config['recaptcha']['public_key']) : ''),
                     'theme' => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['theme'] : ''),
