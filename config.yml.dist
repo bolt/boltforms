@@ -90,7 +90,7 @@ Showcase:
   notification:
     enabled: true
     debug: false
-    subject: [TESTING] A showcase form was just submitted 
+    subject: "[TESTING] A showcase form was just submitted" 
     # Name and email address can be either predefined values or fieldnames
     to_name: name
     to_email: email
