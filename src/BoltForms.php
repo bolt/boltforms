@@ -48,7 +48,6 @@ class BoltForms
     private $forms;
 
     /**
-     *
      * @param Bolt\Application $app
      */
     public function __construct(Application $app)
@@ -69,6 +68,7 @@ class BoltForms
     }
 
     /**
+     * Initial form object constructor
      *
      * @param string                   $formname
      * @param string|FormTypeInterface $type
@@ -185,7 +185,7 @@ class BoltForms
      * @param  callable $callback  A PHP callable to call on success
      * @param  mixed    $arguments Arguments to pass to the PHP callable
      * @return mixed    Success - Submitted form parameters, or passed callback function return value
-     *                            Failure - false
+     *                  Failure - false
      */
     public function handleRequest($formname, $request = null, $callback = null, $arguments = array())
     {
