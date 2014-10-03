@@ -77,8 +77,6 @@ class BoltForms
      */
     public function makeForm($formname, $type = 'form', $data = null, $options = array())
     {
-        // FormBuilder	The form builder
-
         $options['csrf_protection'] = $this->config['csrf'];
         $this->forms[$formname] = $this->app['form.factory']->createNamedBuilder($formname, $type, $data, $options)
                                                             ->getForm();
