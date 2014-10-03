@@ -169,11 +169,36 @@ class BoltFormsExtension extends \Twig_Extension
     {
         $notify_form = $this->config[$formname]['notification'];
 
-        // Global debug enabled  - takes preference over form specific settings
-        // Global debug disabled - form specfic setting used
+        /*
+         * Global debug enabled
+         *   - Messages should always go to the global debug address only
+         *   - Takes preference over form specific settings
+         *   - To address also takes precidence
+         *
+         * Global debug disabled
+         *   - Form specific debug settings are applied
+         *
+         * Form debug enabled
+         *   - For debug address takes priority if set
+         */
+        if ($this->config['debug']['enabled']) {
+            $debug = true;
+            $debug_address = $this->config['debug']['address'];
+        } else {
+            if (isset($notify_form['debug']) && $notify_form['debug']) {
+                $debug = true;
+            }
+
+            if (isset($notify_form['debug_address'])) {
+                $debug_address = $notify_form['debug_address'];
+            } else {
+                $debug_address = $this->config['debug']['address'];
+            }
+        }
+
         $emailconfig = array(
-            'debug'         => $this->config['debug']['enabled'] === false && isset($notify_form['debug']) ? $notify_form['debug'] : $this->config['debug']['enabled'],
-            'debug_address' => $this->config['debug']['address'],
+            'debug'         => $debug,
+            'debug_address' => $debug_address,
             'to_name'       => isset($notify_form['to_name'])    ? $notify_form['to_name']    : '',
             'to_email'      => isset($notify_form['to_email'])   ? $notify_form['to_email']   : '',
             'from_name'     => isset($notify_form['from_name'])  ? $notify_form['from_name']  : '',
