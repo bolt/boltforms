@@ -53,8 +53,10 @@ class Email
     /**
      *
      */
-    public function doNotification($formconfig, $emailconfig, $postdata)
+    public function doNotification($formname, $formconfig, $postdata)
     {
+        $emailconfig = $this->getEmailConfig($formname, $postdata);
+
         //
         $this->doCompose($formconfig, $emailconfig, $postdata);
 
@@ -198,6 +200,70 @@ class Email
         } else {
             $this->app['log']->add("Failed Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", 3);
         }
+    }
+
+    /**
+     * Get a usable email configuration array
+     *
+     * @param string $formname
+     * @param array  $postdata
+     */
+    private function getEmailConfig($formname, $postdata)
+    {
+        $notify_form = $this->config[$formname]['notification'];
+
+        /*
+         * Global debug enabled
+         *   - Messages should always go to the global debug address only
+         *   - Takes preference over form specific settings
+         *   - To address also takes precidence
+         *
+         * Global debug disabled
+         *   - Form specific debug settings are applied
+         *
+         * Form debug enabled
+         *   - For debug address takes priority if set
+         */
+        if ($this->config['debug']['enabled']) {
+            $debug = true;
+            $debug_address = $this->config['debug']['address'];
+        } else {
+            if (isset($notify_form['debug']) && $notify_form['debug']) {
+                $debug = true;
+            }
+
+            if (isset($notify_form['debug_address'])) {
+                $debug_address = $notify_form['debug_address'];
+            } else {
+                $debug_address = $this->config['debug']['address'];
+            }
+        }
+
+        $emailconfig = array(
+            'debug'         => $debug,
+            'debug_address' => $debug_address,
+            'to_name'       => isset($notify_form['to_name'])    ? $notify_form['to_name']    : '',
+            'to_email'      => isset($notify_form['to_email'])   ? $notify_form['to_email']   : '',
+            'from_name'     => isset($notify_form['from_name'])  ? $notify_form['from_name']  : '',
+            'from_email'    => isset($notify_form['from_email']) ? $notify_form['from_email'] : '',
+            'cc_name'       => isset($notify_form['cc_name'])    ? $notify_form['cc_name']    : '',
+            'cc_email'      => isset($notify_form['cc_email'])   ? $notify_form['cc_email']   : '',
+            'bcc_name'      => isset($notify_form['bcc_name'])   ? $notify_form['bcc_name']   : '',
+            'bcc_email'     => isset($notify_form['bcc_email'])  ? $notify_form['bcc_email']  : ''
+        );
+
+        // If any fields rely on posted data populate them now
+        foreach ($emailconfig as $key => $value) {
+            if ($key == 'debug' || $key == 'debug_address') {
+                continue;
+            }
+
+            if (isset($postdata[$value])) {
+                $emailconfig[$key] = $postdata[$value];
+            }
+        }
+
+        return $emailconfig;
     }
 
     private function addTwigPath()
