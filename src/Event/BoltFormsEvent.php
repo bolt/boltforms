@@ -71,7 +71,7 @@ class BoltFormsEvent extends Event
         if ($this->event->getName() == FormEvents::PRE_SUBMIT) {
             $this->event->setData($data);
         } else {
-            trigger_error(__CLASS__ . "::" . __FUNCTION__ . " can only be called in " . BoltFormsEvents::PRE_SUBMIT, E_USER_ERROR);
+            trigger_error(__CLASS__ . "::" . __FUNCTION__ . " can only be called in BoltFormsEvents::PRE_SUBMIT", E_USER_ERROR);
         }
     }
 
