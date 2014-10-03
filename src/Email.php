@@ -126,6 +126,23 @@ class Email
         ));
 
         /*
+         * Debug
+         */
+        if (! empty($emailconfig['debug']) && $emailconfig['debug']) {
+            $recipient = array(
+                'to_email'   => $emailconfig['debug_address'],
+                'to_name' => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : 'BoltForms Debug'
+            );
+
+            $this->message->setTo(array(
+                $recipient['to_email'] => $recipient['to_name']
+            ));
+
+            // Don't set any further recipients
+            return;
+        }
+
+        /*
          * To
          */
         if (! empty($emailconfig['to_email'])) {
