@@ -53,12 +53,12 @@ class Email
     /**
      *
      */
-    public function doNotification($formname, $formconfig, $postdata)
+    public function doNotification($formname, $formconfig, $formdata)
     {
-        $emailconfig = $this->getEmailConfig($formname, $postdata);
+        $emailconfig = $this->getEmailConfig($formname, $formdata);
 
         //
-        $this->doCompose($formconfig, $emailconfig, $postdata);
+        $this->doCompose($formconfig, $emailconfig, $formdata);
 
         //
         $this->doAddress($emailconfig);
@@ -70,7 +70,7 @@ class Email
     /**
      * Compose the email data to be sent
      */
-    private function doCompose($formconfig, $emailconfig, $postdata)
+    private function doCompose($formconfig, $emailconfig, $formdata)
     {
         // Set our Twig lookup path
         $this->addTwigPath();
@@ -81,7 +81,7 @@ class Email
         $html = $this->app['render']->render($this->config['templates']['subject'], array(
             'subject' => $formconfig['notification']['subject'],
             'config'  => $emailconfig,
-            'data'    => $postdata
+            'data'    => $formdata
         ));
 
         $subject = new \Twig_Markup($html, 'UTF-8');
@@ -92,7 +92,7 @@ class Email
         $html = $this->app['render']->render($this->config['templates']['email'], array(
             'fields' => $formconfig['fields'],
             'config' => $emailconfig,
-            'data'   => $postdata
+            'data'   => $formdata
         ));
 
         $body = new \Twig_Markup($html, 'UTF-8');
@@ -206,9 +206,9 @@ class Email
      * Get a usable email configuration array
      *
      * @param string $formname
-     * @param array  $postdata
+     * @param array  $formdata
      */
-    private function getEmailConfig($formname, $postdata)
+    private function getEmailConfig($formname, $formdata)
     {
         $notify_form = $this->config[$formname]['notification'];
 
@@ -258,8 +258,8 @@ class Email
                 continue;
             }
 
-            if (isset($postdata[$value])) {
-                $emailconfig[$key] = $postdata[$value];
+            if (isset($formdata[$value])) {
+                $emailconfig[$key] = $formdata[$value];
             }
         }
 
