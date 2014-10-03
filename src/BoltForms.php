@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt;
 use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvent;
+use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -79,6 +80,7 @@ class BoltForms
     {
         $options['csrf_protection'] = $this->config['csrf'];
         $this->forms[$formname] = $this->app['form.factory']->createNamedBuilder($formname, $type, $data, $options)
+                                                            ->addEventSubscriber(new BoltFormsSubscriber())
                                                             ->getForm();
     }
 

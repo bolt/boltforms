@@ -3,6 +3,9 @@
 namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 
 use Bolt;
+use Bolt\Configuration\ResourceManager;
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -31,6 +34,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class BoltFormsSubscriber implements EventSubscriberInterface
 {
+    public function __construct()
+    {
+        $this->app = ResourceManager::getApp();
+    }
+
     public static function getSubscribedEvents()
     {
         return array(
@@ -57,8 +65,7 @@ class BoltFormsSubscriber implements EventSubscriberInterface
     /**
      * Form pre submission event
      *
-     * To modify data on the fly, this is the point to do it
-     * using:
+     * To modify data on the fly, this is the point to do it using:
      *  $data = $event->getData();
      *  $event->setData($data);
      *
@@ -66,9 +73,14 @@ class BoltFormsSubscriber implements EventSubscriberInterface
      */
     public function preSubmit(FormEvent $event)
     {
-//         $data = $event->getData();
-//         $form = $event->getForm();
-
+        if ($this->app['dispatcher']->hasListeners(BoltFormsEvents::PRE_SUBMIT)) {
+            $event = new BoltFormsEvent($event);
+            try {
+                $this->app['dispatcher']->dispatch(BoltFormsEvents::PRE_SUBMIT, $event);
+            } catch (\Exception $e) {
+                $this->app['log']->add("[BoltForms] " . BoltFormsEvents::PRE_SUBMIT. " subscriber had an error: " . $e->getMessage(), 2);
+            }
+        }
     }
 
     public function submit(FormEvent $event)

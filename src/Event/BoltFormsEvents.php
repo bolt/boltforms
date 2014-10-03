@@ -24,7 +24,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Event;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-final class BoltFormEvents
+final class BoltFormsEvents
 {
     const PRE_SUBMIT = 'boltforms.pre_bind';
 
