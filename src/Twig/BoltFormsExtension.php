@@ -116,6 +116,7 @@ class BoltFormsExtension extends \Twig_Extension
 
             if ($this->app['request']->getMethod() == 'POST') {
                 $formdata = $this->forms->handleRequest($formname);
+                $sent = $this->forms->getForm($formname)->isSubmitted();
 
                 if ($formdata) {
                     // Don't keep token data around where not needed
@@ -136,6 +137,8 @@ class BoltFormsExtension extends \Twig_Extension
                         $emailconfig = $this->getEmailConfig($formname, $formdata);
                         $this->email->doNotification($this->config[$formname], $emailconfig, $formdata);
                     }
+                } else {
+                    $sent = false;
                 }
             }
 
@@ -143,7 +146,7 @@ class BoltFormsExtension extends \Twig_Extension
             $twigvalues = array(
                 'error'     => $error,
                 'message'   => $message,
-                'sent'      => $this->forms->getForm($formname)->isSubmitted(),
+                'sent'      => $sent,
                 'recaptcha' => array(
                     'html'  => ($this->config['recaptcha']['enabled'] ? recaptcha_get_html($this->config['recaptcha']['public_key']) : ''),
                     'theme' => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['theme'] : ''),
