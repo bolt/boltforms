@@ -8,7 +8,7 @@
 	"require" : {
 		"bolt/bolt" : ">=2.0.0,<3.0.0"
 	},
-	"license" : "MIT",
+	"license" : "GPL-3.0+",
 	"authors" : [{
 			"name" : "Gawain Lynch",
 			"email" : "gawain.lynch@gmail.com"
