@@ -58,3 +58,12 @@ if ($app['request']->getMethod() == 'POST') {
     }
 }
 ``` 
+
+Event Dispatcher Listener
+-------------------------
+
+```php
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+
+$this->app['dispatcher']->addListener(BoltFormsEvents::POST_SUBMIT,  array($this, 'myPostSubmit'));
+```
