@@ -87,7 +87,7 @@ class BoltForms
     /**
      * Add a field to the form
      *
-     * @param string $formname - Name of the form
+     * @param string $formname Name of the form
      * @param string $type
      * @param array  $options
      */
@@ -135,8 +135,8 @@ class BoltForms
     /**
      * Add an array of fields to the form
      *
-     * @param  string $formname - Name of the form
-     * @param  array  $fields   - Associative array keyed on field name => array('type' => '', 'options => array())
+     * @param  string $formname Name of the form
+     * @param  array  $fields   Associative array keyed on field name => array('type' => '', 'options => array())
      * @return void
      */
     public function addFieldArray($formname, array $fields)
