@@ -25,7 +25,7 @@ csrf: true
 # form can still enable it's own debug — specific for and to that form
 debug:
   enabled: true  
-  debug_address: noreply@example.com
+  address: noreply@example.com
 
 ## Example 1
 #
@@ -35,11 +35,10 @@ contact:
     enabled: true
     debug: false
     subject: Your contact form was submitted 
-    # Name and email address can be either predefined values or fieldnames
-    to_name: name
-    to_email: email
-    from_name: My Site
-    from_email: noreply@example.com
+    to_name: name         # A field name, specified in the fields: section below
+    to_email: email       # A field name, specified in the fields: section below
+    from_name: My Site              # Must be valid text
+    from_email: noreply@example.com # Must be valid email address
     cc_name: Info Person
     cc_email: info@example.com
     bcc_name: Manager Person
