@@ -226,7 +226,12 @@ class Email
          */
         if ($this->config['debug']['enabled']) {
             $debug = true;
-            $debug_address = $this->config['debug']['address'];
+
+            if (empty($this->config['debug']['address'])) {
+                trigger_error("[BoltForms] Debug email address can not be empty if debugging enabled!", E_USER_ERROR);
+            } else {
+                $debug_address = $this->config['debug']['address'];
+            }
         } else {
             if (isset($notify_form['debug']) && $notify_form['debug']) {
                 $debug = true;
