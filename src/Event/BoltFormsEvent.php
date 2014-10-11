@@ -29,22 +29,22 @@ use Symfony\Component\Form\FormEvents;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class BoltFormsEvent extends Event
+class BoltFormsEvent extends FormEvent
 {
     /**
      * @var Symfony\Component\Form\FormEvent
      */
-    private $event;
+    protected $event;
 
     /**
      * @var array
      */
-    private $data;
+    protected $data;
 
     /**
      * @var Symfony\Component\Form\FormInterface
      */
-    private $form;
+    protected $form;
 
     /**
      * @param FormEvent $event
