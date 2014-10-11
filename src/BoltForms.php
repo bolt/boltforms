@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 use Bolt\Application;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvent;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 
