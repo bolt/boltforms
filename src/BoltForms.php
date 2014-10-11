@@ -209,17 +209,6 @@ class BoltForms
             // Submitted data
             $data = $this->forms[$formname]->getData();
 
-            // Form submission event dispatcher
-            if ($this->app['dispatcher']->hasListeners('boltforms.FormSubmission')) {
-                $event = new BoltFormsEvent($formname, $this->config[$formname], $data);
-                try {
-                    $this->app['dispatcher']->dispatch('boltforms.FormSubmission', $event);
-                } catch (\Exception $e) {
-                    // Log the error
-                    $this->app['log']->add('Dispatcher error for boltforms.FormSubmission: ' . $e->getMessage(), 2);
-                }
-            }
-
             // If passed a callback, call it.  Else return the form data
             if (is_callable($callback)) {
                 $arguments[] = $data;

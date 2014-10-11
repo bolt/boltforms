@@ -39,6 +39,11 @@ class BoltFormsSubscriber implements EventSubscriberInterface
         $this->app = ResourceManager::getApp();
     }
 
+    /**
+     * Events that BoltFormsSubscriber subscribes to
+     *
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return array(
@@ -50,20 +55,44 @@ class BoltFormsSubscriber implements EventSubscriberInterface
         );
     }
 
+    /**
+     * Event triggered on FormEvents::PRE_SET_DATA
+     *
+     * @param FormEvent $event
+     */
     public function preSetData(FormEvent $event)
     {
-//         $data = $event->getData();
-//         $form = $event->getForm();
+        if ($this->app['dispatcher']->hasListeners(BoltFormsEvents::PRE_SET_DATA)) {
+            $event = new BoltFormsEvent($event);
+            try {
+                $this->app['dispatcher']->dispatch(BoltFormsEvents::PRE_SET_DATA, $event);
+            } catch (\Exception $e) {
+                $this->app['log']->add("[BoltForms] " . BoltFormsEvents::PRE_SET_DATA. " subscriber had an error: " . $e->getMessage(), 2);
+            }
+        }
     }
 
+    /**
+     * Event triggered on FormEvents::POST_SET_DATA
+     *
+     * @param FormEvent $event
+     */
     public function postSetData(FormEvent $event)
     {
-//         $data = $event->getData();
-//         $form = $event->getForm();
+        if ($this->app['dispatcher']->hasListeners(BoltFormsEvents::POST_SET_DATA)) {
+            $event = new BoltFormsEvent($event);
+            try {
+                $this->app['dispatcher']->dispatch(BoltFormsEvents::POST_SET_DATA, $event);
+            } catch (\Exception $e) {
+                $this->app['log']->add("[BoltForms] " . BoltFormsEvents::POST_SET_DATA. " subscriber had an error: " . $e->getMessage(), 2);
+            }
+        }
     }
 
     /**
      * Form pre submission event
+     *
+     * Event triggered on FormEvents::SUBMIT
      *
      * To modify data on the fly, this is the point to do it using:
      *  $data = $event->getData();
@@ -83,15 +112,37 @@ class BoltFormsSubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     * Event triggered on FormEvents::SUBMIT
+     *
+     * @param FormEvent $event
+     */
     public function submit(FormEvent $event)
     {
-//         $data = $event->getData();
-//         $form = $event->getForm();
+        if ($this->app['dispatcher']->hasListeners(BoltFormsEvents::SUBMIT)) {
+            $event = new BoltFormsEvent($event);
+            try {
+                $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMIT, $event);
+            } catch (\Exception $e) {
+                $this->app['log']->add("[BoltForms] " . BoltFormsEvents::SUBMIT. " subscriber had an error: " . $e->getMessage(), 2);
+            }
+        }
     }
 
+    /**
+     * Event triggered on FormEvents::POST_SUBMIT
+     *
+     * @param FormEvent $event
+     */
     public function postSubmit(FormEvent $event)
     {
-//         $data = $event->getData();
-//         $form = $event->getForm();
+        if ($this->app['dispatcher']->hasListeners(BoltFormsEvents::POST_SUBMIT)) {
+            $event = new BoltFormsEvent($event);
+            try {
+                $this->app['dispatcher']->dispatch(BoltFormsEvents::POST_SUBMIT, $event);
+            } catch (\Exception $e) {
+                $this->app['log']->add("[BoltForms] " . BoltFormsEvents::POST_SUBMIT. " subscriber had an error: " . $e->getMessage(), 2);
+            }
+        }
     }
 }
