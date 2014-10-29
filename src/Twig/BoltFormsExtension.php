@@ -135,7 +135,7 @@ class BoltFormsExtension extends \Twig_Extension
                     $recaptcha = $answer->is_valid;
                 }
 
-                if ($formdata) {
+                if ($formdata && $recaptcha) {
                     // Don't keep token data around where not needed
                     unset ($formdata['_token']);
 
