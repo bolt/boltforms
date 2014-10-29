@@ -9,9 +9,10 @@
     <p class="boltform-message">{{ message }}</p>
 {% endif %}
 
-{{ html }}
-
 {% if not sent %}
+
+    {{ html_pre }}
+
     {% if recaptcha.theme|default('clean') %}
     <script>
         var RecaptchaOptions = {
@@ -30,10 +31,15 @@
         {% endfor %}
 
         {% if recaptcha.html|default(false) %}
-        <div class="boltform-row">
-            <label for="form_message" class="required">ReCaptcha</label>
-            {{ recaptcha.html|raw }}
-        </div>
+
+            {% if not recaptcha.valid %}
+                {{ recaptcha.error_message }}
+            {% endif %}
+
+            <div class="boltform-row">
+                <label for="form_message" class="required">{{ recaptcha.label }}</label>
+                {{ recaptcha.html|raw }}
+            </div>
         {% endif %}
 
         <br>
@@ -41,4 +47,6 @@
         {{ form_row(form.submit) }}
     {{ form_end(form) }}
 
+{% else %}
+    {{ html_post }}
 {% endif %}
