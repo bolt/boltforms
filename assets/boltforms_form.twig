@@ -1,6 +1,7 @@
 
 {% form_theme form 'boltforms_fields.twig' %}
 
+<div class="boltform">
 {% if error %}
     <p class="boltform-error">{{ error }}</p>
 {% endif %}
@@ -40,6 +41,7 @@
                 <label for="form_message" class="required">{{ recaptcha.label }}</label>
                 {{ recaptcha.html|raw }}
             </div>
+
         {% endif %}
 
         <br>
@@ -50,3 +52,4 @@
 {% else %}
     {{ html_post }}
 {% endif %}
+</div>
