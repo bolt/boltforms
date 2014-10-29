@@ -119,7 +119,7 @@ class Email
         if (! empty($emailconfig['from_email'])) {
             $recipient = array(
                 'from_email'   => $emailconfig['from_email'],
-                'from_name' => isset($emailconfig['from_name']) ? $emailconfig['from_name'] : ''
+                'from_name' => isset($emailconfig['from_name']) ? $emailconfig['from_name'] : 'BoltForms'
             );
         }
 
