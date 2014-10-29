@@ -98,10 +98,11 @@ class BoltFormsExtension extends \Twig_Extension
      * Twig function for form generation
      *
      * @param  string      $formname
-     * @param  string      $html     Pre existing HTML to be passed to Twig
+     * @param  string      $html_pre  HTML to display with for before successful submit
+     * @param  string      $html_post HTML to display with for after successful submit
      * @return Twig_Markup
      */
-    public function twigBoltForms($formname, $html = '')
+    public function twigBoltForms($formname, $html_pre = '', $html_post = '')
     {
         if (isset($this->config[$formname])) {
             $options = array();
@@ -160,7 +161,8 @@ class BoltFormsExtension extends \Twig_Extension
             // Get our values to be passed to Twig
             $twigvalues = array(
                 'fields'    => $fields,
-                'html'      => $html,
+                'html_pre'  => $html_pre,
+                'html_post' => $html_post,
                 'error'     => $error,
                 'message'   => $message,
                 'sent'      => $sent,
