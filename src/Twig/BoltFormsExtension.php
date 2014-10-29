@@ -121,6 +121,19 @@ class BoltFormsExtension extends \Twig_Extension
                 $formdata = $this->forms->handleRequest($formname);
                 $sent = $this->forms->getForm($formname)->isSubmitted();
 
+                // Check reCaptcha, if enabled.  If not just return true
+                if ($this->config['recaptcha']['enabled']) {
+                    $answer = recaptcha_check_answer(
+                        $this->config['recaptcha']['private_key'],
+                        $this->app['request']->getClientIp(),
+                        $this->app['request']->get('recaptcha_challenge_field'),
+                        $this->app['request']->get('recaptcha_response_field'));
+
+                    $recaptcha = $answer->is_valid;
+                } else {
+                    $recaptcha = true;
+                }
+
                 if ($formdata) {
                     // Don't keep token data around where not needed
                     unset ($formdata['_token']);
@@ -152,6 +165,7 @@ class BoltFormsExtension extends \Twig_Extension
                 'recaptcha' => array(
                     'html'  => ($this->config['recaptcha']['enabled'] ? recaptcha_get_html($this->config['recaptcha']['public_key']) : ''),
                     'theme' => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['theme'] : ''),
+                    'valid' => $recaptcha
                 ),
                 'formname'  => $formname
             );
