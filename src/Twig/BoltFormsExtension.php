@@ -160,6 +160,7 @@ class BoltFormsExtension extends \Twig_Extension
 
             // Get our values to be passed to Twig
             $twigvalues = array(
+                'fields'    => $fields,
                 'html'      => $html,
                 'error'     => $error,
                 'message'   => $message,
