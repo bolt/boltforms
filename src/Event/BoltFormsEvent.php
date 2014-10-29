@@ -66,7 +66,7 @@ class BoltFormsEvent extends FormEvent
         return $this->data;
     }
 
-    public function setData(array $data)
+    public function setData($data)
     {
         if ($this->event->getName() == FormEvents::PRE_SUBMIT) {
             $this->event->setData($data);
