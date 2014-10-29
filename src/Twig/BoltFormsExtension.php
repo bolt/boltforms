@@ -110,6 +110,7 @@ class BoltFormsExtension extends \Twig_Extension
             $message = '';
             $error = '';
             $formdata = false;
+            $recaptcha = true;
 
             $this->forms->makeForm($formname, 'form', $options, $data);
 
@@ -131,8 +132,6 @@ class BoltFormsExtension extends \Twig_Extension
                         $this->app['request']->get('recaptcha_response_field'));
 
                     $recaptcha = $answer->is_valid;
-                } else {
-                    $recaptcha = true;
                 }
 
                 if ($formdata) {
