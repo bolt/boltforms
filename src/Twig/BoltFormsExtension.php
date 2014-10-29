@@ -103,6 +103,9 @@ class BoltFormsExtension extends \Twig_Extension
     public function twigBoltForms($formname)
     {
         if (isset($this->config[$formname])) {
+            $options = array();
+            $data = array();
+            $sent = false;
             $message = '';
             $error = '';
             $formdata = false;
