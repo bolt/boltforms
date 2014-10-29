@@ -34,7 +34,9 @@
         {% if recaptcha.html|default(false) %}
 
             {% if not recaptcha.valid %}
-                {{ recaptcha.error_message }}
+            <ul>
+                <li>{{ recaptcha.error_message }}<li>
+            </ul>
             {% endif %}
 
             <div class="boltform-row">
