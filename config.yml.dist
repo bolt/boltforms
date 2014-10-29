@@ -6,6 +6,7 @@
 # reCAPTCHa set up
 recaptcha:
   enabled: false
+  label: "Please enter the reCaptch text to prove you're a human"
   public_key: ''
   private_key: ''
   error_message: "The CAPTCHA wasn't entered correctly. Please try again."
