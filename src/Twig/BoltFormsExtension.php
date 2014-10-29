@@ -167,6 +167,7 @@ class BoltFormsExtension extends \Twig_Extension
                 'message'   => $message,
                 'sent'      => $sent,
                 'recaptcha' => array(
+                    'label' => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['label'] : ''),
                     'html'  => ($this->config['recaptcha']['enabled'] ? recaptcha_get_html($this->config['recaptcha']['public_key']) : ''),
                     'theme' => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['theme'] : ''),
                     'valid' => $recaptcha
