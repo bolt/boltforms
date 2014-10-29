@@ -4,19 +4,19 @@
  * @see http://www.getskeleton.com/?#forms
  */
 
-form.simpleform {
+.boltform {
     margin: 20px 0;
 }
 
-form.simpleform fieldset {
+.boltform fieldset {
     margin-bottom: 20px;
 }
 
-form.simpleform input[type="text"],
-form.simpleform input[type="password"],
-form.simpleform input[type="email"],
-form.simpleform textarea,
-form.simpleform select {
+.boltform input[type="text"],
+.boltform input[type="password"],
+.boltform input[type="email"],
+.boltform textarea,
+.boltform select {
     border: 1px solid #ccc;
     padding: 6px 4px;
     outline: none;
@@ -31,14 +31,14 @@ form.simpleform select {
     background: #fff;
 }
 
-form.simpleform select {
+.boltform select {
     padding: 0;
 }
 
-form.simpleform input[type="text"]:focus,
-form.simpleform input[type="password"]:focus,
-form.simpleform input[type="email"]:focus,
-form.simpleform textarea:focus {
+.boltform input[type="text"]:focus,
+.boltform input[type="password"]:focus,
+.boltform input[type="email"]:focus,
+.boltform textarea:focus {
     border: 1px solid #aaa;
     color: #444;
     -moz-box-shadow: 0 0 3px rgba(0,0,0,.2);
@@ -46,57 +46,57 @@ form.simpleform textarea:focus {
     box-shadow:  0 0 3px rgba(0,0,0,.2);
 }
 
-form.simpleform input.wide {
+.boltform input.wide {
     width: 90%;
 }
 
-form.simpleform textarea {
+.boltform textarea {
     min-height: 60px;
     min-width: 90%;
 }
 
-form.simpleform label,
-form.simpleform legend {
+.boltform label,
+.boltform legend {
     display: block;
     margin: 0.75em 0 0.25em;
 }
 
-form.simpleform select {
+.boltform select {
     width: 220px;
 }
 
-form.simpleform input[type="checkbox"] {
+.boltform input[type="checkbox"] {
     display: inline;
     margin-right: 1em;
 }
 
-form.simpleform label span,
-form.simpleform legend span {
+.boltform label span,
+.boltform legend span {
     font-weight: normal;
     font-size: 13px;
     color: #444;
 }
 
-form.simpleform button,
-form.simpleform input[type="button"],
-form.simpleform input[type="submit"] {
+.boltform button,
+.boltform input[type="button"],
+.boltform input[type="submit"] {
     margin-top: 0.75em;
     padding: 4px 14px;
     font-weight: normal;
 }
 
-form.simpleform .checkbox-placeholder {
+.boltform .checkbox-placeholder {
     display: inline;
     color: #666;
 }
 
-form.simpleform label.required:after {
+.boltform label.required:after {
     content: " *";
     color: #F00;
     font-weight: bold;
 }
 
-p.simpleform-error {
+p.boltform-error {
     padding: 8px 35px 8px 14px;
     margin-bottom: 20px;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
@@ -108,7 +108,7 @@ p.simpleform-error {
     background-color: #F2DEDE;
 }
 
-p.simpleform-message {
+p.boltform-message {
     padding: 8px 35px 8px 14px;
     margin-bottom: 20px;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
