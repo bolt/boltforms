@@ -46,7 +46,7 @@ contact:
     bcc_email: manager@example.com
     attach_files: false
   feedback:
-    success: Message submission sucessfull
+    success: Message submission sucessful
     error: There are errors in the form, please fix before trying to resubmit 
 #  database:
 #    contenttype: mycontenttype  # Contenttype to create
@@ -104,7 +104,7 @@ Showcase:
     bcc_email: manager@example.com
     attach_files: false
   feedback:
-    success: Form submission sucessfull
+    success: Form submission sucessful
     error: There are errors in the form, please fix before trying to resubmit
 #  database:
 #    contenttype: mycontenttype  # Contenttype to create
