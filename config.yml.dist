@@ -35,7 +35,7 @@ contact:
   notification:
     enabled: true
     debug: false
-    subject: Your contact form was submitted 
+    subject: Your message was submitted 
     to_name: My Site              # Must be valid text
     to_email: noreply@example.com # Must be valid email address
     from_name: name               # A field name, specified in the fields: section below
@@ -45,6 +45,9 @@ contact:
     bcc_name: Manager Person
     bcc_email: manager@example.com
     attach_files: false
+  feedback:
+    success: Message submission sucessfull
+    error: There are errors in the form, please fix before trying to resubmit 
 #  database:
 #    contenttype: mycontenttype  # Contenttype to create
 #    table: bolt_secret_table    # Specific database table to write to
@@ -100,6 +103,9 @@ Showcase:
     bcc_name: Manager Person
     bcc_email: manager@example.com
     attach_files: false
+  feedback:
+    success: Form submission sucessfull
+    error: There are errors in the form, please fix before trying to resubmit
 #  database:
 #    contenttype: mycontenttype  # Contenttype to create
 #    table: bolt_secret_table    # Specific database table to write to
