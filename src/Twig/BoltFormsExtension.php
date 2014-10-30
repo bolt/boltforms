@@ -98,8 +98,8 @@ class BoltFormsExtension extends \Twig_Extension
      * Twig function for form generation
      *
      * @param  string      $formname
-     * @param  string      $html_pre  HTML to display with for before successful submit
-     * @param  string      $html_post HTML to display with for after successful submit
+     * @param  string      $html_pre  Intro HTML to display BEFORE successful submit
+     * @param  string      $html_post Intro HTML to display AFTER successful submit
      * @return Twig_Markup
      */
     public function twigBoltForms($formname, $html_pre = '', $html_post = '')
