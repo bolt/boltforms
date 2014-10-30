@@ -2,7 +2,7 @@
 {% block form_errors %}
     {% spaceless %}
         {% if errors|length > 0 %}
-        <ul>
+        <ul class="boltform-errors">
             {% for error in errors %}
                 <li class="boltform-errors">{{ error.message }}</li>
             {% endfor %}
