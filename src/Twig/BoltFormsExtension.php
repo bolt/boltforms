@@ -154,10 +154,10 @@ class BoltFormsExtension extends \Twig_Extension
                         $this->email->doNotification($formname, $this->config[$formname], $formdata);
                     }
 
-                    $message = isset($this->config[$formname]['feeback']['success']) ? $this->config[$formname]['feeback']['success'] : 'Form submitted sucessfully';
+                    $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
                 } else {
                     $sent = false;
-                    $error = isset($this->config[$formname]['feeback']['error']) ? $this->config[$formname]['feeback']['error'] : 'There are errors in the form, please fix before trying to resubmit';
+                    $error = isset($this->config[$formname]['feedback']['error']) ? $this->config[$formname]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit';
                 }
             }
 
