@@ -87,7 +87,17 @@ class Database
     public function writeToContentype($contenttype, $data)
     {
         $record = $this->app['storage']->getEmptyContent($contenttype);
+
+        if (empty($data['datecreated'])) {
+            $data['datecreated'] = date('Y-m-d H:i:s');
+        }
+
+        if (empty($data['datepublish'])) {
+            $data['datepublish'] = date('Y-m-d H:i:s');
+        }
+
         $record->setValues($data);
+
         $this->app['storage']->saveContent($record);
     }
 }
