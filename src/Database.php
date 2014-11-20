@@ -55,6 +55,8 @@ class Database
      */
     public function writeToTable($tablename, $data)
     {
+        $savedata = array();
+
         // Don't try to write to a non-existant table
         $sm = $this->app['db']->getSchemaManager();
         if (! $sm->tablesExist(array($tablename))) {
@@ -86,16 +88,22 @@ class Database
      */
     public function writeToContentype($contenttype, $data)
     {
+        // Get an empty record for out contenttype
         $record = $this->app['storage']->getEmptyContent($contenttype);
 
-        if (empty($data['datecreated'])) {
-            $data['datecreated'] = date('Y-m-d H:i:s');
+        // Symfony makes empty fields NULL, PostgreSQL gets mad.
+        foreach ($data as $key => $val) {
+            if (is_null($val)) {
+                $data[$key] = '';
+            }
         }
 
+        // Set a publiched date
         if (empty($data['datepublish'])) {
             $data['datepublish'] = date('Y-m-d H:i:s');
         }
 
+        // Store the data array into the record
         $record->setValues($data);
 
         $this->app['storage']->saveContent($record);
