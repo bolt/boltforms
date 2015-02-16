@@ -104,83 +104,85 @@ class BoltFormsExtension extends \Twig_Extension
      */
     public function twigBoltForms($formname, $html_pre = '', $html_post = '')
     {
-        if (isset($this->config[$formname])) {
-            $options = array();
-            $data = array();
-            $sent = false;
-            $message = '';
-            $error = '';
-            $formdata = false;
-            $recaptcha = true;
+        if (!isset($this->config[$formname])) {
+            return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formname'!</strong></p>", 'UTF-8');
+        }
 
-            $this->forms->makeForm($formname, 'form', $options, $data);
+        $options = array();
+        $data = array();
+        $sent = false;
+        $message = '';
+        $error = '';
+        $formdata = false;
+        $recaptcha = true;
 
-            $fields = $this->config[$formname]['fields'];
+        $this->forms->makeForm($formname, 'form', $options, $data);
 
-            // Add our fields all at once
-            $this->forms->addFieldArray($formname, $fields);
+        $fields = $this->config[$formname]['fields'];
 
-            if ($this->app['request']->getMethod() == 'POST') {
-                $formdata = $this->forms->handleRequest($formname);
-                $sent = $this->forms->getForm($formname)->isSubmitted();
+        // Add our fields all at once
+        $this->forms->addFieldArray($formname, $fields);
 
-                // Check reCaptcha, if enabled.  If not just return true
-                if ($this->config['recaptcha']['enabled']) {
-                    $answer = recaptcha_check_answer(
-                        $this->config['recaptcha']['private_key'],
-                        $this->app['request']->getClientIp(),
-                        $this->app['request']->get('recaptcha_challenge_field'),
-                        $this->app['request']->get('recaptcha_response_field'));
+        if ($this->app['request']->getMethod() == 'POST') {
+            $formdata = $this->forms->handleRequest($formname);
+            $sent = $this->forms->getForm($formname)->isSubmitted();
 
-                    $recaptcha = $answer->is_valid;
-                }
+            // Check reCaptcha, if enabled.  If not just return true
+            if ($this->config['recaptcha']['enabled']) {
+                $answer = recaptcha_check_answer(
+                    $this->config['recaptcha']['private_key'],
+                    $this->app['request']->getClientIp(),
+                    $this->app['request']->get('recaptcha_challenge_field'),
+                    $this->app['request']->get('recaptcha_response_field'));
 
-                if ($formdata && $recaptcha) {
-                    // Don't keep token data around where not needed
-                    unset ($formdata['_token']);
-
-                    // Write to a Contenttype
-                    if (isset($this->config[$formname]['database']['contenttype'])) {
-                        $this->database->writeToContentype($this->config[$formname]['database']['contenttype'], $formdata);
-                    }
-
-                    // Write to a normal database table
-                    if (isset($this->config[$formname]['database']['table'])) {
-                        $this->database->writeToTable($this->config[$formname]['database']['table'], $formdata);
-                    }
-
-                    // Send notification email
-                    if (isset($this->config[$formname]['notification']['enabled'])) {
-                        $this->email->doNotification($formname, $this->config[$formname], $formdata);
-                    }
-
-                    $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
-                } else {
-                    $sent = false;
-                    $error = isset($this->config[$formname]['feedback']['error']) ? $this->config[$formname]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit';
-                }
+                $recaptcha = $answer->is_valid;
             }
 
-            // Get our values to be passed to Twig
-            $twigvalues = array(
-                'fields'    => $fields,
-                'html_pre'  => $html_pre,
-                'html_post' => $html_post,
-                'error'     => $error,
-                'message'   => $message,
-                'sent'      => $sent,
-                'recaptcha' => array(
-                    'label'         => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['label'] : ''),
-                    'error_message' => $this->config['recaptcha']['error_message'],
-                    'html'          => ($this->config['recaptcha']['enabled'] ? recaptcha_get_html($this->config['recaptcha']['public_key']) : ''),
-                    'theme'         => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['theme'] : ''),
-                    'valid'         => $recaptcha
-                ),
-                'formname'  => $formname
-            );
+            if ($formdata && $recaptcha) {
+                // Don't keep token data around where not needed
+                unset ($formdata['_token']);
 
-            // Render the Twig_Markup
-            return $this->forms->renderForm($formname, $this->config['templates']['form'], $twigvalues);
+                // Write to a Contenttype
+                if (isset($this->config[$formname]['database']['contenttype'])) {
+                    $this->database->writeToContentype($this->config[$formname]['database']['contenttype'], $formdata);
+                }
+
+                // Write to a normal database table
+                if (isset($this->config[$formname]['database']['table'])) {
+                    $this->database->writeToTable($this->config[$formname]['database']['table'], $formdata);
+                }
+
+                // Send notification email
+                if (isset($this->config[$formname]['notification']['enabled'])) {
+                    $this->email->doNotification($formname, $this->config[$formname], $formdata);
+                }
+
+                $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
+            } else {
+                $sent = false;
+                $error = isset($this->config[$formname]['feedback']['error']) ? $this->config[$formname]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit';
+            }
         }
+
+        // Get our values to be passed to Twig
+        $twigvalues = array(
+            'fields'    => $fields,
+            'html_pre'  => $html_pre,
+            'html_post' => $html_post,
+            'error'     => $error,
+            'message'   => $message,
+            'sent'      => $sent,
+            'recaptcha' => array(
+                'label'         => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['label'] : ''),
+                'error_message' => $this->config['recaptcha']['error_message'],
+                'html'          => ($this->config['recaptcha']['enabled'] ? recaptcha_get_html($this->config['recaptcha']['public_key']) : ''),
+                'theme'         => ($this->config['recaptcha']['enabled'] ? $this->config['recaptcha']['theme'] : ''),
+                'valid'         => $recaptcha
+            ),
+            'formname'  => $formname
+        );
+
+        // Render the Twig_Markup
+        return $this->forms->renderForm($formname, $this->config['templates']['form'], $twigvalues);
     }
 }
