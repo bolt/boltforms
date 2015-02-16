@@ -4,6 +4,8 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 use Bolt\Application;
+use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
+use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -101,6 +103,17 @@ class BoltForms
                 }
             }
         }
+
+        if ($type === 'choice') {
+            if (is_string($options['choices']) && strpos($options['choices'], 'contenttype::') === 0) {
+                $choice = new ContentType($this->app, $fieldname, $options['choices']);
+            } else {
+                $choice = new ArrayType($fieldname, $options['choices']);
+            }
+
+            $options['choices'] = $choice->getChoices();
+        }
+
         $this->forms[$formname]->add($fieldname, $type, $options);
     }
 
