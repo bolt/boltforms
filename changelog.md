@@ -4,6 +4,7 @@
 
  * Show a message if the form requested in {{ boltforms() }} is not found in the configuration
  * JSON encode arrays on database writes
+ * Added the ability to use Contentype records for choice field value/labels
 
 * 2.0.1 (2015-01-18)
 
