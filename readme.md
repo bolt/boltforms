@@ -65,7 +65,7 @@ API
 ---
 
 Below is a brief example of how to implement the Bolt Forms API.  For a slightly 
-more detailed example, examine the `BoltForms\Twig\BoltFormsExtension` class.
+more detailed example, examine the `Bolt\Extension\Bolt\BoltForms\Extension` class.
 
 ```php
 // Get the API class
