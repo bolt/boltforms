@@ -16,7 +16,15 @@
     {% if field.options.label|default('') is empty %}
         <p>{{ label }}: {{ value }}</p>
     {% else %}
-        <p>{{ field.options.label }}: {{ value }}</p>
+        {% if value is iterable %}
+            <p>{{ field.options.label }}: <br>
+            {% for val in value %}
+                - {{ val }}<br>
+            {% endfor %}
+            </p>
+        {% else %}
+            <p>{{ field.options.label }}: {{ value }}</p>
+        {% endif %}
     {% endif %}
 
 {% endfor %}
