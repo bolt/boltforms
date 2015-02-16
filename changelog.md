@@ -3,6 +3,7 @@
 * 2.0.2 (2015-02-16)
 
  * Show a message if the form requested in {{ boltforms() }} is not found in the configuration
+ * JSON encode arrays on database writes
 
 * 2.0.1 (2015-01-18)
 

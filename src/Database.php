@@ -70,10 +70,15 @@ class Database
             $savedata[$colname] = $data[$colname];
         }
 
-        // Don't try to insert NULLs
         foreach ($savedata as $key => $value) {
+            // Don't try to insert NULLs
             if ($value === null) {
                 $savedata[$key] = '';
+            }
+
+            // JSON encode arrays
+            if (is_array($value)){
+                $savedata[$key] = json_encode($value);
             }
         }
 
@@ -91,14 +96,19 @@ class Database
         // Get an empty record for out contenttype
         $record = $this->app['storage']->getEmptyContent($contenttype);
 
-        // Symfony makes empty fields NULL, PostgreSQL gets mad.
-        foreach ($data as $key => $val) {
-            if (is_null($val)) {
+        foreach ($data as $key => $value) {
+            // Symfony makes empty fields NULL, PostgreSQL gets mad.
+            if (is_null($value)) {
                 $data[$key] = '';
+            }
+
+            // JSON encode arrays
+            if (is_array($value)){
+                $data[$key] = json_encode($value);
             }
         }
 
-        // Set a publiched date
+        // Set a published date
         if (empty($data['datepublish'])) {
             $data['datepublish'] = date('Y-m-d H:i:s');
         }
