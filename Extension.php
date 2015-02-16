@@ -4,10 +4,6 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 
-/*
- * WARNING: VERY PROOF-OF-CONCEPT IN ALL WAYS!
- */
-
 /**
  * BoltForms a Symfony Forms interface for Bolt
  *
@@ -50,7 +46,7 @@ class Extension extends \Bolt\BaseExtension
     {
         return Extension::NAME;
     }
-    
+
     /**
      * Allow users to place {{ boltforms() }} tags into content, if
      * `allowtwig: true` is set in the contenttype.
@@ -98,7 +94,6 @@ class Extension extends \Bolt\BaseExtension
      */
     private function setConfig()
     {
-        //
     }
 
     /**

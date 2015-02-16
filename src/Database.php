@@ -77,7 +77,7 @@ class Database
             }
 
             // JSON encode arrays
-            if (is_array($value)){
+            if (is_array($value)) {
                 $savedata[$key] = json_encode($value);
             }
         }
@@ -103,7 +103,7 @@ class Database
             }
 
             // JSON encode arrays
-            if (is_array($value)){
+            if (is_array($value)) {
                 $data[$key] = json_encode($value);
             }
         }
