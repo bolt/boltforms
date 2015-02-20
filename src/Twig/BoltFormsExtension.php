@@ -165,6 +165,7 @@ class BoltFormsExtension extends \Twig_Extension
         }
 
         // Get our values to be passed to Twig
+        $fields = $this->forms->getForm($formname)->all();
         $twigvalues = array(
             'fields'    => $fields,
             'html_pre'  => $html_pre,
