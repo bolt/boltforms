@@ -31,7 +31,7 @@
         {{ form_errors(form) }}
 
         {% for key, value in fields  %}
-            {% if value.type != 'submit' %}
+            {% if value.config.name != 'submit' %}
                 {{ form_row(form[key]) }}
             {% endif %}
         {% endfor %}
