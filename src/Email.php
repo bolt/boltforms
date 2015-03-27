@@ -196,9 +196,9 @@ class Email
     private function doSend($emailconfig)
     {
         if ($this->app['mailer']->send($this->message)) {
-            $this->app['log']->add("Sent Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", 3);
+            $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", array('event' => 'extensions'));
         } else {
-            $this->app['log']->add("Failed Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", 3);
+            $this->app['logger.system']->info("Failed Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", array('event' => 'extensions'));
         }
     }
 
