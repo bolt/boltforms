@@ -58,6 +58,15 @@ class Extension extends \Bolt\BaseExtension
         return true;
     }
 
+    /**
+     * Let Bolt know this extension sends emails. The user will see a
+     * notification on the dashboard if mail is not set up correctly.
+     */
+    public function sendsMail()
+    {
+        return true;
+    }
+
     public function initialize()
     {
 
