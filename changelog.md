@@ -1,5 +1,10 @@
 # Changelog for Bolt Forms
 
+* 2.1.0 (2015-03-27)
+
+ * Update to Bolt 2.1 logger
+ * Bump mimimum required version to Bolt 2.1
+
 * 2.0.3 (2015-02-21)
 
  * Fix: Correct match of 'submit' field (@rixbeck)
