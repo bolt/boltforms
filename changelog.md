@@ -1,5 +1,9 @@
 # Changelog for Bolt Forms
 
+* 2.1.1 (2015-03-28)
+
+ * Hook into Bolt mail set up warning
+
 * 2.1.0 (2015-03-27)
 
  * Update to Bolt 2.1 logger
