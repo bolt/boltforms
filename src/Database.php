@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Bolt;
 use Silex\Application;
 
 /**
@@ -29,7 +28,6 @@ use Silex\Application;
  */
 class Database
 {
-
     /**
      * @var Application
      */
@@ -49,11 +47,12 @@ class Database
     /**
      * Write out form data to a specified database table
      *
-     * @param  string  $tablename
-     * @param  array   $data
+     * @param string $tablename
+     * @param array  $data
+     *
      * @return boolean
      */
-    public function writeToTable($tablename, $data)
+    public function writeToTable($tablename, array $data)
     {
         $savedata = array();
 
@@ -91,7 +90,7 @@ class Database
      * @param string $contenttype
      * @param array  $data
      */
-    public function writeToContentype($contenttype, $data)
+    public function writeToContentype($contenttype, array $data)
     {
         // Get an empty record for out contenttype
         $record = $this->app['storage']->getEmptyContent($contenttype);

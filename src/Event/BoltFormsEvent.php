@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Event;
 
-use Bolt;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;

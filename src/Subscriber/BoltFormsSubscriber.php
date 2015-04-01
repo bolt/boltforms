@@ -2,13 +2,12 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 
-use Bolt;
 use Bolt\Configuration\ResourceManager;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Dedicated subscriber interface for BoltForms

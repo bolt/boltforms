@@ -33,7 +33,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class BoltForms
 {
-
     /**
      * @var Application
      */
@@ -61,7 +60,8 @@ class BoltForms
     /**
      * Get a particular form
      *
-     * @param  string              $formname
+     * @param string $formname
+     *
      * @return FormConfigInterface
      */
     public function getForm($formname)
@@ -120,7 +120,8 @@ class BoltForms
     /**
      * Extract, expand and set & create validator instance array(s)
      *
-     * @param  mixed                                  $input
+     * @param mixed $input
+     *
      * @return Symfony\Component\Validator\Constraint
      */
     private function getConstraint($input)
@@ -147,8 +148,9 @@ class BoltForms
     /**
      * Add an array of fields to the form
      *
-     * @param  string $formname Name of the form
-     * @param  array  $fields   Associative array keyed on field name => array('type' => '', 'options => array())
+     * @param string $formname Name of the form
+     * @param array  $fields   Associative array keyed on field name => array('type' => '', 'options => array())
+     *
      * @return void
      */
     public function addFieldArray($formname, array $fields)
@@ -162,9 +164,10 @@ class BoltForms
     /**
      * Render our form into HTML
      *
-     * @param  string       $formname   Name of the form
-     * @param  string       $template   A Twig template file name in Twig's path
-     * @param  array        $twigvalues Associative array of key/value pairs to pass to Twig's render of $template
+     * @param string $formname   Name of the form
+     * @param string $template   A Twig template file name in Twig's path
+     * @param array  $twigvalues Associative array of key/value pairs to pass to Twig's render of $template
+     *
      * @return \Twig_Markup
      */
     public function renderForm($formname, $template = '', array $twigvalues = array())
@@ -194,12 +197,13 @@ class BoltForms
     /**
      * Handle the request.  Caller must test for POST
      *
-     * @param  string   $formname  The name of the form
-     * @param  Request  $request
-     * @param  callable $callback  A PHP callable to call on success
-     * @param  mixed    $arguments Arguments to pass to the PHP callable
-     * @return mixed    Success - Submitted form parameters, or passed callback function return value
-     *                  Failure - false
+     * @param string   $formname  The name of the form
+     * @param Request  $request
+     * @param callable $callback  A PHP callable to call on success
+     * @param mixed    $arguments Arguments to pass to the PHP callable
+     *
+     * @return mixed Success - Submitted form parameters, or passed callback function return value
+     *               Failure - false
      */
     public function handleRequest($formname, $request = null, $callback = null, $arguments = array())
     {

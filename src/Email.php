@@ -118,8 +118,8 @@ class Email
          */
         if (! empty($emailconfig['from_email'])) {
             $recipient = array(
-                'from_email'   => $emailconfig['from_email'],
-                'from_name' => isset($emailconfig['from_name']) ? $emailconfig['from_name'] : 'BoltForms'
+                'from_email' => $emailconfig['from_email'],
+                'from_name'  => isset($emailconfig['from_name']) ? $emailconfig['from_name'] : 'BoltForms'
             );
         }
 
@@ -132,8 +132,8 @@ class Email
          */
         if (! empty($emailconfig['debug']) && $emailconfig['debug']) {
             $recipient = array(
-                'to_email'   => $emailconfig['debug_address'],
-                'to_name' => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : 'BoltForms Debug'
+                'to_email' => $emailconfig['debug_address'],
+                'to_name'  => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : 'BoltForms Debug'
             );
 
             $this->message->setTo(array(
@@ -149,8 +149,8 @@ class Email
          */
         if (! empty($emailconfig['to_email'])) {
             $recipient = array(
-                'to_email'   => $emailconfig['to_email'],
-                'to_name' => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : ''
+                'to_email' => $emailconfig['to_email'],
+                'to_name'  => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : ''
             );
         }
 
@@ -163,8 +163,8 @@ class Email
          */
         if (! empty($emailconfig['cc_email'])) {
             $recipient = array(
-                'cc_email'   => $emailconfig['cc_email'],
-                'cc_name' => isset($emailconfig['cc_name']) ? $emailconfig['cc_name'] : ''
+                'cc_email' => $emailconfig['cc_email'],
+                'cc_name'  => isset($emailconfig['cc_name']) ? $emailconfig['cc_name'] : ''
             );
 
             if (isset($emailconfig['cc_email'])) {
@@ -177,15 +177,14 @@ class Email
          */
         if (! empty($emailconfig['bcc_email'])) {
             $recipient = array(
-                'bcc_email'   => $emailconfig['bcc_email'],
-                'bcc_name' => isset($emailconfig['bcc_name']) ? $emailconfig['bcc_name'] : ''
+                'bcc_email' => $emailconfig['bcc_email'],
+                'bcc_name'  => isset($emailconfig['bcc_name']) ? $emailconfig['bcc_name'] : ''
             );
 
             if (isset($emailconfig['bcc_email'])) {
                 $this->message->setBcc($emailconfig['bcc_email']);
             }
         }
-
     }
 
     /**
@@ -228,7 +227,7 @@ class Email
             $debug = true;
 
             if (empty($this->config['debug']['address'])) {
-                trigger_error("[BoltForms] Debug email address can not be empty if debugging enabled!", E_USER_ERROR);
+                trigger_error('[BoltForms] Debug email address can not be empty if debugging enabled!', E_USER_ERROR);
             } else {
                 $debug_address = $this->config['debug']['address'];
             }

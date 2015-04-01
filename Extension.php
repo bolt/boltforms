@@ -113,7 +113,7 @@ class Extension extends \Bolt\BaseExtension
     protected function getDefaultConfig()
     {
         return array(
-            'csrf' => true,
+            'csrf'      => true,
             'recaptcha' => array(
                 'enabled'       => false,
                 'label'         => "Please enter the reCaptch text to prove you're a human",
@@ -134,5 +134,4 @@ class Extension extends \Bolt\BaseExtension
             )
         );
     }
-
 }

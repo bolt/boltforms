@@ -92,14 +92,15 @@ class ContentType implements ChoiceInterface
     /**
      * Get choice values from Contenttype records
      *
-     * @param  string $str
+     * @param string $str
+     *
      * @return array
      */
     private function getChoicesFromContenttypeRecords($key)
     {
         $params = explode('::', $key);
 
-        if ($params === false || count($params) !== 4 ) {
+        if ($params === false || count($params) !== 4) {
             throw new \UnexpectedValueException("The configured Contenttype choice field '$this->name' has an invalid key string: '$key'");
         }
 

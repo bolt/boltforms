@@ -2,10 +2,10 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
+use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Database;
 use Bolt\Extension\Bolt\BoltForms\Email;
 use Bolt\Extension\Bolt\BoltForms\Extension;
-use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Silex\Application;
 
 /**
@@ -97,9 +97,10 @@ class BoltFormsExtension extends \Twig_Extension
     /**
      * Twig function for form generation
      *
-     * @param  string      $formname
-     * @param  string      $html_pre  Intro HTML to display BEFORE successful submit
-     * @param  string      $html_post Intro HTML to display AFTER successful submit
+     * @param string $formname
+     * @param string $html_pre  Intro HTML to display BEFORE successful submit
+     * @param string $html_post Intro HTML to display AFTER successful submit
+     *
      * @return Twig_Markup
      */
     public function twigBoltForms($formname, $html_pre = '', $html_post = '')
@@ -140,7 +141,7 @@ class BoltFormsExtension extends \Twig_Extension
 
             if ($formdata && $recaptcha) {
                 // Don't keep token data around where not needed
-                unset ($formdata['_token']);
+                unset($formdata['_token']);
 
                 // Write to a Contenttype
                 if (isset($this->config[$formname]['database']['contenttype'])) {
