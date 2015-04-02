@@ -36,7 +36,7 @@
             {% endif %}
         {% endfor %}
 
-        {% if recaptcha.html|default(false) %}
+        {% if recaptcha.enabled %}
 
             {% if not recaptcha.valid %}
             <ul class="boltform-error">
@@ -46,7 +46,8 @@
 
             <div class="boltform-row">
                 <label for="form_message" class="required">{{ recaptcha.label }}</label>
-                {{ recaptcha.html|raw }}
+                <script src="https://www.google.com/recaptcha/api.js?hl={{ htmllang() }}" async defer></script>
+                <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
             </div>
 
         {% endif %}
