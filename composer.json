@@ -22,7 +22,9 @@
 			"Bolt\\Extension\\Bolt\\BoltForms\\" : [
 				"",
 				"src/"
-			]
+			],
+            "Bolt\\Extension\\Bolt\\BoltForms\\Tests\\" : "tests",
+			"ReCaptcha\\" : "lib/ReCaptcha/"
 		}
 	},
 	"extra" : {
