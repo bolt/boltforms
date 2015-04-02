@@ -69,11 +69,15 @@ class Extension extends \Bolt\BaseExtension
 
     public function initialize()
     {
-
         /*
          * Config
          */
         $this->setConfig();
+
+        /*
+         * Provider
+         */
+        $this->app->register(new Provider\BoltFormsServiceProvider($this->app));
 
         /*
          * Backend
