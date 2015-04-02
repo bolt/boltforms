@@ -39,6 +39,12 @@ class BoltFormsExtension extends \Twig_Extension
     /** @var array */
     private $config;
 
+    /** @var array */
+    private $recaptcha = array(
+        'success'    => true,
+        'errorCodes' => null
+    );
+
     /** @var \Twig_Environment */
     private $twig = null;
 
@@ -91,9 +97,7 @@ class BoltFormsExtension extends \Twig_Extension
         $sent       = false;
         $message    = '';
         $error      = '';
-        $errorCodes = null;
         $formdata   = false;
-        $recaptcha  = true;
 
         $this->app['boltforms']->makeForm($formname, 'form', $options, $data);
 
@@ -106,15 +110,10 @@ class BoltFormsExtension extends \Twig_Extension
             $formdata = $this->app['boltforms']->handleRequest($formname);
             $sent = $this->app['boltforms']->getForm($formname)->isSubmitted();
 
-            // Check reCaptcha, if enabled.  If not just return true
-            if ($this->config['recaptcha']['enabled']) {
-                $rc = new ReCaptcha($this->config['recaptcha']['private_key']);
-                $reCaptchaResponse = $rc->verify($this->app['request']->get('g-recaptcha-response'), $this->app['request']->getClientIp());
-                $recaptcha = $reCaptchaResponse->isSuccess();
-                $errorCodes = $reCaptchaResponse->getErrorCodes();
-            }
+            // Check reCaptcha, if enabled.
+            $this->getReCaptchaResponses();
 
-            if ($formdata && $recaptcha) {
+            if ($formdata && $this->recaptcha['success']) {
                 // Don't keep token data around where not needed
                 unset($formdata['_token']);
 
@@ -153,15 +152,32 @@ class BoltFormsExtension extends \Twig_Extension
                 'enabled'       => $this->config['recaptcha']['enabled'],
                 'label'         => $this->config['recaptcha']['label'],
                 'error_message' => $this->config['recaptcha']['error_message'],
-                'error_codes'   => $errorCodes,
+                'error_codes'   => $this->recaptcha['errorCodes'],
                 'public_key'    => $this->config['recaptcha']['public_key'],
                 'theme'         => $this->config['recaptcha']['theme'],
-                'valid'         => $recaptcha
+                'valid'         => $this->recaptcha['success']
             ),
             'formname'  => $formname
         );
 
         // Render the Twig_Markup
         return $this->app['boltforms']->renderForm($formname, $this->config['templates']['form'], $twigvalues);
+    }
+
+    /**
+     * Check reCaptcha, if enabled.
+     */
+    private function getReCaptchaResponses()
+    {
+        // Check reCaptcha, if enabled.  If not just return true
+        if ($this->config['recaptcha']['enabled']) {
+            $rc = new ReCaptcha($this->config['recaptcha']['private_key']);
+            $reCaptchaResponse = $rc->verify($this->app['request']->get('g-recaptcha-response'), $this->app['request']->getClientIp());
+
+            $this->recaptcha = array(
+                'success'    => $reCaptchaResponse->isSuccess(),
+                'errorCodes' => $reCaptchaResponse->getErrorCodes()
+            );
+        }
     }
 }
