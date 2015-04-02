@@ -1,5 +1,10 @@
 # Changelog for Bolt Forms
 
+* 2.1.2 (2015-04-02)
+
+ * Update reCapcha to latest upstream version
+ * Add $app['boltforms'] service provider
+ 
 * 2.1.1 (2015-03-28)
 
  * Hook into Bolt mail set up warning
