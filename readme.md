@@ -65,11 +65,12 @@ API
 ---
 
 Below is a brief example of how to implement the Bolt Forms API.  For a slightly 
-more detailed example, examine the `Bolt\Extension\Bolt\BoltForms\Extension` class.
+more detailed example, see the `Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension` 
+class.
 
 ```php
 // Get the API class
-$forms = new \Bolt\Extension\Bolt\BoltForms\BoltForms($app);
+$forms = $this->app['boltforms'];
 
 // Make the forms object inside the API class
 $forms->makeForm($formname, 'form', $options, $data);
