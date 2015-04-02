@@ -16,6 +16,8 @@ class ExtensionTest extends BoltUnitTest
         $app = $this->getApp();
         $extension = new Extension($app);
         $app['extensions']->register( $extension );
-        $this->assertSame($extension, $app['extensions.boltforms']);
+        $name = $extension->getName();
+        $this->assertSame($name, 'BoltForms');
+        $this->assertSame($extension, $app["extensions.$name"]);
     }
 }
