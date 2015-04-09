@@ -6,11 +6,11 @@
 {% endblock boltforms_css %}
 
 <div class="boltform">
-{% if error %}
+{% if error and app.request.request.get('boltforms') %}
     <p class="boltform-error">{{ error }}</p>
 {% endif %}
 
-{% if message %}
+{% if message and app.request.request.get('boltforms') %}
     <p class="boltform-message">{{ message }}</p>
 {% endif %}
 
@@ -25,9 +25,8 @@
         };
     </script>
     {% endif %}
-
-    {{ form_start(form) }}
-
+    
+    {{ form_start(form, {'attr': {'name': 'boltforms'}}) }}
         {{ form_errors(form) }}
 
         {% for key, value in fields  %}
