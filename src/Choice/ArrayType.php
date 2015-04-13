@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
-use Silex\Application;
 
 /**
  * Array choices for BoltForms
