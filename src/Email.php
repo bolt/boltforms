@@ -75,10 +75,18 @@ class Email
         // Set our Twig lookup path
         $this->addTwigPath();
 
+        // If the form has it's own templates defined, use those, else the globals.
+        $templateSubject = isset($formconfig['templates']['subject'])
+            ? $formconfig['templates']['subject']
+            : $this->config['templates']['subject'];
+        $templateEmail = isset($formconfig['templates']['email'])
+            ? $formconfig['templates']['email']
+            : $this->config['templates']['email'];
+
         /*
          * Subject
          */
-        $html = $this->app['render']->render($this->config['templates']['subject'], array(
+        $html = $this->app['render']->render($templateSubject, array(
             'subject' => $formconfig['notification']['subject'],
             'config'  => $emailconfig,
             'data'    => $formdata
@@ -89,7 +97,7 @@ class Email
         /*
          * Body
          */
-        $html = $this->app['render']->render($this->config['templates']['email'], array(
+        $html = $this->app['render']->render($templateEmail, array(
             'fields' => $formconfig['fields'],
             'config' => $emailconfig,
             'data'   => $formdata

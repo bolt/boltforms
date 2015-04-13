@@ -2,6 +2,11 @@
 ### Bolt Forms
 ###
 
+# Global templates used for rendering forms and emails.
+templates:
+    form: boltforms_form.twig
+    email: boltforms_email.twig
+    subject: boltforms_email_subject.twig
 
 # reCAPTCHa set up
 recaptcha:
@@ -103,6 +108,10 @@ Showcase:
     bcc_name: Manager Person
     bcc_email: manager@example.com
     attach_files: false
+  templates:                      # Over ride the global Twig templates for this form
+    form: boltforms_form.twig
+    email: boltforms_email.twig
+    subject: boltforms_email_subject.twig
   feedback:
     success: Form submission sucessful
     error: There are errors in the form, please fix before trying to resubmit

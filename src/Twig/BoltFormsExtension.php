@@ -160,8 +160,13 @@ class BoltFormsExtension extends \Twig_Extension
             'formname'  => $formname
         );
 
+        // If the form has it's own templates defined, use those, else the globals.
+        $template = isset($this->config[$formname]['templates']['form'])
+            ? $this->config[$formname]['templates']['form']
+            : $this->config['templates']['form'];
+
         // Render the Twig_Markup
-        return $this->app['boltforms']->renderForm($formname, $this->config['templates']['form'], $twigvalues);
+        return $this->app['boltforms']->renderForm($formname, $template, $twigvalues);
     }
 
     /**
