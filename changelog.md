@@ -1,5 +1,11 @@
 # Changelog for Bolt Forms
 
+
+* 2.1.3 (2015-04-13)
+
+ * Forms can define individual templates, or fall back to the global
+ * Updates to the form template 
+
 * 2.1.2 (2015-04-02)
 
  * Update reCapcha to latest upstream version
