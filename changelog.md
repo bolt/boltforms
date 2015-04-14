@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 2.1.4 (2015-04-14)
+
+ * Fix notices
 
 * 2.1.3 (2015-04-13)
 
