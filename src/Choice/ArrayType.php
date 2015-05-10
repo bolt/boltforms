@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
-
 /**
  * Array choices for BoltForms
  *
