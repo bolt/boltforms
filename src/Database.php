@@ -79,6 +79,12 @@ class Database
             if (is_array($value)) {
                 $savedata[$key] = json_encode($value);
             }
+            
+            // https://github.com/bolt/bolt/issues/3459
+            // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
+            if ($value instanceof \DateTime) {
+                $savedata[$key] = $value->format('c');
+            }
         }
 
         $this->app['db']->insert($tablename, $savedata);

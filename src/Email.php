@@ -94,6 +94,14 @@ class Email
 
         $subject = new \Twig_Markup($html, 'UTF-8');
 
+        // https://github.com/bolt/bolt/issues/3459
+        // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
+        foreach($formdata as $key => $value) {
+            if ($value instanceof \DateTime) {
+                $formdata[$key] = $value->format('c');
+            }
+        }
+
         /*
          * Body
          */
