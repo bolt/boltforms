@@ -1,5 +1,9 @@
 # Changelog for Bolt Forms
 
+* 2.1.5 (2015-05-12)
+
+ * Fix handline of DateTime fields
+
 * 2.1.4 (2015-04-14)
 
  * Fix notices
