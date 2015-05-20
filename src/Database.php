@@ -59,6 +59,8 @@ class Database
         // Don't try to write to a non-existant table
         $sm = $this->app['db']->getSchemaManager();
         if (! $sm->tablesExist(array($tablename))) {
+            // log failed attempt
+            $this->app['logger.system']->info("Failed attempt to save Bolt Forms info: missing database table {$tablename}", array('event' => 'extensions'));
             return false;
         }
 
@@ -66,7 +68,12 @@ class Database
         $columns = $sm->listTableColumns($tablename);
         foreach ($columns as $column) {
             $colname = $column->getName();
-            $savedata[$colname] = $data[$colname];
+            // only attempt to insert fields with existing data
+            // this way you can have fields in your table that are not in the form
+            // eg. an auto increment id field of a field to track status of a submission
+            if(array_key_exists($colname, $data)) {
+                $savedata[$colname] = $data[$colname];
+            }
         }
 
         foreach ($savedata as $key => $value) {
