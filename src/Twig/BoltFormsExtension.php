@@ -88,12 +88,6 @@ class BoltFormsExtension extends \Twig_Extension
      */
     public function twigBoltForms($formname, $html_pre = '', $html_post = '')
     {
-        // Make sure that we allow a session cookie for pages with a form. If we don't,
-        // the form's CSRF token will not work correctly. This might be a temporary fix,
-        // depending on how we're going to solve the 'cookies in frontend'-issue.
-        // @see https://github.com/bolt/bolt/issues/3425
-        $this->app['config']->set('general/cookies_no_frontend', false);
-
         if (!isset($this->config[$formname])) {
             return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formname'!</strong></p>", 'UTF-8');
         }
