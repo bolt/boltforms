@@ -86,20 +86,18 @@ class BoltFormsExtension extends \Twig_Extension
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formname, $html_pre = '', $html_post = '')
+    public function twigBoltForms($formname, $html_pre = '', $html_post = '', $data = array(), $options = array())
     {
         if (!isset($this->config[$formname])) {
             return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formname'!</strong></p>", 'UTF-8');
         }
 
-        $options    = array();
-        $data       = array();
         $sent       = false;
         $message    = '';
         $error      = '';
         $formdata   = false;
 
-        $this->app['boltforms']->makeForm($formname, 'form', $options, $data);
+        $this->app['boltforms']->makeForm($formname, 'form', $data, $options);
 
         $fields = $this->config[$formname]['fields'];
 
