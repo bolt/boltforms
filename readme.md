@@ -13,6 +13,15 @@ Define a form in `app/config/extensions/boltforms.bolt.yml` and add the followin
 {{ boltforms('formname') }}
 ```
 
+Template with data
+------------------
+
+You can also add parameters to the boltforms invocation in twig. In this case the value for the field "textfieldname" will be preset "fieldvalue"
+
+```twig
+{{ boltforms('formname', 'Some text before the form', 'After the form', { textfieldname: "fieldvalue"}) }}
+```
+
 Fields
 ------
 
