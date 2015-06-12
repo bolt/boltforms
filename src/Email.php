@@ -248,9 +248,7 @@ class Email
                 $debug_address = $this->config['debug']['address'];
             }
         } else {
-            if (isset($notify_form['debug']) && $notify_form['debug']) {
-                $debug = true;
-            }
+            $debug = isset($notify_form['debug']) && $notify_form['debug'];
 
             if (isset($notify_form['debug_address'])) {
                 $debug_address = $notify_form['debug_address'];
