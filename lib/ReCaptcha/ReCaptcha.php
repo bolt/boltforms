@@ -86,7 +86,7 @@ class ReCaptcha
     {
         // Discard empty solution submissions
         if (empty($response)) {
-            $recaptchaResponse = new Response(false, array('missing-input-response'));
+            $recaptchaResponse = new Response(false, ['missing-input-response']);
             return $recaptchaResponse;
         }
 

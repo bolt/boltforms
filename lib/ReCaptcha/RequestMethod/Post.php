@@ -53,8 +53,8 @@ class Post implements RequestMethod
          * Using "CN_name" will still work, but it will raise deprecated errors.
          */
         $peer_key = version_compare(PHP_VERSION, '5.6.0', '<') ? 'CN_name' : 'peer_name';
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'header' => "Content-type: application/x-www-form-urlencoded\r\n",
                 'method' => 'POST',
                 'content' => $params->toQueryString(),
@@ -62,8 +62,8 @@ class Post implements RequestMethod
                 'verify_peer' => true,
                 // Force the peer validation to use www.google.com
                 $peer_key => 'www.google.com',
-            ),
-        );
+            ],
+        ];
         $context = stream_context_create($options);
         return file_get_contents(self::SITE_VERIFY_URL, false, $context);
     }

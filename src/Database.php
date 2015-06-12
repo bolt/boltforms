@@ -54,13 +54,13 @@ class Database
      */
     public function writeToTable($tablename, array $data)
     {
-        $savedata = array();
+        $savedata = [];
 
         // Don't try to write to a non-existant table
         $sm = $this->app['db']->getSchemaManager();
-        if (! $sm->tablesExist(array($tablename))) {
+        if (! $sm->tablesExist([$tablename])) {
             // log failed attempt
-            $this->app['logger.system']->info("Failed attempt to save Bolt Forms info: missing database table {$tablename}", array('event' => 'extensions'));
+            $this->app['logger.system']->info("Failed attempt to save Bolt Forms info: missing database table {$tablename}", ['event' => 'extensions']);
             return false;
         }
 
@@ -86,7 +86,7 @@ class Database
             if (is_array($value)) {
                 $savedata[$key] = json_encode($value);
             }
-            
+
             // https://github.com/bolt/bolt/issues/3459
             // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
             if ($value instanceof \DateTime) {

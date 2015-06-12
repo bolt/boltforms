@@ -86,11 +86,11 @@ class Email
         /*
          * Subject
          */
-        $html = $this->app['render']->render($templateSubject, array(
+        $html = $this->app['render']->render($templateSubject, [
             'subject' => $formconfig['notification']['subject'],
             'config'  => $emailconfig,
             'data'    => $formdata
-        ));
+        ]);
 
         $subject = new \Twig_Markup($html, 'UTF-8');
 
@@ -105,11 +105,11 @@ class Email
         /*
          * Body
          */
-        $html = $this->app['render']->render($templateEmail, array(
+        $html = $this->app['render']->render($templateEmail, [
             'fields' => $formconfig['fields'],
             'config' => $emailconfig,
             'data'   => $formdata
-        ));
+        ]);
 
         $body = new \Twig_Markup($html, 'UTF-8');
 
@@ -133,28 +133,28 @@ class Email
          * From
          */
         if (! empty($emailconfig['from_email'])) {
-            $recipient = array(
+            $recipient = [
                 'from_email' => $emailconfig['from_email'],
                 'from_name'  => isset($emailconfig['from_name']) ? $emailconfig['from_name'] : 'BoltForms'
-            );
+            ];
         }
 
-        $this->message->setFrom(array(
+        $this->message->setFrom([
             $recipient['from_email'] => $recipient['from_name']
-        ));
+        ]);
 
         /*
          * Debug
          */
         if (! empty($emailconfig['debug']) && $emailconfig['debug']) {
-            $recipient = array(
+            $recipient = [
                 'to_email' => $emailconfig['debug_address'],
                 'to_name'  => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : 'BoltForms Debug'
-            );
+            ];
 
-            $this->message->setTo(array(
+            $this->message->setTo([
                 $recipient['to_email'] => $recipient['to_name']
-            ));
+            ]);
 
             // Don't set any further recipients
             return;
@@ -164,24 +164,24 @@ class Email
          * To
          */
         if (! empty($emailconfig['to_email'])) {
-            $recipient = array(
+            $recipient = [
                 'to_email' => $emailconfig['to_email'],
                 'to_name'  => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : ''
-            );
+            ];
         }
 
-        $this->message->setTo(array(
+        $this->message->setTo([
             $recipient['to_email'] => $recipient['to_name']
-        ));
+        ]);
 
         /*
          * CC
          */
         if (! empty($emailconfig['cc_email'])) {
-            $recipient = array(
+            $recipient = [
                 'cc_email' => $emailconfig['cc_email'],
                 'cc_name'  => isset($emailconfig['cc_name']) ? $emailconfig['cc_name'] : ''
-            );
+            ];
 
             if (isset($emailconfig['cc_email'])) {
                 $this->message->setCc($emailconfig['cc_email']);
@@ -192,10 +192,10 @@ class Email
          * BCC
          */
         if (! empty($emailconfig['bcc_email'])) {
-            $recipient = array(
+            $recipient = [
                 'bcc_email' => $emailconfig['bcc_email'],
                 'bcc_name'  => isset($emailconfig['bcc_name']) ? $emailconfig['bcc_name'] : ''
-            );
+            ];
 
             if (isset($emailconfig['bcc_email'])) {
                 $this->message->setBcc($emailconfig['bcc_email']);
@@ -211,9 +211,9 @@ class Email
     private function doSend($emailconfig)
     {
         if ($this->app['mailer']->send($this->message)) {
-            $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", array('event' => 'extensions'));
+            $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", ['event' => 'extensions']);
         } else {
-            $this->app['logger.system']->info("Failed Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", array('event' => 'extensions'));
+            $this->app['logger.system']->info("Failed Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", ['event' => 'extensions']);
         }
     }
 
@@ -259,7 +259,7 @@ class Email
             }
         }
 
-        $emailconfig = array(
+        $emailconfig = [
             'debug'         => $debug,
             'debug_address' => $debug_address,
             'to_name'       => isset($notify_form['to_name'])    ? $notify_form['to_name']    : '',
@@ -270,7 +270,7 @@ class Email
             'cc_email'      => isset($notify_form['cc_email'])   ? $notify_form['cc_email']   : '',
             'bcc_name'      => isset($notify_form['bcc_name'])   ? $notify_form['bcc_name']   : '',
             'bcc_email'     => isset($notify_form['bcc_email'])  ? $notify_form['bcc_email']  : ''
-        );
+        ];
 
         // If any fields rely on posted data populate them now
         foreach ($emailconfig as $key => $value) {
