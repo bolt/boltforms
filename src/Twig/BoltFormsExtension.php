@@ -116,17 +116,17 @@ class BoltFormsExtension extends \Twig_Extension
                 unset($formdata['_token']);
 
                 // Write to a Contenttype
-                if (isset($this->config[$formname]['database']['contenttype'])) {
+                if (isset($this->config[$formname]['database']['contenttype']) && $this->config[$formname]['database']['contenttype']) {
                     $this->app['boltforms.database']->writeToContentype($this->config[$formname]['database']['contenttype'], $formdata);
                 }
 
                 // Write to a normal database table
-                if (isset($this->config[$formname]['database']['table'])) {
+                if (isset($this->config[$formname]['database']['table']) && $this->config[$formname]['database']['table']) {
                     $this->app['boltforms.database']->writeToTable($this->config[$formname]['database']['table'], $formdata);
                 }
 
                 // Send notification email
-                if (isset($this->config[$formname]['notification']['enabled'])) {
+                if (isset($this->config[$formname]['notification']['enabled']) && $this->config[$formname]['notification']['enabled']) {
                     $this->app['boltforms.email']->doNotification($formname, $this->config[$formname], $formdata);
                 }
 
