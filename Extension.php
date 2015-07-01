@@ -117,26 +117,26 @@ class Extension extends \Bolt\BaseExtension
      */
     protected function getDefaultConfig()
     {
-        return array(
+        return [
             'csrf'      => true,
-            'recaptcha' => array(
+            'recaptcha' => [
                 'enabled'       => false,
                 'label'         => "Please enter the reCaptch text to prove you're a human",
                 'public_key'    => '',
                 'private_key'   => '',
                 'error_message' => "The CAPTCHA wasn't entered correctly. Please try again.",
                 'theme'         => 'clean'
-            ),
-            'templates' => array(
+            ],
+            'templates' => [
                 'fields'  => 'boltforms_fields.twig',
                 'form'    => 'boltforms_form.twig',
                 'email'   => 'boltforms_email.twig',
                 'subject' => 'boltforms_email_subject.twig'
-            ),
-            'debug' => array(
+            ],
+            'debug' => [
                 'enabled' => false,
                 'address' => ''
-            )
-        );
+            ]
+        ];
     }
 }

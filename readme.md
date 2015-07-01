@@ -1,7 +1,7 @@
 Bolt Forms
 ==========
 
-Bolt Forms is an interface to Symfony Forms for Bolt.  It provides a Twig template function and 
+Bolt Forms is an interface to Symfony Forms for Bolt.  It provides a Twig template function and
 exposes a simplified API for extending as you need.
 
 Template Use
@@ -25,8 +25,8 @@ You can also add parameters to the boltforms invocation in twig. In this case th
 Fields
 ------
 
-Each field contains an `options` key that is an array of values that is passed directly to 
-Symfony Forms.  See [the Symfony documentation](http://symfony.com/doc/current/reference/forms/types/form.html) for more information. 
+Each field contains an `options` key that is an array of values that is passed directly to
+Symfony Forms.  See [the Symfony documentation](http://symfony.com/doc/current/reference/forms/types/form.html) for more information.
 
 ```yaml
     fieldname:
@@ -42,8 +42,8 @@ Symfony Forms.  See [the Symfony documentation](http://symfony.com/doc/current/r
 Choice Types
 ------------
 
-Choice types in BoltForms provide three different options for choice values. 
-The standard indexed and associative arrays, and Bolt specific Contenttype 
+Choice types in BoltForms provide three different options for choice values.
+The standard indexed and associative arrays, and Bolt specific Contenttype
 record lookups.
 
 ```yaml
@@ -62,7 +62,7 @@ record lookups.
         choices: 'contenttype::pages::title::slug'
 ```
 
-For the Bolt Contenttype options choices, you just need to make a string with 
+For the Bolt Contenttype options choices, you just need to make a string with
 double-colon delimiters, where:
     'contenttype' - String constant that always equals 'contenttype'
     'name'        - Name of the contenttype itself
@@ -73,8 +73,8 @@ double-colon delimiters, where:
 API
 ---
 
-Below is a brief example of how to implement the Bolt Forms API.  For a slightly 
-more detailed example, see the `Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension` 
+Below is a brief example of how to implement the Bolt Forms API.  For a slightly
+more detailed example, see the `Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension`
 class.
 
 ```php
@@ -86,7 +86,7 @@ $forms->makeForm($formname, 'form', $options, $data);
 
 // Your array of file names and properties.
 // See config.yml.dist for examples of the array properties
-$fields = array();
+$fields = [];
 
 // Add our fields all at once
 $forms->addFieldArray($formname, $fields);
@@ -94,14 +94,14 @@ $forms->addFieldArray($formname, $fields);
 if ($app['request']->getMethod() == 'POST') {
     $formdata = $forms->handleRequest($formname);
     $sent = $forms->getForm($formname)->isSubmitted();
-    
+
     if ($formdata) {
-    
+
        // The form is both submitted and validated at this point
-       
+
     }
 }
-``` 
+```
 
 Event Dispatcher Listener
 -------------------------
@@ -109,5 +109,5 @@ Event Dispatcher Listener
 ```php
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 
-$this->app['dispatcher']->addListener(BoltFormsEvents::POST_SUBMIT,  array($this, 'myPostSubmit'));
+$this->app['dispatcher']->addListener(BoltFormsEvents::POST_SUBMIT, [$this, 'myPostSubmit']);
 ```

@@ -106,7 +106,7 @@ class ContentType implements ChoiceInterface
 
         /** @var $records Bolt\Content[] */
         $records = $this->app['storage']->getContent($params[1]);
-        $choices = array();
+        $choices = [];
 
         foreach ($records as $record) {
             $choices[$record->get($params[3])] = $record->get($params[2]);

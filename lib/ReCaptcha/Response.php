@@ -41,7 +41,7 @@ class Response
      * Error code strings.
      * @var array
      */
-    private $errorCodes = array();
+    private $errorCodes = [];
 
     /**
      * Build the response from the expected JSON returned by the service.
@@ -54,7 +54,7 @@ class Response
         $responseData = json_decode($json, true);
 
         if (!$responseData) {
-            return new Response(false, array('invalid-json'));
+            return new Response(false, ['invalid-json']);
         }
 
         if (isset($responseData['success']) && $responseData['success'] == true) {
@@ -74,7 +74,7 @@ class Response
      * @param boolean $success
      * @param array $errorCodes
      */
-    public function __construct($success, array $errorCodes = array())
+    public function __construct($success, array $errorCodes = [])
     {
         $this->success = $success;
         $this->errorCodes = $errorCodes;

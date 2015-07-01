@@ -40,10 +40,10 @@ class BoltFormsExtension extends \Twig_Extension
     private $config;
 
     /** @var array */
-    private $recaptcha = array(
+    private $recaptcha = [
         'success'    => true,
         'errorCodes' => null
-    );
+    ];
 
     /** @var \Twig_Environment */
     private $twig = null;
@@ -72,9 +72,9 @@ class BoltFormsExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
+        return [
             'boltforms' => new \Twig_Function_Method($this, 'twigBoltForms')
-        );
+        ];
     }
 
     /**
@@ -86,7 +86,7 @@ class BoltFormsExtension extends \Twig_Extension
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formname, $html_pre = '', $html_post = '', $data = array(), $options = array())
+    public function twigBoltForms($formname, $html_pre = '', $html_post = '', $data = [], $options = [])
     {
         if (!isset($this->config[$formname])) {
             return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formname'!</strong></p>", 'UTF-8');
@@ -139,14 +139,14 @@ class BoltFormsExtension extends \Twig_Extension
 
         // Get our values to be passed to Twig
         $fields = $this->app['boltforms']->getForm($formname)->all();
-        $twigvalues = array(
+        $twigvalues = [
             'fields'    => $fields,
             'html_pre'  => $html_pre,
             'html_post' => $html_post,
             'error'     => $error,
             'message'   => $message,
             'sent'      => $sent,
-            'recaptcha' => array(
+            'recaptcha' => [
                 'enabled'       => $this->config['recaptcha']['enabled'],
                 'label'         => $this->config['recaptcha']['label'],
                 'error_message' => $this->config['recaptcha']['error_message'],
@@ -154,9 +154,9 @@ class BoltFormsExtension extends \Twig_Extension
                 'public_key'    => $this->config['recaptcha']['public_key'],
                 'theme'         => $this->config['recaptcha']['theme'],
                 'valid'         => $this->recaptcha['success']
-            ),
+            ],
             'formname'  => $formname
-        );
+        ];
 
         // If the form has it's own templates defined, use those, else the globals.
         $template = isset($this->config[$formname]['templates']['form'])
@@ -177,10 +177,10 @@ class BoltFormsExtension extends \Twig_Extension
             $rc = new ReCaptcha($this->config['recaptcha']['private_key']);
             $reCaptchaResponse = $rc->verify($this->app['request']->get('g-recaptcha-response'), $this->app['request']->getClientIp());
 
-            $this->recaptcha = array(
+            $this->recaptcha = [
                 'success'    => $reCaptchaResponse->isSuccess(),
                 'errorCodes' => $reCaptchaResponse->getErrorCodes()
-            );
+            ];
         }
     }
 }
