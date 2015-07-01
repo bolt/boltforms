@@ -54,6 +54,8 @@ class Database
      */
     public function writeToTable($tablename, array $data)
     {
+        // TODO: remove this after testing
+        dump('writing to plain table');
         $savedata = array();
 
         // Don't try to write to a non-existant table
@@ -92,9 +94,22 @@ class Database
             if ($value instanceof \DateTime) {
                 $savedata[$key] = $value->format('c');
             }
+
+            // handle file storage preparation here
+            // TODO: make this less hacky and check if it is an uploaded file, in stead of the existing property
+            if(is_object($value) && property_exists($value, 'originalName') ) {
+                $savedata[$key] = $this->handleUpload($value, $key);
+            }
+
         }
 
+        // TODO: remove this after testing        
+        dump($savedata);
+
         $this->app['db']->insert($tablename, $savedata);
+
+        // TODO: remove this after testing
+        dump('storage complete');
     }
 
     /**
@@ -105,6 +120,8 @@ class Database
      */
     public function writeToContentype($contenttype, array $data)
     {
+        // TODO: remove this after testing
+        dump('writing to content type');
         // Get an empty record for out contenttype
         $record = $this->app['storage']->getEmptyContent($contenttype);
 
@@ -118,6 +135,13 @@ class Database
             if (is_array($value)) {
                 $data[$key] = json_encode($value);
             }
+
+            // handle file storage preparation here
+            // TODO: make this less hacky and check if it is an uploaded file, in stead of the existing property
+            if(is_object($value) && property_exists($value, 'originalName') ) {
+                $data[$key] = $this->handleUpload($value, $key);
+            }
+
         }
 
         // Set a published date
@@ -128,6 +152,28 @@ class Database
         // Store the data array into the record
         $record->setValues($data);
 
+        // TODO: remove this after testing
+        dump($record);
+
         $this->app['storage']->saveContent($record);
+        
+        // TODO: remove this after testing
+        dump('storage complete');
+    }
+
+    private function handleUpload($filefield, $key = null) {
+        // TODO: make this save a file to the silesystem and return the correct filename
+        // TODO: remove this after testing
+        dump($filefield);
+        // TODO: get $directory from content type configuration
+        // TODO: figure out if we need a $name
+        // TODO: $newfile = $filefield->move($directory, $name)
+        if(is_object($filefield) && property_exists($filefield, 'originalName') ) {
+            // TODO: make it listen to $newfile
+            return array('file' => $filefield->getClientOriginalName());
+        } else {
+            // this will probably result in an error
+            return $filefield;
+        }
     }
 }
