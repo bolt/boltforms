@@ -130,6 +130,11 @@ class BoltFormsExtension extends \Twig_Extension
                     $this->app['boltforms.email']->doNotification($formname, $this->config[$formname], $formdata);
                 }
 
+                // Redirect if wanted
+                if (isset($this->config[$formname]['redirect'])) {
+                    $this->redirect($formname);
+                }
+
                 $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
             } else {
                 $sent = false;
@@ -182,5 +187,27 @@ class BoltFormsExtension extends \Twig_Extension
                 'errorCodes' => $reCaptchaResponse->getErrorCodes()
             );
         }
+    }
+
+    /**
+     * Redirect user by url or route
+     *
+     * @param string $formname Form name
+     */
+    private function redirect($formname)
+    {
+        $redirect = $this->config[$formname]['redirect'];
+
+        if (!empty($redirect['url'])) {
+            $redirect = $this->app->redirect($redirect['url']);
+        } else if (!empty($redirect['route'])) {
+            $params = !empty($redirect['params']) ? $redirect['params'] : [];
+            $add = !empty($redirect['add']) ? $redirect['add'] : [];
+            $redirect = Lib::redirect($redirect['route'], $params, $add);
+        } else {
+            return;
+        }
+
+        $redirect->send();
     }
 }
