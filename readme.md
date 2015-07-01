@@ -85,6 +85,76 @@ testform:
 If any keys are set, the form values from those keys will be added to the get parameters of the redirect.
 
 
+Presave Callbacks
+-----------------
+
+Before the data is saved to a contenttype, database table or sent in an email fields can be changed with presave callbacks.
+
+Possible callbacks:
+
+ - getCurrentDate: Get the form in "YYYY-MM-DD HH:ii:ss"
+ - getRandomValue: Get a 12 char random key
+ - getNextNumber: Get the next number in a sequence, this option requires database storage
+ - getSessionValue: Get a value from the session
+ - getServerValue: Get a server variable
+
+Set `remote_member_id` to the maximum value of the column  + 1 (`MAX(remote_member_id) + 1`). So this works as an autoincrement.
+
+```yaml
+    remote_member_id:
+        type: hidden
+        options:
+            label: false
+        preSaveCallback:
+            getNextNumber:
+                table: 'bolt_tablename'        # optional
+                column: 'remote_member_id'     # required
+                min: 31000                     # optional
+```
+
+Set `randomfield` to a randomized string.
+
+```yaml
+    randomfield:
+        type: hidden
+        options:
+            label: false
+        preSaveCallback: getRandomValue
+```
+
+Set `timestamp` to the current date in the format 'YYYY-MM-DD HH:ii:ss'
+
+```yaml
+    timestamp:
+        type: hidden
+        options:
+            label: false
+        preSaveCallback: getCurrentDate
+```
+
+Set `remote_ip` to the remote address (IP) from the server variables
+
+```yaml
+    remote_ip:
+        type: hidden
+        options:
+            label: false
+        preSaveCallback:
+            getServerValue: 'REMOTE_ADDR'
+```
+
+Set `testkey` to the value for the session variable named "testkey"
+
+```yaml
+    testkey:
+        type: hidden
+        options:
+            label: false
+        preSaveCallback:
+            getSessionValue: 'testkey'
+```
+
+
 API
 ---
 

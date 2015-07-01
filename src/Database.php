@@ -45,6 +45,97 @@ class Database
     }
 
     /**
+     * Modify submitted form data before saving it to the DB
+     *
+     * @param array  $formconfig
+     * @param array  $data
+     *
+     * @return array
+     */
+    public function preSaveCallbacks(array $formconfig, array $data)
+    {
+        $fields = $formconfig['fields'];
+        foreach($fields as $fieldname => $fieldoptions) {
+            if(array_key_exists('preSaveCallback', $fieldoptions) && $callback = $fieldoptions['preSaveCallback']) {
+                if(is_array($callback)) {
+                    $callback_keys = array_keys($callback);
+                    $callbackresult = '';
+                    foreach($callback_keys as $key) {
+                        switch($key) {
+                            case ('getCurrentDate'):
+                                $callbackresult = date('Y-m-d H:i:s');
+                                break;
+                            case ('getRandomValue'):
+                                $callbackresult = $this->app['randomgenerator']->generateString(12);
+                                break;
+                            case ('getNextNumber'):
+                                // if no table is given guess it from the content type or the current table
+                                if(empty($callback[$key]['table'])) {
+                                    if($formconfig['database']['table']) {
+                                        $callback[$key]['table'] = $formconfig['database']['table'];
+                                    } elseif($formconfig['database']['contenttype']) {
+                                        $callback[$key]['table'] = $this->app['db.options']['prefix'] . $formconfig['database']['contenttype'];
+                                    }
+                                }
+                                $callbackresult = $this->getNextNumber($callback[$key]['table'], $callback[$key]['column'], $callback[$key]['min']);
+                                break;
+                            case ('getSessionValue'):
+                                $callbackresult = $this->app['session']->get($callback[$key]);
+                                break;
+                            case ('getServerValue'):
+                                $callbackresult = $this->app['request']->server->get($callback[$key]);
+                                break;
+                            default:
+                                $callbackresult = 'unknown callback ('. $key .') for '.$fieldname;
+                                break;
+                        }
+                    }
+                    $data[$fieldname] = $callbackresult;
+                } else {
+                    switch($callback) {
+                        case ('getCurrentDate'):
+                            $data[$fieldname] = date('Y-m-d H:i:s');
+                            break;
+                        case ('getRandomValue'):
+                            $data[$fieldname] = $this->app['randomgenerator']->generateString(12);
+                            break;
+                        default:
+                            $data[$fieldname] = 'unknown callback ('. $callback .') for '.$fieldname;
+                            break;
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
+    
+    /**
+     * Attempt get the next sequence from a table, if specified..
+     */
+    private function getNextNumber($table, $column, $minimum_value = 0)
+    {
+        $sequence = 0;
+        if (!empty($table)) {
+            try {
+                $query = sprintf("SELECT MAX(%s) as max FROM %s", $column, $table);
+                $sequence = $this->app['db']->executeQuery( $query )->fetchColumn();
+            } catch (\Doctrine\DBAL\DBALException $e) {
+                // Oops. User will get a warning on the dashboard about tables that need to be repaired.
+                $this->app['logger.system']->info("BoltForms could not fetch next sequence number from table {$table} - check if the table exists", array('event' => 'extensions'));
+                echo "Couldn't fetch next sequence number from table " . $table . ".";
+                return false;
+            }
+        }
+        $sequence++;
+
+        if($sequence >= $minimum_value) {
+           return $sequence;
+        }
+        return $minimum_value;
+    }
+
+    /**
      * Write out form data to a specified database table
      *
      * @param string $tablename
