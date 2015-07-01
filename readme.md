@@ -69,6 +69,21 @@ double-colon delimiters, where:
     'labelfield'  - Field to use for the UI displayed to the user
     'valuefield'  - Field to use for the value stored
 
+Redirect after submit
+---------------------
+
+On successfull submit the user can be redirected to another page in bolt. The page for the redirect target must exist.
+
+```yaml
+testform:
+    feedback:
+        redirect:
+            success: 'page/another-page'     # a page path
+            keys: [ name, email ]            # optional keys for the get parameters
+```
+
+If any keys are set, the form values from those keys will be added to the get parameters of the redirect.
+
 
 API
 ---
