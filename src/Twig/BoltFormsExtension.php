@@ -6,9 +6,11 @@ use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Database;
 use Bolt\Extension\Bolt\BoltForms\Email;
 use Bolt\Extension\Bolt\BoltForms\Extension;
+use Bolt\Helpers\Arr;
+use Bolt\Library as Lib;
 use ReCaptcha\ReCaptcha;
 use Silex\Application;
-use Bolt\Library as Lib;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Twig functions for BoltForms
@@ -120,48 +122,23 @@ class BoltFormsExtension extends \Twig_Extension
                 $formdata = $this->app['boltforms.database']->preSaveCallbacks($this->config[$formname], $formdata);
 
                 // Write to a Contenttype
-                if (isset($this->config[$formname]['database']['contenttype'])) {
+                if (isset($this->config[$formname]['database']['contenttype']) && $this->config[$formname]['database']['contenttype']) {
                     $this->app['boltforms.database']->writeToContentype($this->config[$formname]['database']['contenttype'], $formdata);
                 }
 
                 // Write to a normal database table
-                if (isset($this->config[$formname]['database']['table'])) {
+                if (isset($this->config[$formname]['database']['table']) && $this->config[$formname]['database']['table']) {
                     $this->app['boltforms.database']->writeToTable($this->config[$formname]['database']['table'], $formdata);
                 }
 
                 // Send notification email
-                if (isset($this->config[$formname]['notification']['enabled'])) {
+                if (isset($this->config[$formname]['notification']['enabled']) && $this->config[$formname]['notification']['enabled']) {
                     $this->app['boltforms.email']->doNotification($formname, $this->config[$formname], $formdata);
                 }
 
                 // Redirect if a redirect is set and the page exists
-                if(isset($this->config[$formname]['feedback']['redirect'])) {
-                    $redirectpage = $this->app['storage']->getContent($this->config[$formname]['feedback']['redirect']['success']);
-                    $redirectkeys = "";
-                    if($this->config[$formname]['feedback']['redirect']['keys']) {
-                        $redirectkeysarr = array();
-                        foreach($this->config[$formname]['feedback']['redirect']['keys'] as $key) {
-                            if($this->config[$formname]['fields'][$key] && !empty($formdata[$key])) {
-                                // https://github.com/bolt/bolt/issues/3459
-                                // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
-                                if ($formdata[$key] instanceof \DateTime) {
-                                    $formdata[$key] = $formdata[$key]->format('c');
-                                }
-                                $redirectkeysarr[] = $key . '=' . urlencode($formdata[$key]);
-                            }
-                        }
-                        if(!empty($redirectkeysarr)) {
-                            // add the formname to the keys for later identification
-                            $redirectkeysarr[] = 'formkey='.$formname; 
-                            $redirectkeys = "?" . join('&', $redirectkeysarr);
-                        }
-                    }
-                    if($redirectpage) {
-                        // TODO: this should not need an extra Lib dependency
-                        Lib::simpleredirect($redirectpage->link() . $redirectkeys);
-                    } else {
-                        dump("redirectpage '. $this->config[$formname]['feedback']['redirect']['success'] .' is missing for ". $formname);
-                    }
+                if(isset($this->config[$formname]['feedback']['redirect']) && is_array($this->config[$formname]['feedback']['redirect'])) {
+                    $this->redirect($formname, $formdata);
                 }
 
                 $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
@@ -203,6 +180,25 @@ class BoltFormsExtension extends \Twig_Extension
     }
 
     /**
+     * Get a normalised value.
+     *
+     * @see https://github.com/bolt/bolt/issues/3459
+     * @see https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
+     *
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    protected function getNormalisedData($value)
+    {
+        if ($value instanceof \DateTime) {
+            return $value->format('c');
+        }
+
+        return $value;
+    }
+
+    /**
      * Check reCaptcha, if enabled.
      */
     private function getReCaptchaResponses()
@@ -217,5 +213,62 @@ class BoltFormsExtension extends \Twig_Extension
                 'errorCodes' => $reCaptchaResponse->getErrorCodes()
             );
         }
+    }
+
+    /**
+     * Do a redirect.
+     *
+     * @param string $formname
+     * @param array  $formdata
+     */
+    private function redirect($formname, array $formdata)
+    {
+        $redirect = $this->config[$formname]['feedback']['redirect'];
+        $query = $this->getRedirectQuery($redirect, $formdata);
+
+        $response = $this->getRedirectResponse($redirect, $query);
+        if ($response instanceof RedirectResponse) {
+            $response->send();
+        }
+    }
+
+    /**
+     * Build a GET query if required.
+     *
+     * @param array $redirect
+     * @param array $formdata
+     */
+    private function getRedirectQuery(array $redirect, $formdata)
+    {
+        $query = array();
+        if (Arr::isIndexedArray($redirect['query'])) {
+            foreach ($redirect['query'] as $param) {
+                $query[$param] = $this->getNormalisedData($formdata[$param]);
+            }
+        } else {
+            $query = $redirect['query'];
+        }
+
+        return '?' . http_build_query($query);
+    }
+
+    /**
+     * Get the redirect response object.
+     *
+     * @param array  $redirect
+     * @param string $query
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    private function getRedirectResponse(array $redirect, $query)
+    {
+        if (strpos($redirect['target'], 'http') === 0) {
+            return $this->app->redirect($redirect['target'] . $query);
+        } elseif ($redirectpage = $this->app['storage']->getContent($redirect['target'])) {
+            return new RedirectResponse($redirectpage->link() . $query);
+        }
+
+        // No route found
+        return;
     }
 }

@@ -72,18 +72,25 @@ double-colon delimiters, where:
 Redirect after submit
 ---------------------
 
-On successfull submit the user can be redirected to another page in bolt. The page for the redirect target must exist.
+On successfull submit the user can be redirected to another Bolt page, or URL. 
+The page for the redirect target must exist.
+
+The redirect is added to the `feedback` key of the form, for example: 
 
 ```yaml
-testform:
-    feedback:
-        redirect:
-            success: 'page/another-page'     # a page path
-            keys: [ name, email ]            # optional keys for the get parameters
+  feedback:
+    success: Form submission sucessful
+    error: There are errors in the form, please fix before trying to resubmit
+    redirect:
+      target: page/another-page  # A page path, or URL
+      query: [ name, email ]     # Optional keys for the GET parameters
 ```
 
-If any keys are set, the form values from those keys will be added to the get parameters of the redirect.
-
+**Note:**
+* `target:` — Either a route in the form of `contenttype/slug` or a full URL
+* `query:` — (optional) Either an indexed, or associative array
+  - `[ name, email ]` would create the query string `?name=value-of-name-field&email=value-of-email-field`
+  - `{ name: 'foo', email: 'bar' }` would create the query string `?name=foo&email=bar`
 
 Presave Callbacks
 -----------------
@@ -179,11 +186,9 @@ $forms->addFieldArray($formname, $fields);
 if ($app['request']->getMethod() == 'POST') {
     $formdata = $forms->handleRequest($formname);
     $sent = $forms->getForm($formname)->isSubmitted();
-    
+
     if ($formdata) {
-    
-       // The form is both submitted and validated at this point
-       
+        // The form is both submitted and validated at this point
     }
 }
 ``` 

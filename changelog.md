@@ -1,5 +1,9 @@
 # Changelog for Bolt Forms
 
+* 2.1.6 (2015-06-28)
+
+ * Fix logic on database and notification checks
+
 * 2.1.5 (2015-05-12)
 
  * Fix handling of DateTime fields

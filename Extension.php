@@ -91,7 +91,13 @@ class Extension extends \Bolt\BaseExtension
          */
         if ($this->app['config']->getWhichEnd() == 'frontend') {
             // Twig functions
-            $this->app['twig']->addExtension(new Twig\BoltFormsExtension($this->app));
+            $this->app->share($this->app->extend('twig',
+                function($twig, $app) {
+                    $twig->addExtension(new Twig\BoltFormsExtension($app));
+
+                    return $twig;
+                })
+            );
         }
     }
 

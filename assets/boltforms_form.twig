@@ -18,7 +18,7 @@
 
     {{ html_pre }}
 
-    {% if recaptcha.theme|default('clean') %}
+    {% if recaptcha.enabled and recaptcha.theme|default('clean') %}
     <script>
         var RecaptchaOptions = {
             theme : '{{ recaptcha.theme }}'
