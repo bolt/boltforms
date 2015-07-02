@@ -4,9 +4,9 @@
 
 # Global templates used for rendering forms and emails.
 templates:
-    form: boltforms_form.twig
-    email: boltforms_email.twig
-    subject: boltforms_email_subject.twig
+  form: boltforms_form.twig
+  email: boltforms_email.twig
+  subject: boltforms_email_subject.twig
 
 # reCAPTCHa set up
 recaptcha:
@@ -94,7 +94,7 @@ contact:
 ## Example 2
 #
 # Example Showcase Form
-Showcase:
+showcase:
   notification:
     enabled: true
     debug: false
@@ -115,6 +115,9 @@ Showcase:
   feedback:
     success: Form submission sucessful
     error: There are errors in the form, please fix before trying to resubmit
+#    redirect:
+#      target: page/another-page  # A page path, or URL
+#      query: [ name, email ]     # Optional keys for the GET parameters
 #  database:
 #    contenttype: mycontenttype  # Contenttype to create
 #    table: bolt_secret_table    # Specific database table to write to
