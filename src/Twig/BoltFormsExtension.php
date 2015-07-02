@@ -8,6 +8,7 @@ use Bolt\Extension\Bolt\BoltForms\Email;
 use Bolt\Extension\Bolt\BoltForms\Extension;
 use ReCaptcha\ReCaptcha;
 use Silex\Application;
+use Bolt\Library as Lib;
 
 /**
  * Twig functions for BoltForms
@@ -130,12 +131,38 @@ class BoltFormsExtension extends \Twig_Extension
                     $this->app['boltforms.email']->doNotification($formname, $this->config[$formname], $formdata);
                 }
 
-                // Redirect if wanted
-                if (isset($this->config[$formname]['redirect'])) {
-                    $this->redirect($formname);
+                // Redirect if a redirect is set and the page exists
+                if(isset($this->config[$formname]['feedback']['redirect'])) {
+                    $redirectpage = $this->app['storage']->getContent($this->config[$formname]['feedback']['redirect']['success']);
+                    $redirectkeys = "";
+                    if($this->config[$formname]['feedback']['redirect']['keys']) {
+                        $redirectkeysarr = array();
+                        foreach($this->config[$formname]['feedback']['redirect']['keys'] as $key) {
+                            if($this->config[$formname]['fields'][$key] && !empty($formdata[$key])) {
+                                // https://github.com/bolt/bolt/issues/3459
+                                // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
+                                if ($formdata[$key] instanceof \DateTime) {
+                                    $formdata[$key] = $formdata[$key]->format('c');
+                                }
+                                $redirectkeysarr[] = $key . '=' . urlencode($formdata[$key]);
+                            }
+                        }
+                        if(!empty($redirectkeysarr)) {
+                            // add the formname to the keys for later identification
+                            $redirectkeysarr[] = 'formkey='.$formname;
+                            $redirectkeys = "?" . join('&', $redirectkeysarr);
+                        }
+                    }
+                    if($redirectpage) {
+                        // TODO: this should not need an extra Lib dependency
+                        Lib::simpleredirect($redirectpage->link() . $redirectkeys);
+                    } else {
+                        dump("redirectpage '. $this->config[$formname]['feedback']['redirect']['success'] .' is missing for ". $formname);
+                    }
                 }
 
                 $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
+
             } else {
                 $sent = false;
                 $error = isset($this->config[$formname]['feedback']['error']) ? $this->config[$formname]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit';
