@@ -171,7 +171,7 @@ class Database
 
         // create a unique filename with a simple pattern
         $original_filename = $filefield->getClientOriginalName();
-        $proposed_extension = $filefield->guessExtension()?$filefield->guessExtension():pathinfo($originalname, PATHINFO_EXTENSION);
+        $proposed_extension = $filefield->guessExtension()?$filefield->guessExtension():pathinfo($original_filename, PATHINFO_EXTENSION);
         $proposed_filename = sprintf(
             "%s-upload-%s.%s",
             date('Y-m-d'),
