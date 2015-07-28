@@ -162,14 +162,14 @@ class Database
             $contenttype = $record->contenttype;
             if ($contenttype['fields'][$key] && $contenttype['fields'][$key]['upload']) {
                 // set the new upload location
-                $upload_location = '/'.$contenttype['fields'][$key]['upload'] . '/';
+                $upload_location = '/' . $contenttype['fields'][$key]['upload'] . '/';
                 // make sure that there are no double slashes if someone
                 // has added them to the config somewhere
                 $upload_location = str_replace('//', '/', $upload_location);
             }
         } else {
-            // use the bolt default
-            $upload_location = $this->app['resources']->getUrl('upload');
+            // use the Bolt default
+            $upload_location = $upload_root;
         }
 
         // create a unique filename with a simple pattern
@@ -178,8 +178,7 @@ class Database
         $proposed_filename = sprintf(
             "%s-upload-%s.%s",
             date('Y-m-d'),
-            $this->app['randomgenerator']->generateString(12,
-                'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890'),
+            $this->app['randomgenerator']->generateString(12, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890'),
             $proposed_extension
         );
 
