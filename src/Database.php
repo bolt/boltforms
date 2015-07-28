@@ -92,6 +92,13 @@ class Database
             if ($value instanceof \DateTime) {
                 $savedata[$key] = $value->format('c');
             }
+
+            // handle file storage preparation here
+            // TODO: make this less hacky and check if it is an uploaded file, in stead of the existing property
+            if(is_object($value) && ($value instanceof \Symfony\Component\HttpFoundation\File\UploadedFile)) {
+                $savedata[$key] = $this->handleUpload($value, $key, null);
+            }
+
         }
 
         $this->app['db']->insert($tablename, $savedata);
@@ -118,6 +125,13 @@ class Database
             if (is_array($value)) {
                 $data[$key] = json_encode($value);
             }
+
+            // handle file storage preparation here
+            // TODO: make this less hacky and check if it is an uploaded file, instead of the existing property
+            if(is_object($value) && ($value instanceof \Symfony\Component\HttpFoundation\File\UploadedFile)) {
+                $data[$key] = $this->handleUpload($value, $key, $record);
+            }
+
         }
 
         // Set a published date
@@ -129,5 +143,66 @@ class Database
         $record->setValues($data);
 
         $this->app['storage']->saveContent($record);
+    }
+
+    /**
+     * save a file to the filesystem and return the correct filename
+     */
+    private function handleUpload($filefield, $key = null, $record = null) {
+        // use the default bolt file upload path
+        $upload_root = $this->app['paths']['filespath'];
+
+        // refine the upload root with an upload location from the content type
+        if($record!==null) {
+            // there is a record
+            $contenttype = $record->contenttype;
+            if($contenttype['fields'][$key] && $contenttype['fields'][$key]['upload']) {
+                // set the new upload location
+                $upload_location = '/'.$contenttype['fields'][$key]['upload'] . '/';
+                // make sure that there are no double slashes if someone 
+                // has added them to the config somewhere
+                $upload_location = str_replace('//', '/', $upload_location);
+            }
+        } else {
+            // use the bolt default
+            $upload_location = $this->app['paths']['upload'];
+        }
+
+        // create a unique filename with a simple pattern
+        $original_filename = $filefield->getClientOriginalName();
+        $proposed_extension = $filefield->guessExtension()?$filefield->guessExtension():pathinfo($original_filename, PATHINFO_EXTENSION);
+        $proposed_filename = sprintf(
+            "%s-upload-%s.%s",
+            date('Y-m-d'),
+            $this->app['randomgenerator']->generateString(12, 
+                'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890'),
+            $proposed_extension
+        );
+
+        // the location of the file on the server
+        $proposed_file_location = $upload_root . $upload_location;
+
+        // the name of the file in bolt content types
+        $proposed_bolt_filename = $upload_location . $proposed_filename;
+
+        // move the temporary file
+        $newfile = $filefield->move($proposed_file_location, $proposed_filename);
+
+        if(is_object($newfile) && property_exists($filefield, 'originalName') ) {
+            if($record!==null) {
+                return array('file' =>  $proposed_bolt_filename);
+            } else {
+                // if we don't have a record
+                // we need to preserialize the file field because we like to see 
+                // the same structure in the values even then
+                return json_encode(array('file' =>  $proposed_bolt_filename));
+            }
+        } else {
+            // this means something is wrong on your server
+            // leave a nice note in the log
+            $this->app['logger.system']->error("Boltforms failed to store a file upload. Check the form configuration and your server.", array('event' => 'extensions'));
+            // and continue with an empty file
+            return '';
+        }
     }
 }
