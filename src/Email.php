@@ -96,7 +96,7 @@ class Email
 
         // https://github.com/bolt/bolt/issues/3459
         // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
-        foreach($formdata as $key => $value) {
+        foreach ($formdata as $key => $value) {
             if ($value instanceof \DateTime) {
                 $formdata[$key] = $value->format('c');
             }

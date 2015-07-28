@@ -7,7 +7,6 @@ use Bolt\Extension\Bolt\BoltForms\Database;
 use Bolt\Extension\Bolt\BoltForms\Email;
 use Bolt\Extension\Bolt\BoltForms\Extension;
 use Bolt\Helpers\Arr;
-use Bolt\Library as Lib;
 use ReCaptcha\ReCaptcha;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -134,12 +133,11 @@ class BoltFormsExtension extends \Twig_Extension
                 }
 
                 // Redirect if a redirect is set and the page exists
-                if(isset($this->config[$formname]['feedback']['redirect']) && is_array($this->config[$formname]['feedback']['redirect'])) {
+                if (isset($this->config[$formname]['feedback']['redirect']) && is_array($this->config[$formname]['feedback']['redirect'])) {
                     $this->redirect($formname, $formdata);
                 }
 
                 $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
-
             } else {
                 $sent = false;
                 $error = isset($this->config[$formname]['feedback']['error']) ? $this->config[$formname]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit';

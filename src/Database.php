@@ -71,7 +71,7 @@ class Database
             // only attempt to insert fields with existing data
             // this way you can have fields in your table that are not in the form
             // eg. an auto increment id field of a field to track status of a submission
-            if(array_key_exists($colname, $data)) {
+            if (array_key_exists($colname, $data)) {
                 $savedata[$colname] = $data[$colname];
             }
         }
@@ -95,10 +95,9 @@ class Database
 
             // handle file storage preparation here
             // TODO: make this less hacky and check if it is an uploaded file, in stead of the existing property
-            if(is_object($value) && ($value instanceof \Symfony\Component\HttpFoundation\File\UploadedFile)) {
+            if (is_object($value) && ($value instanceof \Symfony\Component\HttpFoundation\File\UploadedFile)) {
                 $savedata[$key] = $this->handleUpload($value, $key, null);
             }
-
         }
 
         $this->app['db']->insert($tablename, $savedata);
@@ -128,10 +127,9 @@ class Database
 
             // handle file storage preparation here
             // TODO: make this less hacky and check if it is an uploaded file, instead of the existing property
-            if(is_object($value) && ($value instanceof \Symfony\Component\HttpFoundation\File\UploadedFile)) {
+            if (is_object($value) && ($value instanceof \Symfony\Component\HttpFoundation\File\UploadedFile)) {
                 $data[$key] = $this->handleUpload($value, $key, $record);
             }
-
         }
 
         // Set a published date
@@ -148,15 +146,16 @@ class Database
     /**
      * save a file to the filesystem and return the correct filename
      */
-    private function handleUpload($filefield, $key = null, $record = null) {
+    private function handleUpload($filefield, $key = null, $record = null)
+    {
         // use the default bolt file upload path
         $upload_root = $this->app['paths']['filespath'];
 
         // refine the upload root with an upload location from the content type
-        if($record!==null) {
+        if ($record !== null) {
             // there is a record
             $contenttype = $record->contenttype;
-            if($contenttype['fields'][$key] && $contenttype['fields'][$key]['upload']) {
+            if ($contenttype['fields'][$key] && $contenttype['fields'][$key]['upload']) {
                 // set the new upload location
                 $upload_location = '/'.$contenttype['fields'][$key]['upload'] . '/';
                 // make sure that there are no double slashes if someone 
@@ -174,7 +173,7 @@ class Database
         $proposed_filename = sprintf(
             "%s-upload-%s.%s",
             date('Y-m-d'),
-            $this->app['randomgenerator']->generateString(12, 
+            $this->app['randomgenerator']->generateString(12,
                 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890'),
             $proposed_extension
         );
@@ -188,14 +187,14 @@ class Database
         // move the temporary file
         $newfile = $filefield->move($proposed_file_location, $proposed_filename);
 
-        if(is_object($newfile) && property_exists($filefield, 'originalName') ) {
-            if($record!==null) {
-                return array('file' =>  $proposed_bolt_filename);
+        if (is_object($newfile) && property_exists($filefield, 'originalName')) {
+            if ($record !== null) {
+                return array('file' => $proposed_bolt_filename);
             } else {
                 // if we don't have a record
                 // we need to preserialize the file field because we like to see 
                 // the same structure in the values even then
-                return json_encode(array('file' =>  $proposed_bolt_filename));
+                return json_encode(array('file' => $proposed_bolt_filename));
             }
         } else {
             // this means something is wrong on your server
