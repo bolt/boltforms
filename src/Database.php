@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Silex\Application;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Database functions for BoltForms
@@ -86,7 +87,7 @@ class Database
             if (is_array($value)) {
                 $savedata[$key] = json_encode($value);
             }
-            
+
             // https://github.com/bolt/bolt/issues/3459
             // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
             if ($value instanceof \DateTime) {
@@ -95,7 +96,7 @@ class Database
 
             // handle file storage preparation here
             // TODO: make this less hacky and check if it is an uploaded file, in stead of the existing property
-            if (is_object($value) && ($value instanceof \Symfony\Component\HttpFoundation\File\UploadedFile)) {
+            if (is_object($value) && ($value instanceof UploadedFile)) {
                 $savedata[$key] = $this->handleUpload($value, $key, null);
             }
         }
@@ -127,7 +128,7 @@ class Database
 
             // handle file storage preparation here
             // TODO: make this less hacky and check if it is an uploaded file, instead of the existing property
-            if (is_object($value) && ($value instanceof \Symfony\Component\HttpFoundation\File\UploadedFile)) {
+            if (is_object($value) && ($value instanceof UploadedFile)) {
                 $data[$key] = $this->handleUpload($value, $key, $record);
             }
         }
@@ -144,9 +145,15 @@ class Database
     }
 
     /**
-     * save a file to the filesystem and return the correct filename
+     * Save a file to the filesystem and return the correct filename
+     *
+     * @param UploadedFile       $filefield
+     * @param string             $key
+     * @param \Bolt\Content|null $record
+     *
+     * @return string[]|string
      */
-    private function handleUpload($filefield, $key = null, $record = null)
+    private function handleUpload(UploadedFile $filefield, $key, $record)
     {
         // use the default bolt file upload path
         $upload_root = $this->app['paths']['filespath'];
@@ -158,7 +165,7 @@ class Database
             if ($contenttype['fields'][$key] && $contenttype['fields'][$key]['upload']) {
                 // set the new upload location
                 $upload_location = '/'.$contenttype['fields'][$key]['upload'] . '/';
-                // make sure that there are no double slashes if someone 
+                // make sure that there are no double slashes if someone
                 // has added them to the config somewhere
                 $upload_location = str_replace('//', '/', $upload_location);
             }
@@ -169,7 +176,7 @@ class Database
 
         // create a unique filename with a simple pattern
         $original_filename = $filefield->getClientOriginalName();
-        $proposed_extension = $filefield->guessExtension()?$filefield->guessExtension():pathinfo($original_filename, PATHINFO_EXTENSION);
+        $proposed_extension = $filefield->guessExtension() ? $filefield->guessExtension() : pathinfo($original_filename, PATHINFO_EXTENSION);
         $proposed_filename = sprintf(
             "%s-upload-%s.%s",
             date('Y-m-d'),
@@ -192,7 +199,7 @@ class Database
                 return array('file' => $proposed_bolt_filename);
             } else {
                 // if we don't have a record
-                // we need to preserialize the file field because we like to see 
+                // we need to preserialize the file field because we like to see
                 // the same structure in the values even then
                 return json_encode(array('file' => $proposed_bolt_filename));
             }
