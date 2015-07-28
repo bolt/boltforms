@@ -95,8 +95,7 @@ class Database
             }
 
             // handle file storage preparation here
-            // TODO: make this less hacky and check if it is an uploaded file, in stead of the existing property
-            if (is_object($value) && ($value instanceof UploadedFile)) {
+            if ($value instanceof UploadedFile && $value->isValid()) {
                 $savedata[$key] = $this->handleUpload($value, $key, null);
             }
         }
@@ -127,8 +126,7 @@ class Database
             }
 
             // handle file storage preparation here
-            // TODO: make this less hacky and check if it is an uploaded file, instead of the existing property
-            if (is_object($value) && ($value instanceof UploadedFile)) {
+            if ($value instanceof UploadedFile && $value->isValid()) {
                 $data[$key] = $this->handleUpload($value, $key, $record);
             }
         }
