@@ -154,7 +154,7 @@ class Database
     private function handleUpload(UploadedFile $filefield, $key, $record)
     {
         // use the default bolt file upload path
-        $upload_root = $this->app['paths']['filespath'];
+        $upload_root = $this->app['resources']->getPath('files');
 
         // refine the upload root with an upload location from the content type
         if ($record !== null) {
@@ -169,7 +169,7 @@ class Database
             }
         } else {
             // use the bolt default
-            $upload_location = $this->app['paths']['upload'];
+            $upload_location = $this->app['resources']->getUrl('upload');
         }
 
         // create a unique filename with a simple pattern
