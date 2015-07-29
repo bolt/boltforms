@@ -117,6 +117,9 @@ class BoltFormsExtension extends \Twig_Extension
                 // Don't keep token data around where not needed
                 unset($formdata['_token']);
 
+                // prepare form fields before saving
+                $formdata = $this->app['boltforms.database']->preSaveCallbacks($this->config[$formname], $formdata);
+
                 // Write to a Contenttype
                 if (isset($this->config[$formname]['database']['contenttype']) && $this->config[$formname]['database']['contenttype']) {
                     $this->app['boltforms.database']->writeToContentype($this->config[$formname]['database']['contenttype'], $formdata);
