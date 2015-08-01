@@ -286,8 +286,12 @@ class BoltForms
 
     /**
      * Check reCaptcha, if enabled.
+     *
+     * @param Request $request
+     *
+     * @return array
      */
-    public function getReCaptchaResponses()
+    public function getReCaptchaResponses(Request $request)
     {
         // Check reCaptcha, if enabled.  If not just return true
         if (!$this->config['recaptcha']['enabled']) {
@@ -298,7 +302,7 @@ class BoltForms
         }
 
         $rc = new ReCaptcha($this->config['recaptcha']['private_key']);
-        $reCaptchaResponse = $rc->verify($this->app['request']->get('g-recaptcha-response'), $this->app['request']->getClientIp());
+        $reCaptchaResponse = $rc->verify($request->get('g-recaptcha-response'), $request->getClientIp());
 
         return array(
             'success'    => $reCaptchaResponse->isSuccess(),
