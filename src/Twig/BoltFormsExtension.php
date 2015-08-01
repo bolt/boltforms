@@ -41,12 +41,6 @@ class BoltFormsExtension extends \Twig_Extension
     /** @var array */
     private $config;
 
-    /** @var array */
-    private $recaptcha = array(
-        'success'    => true,
-        'errorCodes' => null
-    );
-
     /** @var \Twig_Environment */
     private $twig = null;
 
@@ -94,9 +88,10 @@ class BoltFormsExtension extends \Twig_Extension
             return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formname'!</strong></p>", 'UTF-8');
         }
 
-        $sent       = false;
-        $message    = '';
-        $error      = '';
+        $sent = false;
+        $message = '';
+        $error = '';
+        $recaptchaResponse = false;
 
         $this->app['boltforms']->makeForm($formname, 'form', $data, $options);
 
@@ -107,7 +102,10 @@ class BoltFormsExtension extends \Twig_Extension
 
         // Handle the POST
         if ($this->app['request']->isMethod('POST')) {
-            if ($sent = $this->app['boltforms']->processRequest($formname)) {
+            // Check reCaptcha, if enabled.
+            $recaptchaResponse = $this->app['boltforms']->getReCaptchaResponses();
+
+            if ($sent = $this->app['boltforms']->processRequest($formname, $recaptchaResponse)) {
                 $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
             } else {
                 $error = isset($this->config[$formname]['feedback']['error']) ? $this->config[$formname]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit';
@@ -126,11 +124,11 @@ class BoltFormsExtension extends \Twig_Extension
             'recaptcha' => array(
                 'enabled'       => $this->config['recaptcha']['enabled'],
                 'label'         => $this->config['recaptcha']['label'],
-                'error_message' => $this->config['recaptcha']['error_message'],
-                'error_codes'   => $this->recaptcha['errorCodes'],
                 'public_key'    => $this->config['recaptcha']['public_key'],
                 'theme'         => $this->config['recaptcha']['theme'],
-                'valid'         => $this->recaptcha['success']
+                'error_message' => $this->config['recaptcha']['error_message'],
+                'error_codes'   => $recaptchaResponse ? $recaptchaResponse['errorCodes'] : null,
+                'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null
             ),
             'formname'  => $formname
         );
@@ -161,23 +159,6 @@ class BoltFormsExtension extends \Twig_Extension
         }
 
         return $value;
-    }
-
-    /**
-     * Check reCaptcha, if enabled.
-     */
-    private function getReCaptchaResponses()
-    {
-        // Check reCaptcha, if enabled.  If not just return true
-        if ($this->config['recaptcha']['enabled']) {
-            $rc = new ReCaptcha($this->config['recaptcha']['private_key']);
-            $reCaptchaResponse = $rc->verify($this->app['request']->get('g-recaptcha-response'), $this->app['request']->getClientIp());
-
-            $this->recaptcha = array(
-                'success'    => $reCaptchaResponse->isSuccess(),
-                'errorCodes' => $reCaptchaResponse->getErrorCodes()
-            );
-        }
     }
 
     /**

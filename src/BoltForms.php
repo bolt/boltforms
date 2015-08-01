@@ -243,18 +243,16 @@ class BoltForms
      * Process a form's POST request.
      *
      * @param string $formname
+     * @param array  $recaptchaResponse
      *
      * @return boolean
      */
-    public function processRequest($formname)
+    public function processRequest($formname, array $recaptchaResponse)
     {
         $formdata = $this->handleRequest($formname);
         $sent = $this->getForm($formname)->isSubmitted();
 
-        // Check reCaptcha, if enabled.
-        $this->getReCaptchaResponses();
-
-        if ($sent && $formdata && $this->recaptcha['success']) {
+        if ($sent && $formdata && $recaptchaResponse['success']) {
             $conf = $this->config[$formname];
 
             // Don't keep token data around where not needed
@@ -284,5 +282,27 @@ class BoltForms
         }
 
         return false;
+    }
+
+    /**
+     * Check reCaptcha, if enabled.
+     */
+    public function getReCaptchaResponses()
+    {
+        // Check reCaptcha, if enabled.  If not just return true
+        if (!$this->config['recaptcha']['enabled']) {
+            return array(
+                'success'    => true,
+                'errorCodes' => null
+            );
+        }
+
+        $rc = new ReCaptcha($this->config['recaptcha']['private_key']);
+        $reCaptchaResponse = $rc->verify($this->app['request']->get('g-recaptcha-response'), $this->app['request']->getClientIp());
+
+        return array(
+            'success'    => $reCaptchaResponse->isSuccess(),
+            'errorCodes' => $reCaptchaResponse->getErrorCodes()
+        );
     }
 }
