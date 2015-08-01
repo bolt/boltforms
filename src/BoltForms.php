@@ -7,6 +7,7 @@ use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
+use ReCaptcha\ReCaptcha;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -208,11 +209,11 @@ class BoltForms
     public function handleRequest($formname, $request = null, $callback = null, $arguments = array())
     {
         //
-        if (! $this->app['request']->request->has($formname)) {
+        if (!$this->app['request']->request->has($formname)) {
             return false;
         }
 
-        if (! $request) {
+        if (!$request) {
             $request = Request::createFromGlobals();
         }
 
@@ -233,6 +234,53 @@ class BoltForms
             } else {
                 return $data;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * Process a form's POST request.
+     *
+     * @param string $formname
+     *
+     * @return boolean
+     */
+    public function processRequest($formname)
+    {
+        $formdata = $this->handleRequest($formname);
+        $sent = $this->getForm($formname)->isSubmitted();
+
+        // Check reCaptcha, if enabled.
+        $this->getReCaptchaResponses();
+
+        if ($sent && $formdata && $this->recaptcha['success']) {
+            $conf = $this->config[$formname];
+
+            // Don't keep token data around where not needed
+            unset($formdata['_token']);
+
+            // Write to a Contenttype
+            if (isset($conf['database']['contenttype']) && $conf['database']['contenttype']) {
+                $this->app['boltforms.database']->writeToContentype($conf['database']['contenttype'], $formdata);
+            }
+
+            // Write to a normal database table
+            if (isset($conf['database']['table']) && $conf['database']['table']) {
+                $this->app['boltforms.database']->writeToTable($conf['database']['table'], $formdata);
+            }
+
+            // Send notification email
+            if (isset($conf['notification']['enabled']) && $conf['notification']['enabled']) {
+                $this->app['boltforms.email']->doNotification($formname, $conf, $formdata);
+            }
+
+            // Redirect if a redirect is set and the page exists
+            if (isset($conf['feedback']['redirect']) && is_array($conf['feedback']['redirect'])) {
+                $this->redirect($formname, $formdata);
+            }
+
+            return true;
         }
 
         return false;

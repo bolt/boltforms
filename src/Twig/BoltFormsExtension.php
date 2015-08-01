@@ -97,7 +97,6 @@ class BoltFormsExtension extends \Twig_Extension
         $sent       = false;
         $message    = '';
         $error      = '';
-        $formdata   = false;
 
         $this->app['boltforms']->makeForm($formname, 'form', $data, $options);
 
@@ -106,40 +105,11 @@ class BoltFormsExtension extends \Twig_Extension
         // Add our fields all at once
         $this->app['boltforms']->addFieldArray($formname, $fields);
 
-        if ($this->app['request']->getMethod() === 'POST') {
-            $formdata = $this->app['boltforms']->handleRequest($formname);
-            $sent = $this->app['boltforms']->getForm($formname)->isSubmitted();
-
-            // Check reCaptcha, if enabled.
-            $this->getReCaptchaResponses();
-
-            if ($formdata && $this->recaptcha['success']) {
-                // Don't keep token data around where not needed
-                unset($formdata['_token']);
-
-                // Write to a Contenttype
-                if (isset($this->config[$formname]['database']['contenttype']) && $this->config[$formname]['database']['contenttype']) {
-                    $this->app['boltforms.database']->writeToContentype($this->config[$formname]['database']['contenttype'], $formdata);
-                }
-
-                // Write to a normal database table
-                if (isset($this->config[$formname]['database']['table']) && $this->config[$formname]['database']['table']) {
-                    $this->app['boltforms.database']->writeToTable($this->config[$formname]['database']['table'], $formdata);
-                }
-
-                // Send notification email
-                if (isset($this->config[$formname]['notification']['enabled']) && $this->config[$formname]['notification']['enabled']) {
-                    $this->app['boltforms.email']->doNotification($formname, $this->config[$formname], $formdata);
-                }
-
-                // Redirect if a redirect is set and the page exists
-                if (isset($this->config[$formname]['feedback']['redirect']) && is_array($this->config[$formname]['feedback']['redirect'])) {
-                    $this->redirect($formname, $formdata);
-                }
-
+        // Handle the POST
+        if ($this->app['request']->isMethod('POST')) {
+            if ($sent = $this->app['boltforms']->processRequest($formname)) {
                 $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
             } else {
-                $sent = false;
                 $error = isset($this->config[$formname]['feedback']['error']) ? $this->config[$formname]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit';
             }
         }
