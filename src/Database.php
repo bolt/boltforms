@@ -145,67 +145,14 @@ class Database
     /**
      * Save a file to the filesystem and return the correct filename
      *
-     * @param UploadedFile       $filefield
+     * @param UploadedFile       $file
      * @param string             $key
      * @param \Bolt\Content|null $record
      *
      * @return string[]|string
      */
-    private function handleUpload(UploadedFile $filefield, $key, $record)
+    private function handleUpload(UploadedFile $file, $key, $record)
     {
-        // use the default bolt file upload path
-        $upload_root = $this->app['resources']->getPath('files');
-
-        // refine the upload root with an upload location from the content type
-        if ($record !== null) {
-            // there is a record
-            $contenttype = $record->contenttype;
-            if ($contenttype['fields'][$key] && $contenttype['fields'][$key]['upload']) {
-                // set the new upload location
-                $upload_location = '/' . $contenttype['fields'][$key]['upload'] . '/';
-                // make sure that there are no double slashes if someone
-                // has added them to the config somewhere
-                $upload_location = str_replace('//', '/', $upload_location);
-            }
-        } else {
-            // use the Bolt default
-            $upload_location = $upload_root;
-        }
-
-        // create a unique filename with a simple pattern
-        $original_filename = $filefield->getClientOriginalName();
-        $proposed_extension = $filefield->guessExtension() ? $filefield->guessExtension() : pathinfo($original_filename, PATHINFO_EXTENSION);
-        $proposed_filename = sprintf(
-            "%s-upload-%s.%s",
-            date('Y-m-d'),
-            $this->app['randomgenerator']->generateString(12, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890'),
-            $proposed_extension
-        );
-
-        // the location of the file on the server
-        $proposed_file_location = $upload_root . $upload_location;
-
-        // the name of the file in bolt content types
-        $proposed_bolt_filename = $upload_location . $proposed_filename;
-
-        // move the temporary file
-        $newfile = $filefield->move($proposed_file_location, $proposed_filename);
-
-        if (is_object($newfile) && property_exists($filefield, 'originalName')) {
-            if ($record !== null) {
-                return array('file' => $proposed_bolt_filename);
-            } else {
-                // if we don't have a record
-                // we need to preserialize the file field because we like to see
-                // the same structure in the values even then
-                return json_encode(array('file' => $proposed_bolt_filename));
-            }
-        } else {
-            // this means something is wrong on your server
-            // leave a nice note in the log
-            $this->app['logger.system']->error("Boltforms failed to store a file upload. Check the form configuration and your server.", array('event' => 'extensions'));
-            // and continue with an empty file
-            return '';
-        }
+        $upload = new FileUpload();
     }
 }
