@@ -124,11 +124,6 @@ class Database
             if (is_array($value)) {
                 $data[$key] = json_encode($value);
             }
-
-            // handle file storage preparation here
-            if ($value instanceof UploadedFile && $value->isValid()) {
-                $data[$key] = $this->handleUpload($value, $key, $record);
-            }
         }
 
         // Set a published date
@@ -140,19 +135,5 @@ class Database
         $record->setValues($data);
 
         $this->app['storage']->saveContent($record);
-    }
-
-    /**
-     * Save a file to the filesystem and return the correct filename
-     *
-     * @param UploadedFile       $file
-     * @param string             $key
-     * @param \Bolt\Content|null $record
-     *
-     * @return string[]|string
-     */
-    private function handleUpload(UploadedFile $file, $key, $record)
-    {
-        $upload = new FileUpload();
     }
 }
