@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use ReCaptcha\ReCaptcha;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Core API functions for BoltForms
@@ -253,6 +254,7 @@ class BoltForms
         $sent = $this->getForm($formname)->isSubmitted();
 
         if ($sent && $formdata && $recaptchaResponse['success']) {
+            $formdata = $this->processFields($formname, $formdata);
             $conf = $this->config[$formname];
 
             // Don't keep token data around where not needed
@@ -308,5 +310,40 @@ class BoltForms
             'success'    => $reCaptchaResponse->isSuccess(),
             'errorCodes' => $reCaptchaResponse->getErrorCodes()
         );
+    }
+
+    /**
+     * Process the fields to get usable data.
+     *
+     * @param array $formdata
+     *
+     * @return array
+     */
+    protected function processFields($formname, array $formdata)
+    {
+        foreach ($formdata as $field => $value) {
+            // Handle dates
+            if ($value instanceof \DateTime) {
+                $formdata[$field] = $value->format('c');
+            }
+
+            // Handle file uploads
+            if ($value instanceof UploadedFile && $value->isValid()) {
+                if (!$this->config['uploads']['enabled']) {
+                    $this->app['logger.system']->debug('[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.', array('event' => 'extensions'));
+                    continue;
+                }
+
+                // Get the upload object
+                $fileUpload = new FileUpload($this->app, $value);
+
+                // Take configured actions on the file
+                if ($fileUpload->handleUpload($formname)) {
+                    $formdata[$field] = $fileUpload;
+                }
+            }
+        }
+
+        return $formdata;
     }
 }
