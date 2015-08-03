@@ -99,6 +99,13 @@ class Extension extends \Bolt\BaseExtension
                 })
             );
         }
+
+        /*
+         * Management controller
+         */
+        if ($this->config['uploads']['management_controller']) {
+            $this->app->mount('/' . $this->config['uploads']['base_uri'], new Controller\UploadManagement());
+        }
     }
 
     /**
@@ -154,9 +161,11 @@ class Extension extends \Bolt\BaseExtension
                 'address' => ''
             ),
             'uploads' => array(
-                'enabled'           => false,
-                'base_directory'    => '/tmp/',
-                'filename_handling' => 'suffix'
+                'enabled'               => false,
+                'base_directory'        => '/tmp/',
+                'filename_handling'     => 'suffix',
+                'management_controller' => false,
+                'base_uri'             => 'boltforms'
             )
         );
     }
