@@ -1,9 +1,9 @@
 <?php
-
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Email functions for BoltForms
@@ -72,6 +72,11 @@ class Email
      */
     private function doCompose($formconfig, $emailconfig, $formdata)
     {
+        /*
+         * Create message object
+         */
+        $this->message = \Swift_Message::newInstance();
+
         // Set our Twig lookup path
         $this->addTwigPath();
 
@@ -94,21 +99,13 @@ class Email
 
         $subject = new \Twig_Markup($html, 'UTF-8');
 
-        // https://github.com/bolt/bolt/issues/3459
-        // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
-        foreach ($formdata as $key => $value) {
-            if ($value instanceof \DateTime) {
-                $formdata[$key] = $value->format('c');
-            }
-        }
-
         /*
          * Body
          */
         $html = $this->app['render']->render($templateEmail, array(
             'fields' => $formconfig['fields'],
             'config' => $emailconfig,
-            'data'   => $formdata
+            'data'   => $this->getBodyData($formconfig, $formdata)
         ));
 
         $body = new \Twig_Markup($html, 'UTF-8');
@@ -116,10 +113,40 @@ class Email
         /*
          * Build email
          */
-        $this->message = \Swift_Message::newInstance()
+        $this->message
                 ->setSubject($subject)
                 ->setBody(strip_tags($body))
                 ->addPart($body, 'text/html');
+    }
+
+    /**
+     * Get the data suitable for using in TWig.
+     *
+     * @param array $formconfig
+     * @param array $formdata
+     *
+     * @return array
+     */
+    private function getBodyData(array $formconfig, array $formdata)
+    {
+        // https://github.com/bolt/bolt/issues/3459
+        // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
+        $bodydata = array();
+        foreach ($formdata as $key => $value) {
+            if ($value instanceof \DateTime) {
+                $bodydata[$key] = $value->format('c');
+            } elseif ($value instanceof UploadedFile && $value->isValid()) {
+                if (isset($formconfig['notification']['attach_files']) && $formconfig['notification']['attach_files']) {
+                    $attachment = \Swift_Attachment::fromPath($value->getPathname())
+                            ->setFilename($value->getClientOriginalName());
+                    $this->message->attach($attachment);
+                }
+            } else {
+                $bodydata[$key] = $value;
+            }
+        }
+
+        return $bodydata;
     }
 
     /**
