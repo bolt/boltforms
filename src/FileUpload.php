@@ -83,7 +83,7 @@ class FileUpload
         try {
             $targetDir = $this->getTargetFileDirectory($formname);
             $targetFile = $this->getTargetFileName();
-            $this->systemLogger->debug('[BoltForms] Moving uloaded file to use ' . $targetFile . DIRECTORY_SEPARATOR. $targetFile . '.', ['event' => 'extensions']);
+            $this->app['logger.system']->debug('[BoltForms] Moving uloaded file to use ' . $targetFile . DIRECTORY_SEPARATOR. $targetFile . '.', ['event' => 'extensions']);
 
             $this->file->move($targetDir, $targetFile);
         } catch (FileException $e) {
@@ -162,7 +162,7 @@ class FileUpload
             pathinfo($originalName, PATHINFO_FILENAME),
             $extension
         );
-        $this->systemLogger->debug("[BoltForms] Setting uloaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
+        $this->app['logger.system']->debug("[BoltForms] Setting uloaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
 
         return $this->fileName = $fileName;
     }
