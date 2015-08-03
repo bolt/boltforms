@@ -111,6 +111,22 @@ class Extension extends \Bolt\BaseExtension
     }
 
     /**
+     * An the non-forms config keys.
+     *
+     * @return array
+     */
+    public function getConfigKeys()
+    {
+        return array(
+            'csrf',
+            'recaptcha',
+            'templates',
+            'debug',
+            'uploads'
+        );
+    }
+
+    /**
      * Set the defaults for configuration parameters
      *
      * @return array
