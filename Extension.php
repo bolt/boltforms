@@ -82,14 +82,14 @@ class Extension extends \Bolt\BaseExtension
         /*
          * Backend
          */
-        if ($this->app['config']->getWhichEnd() == 'backend') {
+        if ($this->app['config']->getWhichEnd() === 'backend') {
             //
         }
 
         /*
          * Frontend
          */
-        if ($this->app['config']->getWhichEnd() == 'frontend') {
+        if ($this->app['config']->getWhichEnd() === 'frontend') {
             // Twig functions
             $this->app->share($this->app->extend('twig',
                 function ($twig, $app) {
@@ -111,7 +111,7 @@ class Extension extends \Bolt\BaseExtension
     }
 
     /**
-     * An the non-forms config keys.
+     * All the non-forms config keys.
      *
      * @return array
      */
