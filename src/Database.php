@@ -77,28 +77,7 @@ class Database
             }
         }
 
-        foreach ($savedata as $key => $value) {
-            // Don't try to insert NULLs
-            if ($value === null) {
-                $savedata[$key] = '';
-            }
-
-            // JSON encode arrays
-            if (is_array($value)) {
-                $savedata[$key] = json_encode($value);
-            }
-
-            // https://github.com/bolt/bolt/issues/3459
-            // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
-            if ($value instanceof \DateTime) {
-                $savedata[$key] = $value->format('c');
-            }
-
-            // handle file storage preparation here
-            if ($value instanceof UploadedFile && $value->isValid()) {
-                $savedata[$key] = $this->handleUpload($value, $key, null);
-            }
-        }
+        $savedata = $this->getData($savedata);
 
         $this->app['db']->insert($tablename, $savedata);
     }
@@ -114,17 +93,7 @@ class Database
         // Get an empty record for out contenttype
         $record = $this->app['storage']->getEmptyContent($contenttype);
 
-        foreach ($data as $key => $value) {
-            // Symfony makes empty fields NULL, PostgreSQL gets mad.
-            if (is_null($value)) {
-                $data[$key] = '';
-            }
-
-            // JSON encode arrays
-            if (is_array($value)) {
-                $data[$key] = json_encode($value);
-            }
-        }
+        $data = $this->getData($data);
 
         // Set a published date
         if (empty($data['datepublish'])) {
@@ -135,5 +104,40 @@ class Database
         $record->setValues($data);
 
         $this->app['storage']->saveContent($record);
+    }
+
+    /**
+     * Get the data.
+     *
+     * @param array $data
+     *
+     * @return data
+     */
+    protected function getData(array $data)
+    {
+        foreach ($data as $key => $value) {
+            // Don't try to insert NULLs
+            if ($value === null) {
+                $data[$key] = '';
+            }
+
+            // JSON encode arrays
+            if (is_array($value)) {
+                $data[$key] = json_encode($value);
+            }
+
+            // https://github.com/bolt/bolt/issues/3459
+            // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
+            if ($value instanceof \DateTime) {
+                $data[$key] = $value->format('c');
+            }
+
+            // Handle file storage preparation here
+            if ($value instanceof FileUpload && $value->getFile()->isValid()) {
+                $data[$key] = $value->getTargetFileName();
+            }
+        }
+
+        return $data;
     }
 }
