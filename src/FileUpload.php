@@ -44,6 +44,10 @@ class FileUpload
     private $config;
     /** @var string */
     private $fileName;
+    /** @var string */
+    private $fullPath;
+    /** @var boolean */
+    private $valid;
 
     /**
      * Constructor.
@@ -54,7 +58,13 @@ class FileUpload
     {
         $this->app = $app;
         $this->file = $file;
+        $this->valid = $file->isValid();
         $this->config = $app[Extension::CONTAINER]->config;
+    }
+
+    public function __toString()
+    {
+        return (string) $this->file;
     }
 
     /**
@@ -65,6 +75,30 @@ class FileUpload
     public function getFile()
     {
         return $this->file;
+    }
+
+    /**
+     * Flag for a valid file upload.
+     *
+     * @return boolean
+     */
+    public function isValid()
+    {
+        return $this->valid;
+    }
+
+    /**
+     * Full path of the file upload.
+     *
+     * @return string
+     */
+    public function fullPath()
+    {
+        if ($this->fullPath === null) {
+            throw new \RuntimeException('Full path not available until upload is handled.');
+        }
+
+        return $this->fullPath;
     }
 
     /**
@@ -83,9 +117,10 @@ class FileUpload
         try {
             $targetDir = $this->getTargetFileDirectory($formname);
             $targetFile = $this->getTargetFileName();
-            $this->app['logger.system']->debug('[BoltForms] Moving uloaded file to use ' . $targetFile . DIRECTORY_SEPARATOR. $targetFile . '.', ['event' => 'extensions']);
+            $this->fullPath = $targetDir . DIRECTORY_SEPARATOR. $targetFile;
 
             $this->file->move($targetDir, $targetFile);
+            $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', ['event' => 'extensions']);
         } catch (FileException $e) {
             $this->app['logger.system']->error('[BoltForms] File upload aborted as the target directory could not be writen to. Check permissions on ' . $targetDir, array('event' => 'extensions'));
 

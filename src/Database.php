@@ -133,8 +133,8 @@ class Database
             }
 
             // Handle file storage preparation here
-            if ($value instanceof FileUpload && $value->getFile()->isValid()) {
-                $data[$key] = $value->getTargetFileName();
+            if ($value instanceof FileUpload && $value->isValid()) {
+                $data[$key] = $value->fullPath();
             }
         }
 
