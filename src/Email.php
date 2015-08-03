@@ -135,10 +135,10 @@ class Email
         foreach ($formdata as $key => $value) {
             if ($value instanceof \DateTime) {
                 $bodydata[$key] = $value->format('c');
-            } elseif ($value instanceof UploadedFile && $value->isValid()) {
+            } elseif ($value instanceof FileUpload && $value->getFile()->isValid()) {
                 if (isset($formconfig['notification']['attach_files']) && $formconfig['notification']['attach_files']) {
-                    $attachment = \Swift_Attachment::fromPath($value->getPathname())
-                            ->setFilename($value->getClientOriginalName());
+                    $attachment = \Swift_Attachment::fromPath($value->getFile()->getPathname())
+                            ->setFilename($value->getFile()->getClientOriginalName());
                     $this->message->attach($attachment);
                 }
             } else {

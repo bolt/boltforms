@@ -147,7 +147,7 @@ class FileUpload
      *
      * @return string
      */
-    protected function getTargetFileName()
+    public function getTargetFileName()
     {
         if ($this->fileName !== null) {
             return $this->fileName;
