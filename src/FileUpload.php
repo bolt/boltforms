@@ -120,7 +120,7 @@ class FileUpload
 
         try {
             $this->file->move($targetDir, $targetFile);
-            $this->fullPath = $targetDir . DIRECTORY_SEPARATOR. $targetFile;
+            $this->fullPath = $targetDir . DIRECTORY_SEPARATOR . $targetFile;
             $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', ['event' => 'extensions']);
         } catch (FileException $e) {
             $this->app['logger.system']->error('[BoltForms] File upload aborted as the target directory could not be writen to. Check permissions on ' . $targetDir, array('event' => 'extensions'));
