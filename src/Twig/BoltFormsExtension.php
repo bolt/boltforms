@@ -151,9 +151,14 @@ class BoltFormsExtension extends \Twig_Extension
      */
     public function twigBoltFormsUploads($formname = null)
     {
+        $dir = realpath($this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $formname);
+        if ($dir === false) {
+            return new \Twig_Markup('<p><strong>Invalid upload directory</strong></p>', 'UTF-8');
+        }
+
         $finder = new Finder();
         $finder->files()
-            ->in($this->config['uploads']['base_directory'])
+            ->in($dir)
             ->ignoreUnreadableDirs()
             ->ignoreDotFiles(true)
             ->ignoreVCS(true)
