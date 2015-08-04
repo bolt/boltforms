@@ -35,6 +35,8 @@ class FileUpload
 {
     /** @var Application */
     private $app;
+    /** @var string */
+    private $formname;
     /** @var \Symfony\Component\HttpFoundation\File\File */
     private $file;
     /** @var boolean */
@@ -53,11 +55,14 @@ class FileUpload
     /**
      * Constructor.
      *
-     * @param File $file
+     * @param Application $app
+     * @param string      $formname
+     * @param File        $file
      */
-    public function __construct(Application $app, File $file)
+    public function __construct(Application $app, $formname, File $file)
     {
         $this->app = $app;
+        $this->formname = $formname;
         $this->file = $file;
         $this->valid = $file->isValid();
         $this->config = $app[Extension::CONTAINER]->config;
@@ -106,18 +111,16 @@ class FileUpload
      * Move the uploaded file from the temporary location to the permanent one
      * if required by configuration.
      *
-     * @param string $formname
-     *
      * @return true
      */
-    public function move($formname)
+    public function move()
     {
-        if (!$this->checkDirectories($formname)) {
+        if (!$this->checkDirectories()) {
             return false;
         }
 
         try {
-            $targetDir = $this->getTargetFileDirectory($formname);
+            $targetDir = $this->getTargetFileDirectory();
             $targetFile = $this->getTargetFileName();
             $this->fullPath = $targetDir . DIRECTORY_SEPARATOR. $targetFile;
 
@@ -135,14 +138,12 @@ class FileUpload
     /**
      * Check that the base, and optional sub-, directories are valid and exist.
      *
-     * @param string $formname
-     *
      * @return boolean
      */
-    public function checkDirectories($formname)
+    public function checkDirectories()
     {
         $fs = new Filesystem();
-        $dir = $this->getTargetFileDirectory($formname);
+        $dir = $this->getTargetFileDirectory();
 
         if (!$fs->exists($dir)) {
             try {
@@ -166,14 +167,12 @@ class FileUpload
     /**
      * Get the path of the directory that will be used.
      *
-     * @param string $formname
-     *
      * @return string
      */
-    protected function getTargetFileDirectory($formname)
+    protected function getTargetFileDirectory()
     {
-        if (isset($this->config[$formname]['uploads']['subdirectory'])) {
-            return $this->dirName = $this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $this->config[$formname]['uploads']['subdirectory'];
+        if (isset($this->config[$this->formname]['uploads']['subdirectory'])) {
+            return $this->dirName = $this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $this->config[$this->formname]['uploads']['subdirectory'];
         }
 
         return $this->dirName = $this->config['uploads']['base_directory'];

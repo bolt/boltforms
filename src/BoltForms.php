@@ -333,10 +333,10 @@ class BoltForms
                 }
 
                 // Get the upload object
-                $fileUpload = new FileUpload($this->app, $value);
+                $fileUpload = new FileUpload($this->app, $formname, $value);
 
                 // Take configured actions on the file
-                if ($fileUpload->move($formname)) {
+                if ($fileUpload->move()) {
                     $formdata[$field] = $fileUpload;
                 }
             }
