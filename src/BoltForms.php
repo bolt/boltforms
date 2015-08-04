@@ -6,14 +6,15 @@ use Bolt;
 use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Bolt\Helpers\Arr;
 use ReCaptcha\ReCaptcha;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Core API functions for BoltForms
@@ -340,9 +341,36 @@ class BoltForms
                 // Take configured actions on the file
                 $formdata[$field]->move();
             }
+
+            // Handle events for custom data
+            if (isset($this->config[$formname]['fields'][$field]['event']['name'])) {
+                $formdata[$field] = $this->dispatchCustomDataEvent($formname, $field, $value);
+            }
         }
 
         return $formdata;
+    }
+
+    protected function dispatchCustomDataEvent($formname, $field, $value)
+    {
+        $fieldConfig = $this->config[$formname]['fields'][$field];
+        if (strpos('boltforms.', $fieldConfig['event']['name']) === false) {
+            $eventName = 'boltforms.' . $fieldConfig['event']['name'];
+        } else {
+            $eventName = $fieldConfig['event']['name'];
+        }
+
+        if ($this->app['dispatcher']->hasListeners($eventName)) {
+            $eventParams = isset($fieldConfig['event']['params']) ? $fieldConfig['event']['params'] : null;
+            $event = new BoltFormsCustomDataEvent($eventName, $eventParams);
+            try {
+                $this->app['dispatcher']->dispatch($eventName, $event);
+
+                return $event->getData();
+            } catch (\Exception $e) {
+                $this->app['logger.system']->info("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
+            }
+        }
     }
 
     /**
