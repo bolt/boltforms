@@ -44,11 +44,13 @@ class FileUpload
     /** @var string */
     private $fileName;
     /** @var string */
-    private $dirName;
+    private $baseDirName;
     /** @var string */
     private $fullPath;
     /** @var boolean */
     private $valid;
+    /** @var boolean */
+    private $final;
 
     /**
      * Constructor.
@@ -138,7 +140,7 @@ class FileUpload
 
         try {
             $this->file->move($targetDir, $targetFile);
-            $this->fullPath = $targetDir . DIRECTORY_SEPARATOR . $targetFile;
+            $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
             $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', array('event' => 'extensions'));
         } catch (FileException $e) {
             $error = 'File upload aborted as the target directory could not be writen to.';
@@ -177,6 +179,8 @@ class FileUpload
             $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $dir, array('event' => 'extensions'));
             throw new FileUploadException($error);
         }
+
+        $this->baseDirName = realpath($dir);
     }
 
     /**
@@ -186,11 +190,15 @@ class FileUpload
      */
     protected function getTargetFileDirectory()
     {
-        if (isset($this->config[$this->formName]['uploads']['subdirectory'])) {
-            return $this->dirName = $this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $this->config[$this->formName]['uploads']['subdirectory'];
+        if ($this->baseDirName !== null) {
+            return $this->baseDirName;
         }
 
-        return $this->dirName = $this->config['uploads']['base_directory'];
+        if (isset($this->config[$this->formName]['uploads']['subdirectory'])) {
+            return $this->baseDirName = $this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $this->config[$this->formName]['uploads']['subdirectory'];
+        }
+
+        return $this->baseDirName = $this->config['uploads']['base_directory'];
     }
 
     /**
@@ -200,20 +208,33 @@ class FileUpload
      */
     protected function getTargetFileName()
     {
-        if ($this->fileName !== null) {
+        if ($this->final) {
             return $this->fileName;
         }
 
         // Create a unique filename with a simple pattern
         $originalName = $this->file->getClientOriginalName();
         $extension = $this->file->guessExtension() ? : pathinfo($originalName, PATHINFO_EXTENSION);
-
+        $pattern = $this->getTargetFileNamePattern();
         $fileName = sprintf(
-            $this->getTargetFileNamePattern(),
+            $pattern,
             pathinfo($originalName, PATHINFO_FILENAME),
             $extension
         );
+        $this->fullPath = $this->getTargetFileDirectory() . DIRECTORY_SEPARATOR . $fileName;
+
+        $i = 1;
+        while (file_exists($this->fullPath)) {
+            $fileName = sprintf(
+                $pattern,
+                pathinfo($originalName, PATHINFO_FILENAME) . "($i)",
+                $extension
+                );
+            $this->fullPath = $this->getTargetFileDirectory() . DIRECTORY_SEPARATOR . $fileName;
+        }
+
         $this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", array('event' => 'extensions'));
+        $this->final = true;
 
         return $this->fileName = $fileName;
     }
