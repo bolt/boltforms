@@ -123,7 +123,8 @@ class FileUpload
             $this->fullPath = $targetDir . DIRECTORY_SEPARATOR . $targetFile;
             $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', ['event' => 'extensions']);
         } catch (FileException $e) {
-            $this->app['logger.system']->error('[BoltForms] File upload aborted as the target directory could not be writen to. Check permissions on ' . $targetDir, array('event' => 'extensions'));
+            $error = 'File upload aborted as the target directory could not be writen to.';
+            $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $targetDir, array('event' => 'extensions'));
             throw new FileUploadException('File upload aborted as the target directory could not be writen to.');
         }
 
@@ -147,15 +148,15 @@ class FileUpload
             try {
                 $fs->mkdir($dir);
             } catch (IOException $e) {
-                $error = '[BoltForms] File upload aborted as the target directory could not be created. Check permissions on ' . $dir;
-                $this->app['logger.system']->error($error, array('event' => 'extensions'));
+                $error = 'File upload aborted as the target directory could not be created.';
+                $this->app['logger.system']->error('[BoltForms] ' . error . ' Check permissions on ' . $dir, array('event' => 'extensions'));
                 throw new FileUploadException($error);
             }
         }
 
         if (!is_writeable($dir)) {
-            $error = '[BoltForms] File upload aborted as the target directory is not writable. Check permissions on ' . $dir;
-            $this->app['logger.system']->error($error, array('event' => 'extensions'));
+            $error = 'File upload aborted as the target directory is not writable.';
+            $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $dir, array('event' => 'extensions'));
             throw new FileUploadException($error);
         }
     }
