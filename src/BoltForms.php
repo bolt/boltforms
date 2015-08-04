@@ -9,9 +9,11 @@ use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
+use Bolt\Helpers\Arr;
 use ReCaptcha\ReCaptcha;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Core API functions for BoltForms
@@ -341,5 +343,62 @@ class BoltForms
         }
 
         return $formdata;
+    }
+
+    /**
+     * Do a redirect.
+     *
+     * @param string $formname
+     * @param array  $formdata
+     */
+    private function redirect($formname, array $formdata)
+    {
+        $redirect = $this->config[$formname]['feedback']['redirect'];
+        $query = $this->getRedirectQuery($redirect, $formdata);
+
+        $response = $this->getRedirectResponse($redirect, $query);
+        if ($response instanceof RedirectResponse) {
+            $response->send();
+        }
+    }
+
+    /**
+     * Build a GET query if required.
+     *
+     * @param array $redirect
+     * @param array $formdata
+     */
+    private function getRedirectQuery(array $redirect, $formdata)
+    {
+        $query = array();
+        if (Arr::isIndexedArray($redirect['query'])) {
+            foreach ($redirect['query'] as $param) {
+                $query[$param] = $formdata[$param];
+            }
+        } else {
+            $query = $redirect['query'];
+        }
+
+        return '?' . http_build_query($query);
+    }
+
+    /**
+     * Get the redirect response object.
+     *
+     * @param array  $redirect
+     * @param string $query
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    private function getRedirectResponse(array $redirect, $query)
+    {
+        if (strpos($redirect['target'], 'http') === 0) {
+            return $this->app->redirect($redirect['target'] . $query);
+        } elseif ($redirectpage = $this->app['storage']->getContent($redirect['target'])) {
+            return new RedirectResponse($redirectpage->link() . $query);
+        }
+
+        // No route found
+        return;
     }
 }
