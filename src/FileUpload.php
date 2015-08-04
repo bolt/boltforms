@@ -103,13 +103,14 @@ class FileUpload
     }
 
     /**
-     * Handle the upload, um, handling.
+     * Move the uploaded file from the temporary location to the permanent one
+     * if required by configuration.
      *
      * @param string $formname
      *
      * @return true
      */
-    public function handleUpload($formname)
+    public function move($formname)
     {
         if (!$this->checkDirectories($formname)) {
             return false;
