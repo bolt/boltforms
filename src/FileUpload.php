@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Silex\Application;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -42,6 +43,8 @@ class FileUpload
     private $config;
     /** @var string */
     private $fileName;
+    /** @var string */
+    private $dirName;
     /** @var string */
     private $fullPath;
     /** @var boolean */
@@ -93,7 +96,7 @@ class FileUpload
     public function fullPath()
     {
         if ($this->fullPath === null) {
-            throw new \RuntimeException('Full path not available until upload is handled.');
+            throw new FileUploadException('Full path not available until upload is handled.');
         }
 
         return $this->fullPath;
@@ -169,10 +172,10 @@ class FileUpload
     protected function getTargetFileDirectory($formname)
     {
         if (isset($this->config[$formname]['uploads']['subdirectory'])) {
-            return $this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $this->config[$formname]['uploads']['subdirectory'];
+            return $this->dirName = $this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $this->config[$formname]['uploads']['subdirectory'];
         }
 
-        return $this->config['uploads']['base_directory'];
+        return $this->dirName = $this->config['uploads']['base_directory'];
     }
 
     /**
@@ -195,7 +198,7 @@ class FileUpload
             pathinfo($originalName, PATHINFO_FILENAME),
             $extension
         );
-        $this->app['logger.system']->debug("[BoltForms] Setting uloaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
+        $this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
 
         return $this->fileName = $fileName;
     }
