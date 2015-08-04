@@ -112,8 +112,10 @@ class BoltFormsExtension extends \Twig_Extension
                 $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
             } catch (FileUploadException $e) {
                 $error = $e->getMessage();
-            } catch (FileUploadException $e) {
+                $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, array('event' => 'extensions'));
+            } catch (FormValidationException $e) {
                 $error = $e->getMessage();
+                $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $error, array('event' => 'extensions'));
             }
         }
 
