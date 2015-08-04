@@ -93,12 +93,14 @@ accessible to the outside world. BoltForms provides a special route should you
 wish to make the files browsable after upload. This route can be enabled as a 
 global setting via the `management_controller` option.
 
-Secondly, is the `filename_handling` parameter is an important for your level
-of required site security. This is important, as if an attacker knows the 
-uploaded file name, this can make their job a bit easier. BoltForms provides
-three uploaded file naming options, `prefix`, `suffix` and `keep`. 
+Secondly, is the `filename_handling` parameter is an important consideration 
+for your level of required site security. The reason this setting is important 
+is, if an attacker knows the uploaded file name then this can make their job a 
+lot easier. BoltForms provides three uploaded file naming options, `prefix`, 
+`suffix` and `keep`. 
 
-e.g. uploading the file `kitten.jpg`:
+For example, when uploading the file `kitten.jpg` the settings would provide
+something similar to the following table:
 
 -------------------------------------
 | Setting   | Resulting file name     |
@@ -108,7 +110,7 @@ e.g. uploading the file `kitten.jpg`:
 | `keep`   | kitten.jpg              |
 
  
-We recommend `suffix` as this is the most secure, alternatively `prefix` will
+We recommend `suffix`, as this is the most secure. Alternatively `prefix` will
 aid in file browsing. However, `keep` should always be used with caution!
 
 Each form has individual options for uploads, such as whether to attach the 
@@ -168,7 +170,8 @@ The default events that can be used to get field data are:
 #### Examples
 
 Set the `remote_member_id` field value to the maximum value of the column, 
-plus one, i.e. (`MAX(remote_member_id) + 1`). So this works as an autoincrement.
+plus one, i.e. (`MAX(remote_member_id) + 1`), effectively working as an auto
+increment.
 
 ```yaml
     remote_member_id:
@@ -322,11 +325,46 @@ if ($app['request']->getMethod() == 'POST') {
 }
 ``` 
 
-Event Dispatcher Listener
--------------------------
+Event Listeners
+---------------
+
+BoltForms exposes a number of listners, that proxy Symfony Forms listeners.
+  * BoltFormsEvents::PRE_SUBMIT
+  * BoltFormsEvents::SUBMIT
+  * BoltFormsEvents::POST_SUBMIT
+  * BoltFormsEvents::PRE_SET_DATA
+  * BoltFormsEvents::POST_SET_DATA
+
+Each of these match Symfony's constants, just with the BoltForms class name/prefix.
+
+Below is an example of setting a field's data to upper case on submission:
 
 ```php
+<?php
+namespace Bolt\Extension\You\YourExtension;
+
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 
-$this->app['dispatcher']->addListener(BoltFormsEvents::POST_SUBMIT,  array($this, 'myPostSubmit'));
+class Extension extends \Bolt\BaseExtension
+{
+    public function initialize()
+    {
+        // If you want to modify data, only use the BoltFormsEvents::PRE_SUBMIT event
+        $this->app['dispatcher']->addListener(BoltFormsEvents::PRE_SUBMIT,  array($this, 'myPostSubmit'));
+    }
+    
+    public function myPostSubmit($event)
+    {
+        if ($event->getForm()->getName() === 'my_form') {
+            // Get the data from the event
+            $data = $event->getData();
+            
+            // Set some data values to upper case
+            $data['my_field'] = strtoupper($data['my_field']);
+            
+            // Save the data back
+            $event->setData($data);
+        }
+    }
+}
 ```
