@@ -19,7 +19,7 @@
         <tbody>
         {% for file in files %}
             <tr>
-                <td scope="row"><a href="{{ base_uri ~ '?file=' ~ file.getRelativePathname }}">{{ file.getRelativePathname }}</a></td>
+                <td scope="row"><a href="{{ base_uri ~ '?file=' ~ file.getRelativePathname|url_encode }}">{{ file.getRelativePathname }}</a></td>
                 <td scope="row">{{ file.getSize|number_format }}</td>
                 <td scope="row">{{ file.getMTime|date("c") }}</td>
             </tr>
