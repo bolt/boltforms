@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 
 use Bolt\Application;
-use Bolt\Configuration\ResourceManager;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

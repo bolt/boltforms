@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Provider;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Database;
 use Bolt\Extension\Bolt\BoltForms\Email;
+use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsCustomDataSubscriber;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
@@ -35,9 +36,15 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 return $email;
             }
         );
+
+        $app['boltforms.subscriber.custom_data'] = $app->share(function ($app) {
+            return new BoltFormsCustomDataSubscriber($app);
+        });
     }
 
     public function boot(Application $app)
     {
+        $dispatcher = $app['dispatcher'];
+        $dispatcher->addSubscriber($app['boltforms.subscriber.custom_data']);
     }
 }
