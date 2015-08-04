@@ -1,5 +1,14 @@
 # Changelog for Bolt Forms
 
+* 2.2.0 (2015-08-05)
+
+ * Add ability to define a redirect page after submit (credit @jadwigo & @sbani)
+ * Only use reCaptcha when required (credit @sbani)
+ * Added proper handling of file uploads (credit @jadwigo)
+ * Added browsing of uploaded files
+ * Added event base custom field data providers (credit @jadwigo)
+ * Lots of small contributions from a wonderful team of people
+ 
 * 2.1.6 (2015-06-28)
 
  * Fix logic on database and notification checks
