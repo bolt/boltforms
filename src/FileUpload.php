@@ -36,11 +36,9 @@ class FileUpload
     /** @var Application */
     private $app;
     /** @var string */
-    private $formname;
+    private $formName;
     /** @var \Symfony\Component\HttpFoundation\File\File */
     private $file;
-    /** @var boolean */
-    private $validDirectories = false;
     /** @var array */
     private $config;
     /** @var string */
@@ -56,13 +54,13 @@ class FileUpload
      * Constructor.
      *
      * @param Application $app
-     * @param string      $formname
+     * @param string      $formName
      * @param File        $file
      */
-    public function __construct(Application $app, $formname, File $file)
+    public function __construct(Application $app, $formName, File $file)
     {
         $this->app = $app;
-        $this->formname = $formname;
+        $this->formName = $formName;
         $this->file = $file;
         $this->fullPath = (string) $file;
         $this->fileName = basename($this->fullPath);
@@ -109,36 +107,38 @@ class FileUpload
      * Move the uploaded file from the temporary location to the permanent one
      * if required by configuration.
      *
+     * @throws FileUploadException
+     *
      * @return true
      */
     public function move()
     {
-        if (!$this->checkDirectories()) {
-            return false;
-        }
+        $this->checkDirectories();
+
+        $targetDir = $this->getTargetFileDirectory();
+        $targetFile = $this->getTargetFileName();
 
         try {
-            $targetDir = $this->getTargetFileDirectory();
-            $targetFile = $this->getTargetFileName();
-            $this->fullPath = $targetDir . DIRECTORY_SEPARATOR. $targetFile;
-
             $this->file->move($targetDir, $targetFile);
+            $this->fullPath = $targetDir . DIRECTORY_SEPARATOR. $targetFile;
             $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', ['event' => 'extensions']);
         } catch (FileException $e) {
             $this->app['logger.system']->error('[BoltForms] File upload aborted as the target directory could not be writen to. Check permissions on ' . $targetDir, array('event' => 'extensions'));
-
-            return false;
+            throw new FileUploadException('File upload aborted as the target directory could not be writen to.');
         }
 
         return true;
     }
 
     /**
-     * Check that the base, and optional sub-, directories are valid and exist.
+     * Check that the base directory, and optional sub-directory, is/are valid
+     * and exist.
+     *
+     * @throws FileUploadException
      *
      * @return boolean
      */
-    public function checkDirectories()
+    protected function checkDirectories()
     {
         $fs = new Filesystem();
         $dir = $this->getTargetFileDirectory();
@@ -147,19 +147,17 @@ class FileUpload
             try {
                 $fs->mkdir($dir);
             } catch (IOException $e) {
-                $this->app['logger.system']->error('[BoltForms] File upload aborted as the target directory could not be created. Check permissions on ' . $dir, array('event' => 'extensions'));
-
-                return $this->validDirectories = false;
+                $error = '[BoltForms] File upload aborted as the target directory could not be created. Check permissions on ' . $dir;
+                $this->app['logger.system']->error($error, array('event' => 'extensions'));
+                throw new FileUploadException($error);
             }
         }
 
         if (!is_writeable($dir)) {
-            $this->app['logger.system']->error('[BoltForms] File upload aborted as the target directory is not writable. Check permissions on ' . $dir, array('event' => 'extensions'));
-
-            return $this->validDirectories = false;
+            $error = '[BoltForms] File upload aborted as the target directory is not writable. Check permissions on ' . $dir;
+            $this->app['logger.system']->error($error, array('event' => 'extensions'));
+            throw new FileUploadException($error);
         }
-
-        return $this->validDirectories = true;
     }
 
     /**
@@ -169,8 +167,8 @@ class FileUpload
      */
     protected function getTargetFileDirectory()
     {
-        if (isset($this->config[$this->formname]['uploads']['subdirectory'])) {
-            return $this->dirName = $this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $this->config[$this->formname]['uploads']['subdirectory'];
+        if (isset($this->config[$this->formName]['uploads']['subdirectory'])) {
+            return $this->dirName = $this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $this->config[$this->formName]['uploads']['subdirectory'];
         }
 
         return $this->dirName = $this->config['uploads']['base_directory'];
@@ -181,7 +179,7 @@ class FileUpload
      *
      * @return string
      */
-    public function getTargetFileName()
+    protected function getTargetFileName()
     {
         if ($this->fileName !== null) {
             return $this->fileName;
