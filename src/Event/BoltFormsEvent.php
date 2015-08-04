@@ -30,19 +30,11 @@ use Symfony\Component\Form\FormEvents;
  */
 class BoltFormsEvent extends FormEvent
 {
-    /**
-     * @var Symfony\Component\Form\FormEvent
-     */
+    /** @var \Symfony\Component\Form\FormEvent */
     protected $event;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $data;
-
-    /**
-     * @var Symfony\Component\Form\FormInterface
-     */
+    /** @var \Symfony\Component\Form\FormInterface */
     protected $form;
 
     /**
@@ -67,10 +59,10 @@ class BoltFormsEvent extends FormEvent
 
     public function setData($data)
     {
-        if ($this->event->getName() == FormEvents::PRE_SUBMIT) {
+        if ($this->event->getName() === FormEvents::PRE_SUBMIT) {
             $this->event->setData($data);
         } else {
-            trigger_error(__CLASS__ . "::" . __FUNCTION__ . " can only be called in BoltFormsEvents::PRE_SUBMIT", E_USER_ERROR);
+            throw new \RuntimeException(__CLASS__ . '::' . __FUNCTION__ . ' can only be called in BoltFormsEvents::PRE_SUBMIT');
         }
     }
 
