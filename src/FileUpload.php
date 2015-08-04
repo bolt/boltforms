@@ -121,7 +121,7 @@ class FileUpload
         try {
             $this->file->move($targetDir, $targetFile);
             $this->fullPath = $targetDir . DIRECTORY_SEPARATOR . $targetFile;
-            $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', ['event' => 'extensions']);
+            $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', array('event' => 'extensions'));
         } catch (FileException $e) {
             $error = 'File upload aborted as the target directory could not be writen to.';
             $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $targetDir, array('event' => 'extensions'));
@@ -195,7 +195,7 @@ class FileUpload
             pathinfo($originalName, PATHINFO_FILENAME),
             $extension
         );
-        $this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
+        $this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", array('event' => 'extensions'));
 
         return $this->fileName = $fileName;
     }
