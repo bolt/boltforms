@@ -7,6 +7,7 @@ templates:
   form: boltforms_form.twig
   email: boltforms_email.twig
   subject: boltforms_email_subject.twig
+  files: boltforms_file_browser.twig
 
 # reCAPTCHa set up
 recaptcha:

@@ -3,12 +3,11 @@
 namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
-use Bolt\Extension\Bolt\BoltForms\Database;
-use Bolt\Extension\Bolt\BoltForms\Email;
 use Bolt\Extension\Bolt\BoltForms\Extension;
 use Bolt\Helpers\Arr;
 use ReCaptcha\ReCaptcha;
 use Silex\Application;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -69,7 +68,8 @@ class BoltFormsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'boltforms' => new \Twig_Function_Method($this, 'twigBoltForms')
+            'boltforms'         => new \Twig_Function_Method($this, 'twigBoltForms'),
+            'boltforms_uploads' => new \Twig_Function_Method($this, 'twigBoltFormsUploads')
         );
     }
 
@@ -140,6 +140,34 @@ class BoltFormsExtension extends \Twig_Extension
 
         // Render the Twig_Markup
         return $this->app['boltforms']->renderForm($formname, $template, $twigvalues);
+    }
+
+    /**
+     * Twig function to display uploaded files, downloadable via the controller.
+     *
+     * @param string $formname
+     *
+     * @return \Twig_Markup
+     */
+    public function twigBoltFormsUploads($formname = null)
+    {
+        $finder = new Finder();
+        $finder->files()
+            ->in($this->config['uploads']['base_directory'])
+            ->ignoreUnreadableDirs()
+            ->ignoreDotFiles(true)
+            ->ignoreVCS(true)
+        ;
+
+        // Render the Twig
+        $html = $this->app['render']->render(
+        $this->config['templates']['files'], array(
+            'directories' => $finder->directories(),
+            'files'       => $finder->files(),
+            'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download'
+        ));
+
+        return new \Twig_Markup($html, 'UTF-8');
     }
 
     /**

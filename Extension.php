@@ -154,7 +154,8 @@ class Extension extends \Bolt\BaseExtension
                 'fields'  => 'boltforms_fields.twig',
                 'form'    => 'boltforms_form.twig',
                 'email'   => 'boltforms_email.twig',
-                'subject' => 'boltforms_email_subject.twig'
+                'subject' => 'boltforms_email_subject.twig',
+                'files'   => 'boltforms_file_browser.twig'
             ),
             'debug' => array(
                 'enabled' => false,
@@ -165,7 +166,7 @@ class Extension extends \Bolt\BaseExtension
                 'base_directory'        => '/tmp/',
                 'filename_handling'     => 'suffix',
                 'management_controller' => false,
-                'base_uri'             => 'boltforms'
+                'base_uri'              => 'boltforms'
             )
         );
     }

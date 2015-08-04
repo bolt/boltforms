@@ -1,0 +1,29 @@
+{#
+ # Passed in variables:
+ #   base_uri    - Relative base URI for BoltForms download controller
+ #   directories - Symfony SplFileInfo object of found directories
+ #   files       - Symfony SplFileInfo object of found files
+ #}
+
+{% block boltforms_css %}
+<link href="{{ app.paths.extensions }}vendor/bolt/boltforms/css/boltforms.css" rel="stylesheet" type="text/css" />
+{% endblock boltforms_css %}
+
+<div class="boltform boltform-file-browser">
+    <table>
+        <thead>
+            <th scope="column">File Name</th>
+            <th scope="column">Size</th>
+            <th scope="column">Date</th>
+        </thead>
+        <tbody>
+        {% for file in files %}
+            <tr>
+                <td scope="row"><a href="{{ base_uri ~ '?file=' ~ file.getRelativePathname }}">{{ file.getRelativePathname }}</a></td>
+                <td scope="row">{{ file.getSize|number_format }}</td>
+                <td scope="row">{{ file.getMTime|date("c") }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
