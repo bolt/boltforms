@@ -69,6 +69,82 @@ double-colon delimiters, where:
     'labelfield'  - Field to use for the UI displayed to the user
     'valuefield'  - Field to use for the value stored
 
+File Upload Types
+-----------------
+
+Handling file uploads is a very common attack vector used to compromise (hack)
+a server.
+
+BoltForms does a few things to help increase slightly the security of handling
+file uploads.
+
+```yaml
+uploads:
+    enabled: true                             # The global on/off switch for upload handling
+    base_directory: /data/customer-uploads/   # Outside web root and writable by the web server's user
+    filename_handling: prefix                 # Can be either "prefix", "suffix", or "keep"
+    management_controller: true               # Enable a controller to handle browsing and downloading of uploaded files
+```
+
+The directory that you specify for `base_directory` should **NOT** be a route 
+accessible to the outside world. BoltForms provide a special route should you 
+wish to make the files browsable after upload via the `management_controller`
+option.
+
+
+Secondly, is the "filename_handling" parameter. If an attacker knows the 
+uploaded file name, this can make their job a bit easier. So we provide three
+options, e.g. uploading the file kitten.jpg:
+
+-------------------------------------
+| Setting | Resulting file name     |
+|---------|-------------------------|
+| prefix  | kitten.Ze1d352rrI3p.jpg |
+| suffix  | kitten.jpg.Ze1d352rrI3p |
+| keep    | kitten.jpg              |
+
+ 
+We recommend "suffix" as this is the most secure, alternatively "prefix" will
+aid in file browsing. However "keep" should always be used with caution!
+
+A very basic, and cut-down, example of a form with an upload field type is given
+here:
+
+```yaml
+file_upload_form:
+  notification:
+    enabled: true
+    attach_files: true                        # Optionally send the file as an email attachment
+  uploads:
+    subdirectory: file_upload_dir             # Optional subdirectory
+  fields:
+    upload:
+      type: file
+      options:
+        required: false
+        label: Picture of your pet that you want us to add to our site
+
+```
+
+File Upload Browsing
+--------------------
+
+When `management_controller` is enabled, a file in the `base_directory` 
+location is accessible via `http://your-site.com/boltforms/download?file=filename.ext`.
+
+These files can be listed via the Twig funciton `boltforms_uploads()`, e.g.  
+
+```twig
+{{ boltforms_uploads() }}
+```
+
+This can be limited to a form's (optionally defined) subdirectory by passing the
+form name into `boltforms_uploads()`, e.g.
+
+```twig
+{{ boltforms_uploads('file_upload_form') }}
+```
+
 Redirect after submit
 ---------------------
 
