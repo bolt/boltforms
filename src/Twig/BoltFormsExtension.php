@@ -6,11 +6,9 @@ use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Extension;
-use Bolt\Helpers\Arr;
 use ReCaptcha\ReCaptcha;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Twig functions for BoltForms
