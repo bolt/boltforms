@@ -3,6 +3,8 @@
 namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
+use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
+use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Extension;
 use Bolt\Helpers\Arr;
 use ReCaptcha\ReCaptcha;
@@ -105,10 +107,13 @@ class BoltFormsExtension extends \Twig_Extension
             // Check reCaptcha, if enabled.
             $recaptchaResponse = $this->app['boltforms']->getReCaptchaResponses($this->app['request']);
 
-            if ($sent = $this->app['boltforms']->processRequest($formname, $recaptchaResponse)) {
+            try {
+                $sent = $this->app['boltforms']->processRequest($formname, $recaptchaResponse);
                 $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
-            } else {
-                $error = isset($this->config[$formname]['feedback']['error']) ? $this->config[$formname]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit';
+            } catch (FileUploadException $e) {
+                $error = $e->getMessage();
+            } catch (FileUploadException $e) {
+                $error = $e->getMessage();
             }
         }
 

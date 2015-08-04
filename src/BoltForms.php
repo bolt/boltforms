@@ -6,6 +6,8 @@ use Bolt;
 use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
+use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
+use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use ReCaptcha\ReCaptcha;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -35,19 +37,11 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class BoltForms
 {
-    /**
-     * @var Application
-     */
+    /** @var Application */
     private $app;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $config;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $forms;
 
     /**
@@ -283,7 +277,7 @@ class BoltForms
             return true;
         }
 
-        return false;
+        throw new FormValidationException(isset($this->config[$formname]['feedback']['error']) ? $this->config[$formname]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit');
     }
 
     /**
@@ -328,10 +322,14 @@ class BoltForms
             }
 
             // Handle file uploads
-            if ($value instanceof UploadedFile && $value->isValid()) {
+            if ($value instanceof UploadedFile) {
                 if (!$this->config['uploads']['enabled']) {
                     $this->app['logger.system']->debug('[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.', array('event' => 'extensions'));
                     continue;
+                }
+
+                if (!$value->isValid()) {
+                    throw new FileUploadException($value->getErrorMessage());
                 }
 
                 // Get the upload object
