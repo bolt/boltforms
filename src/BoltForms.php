@@ -79,7 +79,7 @@ class BoltForms
     {
         $options['csrf_protection'] = $this->config['csrf'];
         $this->forms[$formname] = $this->app['form.factory']->createNamedBuilder($formname, $type, $data, $options)
-                                                            ->addEventSubscriber(new BoltFormsSubscriber())
+                                                            ->addEventSubscriber(new BoltFormsSubscriber($this->app))
                                                             ->getForm();
     }
 
