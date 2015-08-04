@@ -70,7 +70,7 @@ class FileUpload
 
     public function __toString()
     {
-        return (string) $this->file;
+        return $this->fullPath;
     }
 
     /**
@@ -101,6 +101,24 @@ class FileUpload
     public function fullPath()
     {
         return $this->fullPath;
+    }
+
+    /**
+     * Relative path of the file upload.
+     *
+     * @return string
+     */
+    public function relativePath()
+    {
+        if (!$this->config['uploads']['enabled']) {
+            throw new \RuntimeException('The relative path is not valid when uploads are disabled!');
+        }
+
+        if (strpos($this->fullPath, $this->config['uploads']['base_directory']) !== 0 ) {
+            throw new \RuntimeException('The relative path is not valid before the file is moved!');
+        }
+
+        return str_replace($this->config['uploads']['base_directory'], '', $this->fullPath, 1);
     }
 
     /**

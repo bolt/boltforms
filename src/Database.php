@@ -133,7 +133,7 @@ class Database
 
             // Handle file storage preparation here
             if ($value instanceof FileUpload && $value->isValid()) {
-                $data[$key] = $value->fullPath();
+                $data[$key] = $value->relativePath();
             }
         }
 
