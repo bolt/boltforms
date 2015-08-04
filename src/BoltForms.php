@@ -323,22 +323,20 @@ class BoltForms
 
             // Handle file uploads
             if ($value instanceof UploadedFile) {
-                if (!$this->config['uploads']['enabled']) {
-                    $this->app['logger.system']->debug('[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.', array('event' => 'extensions'));
-                    continue;
-                }
-
                 if (!$value->isValid()) {
                     throw new FileUploadException($value->getErrorMessage());
                 }
 
                 // Get the upload object
-                $fileUpload = new FileUpload($this->app, $formname, $value);
+                $formdata[$field] = new FileUpload($this->app, $formname, $value);
+
+                if (!$this->config['uploads']['enabled']) {
+                    $this->app['logger.system']->debug('[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.', array('event' => 'extensions'));
+                    continue;
+                }
 
                 // Take configured actions on the file
-                if ($fileUpload->move()) {
-                    $formdata[$field] = $fileUpload;
-                }
+                $formdata[$field]->move();
             }
         }
 

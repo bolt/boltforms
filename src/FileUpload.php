@@ -64,6 +64,8 @@ class FileUpload
         $this->app = $app;
         $this->formname = $formname;
         $this->file = $file;
+        $this->fullPath = (string) $file;
+        $this->fileName = basename($this->fullPath);
         $this->valid = $file->isValid();
         $this->config = $app[Extension::CONTAINER]->config;
     }
@@ -100,10 +102,6 @@ class FileUpload
      */
     public function fullPath()
     {
-        if ($this->fullPath === null) {
-            throw new FileUploadException('Full path not available until upload is handled.');
-        }
-
         return $this->fullPath;
     }
 
