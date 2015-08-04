@@ -8,8 +8,8 @@ use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use ReCaptcha\ReCaptcha;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Core API functions for BoltForms

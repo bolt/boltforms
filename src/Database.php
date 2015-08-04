@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Silex\Application;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Database functions for BoltForms

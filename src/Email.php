@@ -3,7 +3,6 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 use Silex\Application;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Email functions for BoltForms
