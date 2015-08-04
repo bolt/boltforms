@@ -231,6 +231,7 @@ class FileUpload
                 $extension
                 );
             $this->fullPath = $this->getTargetFileDirectory() . DIRECTORY_SEPARATOR . $fileName;
+            $i++;
         }
 
         $this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", array('event' => 'extensions'));
