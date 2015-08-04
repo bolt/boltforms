@@ -153,6 +153,121 @@ form name into `boltforms_uploads()`, e.g.
 {{ boltforms_uploads('file_upload_form') }}
 ```
 
+Custom Field Data Providers
+---------------------------
+
+BoltForms allows you to specify, and customise, certain input data. This is done
+via event dispatchers.
+
+The default events that can be used to get field data are:
+  - next_increment
+  - random_string
+  - server_value
+  - session_value
+
+#### Examples
+
+Set the `remote_member_id` field value to the maximum value of the column, 
+plus one, i.e. (`MAX(remote_member_id) + 1`). So this works as an autoincrement.
+
+```yaml
+    remote_member_id:
+      type: hidden
+      options:
+        label: false
+      event: 
+        name: next_increment
+        params:
+          table: bolt_tablename       # Optional
+#         contenttype: pages          # Optional/alternative to table:
+          column: remote_member_id    # Required
+          min: 31000                  # Optional
+```
+
+Set the `randomfield` field value to a randomized string.
+
+```yaml
+    randomfield:
+      type: hidden
+      options:
+        label: false
+      event: 
+        name: random_string
+        params:
+          length: 12                  # Optional, defaults to 12
+```
+
+Set the `remote_ip` field value to the remote address (IP) from the $_SERVER variables
+
+```yaml
+    remote_ip:
+      type: hidden
+      options:
+        label: false
+      event: 
+        name: server_value
+        params:
+          key: REMOTE_ADDR
+```
+
+Set the `testkey` field value to the value for the session variable named "testkey"
+
+```yaml
+    testkey:
+      type: hidden
+      options:
+        label: false
+      event: 
+        name: session_value
+        params:
+          key: testkey
+```
+
+#### Extending Available Events
+
+Should you want to provide your own extension with a data event, you can specify
+a custom event name and parameters in the field definition, e.g.:
+
+```yaml
+    my_custom_field:
+      type: hidden
+      options:
+        label: false
+      event: 
+        name: favourite_colour
+        params:
+          foo: bar 
+```
+
+The in your extension you can add a listener on the event name, prefixed with
+`boltforms.` (notice the dot) and provide a callback function that provides
+the data you want set in the field.
+
+```php
+public function initialize()
+{
+    $eventName = 'boltforms.favourite_colour';
+    $this->app['dispatcher']->addListener($eventName,  array($this, 'myCustomDataProvider'));
+}
+```
+
+In the callback function, you can access any passed in parameters with `$event->eventParams()`
+and persist the new data with `$event->setData()`.
+
+```php
+public function myCustomDataProvider($event)
+{
+    $params = $event->eventParams();
+    if (isset($params['foo']) && $params['foo'] === 'bar') {
+        $colour = 'green';
+    } else {
+        $colour = 'blue';
+    }
+    
+    $event->setData($colour);
+}
+```
+
 Redirect after submit
 ---------------------
 
