@@ -27,4 +27,16 @@ class ExtensionTest extends AbstractBoltFormsUnitTest
         // Check that we're giving warnings for mail
         $this->assertTrue($extension->sendsMail());
     }
+
+    public function testGetConfigKeys()
+    {
+        $extension = $this->getExtension();
+        $keys = $extension->getConfigKeys();
+
+        $this->assertContains('csrf', $keys);
+        $this->assertContains('recaptcha', $keys);
+        $this->assertContains('templates', $keys);
+        $this->assertContains('debug', $keys);
+        $this->assertContains('uploads', $keys);
+    }
 }
