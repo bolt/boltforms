@@ -59,4 +59,15 @@
            </arguments>
         </listener>
     </listeners>
+    <filter>
+        <blacklist>
+            <directory>vendor</directory>
+            <directory>lib</directory>
+            <file>init.php</file>
+        </blacklist>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <file>Extension.php</file>
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
 </phpunit>
