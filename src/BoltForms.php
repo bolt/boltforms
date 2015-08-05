@@ -206,13 +206,14 @@ class BoltForms
      */
     public function handleRequest($formname, $request = null, $callback = null, $arguments = array())
     {
+
         //
         if (!$this->app['request']->request->has($formname)) {
             return false;
         }
 
         if (!$request) {
-            $request = Request::createFromGlobals();
+            $request = $this->app['request'];
         }
 
         //
