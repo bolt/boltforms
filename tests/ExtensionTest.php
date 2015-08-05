@@ -8,16 +8,23 @@ use Bolt\Extension\Bolt\BoltForms\Extension;
 /**
  * Ensure that BoltForms loads correctly.
  *
+ * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class ExtensionTest extends BoltUnitTest
+class ExtensionTest extends AbstractBoltFormsUnitTest
 {
     public function testExtensionRegister()
     {
         $app = $this->getApp();
-        $extension = new Extension($app);
-        $app['extensions']->register( $extension );
+        $extension = $this->getExtension($app);
+
+        // Check getName() returns the correct value
         $name = $extension->getName();
         $this->assertSame($name, 'BoltForms');
-        $this->assertSame($extension, $app["extensions.$name"]);
+
+        // Check that we're able to use "safe Twig"
+        $this->assertTrue($extension->isSafe());
+
+        // Check that we're giving warnings for mail
+        $this->assertTrue($extension->sendsMail());
     }
 }
