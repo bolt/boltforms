@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Core API functions for BoltForms
  *
- * Copyright (C) 2014 Gawain Lynch
+ * Copyright (C) 2014-2015 Gawain Lynch
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
