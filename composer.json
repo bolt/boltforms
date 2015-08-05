@@ -25,10 +25,15 @@
 				"",
 				"src/"
 			],
-			"Bolt\\Extension\\Bolt\\BoltForms\\Tests\\" : "tests/",
 			"ReCaptcha\\" : "lib/ReCaptcha/"
 		}
 	},
+    "autoload-dev" : {
+        "psr-4" : {
+			"Bolt\\Extension\\Bolt\\BoltForms\\Tests\\" : "tests/",
+            "Bolt\\Tests\\" : "vendor/bolt/bolt/tests/phpunit/unit/"
+        }
+    },
 	"extra" : {
 		"branch-alias" : {
 			"dev-master" : "2.2.*-dev"
