@@ -2,8 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
-use Bolt\Tests\BoltUnitTest;
 use Bolt\Extension\Bolt\BoltForms\Extension;
+use Bolt\Tests\BoltUnitTest;
 
 /**
  * Base class for BoltForms testing.
@@ -102,7 +102,7 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
                 ),
             ),
             'submit' => array(
-                'type' => 'submit',
+                'type'    => 'submit',
                 'options' => array()
             ),
         );

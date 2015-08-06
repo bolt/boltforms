@@ -1,12 +1,9 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
-use Bolt\Tests\BoltUnitTest;
-use Bolt\Extension\Bolt\BoltForms\Extension;
 use Bolt\Extension\Bolt\BoltForms\FileUpload;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * FileUpload class tests.
@@ -44,7 +41,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
         $upload = new FileUpload($app, 'contact', $fileUpload);
 
-        $this->setExpectedException( '\RuntimeException', 'The relative path is not valid when uploads are disabled!');
+        $this->setExpectedException('\RuntimeException', 'The relative path is not valid when uploads are disabled!');
         $upload->relativePath();
     }
 
@@ -56,7 +53,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
         $upload = new FileUpload($app, 'contact', $fileUpload);
 
-        $this->setExpectedException( '\RuntimeException', 'The relative path is not valid before the file is moved!');
+        $this->setExpectedException('\RuntimeException', 'The relative path is not valid before the file is moved!');
         $upload->relativePath();
     }
 

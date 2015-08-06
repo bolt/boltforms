@@ -2,12 +2,9 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
-use Bolt\Tests\BoltUnitTest;
-use Bolt\Extension\Bolt\BoltForms\Extension;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Database;
 use Bolt\Extension\Bolt\BoltForms\Email;
-use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsCustomDataSubscriber;
 
 /**
  * BoltFormsServiceProvider tests.

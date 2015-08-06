@@ -2,9 +2,8 @@
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
-use Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension;
-use Bolt\Tests\BoltUnitTest;
 use Bolt\Extension\Bolt\BoltForms\Extension;
+use Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -152,8 +151,6 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $this->assertRegExp('#The thing was sent#', (string) $html);
     }
 
-
-
     public function testTwigBoltFormsUploads()
     {
         $app = $this->getApp();
@@ -181,7 +178,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
 
         $fs = new Filesystem();
-        if(!$fs->exists($tmpDir)) {
+        if (!$fs->exists($tmpDir)) {
             $fs->mkdir($tmpDir);
         }
         $fs->copy($srcFile, "$tmpDir/bolt-logo.png", true);

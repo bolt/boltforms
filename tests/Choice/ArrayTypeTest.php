@@ -1,8 +1,6 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
-use Bolt\Tests\BoltUnitTest;
-use Bolt\Extension\Bolt\BoltForms\Extension;
 use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 
 /**
