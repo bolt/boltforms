@@ -242,7 +242,7 @@ a custom event name and parameters in the field definition, e.g.:
           foo: bar 
 ```
 
-The in your extension you can add a listener on the event name, prefixed with
+Then in your extension you can add a listener on the event name, prefixed with
 `boltforms.` (notice the dot) and provide a callback function that provides
 the data you want set in the field.
 
