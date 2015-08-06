@@ -120,7 +120,7 @@ class FileUpload
             throw new \RuntimeException('The relative path is not valid before the file is moved!');
         }
 
-        return str_replace($this->config['uploads']['base_directory'], '', $this->fullPath, 1);
+        return ltrim(str_replace($this->config['uploads']['base_directory'], '', $this->fullPath), '/');
     }
 
     /**
