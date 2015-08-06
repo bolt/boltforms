@@ -301,8 +301,7 @@ class BoltForms
             );
         }
 
-        $rc = new ReCaptcha($this->config['recaptcha']['private_key']);
-        $reCaptchaResponse = $rc->verify($request->get('g-recaptcha-response'), $request->getClientIp());
+        $reCaptchaResponse = $this->app['recaptcha']->verify($request->get('g-recaptcha-response'), $request->getClientIp());
 
         return array(
             'success'    => $reCaptchaResponse->isSuccess(),
