@@ -1,0 +1,193 @@
+<?php
+namespace Bolt\Extension\Bolt\BoltForms\Tests;
+
+use Bolt\Extension\Bolt\BoltForms\BoltForms;
+use Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension;
+use Bolt\Tests\BoltUnitTest;
+use Bolt\Extension\Bolt\BoltForms\Extension;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\Request;
+
+/**
+ * FileUpload class tests.
+ *
+ * @author Gawain Lynch <gawain.lynch@gmail.com>
+ */
+class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
+{
+    public function testConstructor()
+    {
+        $app = $this->getApp();
+        $twigExt = new BoltFormsExtension($app);
+
+        $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension', $twigExt);
+        $this->assertSame($twigExt->getName(), 'boltforms.extension');
+    }
+
+    public function testInitRuntime()
+    {
+        $app = $this->getApp();
+        $twigExt = new BoltFormsExtension($app);
+        $environment = new \Twig_Environment();
+        $twigExt->initRuntime($environment);
+    }
+
+    public function testFunctions()
+    {
+        $app = $this->getApp();
+        $twigExt = new BoltFormsExtension($app);
+        $functions = $twigExt->getFunctions();
+
+        $this->assertArrayHasKey('boltforms', $functions);
+        $this->assertArrayHasKey('boltforms_uploads', $functions);
+
+        $this->assertInstanceOf('\Twig_Function_Method', $functions['boltforms']);
+        $this->assertInstanceOf('\Twig_Function_Method', $functions['boltforms_uploads']);
+    }
+
+    public function testTwigBoltForms()
+    {
+        $app = $this->getApp();
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+
+        $boltforms->makeForm('contact');
+        $fields = $this->formValues();
+
+        $boltforms->addFieldArray('contact', $fields);
+
+        $html_pre = 'This is the HTML before';
+        $html_post = 'The thing was sent';
+        $data = array();
+        $options = array();
+
+        $twigExt = new BoltFormsExtension($app);
+
+        // Request a non-exist form
+        $html = $twigExt->twigBoltForms('koalas');
+        $this->assertInstanceOf('\Twig_Markup', $html);
+        $this->assertSame("<p><strong>BoltForms is missing the configuration for the form named 'koalas'!</strong></p>", (string) $html);
+
+        // Now a real one
+        $html = $twigExt->twigBoltForms('contact', $html_pre, $html_post, $data, $options);
+        $this->assertInstanceOf('\Twig_Markup', $html);
+        $this->assertRegExp('#This is the HTML before#', (string) $html);
+    }
+
+    public function testTwigBoltFormsPost()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+
+        $parameters = array(
+            'contact' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello'
+            )
+        );
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('contact');
+        $fields = $this->formValues();
+        $boltforms->addFieldArray('contact', $fields);
+        $app['boltforms'] = $boltforms;
+
+        $html_pre = 'This is the HTML before';
+        $html_post = 'The thing was sent';
+        $data = array();
+        $options = array();
+
+        $twigExt = new BoltFormsExtension($app);
+
+        $html = $twigExt->twigBoltForms('contact', $html_pre, $html_post, $data, $options);
+        $this->assertInstanceOf('\Twig_Markup', $html);
+
+        $this->assertRegExp('#<p class="boltform-message">Message submission sucessful</p>#', (string) $html);
+        $this->assertRegExp('#The thing was sent#', (string) $html);
+    }
+
+    public function testTwigBoltFormsPostReCaptcha()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['recaptcha']['enabled'] = true;
+        $this->getExtension($app)->config['recaptcha']['private_key'] = 'abc123';
+        $this->getExtension($app)->config['csrf'] = false;
+
+        $reResponse = new \ReCaptcha\Response(true);
+        $recaptcha = $this->getMock('\ReCaptcha\ReCaptcha', array('verify'), array('abc123'));
+        $recaptcha
+            ->expects($this->any())
+            ->method('verify')
+            ->will($this->returnValue($reResponse));
+        $app['recaptcha'] = $recaptcha;
+
+        $parameters = array(
+            'contact' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello'
+            )
+        );
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('contact');
+        $fields = $this->formValues();
+        $boltforms->addFieldArray('contact', $fields);
+        $app['boltforms'] = $boltforms;
+
+        $html_pre = 'This is the HTML before';
+        $html_post = 'The thing was sent';
+        $data = array();
+        $options = array();
+
+        $twigExt = new BoltFormsExtension($app);
+
+        $html = $twigExt->twigBoltForms('contact', $html_pre, $html_post, $data, $options);
+        $this->assertInstanceOf('\Twig_Markup', $html);
+
+        $this->assertRegExp('#<p class="boltform-message">Message submission sucessful</p>#', (string) $html);
+        $this->assertRegExp('#The thing was sent#', (string) $html);
+    }
+
+
+
+    public function testTwigBoltFormsUploads()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension($app)->config['contact']['uploads']['subdirectory'] = 'contact';
+
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+
+        $boltforms->makeForm('contact');
+        $fields = $this->formValues();
+
+        $boltforms->addFieldArray('contact', $fields);
+        $app['boltforms'] = $boltforms;
+
+        $twigExt = new BoltFormsExtension($app);
+
+        // Invalid directory
+        $html = $twigExt->twigBoltFormsUploads('koala');
+        $this->assertInstanceOf('\Twig_Markup', $html);
+        $this->assertSame('<p><strong>Invalid upload directory</strong></p>', (string) $html);
+
+        // Valid
+        $tmpDir = sys_get_temp_dir() . '/contact';
+        $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
+
+        $fs = new Filesystem();
+        if(!$fs->exists($tmpDir)) {
+            $fs->mkdir($tmpDir);
+        }
+        $fs->copy($srcFile, "$tmpDir/bolt-logo.png", true);
+
+        $html = $twigExt->twigBoltFormsUploads('contact');
+        $this->assertInstanceOf('\Twig_Markup', $html);
+        $this->assertRegExp('#<a href="/boltforms/download\?file=bolt-logo.png">bolt-logo.png</a>#', (string) $html);
+    }
+}
