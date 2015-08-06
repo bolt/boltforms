@@ -229,7 +229,7 @@ class FileUpload
                 $pattern,
                 pathinfo($originalName, PATHINFO_FILENAME) . "($i)",
                 $extension
-                );
+            );
             $this->fullPath = $this->getTargetFileDirectory() . DIRECTORY_SEPARATOR . $fileName;
             $i++;
         }
