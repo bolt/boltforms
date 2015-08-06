@@ -169,13 +169,15 @@ class BoltFormsExtension extends \Twig_Extension
             ->ignoreVCS(true)
         ;
 
-        // Render the Twig
-        $html = $this->app['render']->render(
-        $this->config['templates']['files'], array(
+        $twigvalues = array(
             'directories' => $finder->directories(),
             'files'       => $finder->files(),
             'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download'
-        ));
+        );
+
+        // Render the Twig
+        $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets');
+        $html = $this->app['render']->render($this->config['templates']['files'], $twigvalues);
 
         return new \Twig_Markup($html, 'UTF-8');
     }
