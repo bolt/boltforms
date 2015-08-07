@@ -30,8 +30,8 @@
 	},
     "autoload-dev" : {
         "psr-4" : {
-			"Bolt\\Extension\\Bolt\\BoltForms\\Tests\\" : "tests/",
-            "Bolt\\Tests\\" : "vendor/bolt/bolt/tests/phpunit/unit/"
+		"Bolt\\Extension\\Bolt\\BoltForms\\Tests\\" : "tests/",
+		"Bolt\\Tests\\" : "vendor/bolt/bolt/tests/phpunit/unit/"
         }
     },
 	"extra" : {
