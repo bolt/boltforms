@@ -12,9 +12,9 @@ use Bolt\Tests\BoltUnitTest;
  */
 abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
 {
-    public function getApp()
+    public function getApp($boot = true)
     {
-        $app = parent::getApp();
+        $app = parent::getApp($boot);
         $extension = new Extension($app);
         $app['extensions']->register($extension);
 
