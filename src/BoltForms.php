@@ -241,12 +241,15 @@ class BoltForms
     /**
      * Process a form's POST request.
      *
-     * @param string $formname
-     * @param array  $recaptchaResponse
+     * @param string  $formname
+     * @param array   $recaptchaResponse
+     * @param boolean $returnData
      *
-     * @return boolean
+     * @throws FormValidationException
+     *
+     * @return boolean|array
      */
-    public function processRequest($formname, array $recaptchaResponse)
+    public function processRequest($formname, array $recaptchaResponse, $returnData = false)
     {
         $formdata = $this->handleRequest($formname);
         $sent = $this->getForm($formname)->isSubmitted();
@@ -276,6 +279,10 @@ class BoltForms
             // Redirect if a redirect is set and the page exists
             if (isset($conf['feedback']['redirect']) && is_array($conf['feedback']['redirect'])) {
                 $this->redirect($formname, $formdata);
+            }
+
+            if ($returnData) {
+                return $formdata;
             }
 
             return true;
@@ -314,6 +321,8 @@ class BoltForms
      *
      * @param array $formdata
      *
+     * @throws FileUploadException
+     *
      * @return array
      */
     protected function processFields($formname, array $formdata)
@@ -351,6 +360,13 @@ class BoltForms
         return $formdata;
     }
 
+    /**
+     * Dispatch custom data events.
+     *
+     * @param string $formname
+     * @param string $field
+     * @param mixed  $value
+     */
     protected function dispatchCustomDataEvent($formname, $field, $value)
     {
         $fieldConfig = $this->config[$formname]['fields'][$field];
