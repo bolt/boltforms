@@ -58,9 +58,9 @@ class Database
 
         // Don't try to write to a non-existant table
         $sm = $this->app['db']->getSchemaManager();
-        if (! $sm->tablesExist(array($tablename))) {
+        if (!$sm->tablesExist(array($tablename))) {
             // log failed attempt
-            $this->app['logger.system']->info("Failed attempt to save Bolt Forms info: missing database table {$tablename}", array('event' => 'extensions'));
+            $this->app['logger.system']->info("Failed attempt to save Bolt Forms submission: missing database table `$tablename`", array('event' => 'extensions'));
             return false;
         }
 
