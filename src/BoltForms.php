@@ -206,8 +206,6 @@ class BoltForms
      */
     public function handleRequest($formname, $request = null, $callback = null, $arguments = array())
     {
-
-        //
         if (!$this->app['request']->request->has($formname)) {
             return false;
         }
@@ -216,7 +214,7 @@ class BoltForms
             $request = $this->app['request'];
         }
 
-        //
+        // Handle the Request object to check if the data sent is valid
         $this->forms[$formname]->handleRequest($request);
 
         // Test if form, as submitted, passes validation
