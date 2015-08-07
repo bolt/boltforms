@@ -7,7 +7,7 @@ use Silex\Application;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * File upload handler for BoltForms
@@ -37,7 +37,7 @@ class FileUpload
     private $app;
     /** @var string */
     private $formName;
-    /** @var \Symfony\Component\HttpFoundation\File\File */
+    /** @var \Symfony\Component\HttpFoundation\File\UploadedFile */
     private $file;
     /** @var array */
     private $config;
@@ -59,7 +59,7 @@ class FileUpload
      * @param string      $formName
      * @param File        $file
      */
-    public function __construct(Application $app, $formName, File $file)
+    public function __construct(Application $app, $formName, UploadedFile $file)
     {
         $this->app = $app;
         $this->formName = $formName;
