@@ -47,6 +47,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     public function testTwigBoltForms()
     {
         $app = $this->getApp();
+        $this->getExtension($app)->config['testing_form']['fields'] = $this->formValues();
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
 
@@ -77,6 +78,8 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['testing_form']['fields'] = $this->formValues();
+        $this->getExtension($app)->config['testing_form']['feedback']['success'] = 'Well, that worked!';
 
         $parameters = array(
             'testing_form' => array(
@@ -103,7 +106,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $html = $twigExt->twigBoltForms('testing_form', $html_pre, $html_post, $data, $options);
         $this->assertInstanceOf('\Twig_Markup', $html);
 
-        $this->assertRegExp('#<p class="boltform-message">Message submission sucessful</p>#', (string) $html);
+        $this->assertRegExp('#<p class="boltform-message">Well, that worked!</p>#', (string) $html);
         $this->assertRegExp('#The thing was sent#', (string) $html);
     }
 
@@ -113,6 +116,8 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['recaptcha']['enabled'] = true;
         $this->getExtension($app)->config['recaptcha']['private_key'] = 'abc123';
         $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['testing_form']['fields'] = $this->formValues();
+        $this->getExtension($app)->config['testing_form']['feedback']['success'] = 'Well, that worked!';
 
         $reResponse = new \ReCaptcha\Response(true);
         $recaptcha = $this->getMock('\ReCaptcha\ReCaptcha', array('verify'), array('abc123'));
@@ -147,7 +152,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $html = $twigExt->twigBoltForms('testing_form', $html_pre, $html_post, $data, $options);
         $this->assertInstanceOf('\Twig_Markup', $html);
 
-        $this->assertRegExp('#<p class="boltform-message">Message submission sucessful</p>#', (string) $html);
+        $this->assertRegExp('#<p class="boltform-message">Well, that worked!</p>#', (string) $html);
         $this->assertRegExp('#The thing was sent#', (string) $html);
     }
 
