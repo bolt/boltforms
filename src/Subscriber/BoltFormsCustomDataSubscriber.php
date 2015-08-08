@@ -51,7 +51,7 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
      */
     public function nextIncrement(BoltFormsCustomDataEvent $event)
     {
-        $params = $event->eventParams();
+        $params = $event->getParameters();
 
         if (isset($params['table'])) {
             $table = $params['table'];
@@ -73,7 +73,7 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
      */
     public function randomString(BoltFormsCustomDataEvent $event)
     {
-        $params = $event->eventParams();
+        $params = $event->getParameters();
         $length = isset($params['length']) ? $params['length'] : 12;
         $event->setData($this->app['randomgenerator']->generateString($length));
     }
@@ -85,7 +85,7 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
      */
     public function serverValue(BoltFormsCustomDataEvent $event)
     {
-        $params = $event->eventParams();
+        $params = $event->getParameters();
         if (!isset($params['key'])) {
             return;
         }
@@ -100,7 +100,7 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
      */
     public function sessionValue(BoltFormsCustomDataEvent $event)
     {
-        $params = $event->eventParams();
+        $params = $event->getParameters();
         if (!isset($params['key'])) {
             return;
         }

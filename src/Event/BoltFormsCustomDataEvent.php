@@ -50,7 +50,7 @@ class BoltFormsCustomDataEvent extends Event
      *
      * @return string
      */
-    public function eventName()
+    public function getName()
     {
         return $this->eventName;
     }
@@ -60,7 +60,7 @@ class BoltFormsCustomDataEvent extends Event
      *
      * @return array
      */
-    public function eventParams()
+    public function getParameters()
     {
         return $this->eventParams;
     }

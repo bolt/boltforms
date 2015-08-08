@@ -15,8 +15,8 @@ class BoltFormsCustomDataEventTest extends AbstractBoltFormsUnitTest
         $event = new BoltFormsCustomDataEvent('koala', array('leaves'));
         $event->setData('gum-leaves');
 
-        $this->assertSame('koala', $event->eventName());
-        $this->assertSame(array('leaves'), $event->eventParams());
+        $this->assertSame('koala', $event->getName());
+        $this->assertSame(array('leaves'), $event->getParameters());
         $this->assertSame('gum-leaves', $event->getData());
     }
 }
