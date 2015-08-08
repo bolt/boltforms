@@ -28,6 +28,8 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['debug']['enabled'] = false;
         $this->getExtension($app)->config['testing_form']['notification']['enabled'] = true;
         $this->getExtension($app)->config['testing_form']['notification']['debug'] = false;
+        $this->getExtension($app)->config['testing_form']['notification']['to_name'] = 'Kenny Koala';
+        $this->getExtension($app)->config['testing_form']['notification']['to_email'] = 'kenny.koala@example.com';
         $this->getExtension($app)->config['testing_form']['notification']['from_name'] = 'Gawain Lynch';
         $this->getExtension($app)->config['testing_form']['notification']['from_email'] = 'gawain@example.com';
         $this->getExtension($app)->config['testing_form']['notification']['cc_name'] = 'Bob den Otter';
