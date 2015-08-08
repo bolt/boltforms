@@ -20,6 +20,7 @@ before_script:
   # Set up Composer
   - composer self-update || true
   - composer install --prefer-dist
+  - composer require bolt/bolt:dev-release/2.2
 
 script:
   # PHPUnit
