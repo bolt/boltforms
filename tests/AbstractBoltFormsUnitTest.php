@@ -101,6 +101,20 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
                     'multiple' => false
                 ),
             ),
+            'file' => array(
+                'type'    => 'file',
+                'options' => array(
+                    'required' => false,
+                    'label'    => 'Attach a file',
+                ),
+            ),
+            'date' => array(
+                'type'    => 'date',
+                'options' => array(
+                    'required' => false,
+                    'label'    => 'When should we call',
+                ),
+            ),
             'submit' => array(
                 'type'    => 'submit',
                 'options' => array()

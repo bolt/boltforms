@@ -73,7 +73,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $this->assertRegExp('#<link href="/extensions/vendor/bolt/boltforms/css/boltforms.css" rel="stylesheet" type="text/css" />#', $html);
         $this->assertRegExp('#<div class="boltform">#', $html);
         $this->assertRegExp('#var RecaptchaOptions =#', $html);
-        $this->assertRegExp('#<form method="post" action="" name="">#', $html);
+        $this->assertRegExp('#<form method="post" action="" name="" enctype="multipart/form-data">#', $html);
         $this->assertRegExp('#<ul class="boltform-error">#', $html);
         $this->assertRegExp('#<li class="boltform-errors"></li>#', $html);
         $this->assertRegExp('#<label for="form_message" class="required"></label>#', $html);
