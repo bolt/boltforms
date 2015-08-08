@@ -2,9 +2,9 @@
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * BoltForms class tests.
@@ -139,12 +139,12 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
                 'file'    => null,
                 'date'    => array(
                     'date' => array(
-                        'day' => '23',
+                        'day'   => '23',
                         'month' => '10',
-                        'year' => '2010',
+                        'year'  => '2010',
                     ),
                     'time' => array(
-                        'hour' => '18',
+                        'hour'   => '18',
                         'minute' => '15',
                     ),
                 )
