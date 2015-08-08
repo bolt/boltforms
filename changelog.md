@@ -1,6 +1,6 @@
 # Changelog for Bolt Forms
 
-* 2.2.0 (2015-08-05)
+* 2.2.0 (2015-08-08)
 
  * Add ability to define a redirect page after submit (credit @jadwigo & @sbani)
  * Only use reCaptcha when required (credit @sbani)
