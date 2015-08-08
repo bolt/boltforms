@@ -409,17 +409,31 @@ class BoltForms
      *
      * @param array $redirect
      * @param array $formdata
+     *
+     * @return string
      */
     private function getRedirectQuery(array $redirect, $formdata)
     {
+        if (!isset($redirect['query']) || empty($redirect['query'])) {
+            return '';
+        }
+
         $query = array();
-        if (Arr::isIndexedArray($redirect['query'])) {
-            foreach ($redirect['query'] as $param) {
-                $query[$param] = $formdata[$param];
+        if (is_array($redirect['query'])) {
+            if (Arr::isIndexedArray($redirect['query'])) {
+                foreach ($redirect['query'] as $param) {
+                    $query[$param] = $formdata[$param];
+                }
+            } else {
+                foreach ($redirect['query'] as $id => $param) {
+                    $query[$id] = $formdata[$param];
+                }
             }
         } else {
-            $query = $redirect['query'];
+            $param = $redirect['query'];
+            $query[$param] = $formdata[$param];
         }
+
 
         return '?' . http_build_query($query);
     }
@@ -430,7 +444,7 @@ class BoltForms
      * @param array  $redirect
      * @param string $query
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|null
      */
     private function getRedirectResponse(array $redirect, $query)
     {
