@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
  * Core API functions for BoltForms
@@ -451,11 +452,15 @@ class BoltForms
     {
         if (strpos($redirect['target'], 'http') === 0) {
             return $this->app->redirect($redirect['target'] . $query);
-        } elseif ($redirectpage = $this->app['storage']->getContent($redirect['target'])) {
-            return new RedirectResponse($redirectpage->link() . $query);
+        } else {
+            try {
+                $url = '/' . ltrim($redirect['target'], '/');
+                $this->app['url_matcher']->match($url);
+                return new RedirectResponse($url . $query);
+            } catch (ResourceNotFoundException $e) {
+                // No route found… Go home site admin, you're… um… putting a bad route in!
+                return;
+            }
         }
-
-        // No route found
-        return;
     }
 }
