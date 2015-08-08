@@ -118,4 +118,129 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
 
         $this->assertTrue($result);
     }
+
+    public function testRedirectUrl()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['contact']['feedback']['redirect']['target'] = 'http://example.com';
+
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('contact');
+        $fields = $this->formValues();
+        $boltforms->addFieldArray('contact', $fields);
+
+        $parameters = array(
+            'contact' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello'
+            )
+        );
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $result = $boltforms->processRequest('contact', array('success' => true));
+
+        $this->assertTrue($result);
+        $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com" />#');
+    }
+
+    public function testRedirectUrlQueryIndex()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['contact']['feedback']['redirect']['target'] = 'http://example.com';
+        $this->getExtension($app)->config['contact']['feedback']['redirect']['query'] = array('name', 'email');
+
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('contact');
+        $fields = $this->formValues();
+        $boltforms->addFieldArray('contact', $fields);
+
+        $parameters = array(
+            'contact' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello'
+            )
+        );
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $result = $boltforms->processRequest('contact', array('success' => true));
+
+        $this->assertTrue($result);
+        $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com\?name=Gawain\+Lynch&amp;email=gawain.lynch%40gmail.com" />#');
+    }
+
+    public function testRedirectUrlQueryAssoc()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['contact']['feedback']['redirect']['target'] = 'http://example.com';
+        $this->getExtension($app)->config['contact']['feedback']['redirect']['query'] = array('person' => 'name', 'address' => 'email');
+
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('contact');
+        $fields = $this->formValues();
+        $boltforms->addFieldArray('contact', $fields);
+
+        $parameters = array(
+            'contact' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello'
+            )
+        );
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $result = $boltforms->processRequest('contact', array('success' => true));
+
+        $this->assertTrue($result);
+        $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com\?person=Gawain\+Lynch&amp;address=gawain.lynch%40gmail.com" />#');
+    }
+
+    public function testRedirectRecord()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['contact']['feedback']['redirect']['target'] = 'page/koalas';
+        $this->getExtension($app)->config['contact']['feedback']['redirect']['query'] = 'name';
+
+        $content = $this->getMock('\Bolt\Content', array('link'), array($app));
+        $content->expects($this->any())
+            ->method('link')
+            ->will($this->returnValue('/page/koalas'));
+        $storage = $this->getMock('\Bolt\Storage', array('getContent'), array($app));
+        $storage->expects($this->any())
+            ->method('getContent')
+            ->will($this->returnValue($content));
+        $app['storage'] = $storage;
+
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('contact');
+        $fields = $this->formValues();
+        unset($fields['array_index']);
+        unset($fields['array_assoc']);
+        unset($fields['lookup']);
+
+        $boltforms->addFieldArray('contact', $fields);
+
+        $parameters = array(
+            'contact' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello'
+            )
+        );
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $result = $boltforms->processRequest('contact', array('success' => true));
+
+        $this->assertTrue($result);
+        $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=/page/koalas\?name=Gawain\+Lynch" />#');
+    }
 }
