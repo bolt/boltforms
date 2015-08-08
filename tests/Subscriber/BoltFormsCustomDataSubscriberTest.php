@@ -25,19 +25,19 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $app = $this->getApp(false);
         $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['contact']['fields']['next_inc'] = $nextIncField;
+        $this->getExtension($app)->config['testing_form']['fields']['next_inc'] = $nextIncField;
 
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
 
         $fields = $this->formValues();
         $fields['next_inc'] = $nextIncField;
 
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
-            'contact' => array(
+            'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
                 'message' => 'Hello'
@@ -73,7 +73,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
             ->willReturn(array('id' => 1));
         $app['users'] = $users;
 
-        $result = $boltforms->processRequest('contact', array('success' => true), true);
+        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
@@ -95,19 +95,19 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $app = $this->getApp(false);
         $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['contact']['fields']['random_str'] = $randomStringField;
+        $this->getExtension($app)->config['testing_form']['fields']['random_str'] = $randomStringField;
 
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
 
         $fields = $this->formValues();
         $fields['random_str'] = $randomStringField;
 
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
-            'contact' => array(
+            'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
                 'message' => 'Hello'
@@ -116,7 +116,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/', 'POST', $parameters);
         $app->boot();
 
-        $result = $boltforms->processRequest('contact', array('success' => true), true);
+        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('random_str', $result);
         $this->assertSame(22, strlen($result['random_str']));
@@ -137,19 +137,19 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $app = $this->getApp(false);
         $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['contact']['fields']['server_val'] = $serverValueField;
+        $this->getExtension($app)->config['testing_form']['fields']['server_val'] = $serverValueField;
 
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
 
         $fields = $this->formValues();
         $fields['server_val'] = $serverValueField;
 
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
-            'contact' => array(
+            'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
                 'message' => 'Hello'
@@ -159,7 +159,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/', 'POST', $parameters, array(), array(), array('SCRIPT_NAME' => $_SERVER['SCRIPT_NAME']));
         $app->boot();
 
-        $result = $boltforms->processRequest('contact', array('success' => true), true);
+        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('server_val', $result);
         $this->assertSame($_SERVER['SCRIPT_NAME'], $result['server_val']);
@@ -180,19 +180,19 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $app = $this->getApp(false);
         $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['contact']['fields']['session_value'] = $sessionValueField;
+        $this->getExtension($app)->config['testing_form']['fields']['session_value'] = $sessionValueField;
 
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
 
         $fields = $this->formValues();
         $fields['session_value'] = $sessionValueField;
 
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
-            'contact' => array(
+            'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
                 'message' => 'Hello'
@@ -203,7 +203,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app->boot();
         $app['session']->set('koala', 'gum-leaves');
 
-        $result = $boltforms->processRequest('contact', array('success' => true), true);
+        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('session_value', $result);
         $this->assertSame('gum-leaves', $result['session_value']);

@@ -16,7 +16,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
-        $boltforms = new FileUpload($app, 'contact', $fileUpload);
+        $boltforms = new FileUpload($app, 'testing_form', $fileUpload);
 
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\FileUpload', $boltforms);
     }
@@ -25,7 +25,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
 
         $this->assertSame(__FILE__, $upload->__toString());
         $this->assertSame(__FILE__, $upload->fullPath());
@@ -39,7 +39,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['uploads']['enabled'] = false;
 
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
 
         $this->setExpectedException('\RuntimeException', 'The relative path is not valid when uploads are disabled!');
         $upload->relativePath();
@@ -51,7 +51,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['uploads']['enabled'] = true;
 
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
 
         $this->setExpectedException('\RuntimeException', 'The relative path is not valid before the file is moved!');
         $upload->relativePath();
@@ -64,7 +64,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['uploads']['base_directory'] = dirname(__FILE__);
 
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
 
         $path = $upload->relativePath();
         $this->assertSame($path, basename(__FILE__));
@@ -81,7 +81,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -91,7 +91,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $this->getExtension($app)->config['contact']['uploads']['subdirectory'] = 'contact';
+        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
 
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
@@ -100,7 +100,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -110,12 +110,12 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $this->getExtension($app)->config['contact']['uploads']['subdirectory'] = 'contact';
+        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
         $this->getExtension($app)->config['uploads']['filename_handling'] = 'prefix';
 
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
-        $tmpDir = sys_get_temp_dir() . '/contact';
+        $tmpDir = sys_get_temp_dir() . '/testing_form';
 
         $fs = new Filesystem();
         if ($fs->exists($tmpDir)) {
@@ -124,7 +124,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -135,12 +135,12 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $this->getExtension($app)->config['contact']['uploads']['subdirectory'] = 'contact';
+        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
         $this->getExtension($app)->config['uploads']['filename_handling'] = 'suffix';
 
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
-        $tmpDir = sys_get_temp_dir() . '/contact';
+        $tmpDir = sys_get_temp_dir() . '/testing_form';
 
         $fs = new Filesystem();
         if ($fs->exists($tmpDir)) {
@@ -149,7 +149,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -161,11 +161,11 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $app = $this->getApp();
         $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
         $this->getExtension($app)->config['uploads']['filename_handling'] = 'keep';
-        $this->getExtension($app)->config['contact']['uploads']['subdirectory'] = 'contact';
+        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
 
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
-        $tmpDir = sys_get_temp_dir() . '/contact';
+        $tmpDir = sys_get_temp_dir() . '/testing_form';
 
         $fs = new Filesystem();
         if ($fs->exists($tmpDir)) {
@@ -174,7 +174,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -186,11 +186,11 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $app = $this->getApp();
         $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
         $this->getExtension($app)->config['uploads']['filename_handling'] = 'keep';
-        $this->getExtension($app)->config['contact']['uploads']['subdirectory'] = 'contact';
+        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
 
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
-        $tmpDir = sys_get_temp_dir() . '/contact';
+        $tmpDir = sys_get_temp_dir() . '/testing_form';
 
         $fs = new Filesystem();
         if ($fs->exists($tmpDir)) {
@@ -199,13 +199,13 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'contact', $fileUpload);
+        $upload = new FileUpload($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());

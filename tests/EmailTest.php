@@ -26,25 +26,25 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $app = $this->getApp();
         $this->getExtension($app)->config['csrf'] = false;
         $this->getExtension($app)->config['debug']['enabled'] = false;
-        $this->getExtension($app)->config['contact']['notification']['enabled'] = true;
-        $this->getExtension($app)->config['contact']['notification']['debug'] = false;
-        $this->getExtension($app)->config['contact']['notification']['from_name'] = 'Gawain Lynch';
-        $this->getExtension($app)->config['contact']['notification']['from_email'] = 'gawain@example.com';
-        $this->getExtension($app)->config['contact']['notification']['cc_name'] = 'Bob den Otter';
-        $this->getExtension($app)->config['contact']['notification']['cc_email'] = 'bob@example.com';
-        $this->getExtension($app)->config['contact']['notification']['bcc_name'] = 'Lodewijk Evers';
-        $this->getExtension($app)->config['contact']['notification']['bcc_email'] = 'lodewijk@example.com';
+        $this->getExtension($app)->config['testing_form']['notification']['enabled'] = true;
+        $this->getExtension($app)->config['testing_form']['notification']['debug'] = false;
+        $this->getExtension($app)->config['testing_form']['notification']['from_name'] = 'Gawain Lynch';
+        $this->getExtension($app)->config['testing_form']['notification']['from_email'] = 'gawain@example.com';
+        $this->getExtension($app)->config['testing_form']['notification']['cc_name'] = 'Bob den Otter';
+        $this->getExtension($app)->config['testing_form']['notification']['cc_email'] = 'bob@example.com';
+        $this->getExtension($app)->config['testing_form']['notification']['bcc_name'] = 'Lodewijk Evers';
+        $this->getExtension($app)->config['testing_form']['notification']['bcc_email'] = 'lodewijk@example.com';
 
         $app['request'] = Request::create('/');
 
         $boltforms = new BoltForms($app);
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
         $fields = $this->formValues();
 
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
-            'contact' => array(
+            'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
                 'message' => 'Hello',
@@ -53,7 +53,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $boltforms->processRequest('contact', array('success' => true));
+        $result = $boltforms->processRequest('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }

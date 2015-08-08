@@ -20,11 +20,11 @@ class BoltFormsEventTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
 
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
         $fields = $this->formValues();
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
 
-        $evt = new FormEvent($boltforms->getForm('contact'), array('koala' => 'leaves'));
+        $evt = new FormEvent($boltforms->getForm('testing_form'), array('koala' => 'leaves'));
         $event = new BoltFormsEvent($evt);
 
         $this->assertInstanceOf('Symfony\Component\Form\FormEvent', $event->getEvent());

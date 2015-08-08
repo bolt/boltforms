@@ -50,10 +50,10 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
 
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
         $fields = $this->formValues();
 
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
 
         $html_pre = 'This is the HTML before';
         $html_post = 'The thing was sent';
@@ -68,7 +68,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $this->assertSame("<p><strong>BoltForms is missing the configuration for the form named 'koalas'!</strong></p>", (string) $html);
 
         // Now a real one
-        $html = $twigExt->twigBoltForms('contact', $html_pre, $html_post, $data, $options);
+        $html = $twigExt->twigBoltForms('testing_form', $html_pre, $html_post, $data, $options);
         $this->assertInstanceOf('\Twig_Markup', $html);
         $this->assertRegExp('#This is the HTML before#', (string) $html);
     }
@@ -79,7 +79,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['csrf'] = false;
 
         $parameters = array(
-            'contact' => array(
+            'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
                 'message' => 'Hello'
@@ -88,9 +88,9 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $boltforms = new BoltForms($app);
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
         $fields = $this->formValues();
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
         $app['boltforms'] = $boltforms;
 
         $html_pre = 'This is the HTML before';
@@ -100,7 +100,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
 
         $twigExt = new BoltFormsExtension($app);
 
-        $html = $twigExt->twigBoltForms('contact', $html_pre, $html_post, $data, $options);
+        $html = $twigExt->twigBoltForms('testing_form', $html_pre, $html_post, $data, $options);
         $this->assertInstanceOf('\Twig_Markup', $html);
 
         $this->assertRegExp('#<p class="boltform-message">Message submission sucessful</p>#', (string) $html);
@@ -123,7 +123,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $app['recaptcha'] = $recaptcha;
 
         $parameters = array(
-            'contact' => array(
+            'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
                 'message' => 'Hello'
@@ -132,9 +132,9 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $boltforms = new BoltForms($app);
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
         $fields = $this->formValues();
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
         $app['boltforms'] = $boltforms;
 
         $html_pre = 'This is the HTML before';
@@ -144,7 +144,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
 
         $twigExt = new BoltFormsExtension($app);
 
-        $html = $twigExt->twigBoltForms('contact', $html_pre, $html_post, $data, $options);
+        $html = $twigExt->twigBoltForms('testing_form', $html_pre, $html_post, $data, $options);
         $this->assertInstanceOf('\Twig_Markup', $html);
 
         $this->assertRegExp('#<p class="boltform-message">Message submission sucessful</p>#', (string) $html);
@@ -155,15 +155,15 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $this->getExtension($app)->config['contact']['uploads']['subdirectory'] = 'contact';
+        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
 
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
 
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
         $fields = $this->formValues();
 
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
         $app['boltforms'] = $boltforms;
 
         $twigExt = new BoltFormsExtension($app);
@@ -174,7 +174,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $this->assertSame('<p><strong>Invalid upload directory</strong></p>', (string) $html);
 
         // Valid
-        $tmpDir = sys_get_temp_dir() . '/contact';
+        $tmpDir = sys_get_temp_dir() . '/testing_form';
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
 
         $fs = new Filesystem();
@@ -183,7 +183,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         }
         $fs->copy($srcFile, "$tmpDir/bolt-logo.png", true);
 
-        $html = $twigExt->twigBoltFormsUploads('contact');
+        $html = $twigExt->twigBoltFormsUploads('testing_form');
         $this->assertInstanceOf('\Twig_Markup', $html);
         $this->assertRegExp('#<a href="/boltforms/download\?file=bolt-logo.png">bolt-logo.png</a>#', (string) $html);
     }

@@ -29,25 +29,25 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['csrf'] = false;
         $this->getExtension($app)->config['uploads']['enabled'] = true;
         $this->getExtension($app)->config['uploads']['base_directory'] = __DIR__;
-        $this->getExtension($app)->config['contact']['database']['table'] = 'koala';
+        $this->getExtension($app)->config['testing_form']['database']['table'] = 'koala';
 
         $app['request'] = Request::create('/');
 
         $boltforms = new BoltForms($app);
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
         $fields = $this->formValues();
 //         $fields['date'] = array('type' => 'datetime');
 //         $fields['json'] = array('type' => 'text');
         $fields['file'] = array('type' => 'file');
 
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->getParameters($app);
 
         // Mock the database query
         $mocker = new Mock\DoctrineMockBuilder();
         $db = $mocker->getConnectionMock();
-        $sm = $mocker->getSchemaManagerMock($db, true, array_keys($parameters['contact']));
+        $sm = $mocker->getSchemaManagerMock($db, true, array_keys($parameters['testing_form']));
         $db->expects($this->any())
             ->method('getSchemaManager')
             ->will($this->returnValue($sm));
@@ -66,7 +66,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $boltforms->processRequest('contact', array('success' => true));
+        $result = $boltforms->processRequest('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -77,13 +77,13 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['csrf'] = false;
         $this->getExtension($app)->config['uploads']['enabled'] = true;
         $this->getExtension($app)->config['uploads']['base_directory'] = __DIR__;
-        $this->getExtension($app)->config['contact']['database']['contenttype'] = 'koala';
+        $this->getExtension($app)->config['testing_form']['database']['contenttype'] = 'koala';
 
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
-        $boltforms->makeForm('contact');
+        $boltforms->makeForm('testing_form');
         $fields = $this->formValues();
-        $boltforms->addFieldArray('contact', $fields);
+        $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->getParameters($app);
 
@@ -96,7 +96,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $boltforms->processRequest('contact', array('success' => true));
+        $result = $boltforms->processRequest('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -104,13 +104,13 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
     protected function getParameters($app)
     {
         return array(
-            'contact' => array(
+            'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
                 'message' => 'Hello',
 //                 'date'    => new \DateTime('now'),
 //                 'json'    => array('koala', 'leaves'),
-//                 'file'    => new FileUpload($app, 'contact', new UploadedFile(__FILE__, __FILE__, null, null, null, true))
+//                 'file'    => new FileUpload($app, 'testing_form', new UploadedFile(__FILE__, __FILE__, null, null, null, true))
             )
         );
     }
