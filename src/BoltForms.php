@@ -12,6 +12,8 @@ use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Bolt\Helpers\Arr;
 use ReCaptcha\ReCaptcha;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -433,7 +435,6 @@ class BoltForms
             $param = $redirect['query'];
             $query[$param] = $formdata[$param];
         }
-
 
         return '?' . http_build_query($query);
     }
