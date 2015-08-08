@@ -109,10 +109,11 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
                 ),
             ),
             'date' => array(
-                'type'    => 'date',
+                'type'    => 'datetime',
                 'options' => array(
                     'required' => false,
                     'label'    => 'When should we call',
+                    'constraints' => 'DateTime',
                 ),
             ),
             'submit' => array(
