@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 2.2.1 (2015-08-08)
+ * Allow redirects to use all site routes, not just records
+
 * 2.2.0 (2015-08-08)
 
  * Add ability to define a redirect page after submit (credit @jadwigo & @sbani)
