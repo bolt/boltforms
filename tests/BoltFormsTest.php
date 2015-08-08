@@ -3,6 +3,8 @@ namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * BoltForms class tests.
@@ -110,6 +112,145 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
                 'message' => 'Hello'
+            )
+        );
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $result = $boltforms->processRequest('testing_form', array('success' => true));
+
+        $this->assertTrue($result);
+    }
+
+    public function testProcessRequestDateTime()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('testing_form');
+        $fields = $this->formValues();
+        $boltforms->addFieldArray('testing_form', $fields);
+
+        $parameters = array(
+            'testing_form' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello',
+                'file'    => null,
+                'date'    => array(
+                    'date' => array(
+                        'day' => '23',
+                        'month' => '10',
+                        'year' => '2010',
+                    ),
+                    'time' => array(
+                        'hour' => '18',
+                        'minute' => '15',
+                    ),
+                )
+            )
+        );
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $result = $boltforms->processRequest('testing_form', array('success' => true));
+
+        $this->assertTrue($result);
+    }
+
+    public function testProcessRequestFileUploadInvalid()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
+        $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
+
+        $fs = new Filesystem();
+        $fs->copy($srcFile, $tmpFile, true);
+
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('testing_form');
+        $fields = $this->formValues();
+        $boltforms->addFieldArray('testing_form', $fields);
+
+        $parameters = array(
+            'testing_form' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello',
+                'file'    => new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, false),
+                'date'    => null
+            )
+        );
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $this->setExpectedException('Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException');
+
+        $result = $boltforms->processRequest('testing_form', array('success' => true));
+
+        $this->assertFalse($result);
+    }
+
+    public function testProcessRequestFileUploadDisabled()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['uploads']['enabled'] = false;
+        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
+        $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
+
+        $fs = new Filesystem();
+        $fs->copy($srcFile, $tmpFile, true);
+
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('testing_form');
+        $fields = $this->formValues();
+        $boltforms->addFieldArray('testing_form', $fields);
+
+        $parameters = array(
+            'testing_form' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello',
+                'file'    => new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true),
+                'date'    => null
+            )
+        );
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $result = $boltforms->processRequest('testing_form', array('success' => true));
+
+        $this->assertTrue($result);
+    }
+
+    public function testProcessRequestFileUploadEnabled()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['uploads']['enabled'] = true;
+        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
+        $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
+
+        $fs = new Filesystem();
+        $fs->copy($srcFile, $tmpFile, true);
+
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('testing_form');
+        $fields = $this->formValues();
+        $boltforms->addFieldArray('testing_form', $fields);
+
+        $parameters = array(
+            'testing_form' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello',
+                'file'    => new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true),
+                'date'    => null
             )
         );
         $app['request'] = Request::create('/', 'POST', $parameters);
