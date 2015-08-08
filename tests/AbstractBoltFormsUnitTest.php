@@ -2,8 +2,10 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
+use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Extension;
 use Bolt\Tests\BoltUnitTest;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Base class for BoltForms testing.
@@ -111,8 +113,8 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
             'date' => array(
                 'type'    => 'datetime',
                 'options' => array(
-                    'required' => false,
-                    'label'    => 'When should we call',
+                    'required'    => false,
+                    'label'       => 'When should we call',
                     'constraints' => 'DateTime',
                 ),
             ),
@@ -121,5 +123,30 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
                 'options' => array()
             ),
         );
+    }
+
+    protected function formProcessRequest($app)
+    {
+        $this->getExtension($app)->config['csrf'] = false;
+
+        $app['request'] = Request::create('/');
+
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('testing_form');
+
+        $fields = $this->formValues();
+        $boltforms->addFieldArray('testing_form', $fields);
+
+        $parameters = array(
+            'testing_form' => array(
+                'name'    => 'Gawain Lynch',
+                'email'   => 'gawain.lynch@gmail.com',
+                'message' => 'Hello'
+            )
+        );
+
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        return $boltforms->processRequest('testing_form', array('success' => true));
     }
 }
