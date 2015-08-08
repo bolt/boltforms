@@ -2,11 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
-use Bolt\Application;
-use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Controller\UploadManagement;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Symfony\Component\HttpFoundation\Request;
 
 class UploadManagementTest extends AbstractBoltFormsUnitTest
@@ -32,7 +28,6 @@ class UploadManagementTest extends AbstractBoltFormsUnitTest
 
         $this->assertSame(200, $route->getStatusCode());
         $this->assertInstanceOf('\Symfony\Component\HttpFoundation\BinaryFileResponse', $route);
-
     }
 
     public function testDownloadRoute404()

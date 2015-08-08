@@ -2,10 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
-use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Tests\Mocks\DoctrineMockBuilder;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -14,12 +11,12 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
     public function testNextIncrement()
     {
         $nextIncField = array(
-            'type' => 'hidden',
+            'type'    => 'hidden',
             'options' => array('label' => false),
-            'event' => array(
-                'name' => 'next_increment',
+            'event'   => array(
+                'name'   => 'next_increment',
                 'params' => array(
-                    'table' => 'koalas',
+                    'table'  => 'koalas',
                     'column' => 'gum_leaves',
                     'min'    => 42
                 )
@@ -86,10 +83,10 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
     public function testRandomString()
     {
         $randomStringField = array(
-            'type' => 'hidden',
+            'type'    => 'hidden',
             'options' => array('label' => false),
-            'event' => array(
-                'name' => 'random_string',
+            'event'   => array(
+                'name'   => 'random_string',
                 'params' => array(
                     'length' => 22
                 )
@@ -128,10 +125,10 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
     public function testServerValue()
     {
         $serverValueField = array(
-            'type' => 'hidden',
+            'type'    => 'hidden',
             'options' => array('label' => false),
-            'event' => array(
-                'name' => 'server_value',
+            'event'   => array(
+                'name'   => 'server_value',
                 'params' => array(
                     'key' => 'SCRIPT_NAME'
                 )
@@ -171,10 +168,10 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
     public function testSessionValue()
     {
         $sessionValueField = array(
-            'type' => 'hidden',
+            'type'    => 'hidden',
             'options' => array('label' => false),
-            'event' => array(
-                'name' => 'session_value',
+            'event'   => array(
+                'name'   => 'session_value',
                 'params' => array(
                     'key' => 'koala'
                 )

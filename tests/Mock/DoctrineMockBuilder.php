@@ -28,23 +28,23 @@ class DoctrineMockBuilder extends \Bolt\Tests\Mocks\DoctrineMockBuilder
             )
             ->getMock();
 
-            $mock->expects($this->any())
+        $mock->expects($this->any())
                 ->method('prepare')
                 ->will($this->returnValue($this->getStatementMock()));
 
-            $mock->expects($this->any())
+        $mock->expects($this->any())
                 ->method('query')
                 ->will($this->returnValue($this->getStatementMock()));
 
-            $mock->expects($this->any())
+        $mock->expects($this->any())
                 ->method('createQueryBuilder')
                 ->will($this->returnValue($this->getQueryBuilderMock($mock)));
 
-            $mock->expects($this->any())
+        $mock->expects($this->any())
                 ->method('getDatabasePlatform')
                 ->will($this->returnValue($this->getDatabasePlatformMock()));
 
-            return $mock;
+        return $mock;
     }
 
     /**
@@ -73,7 +73,6 @@ class DoctrineMockBuilder extends \Bolt\Tests\Mocks\DoctrineMockBuilder
      */
     public function getSchemaManagerMock($db, $tablesExist = true, $columns = array())
     {
-
         $mock = $this->getMockForAbstractClass(
             'Doctrine\DBAL\Schema\AbstractSchemaManager',
             array($db),

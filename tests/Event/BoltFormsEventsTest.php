@@ -2,7 +2,6 @@
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * BoltForms class tests.
