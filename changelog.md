@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 2.2.2 (2015-08-09)
+ * Fix reCaptch displaying error on GET
+ 
 * 2.2.1 (2015-08-08)
  * Allow redirects to use all site routes, not just records
 
