@@ -58,7 +58,7 @@
         <br>
 
         <div class="boltforms-row{% if form.submit.vars.attr.class is defined %} boltforms-{{ form.submit.vars.attr.class }}-row{% endif %}">
-            {{ form_row(form.submit) }}
+            {{ form_widget(form.submit) }}
         </div>
 
     {{ form_end(form) }}
