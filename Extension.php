@@ -93,7 +93,8 @@ class Extension extends \Bolt\BaseExtension
          * Management controller
          */
         if ($this->config['uploads']['management_controller']) {
-            $this->app->mount('/' . $this->config['uploads']['base_uri'], new Controller\UploadManagement());
+            $url = '/' . ltrim($this->config['uploads']['base_uri'], '/');
+            $this->app->mount($url, new Controller\UploadManagement());
         }
     }
 
