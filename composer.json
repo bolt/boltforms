@@ -3,7 +3,7 @@
 	"description" : "Symfony Forms API for bolt",
 	"type" : "bolt-extension",
 	"keywords" : [
-		""
+		"forms", "contact", "comments", "reCaptcha", "uploads"
 	],
 	"require" : {
 		"bolt/bolt" : ">=2.1.0,<3.0.0"
