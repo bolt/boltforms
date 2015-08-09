@@ -91,7 +91,10 @@ class BoltFormsExtension extends \Twig_Extension
         $sent = false;
         $message = '';
         $error = '';
-        $recaptchaResponse = false;
+        $recaptchaResponse = array(
+            'success'    => true,
+            'errorCodes' => null
+        );
 
         $this->app['boltforms']->makeForm($formname, 'form', $data, $options);
 
