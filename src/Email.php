@@ -2,6 +2,7 @@
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
+use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
 use Silex\Application;
 
 /**
@@ -56,13 +57,8 @@ class Email
     {
         $emailconfig = $this->getEmailConfig($formname, $formdata);
 
-        //
         $this->doCompose($formconfig, $emailconfig, $formdata);
-
-        //
         $this->doAddress($emailconfig);
-
-        //
         $this->doSend($emailconfig);
     }
 
@@ -269,7 +265,7 @@ class Email
             $debug = true;
 
             if (empty($this->config['debug']['address'])) {
-                trigger_error('[BoltForms] Debug email address can not be empty if debugging enabled!', E_USER_ERROR);
+                throw new EmailException('[BoltForms] Debug email address can not be empty if debugging enabled!');
             } else {
                 $debug_address = $this->config['debug']['address'];
             }
