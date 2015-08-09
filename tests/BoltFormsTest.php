@@ -81,7 +81,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $this->assertRegExp('#<label for="form_message" class="required"></label>#', $html);
         $this->assertRegExp('#<script src="https://www.google.com/recaptcha/api.js\?hl=en-GB" async defer></script>#', $html);
         $this->assertRegExp('#<div class="g-recaptcha" data-sitekey=""></div>#', $html);
-        $this->assertRegExp('#<div><button type="submit" id="testing_form_submit" name="testing_form\[submit\]">Submit</button></div>#', $html);
+        $this->assertRegExp('#<button type="submit" id="testing_form_submit" name="testing_form\[submit\]">Submit</button>#', $html);
         $this->assertRegExp('#<label for="testing_form_name" class="required">Name</label>#', $html);
         $this->assertRegExp('#<input type="text" id="testing_form_name" name="testing_form\[name\]" required="required"    placeholder="Your name..." />#', $html);
         $this->assertRegExp('#<label for="testing_form_email" class="required">Email address</label>#', $html);
