@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
+use Bolt\Extension\Bolt\BoltForms\Extension;
+use Symfony\Component\HttpFoundation\Request;
 /**
  * Ensure that BoltForms loads correctly.
  *
@@ -35,5 +37,30 @@ class ExtensionTest extends AbstractBoltFormsUnitTest
         $this->assertContains('templates', $keys);
         $this->assertContains('debug', $keys);
         $this->assertContains('uploads', $keys);
+    }
+
+    public function testExtensionController()
+    {
+        $app = $this->getApp();
+        $app['request'] = Request::create('/');
+        $this->getExtension($app)->config['uploads']['management_controller'] = true;
+        $this->getExtension($app)->config['uploads']['base_uri'] = 'koala-country';
+
+        $app[Extension::CONTAINER]->initialize();
+    }
+
+    public function testExtensionTwig()
+    {
+        $app = $this->getApp();
+        $config = $this->getMock('\Bolt\Config', array('getWhichEnd'), array($app));
+        $config->expects($this->any())
+            ->method('getWhichEnd')
+            ->will($this->returnValue('frontend'));
+        $app['config'] = $config;
+        $app[Extension::CONTAINER]->initialize();
+
+        $twigExt = $app['twig']->getExtension('boltforms.extension');
+        $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension', $twigExt);
+        $this->assertSame('boltforms.extension', $twigExt->getName());
     }
 }
