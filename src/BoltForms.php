@@ -461,6 +461,7 @@ class BoltForms
             try {
                 $url = '/' . ltrim($redirect['target'], '/');
                 $this->app['url_matcher']->match($url);
+
                 return new RedirectResponse($url . $query);
             } catch (ResourceNotFoundException $e) {
                 // No route found… Go home site admin, you're… um… putting a bad route in!

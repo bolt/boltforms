@@ -350,15 +350,14 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['feedback']['redirect']['target'] = 'page/koalas';
         $this->getExtension($app)->config['testing_form']['feedback']['redirect']['query'] = 'name';
 
-        $content = $this->getMock('\Bolt\Content', array('link'), array($app));
-        $content->expects($this->any())
-            ->method('link')
+        $matcher = $this->getMockBuilder('\Bolt\Routing\UrlMatcher')
+            ->disableOriginalConstructor()
+            ->setMethods(array('match'))
+            ->getMock();
+        $matcher->expects($this->any())
+            ->method('match')
             ->will($this->returnValue('/page/koalas'));
-        $storage = $this->getMock('\Bolt\Storage', array('getContent'), array($app));
-        $storage->expects($this->any())
-            ->method('getContent')
-            ->will($this->returnValue($content));
-        $app['storage'] = $storage;
+        $app['url_matcher'] = $matcher;
 
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
