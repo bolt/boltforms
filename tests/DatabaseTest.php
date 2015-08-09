@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\BoltForms\Database;
 use Bolt\Extension\Bolt\BoltForms\FileUpload;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * BoltForms\Database class tests.
@@ -36,10 +37,6 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
         $fields = $this->formValues();
-//         $fields['date'] = array('type' => 'datetime');
-//         $fields['json'] = array('type' => 'text');
-        $fields['file'] = array('type' => 'file');
-
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->getParameters($app);
@@ -103,14 +100,32 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
     protected function getParameters($app)
     {
+        // Upload file set up
+        $this->getExtension($app)->config['uploads']['enabled'] = true;
+        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
+        $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
+
+        $fs = new Filesystem();
+        $fs->copy($srcFile, $tmpFile, true);
+
         return array(
             'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
                 'message' => 'Hello',
-//                 'date'    => new \DateTime('now'),
-//                 'json'    => array('koala', 'leaves'),
-//                 'file'    => new FileUpload($app, 'testing_form', new UploadedFile(__FILE__, __FILE__, null, null, null, true))
+                'file'    => new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true),
+                'date'    => array(
+                    'date' => array(
+                        'day'   => '23',
+                        'month' => '10',
+                        'year'  => '2010',
+                    ),
+                    'time' => array(
+                        'hour'   => '18',
+                        'minute' => '15',
+                    ),
+                )
             )
         );
     }
