@@ -70,22 +70,10 @@ class Extension extends \Bolt\BaseExtension
     public function initialize()
     {
         /*
-         * Config
-         */
-        $this->setConfig();
-
-        /*
          * Provider
          */
         $this->app->register(new Provider\BoltFormsServiceProvider($this->app));
         $this->app->register(new Provider\RecaptchaServiceProvider($this->app));
-
-        /*
-         * Backend
-         */
-        if ($this->app['config']->getWhichEnd() === 'backend') {
-            //
-        }
 
         /*
          * Frontend
@@ -107,15 +95,6 @@ class Extension extends \Bolt\BaseExtension
         if ($this->config['uploads']['management_controller']) {
             $this->app->mount('/' . $this->config['uploads']['base_uri'], new Controller\UploadManagement());
         }
-    }
-
-    /**
-     * Post config file loading configuration
-     *
-     * @return void
-     */
-    private function setConfig()
-    {
     }
 
     /**
