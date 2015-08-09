@@ -8,6 +8,9 @@
 	"require" : {
 		"bolt/bolt" : ">=2.1.0,<3.0.0"
 	},
+    "suggest": {
+        "rossriley/formeditor": "A UI editor for form configuration."
+    },
 	"license" : "GPL-3.0+",
 	"authors" : [{
 			"name" : "Gawain Lynch",
