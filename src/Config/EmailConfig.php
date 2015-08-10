@@ -295,28 +295,25 @@ class EmailConfig implements \ArrayAccess
 
     public function offsetGet($offset)
     {
-        $offset = $this->toSnakeCase($offset);
+        $offset = $this->toPsr2CamelCase($offset);
 
         return isset($this->{$offset}) ? $this->{$offset} : null;
     }
 
     /**
-     * Convert a CamelCase string to snake_case.
+     * Convert a snake_case string to CamelCase PSR-2 property.
      *
      * @param string $input
      *
      * @return string
      */
-    private function toSnakeCase($input)
+    private function toPsr2CamelCase($input)
     {
-        $matches = array();
-        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
-        $ret = $matches[0];
-
-        foreach ($ret as &$match) {
-            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        $parts = explode('_', $input);
+        foreach ($parts as &$part) {
+            $part = ucfirst($part);
         }
 
-        return implode('_', $ret);
+        return lcfirst(implode('', $parts));
     }
 }
