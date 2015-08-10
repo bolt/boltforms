@@ -223,6 +223,20 @@ class Email
                 $this->message->setBcc($emailconfig['bcc_email']);
             }
         }
+
+        /*
+         * ReplyTo
+         */
+        if (! empty($emailconfig['replyto_email'])) {
+            $recipient = array(
+                'replyto_email' => $emailconfig['replyto_email'],
+                'replyto_name'  => isset($emailconfig['replyto_name']) ? $emailconfig['replyto_name'] : ''
+            );
+            
+            $this->message->setReplyTo(array(
+                $recipient['replyto_email'] => $recipient['replyto_name']
+            ));
+        }
     }
 
     /**
@@ -282,14 +296,16 @@ class Email
         $emailconfig = array(
             'debug'         => $debug,
             'debug_address' => $debug_address,
-            'to_name'       => isset($notify_form['to_name'])    ? $notify_form['to_name']    : '',
-            'to_email'      => isset($notify_form['to_email'])   ? $notify_form['to_email']   : '',
-            'from_name'     => isset($notify_form['from_name'])  ? $notify_form['from_name']  : '',
-            'from_email'    => isset($notify_form['from_email']) ? $notify_form['from_email'] : '',
-            'cc_name'       => isset($notify_form['cc_name'])    ? $notify_form['cc_name']    : '',
-            'cc_email'      => isset($notify_form['cc_email'])   ? $notify_form['cc_email']   : '',
-            'bcc_name'      => isset($notify_form['bcc_name'])   ? $notify_form['bcc_name']   : '',
-            'bcc_email'     => isset($notify_form['bcc_email'])  ? $notify_form['bcc_email']  : ''
+            'to_name'       => isset($notify_form['to_name'])       ? $notify_form['to_name']       : '',
+            'to_email'      => isset($notify_form['to_email'])      ? $notify_form['to_email']      : '',
+            'from_name'     => isset($notify_form['from_name'])     ? $notify_form['from_name']     : '',
+            'from_email'    => isset($notify_form['from_email'])    ? $notify_form['from_email']    : '',
+            'cc_name'       => isset($notify_form['cc_name'])       ? $notify_form['cc_name']       : '',
+            'cc_email'      => isset($notify_form['cc_email'])      ? $notify_form['cc_email']      : '',
+            'bcc_name'      => isset($notify_form['bcc_name'])      ? $notify_form['bcc_name']      : '',
+            'bcc_email'     => isset($notify_form['bcc_email'])     ? $notify_form['bcc_email']     : '',
+            'replyto_name'  => isset($notify_form['replyto_name'])  ? $notify_form['replyto_name']  : '',
+            'replyto_email' => isset($notify_form['replyto_email']) ? $notify_form['replyto_email'] : ''
         );
 
         // If any fields rely on posted data populate them now
