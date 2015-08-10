@@ -25,7 +25,7 @@ use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class EmailConfig
+class EmailConfig implements \ArrayAccess
 {
     /** @var array */
     protected $globalConfig;
@@ -266,5 +266,44 @@ class EmailConfig
         }
 
         return $value;
+    }
+
+    public function offsetSet($offset, $value)
+    {
+    }
+
+    public function offsetExists($offset)
+    {
+    }
+
+    public function offsetUnset($offset)
+    {
+    }
+
+    public function offsetGet($offset)
+    {
+        $offset = $this->toSnakeCase($offset);
+
+        return isset($this->{$offset}) ? $this->{$offset} : null;
+    }
+
+    /**
+     * Convert a CamelCase string to snake_case.
+     *
+     * @param string $input
+     *
+     * @return string
+     */
+    private function toSnakeCase($input)
+    {
+        $matches = array();
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
+        $ret = $matches[0];
+
+        foreach ($ret as &$match) {
+            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        }
+
+        return implode('_', $ret);
     }
 }
