@@ -203,16 +203,15 @@ class BoltForms
     /**
      * Handle the request.  Caller must test for POST
      *
-     * @param string   $formname  The name of the form
-     * @param Request  $request
+     * @param string  $formname The name of the form
+     * @param Request $request
      *
-     * @return mixed Success - Submitted form parameters, or passed callback function return value
-     *               Failure - false
+     * @return FormData|null
      */
     public function handleRequest($formname, $request = null)
     {
         if (!$this->app['request']->request->has($formname)) {
-            return false;
+            return;
         }
 
         if (!$request) {
@@ -226,16 +225,18 @@ class BoltForms
         if ($this->forms[$formname]->isValid()) {
 
             // Submitted data
-            return $this->forms[$formname]->getData();
+            $data = $this->forms[$formname]->getData();
+
+            return new FormData($data);
         }
 
-        return false;
+        return;
     }
 
     /**
      * Process a form's POST request.
      *
-     * @param string  $formname
+     * @param string  $formName
      * @param array   $recaptchaResponse
      * @param boolean $returnData
      *
@@ -243,46 +244,82 @@ class BoltForms
      *
      * @return boolean|array
      */
-    public function processRequest($formname, array $recaptchaResponse, $returnData = false)
+    public function processRequest($formName, array $recaptchaResponse, $returnData = false)
     {
-        $formdata = $this->handleRequest($formname);
-        $sent = $this->getForm($formname)->isSubmitted();
+        /** @var FormData $formData */
+        $formData = $this->handleRequest($formName);
+        $sent = $this->getForm($formName)->isSubmitted();
 
-        if ($sent && $formdata && $recaptchaResponse['success']) {
-            $formdata = $this->processFields($formname, $formdata);
-            $conf = $this->config[$formname];
-
-            // Don't keep token data around where not needed
-            unset($formdata['_token']);
+        if ($sent && $formData !== null && $recaptchaResponse['success']) {
+            $this->processFields($formName, $formData);
+            $formConfig = $this->config[$formName];
 
             // Write to a Contenttype
-            if (isset($conf['database']['contenttype']) && $conf['database']['contenttype']) {
-                $this->app['boltforms.database']->writeToContentype($conf['database']['contenttype'], $formdata);
+            if (isset($formConfig['database']['contenttype']) && $formConfig['database']['contenttype']) {
+                $this->app['boltforms.database']->writeToContentype($formConfig['database']['contenttype'], $formData);
             }
 
             // Write to a normal database table
-            if (isset($conf['database']['table']) && $conf['database']['table']) {
-                $this->app['boltforms.database']->writeToTable($conf['database']['table'], $formdata);
+            if (isset($formConfig['database']['table']) && $formConfig['database']['table']) {
+                $this->app['boltforms.database']->writeToTable($formConfig['database']['table'], $formData);
             }
 
             // Send notification email
-            if (isset($conf['notification']['enabled']) && $conf['notification']['enabled']) {
-                $this->app['boltforms.email']->doNotification($conf, $formdata);
+            if (isset($formConfig['notification']['enabled']) && $formConfig['notification']['enabled']) {
+                $this->app['boltforms.email']->doNotification($formConfig, $formData);
             }
 
             // Redirect if a redirect is set and the page exists
-            if (isset($conf['feedback']['redirect']) && is_array($conf['feedback']['redirect'])) {
-                $this->redirect($formname, $formdata);
+            if (isset($formConfig['feedback']['redirect']) && is_array($formConfig['feedback']['redirect'])) {
+                $this->redirect($formName, $formData);
             }
 
             if ($returnData) {
-                return $formdata;
+                return $formData;
             }
 
             return true;
         }
 
-        throw new FormValidationException(isset($this->config[$formname]['feedback']['error']) ? $this->config[$formname]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit');
+        throw new FormValidationException(isset($this->config[$formName]['feedback']['error']) ? $this->config[$formName]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit');
+    }
+
+    /**
+     * Process the fields to get usable data.
+     *
+     * @param string   $formName
+     * @param FormData $formData
+     *
+     * @throws FileUploadException
+     */
+    protected function processFields($formName, FormData $formData)
+    {
+        foreach ($formData->keys() as $fieldName) {
+            $field = $formData->get($fieldName);
+
+            // Handle file uploads
+            if ($field instanceof UploadedFile) {
+                if (! $field->isValid()) {
+                    throw new FileUploadException($field->getErrorMessage());
+                }
+
+                // Get the upload object
+                $formData->set($fieldName, new FileUpload($this->app, $formName, $field));
+
+                if (!$this->config['uploads']['enabled']) {
+                    $this->app['logger.system']->debug('[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.', array('event' => 'extensions'));
+                    continue;
+                }
+
+                // Take configured actions on the file
+                $formData->get($fieldName)->move();
+            }
+
+            // Handle events for custom data
+            if (isset($this->config[$formName]['fields'][$fieldName]['event']['name'])) {
+                $formData->set($fieldName, $this->dispatchCustomDataEvent($formName, $fieldName));
+            }
+        }
     }
 
     /**
@@ -308,51 +345,6 @@ class BoltForms
             'success'    => $reCaptchaResponse->isSuccess(),
             'errorCodes' => $reCaptchaResponse->getErrorCodes()
         );
-    }
-
-    /**
-     * Process the fields to get usable data.
-     *
-     * @param string $formname
-     * @param array  $formdata
-     *
-     * @throws FileUploadException
-     *
-     * @return array
-     */
-    protected function processFields($formname, array $formdata)
-    {
-        foreach ($formdata as $field => $value) {
-            // Handle dates
-            if ($value instanceof \DateTime) {
-                $formdata[$field] = $value->format('c');
-            }
-
-            // Handle file uploads
-            if ($value instanceof UploadedFile) {
-                if (!$value->isValid()) {
-                    throw new FileUploadException($value->getErrorMessage());
-                }
-
-                // Get the upload object
-                $formdata[$field] = new FileUpload($this->app, $formname, $value);
-
-                if (!$this->config['uploads']['enabled']) {
-                    $this->app['logger.system']->debug('[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.', array('event' => 'extensions'));
-                    continue;
-                }
-
-                // Take configured actions on the file
-                $formdata[$field]->move();
-            }
-
-            // Handle events for custom data
-            if (isset($this->config[$formname]['fields'][$field]['event']['name'])) {
-                $formdata[$field] = $this->dispatchCustomDataEvent($formname, $field);
-            }
-        }
-
-        return $formdata;
     }
 
     /**
@@ -386,13 +378,13 @@ class BoltForms
     /**
      * Do a redirect.
      *
-     * @param string $formname
-     * @param array  $formdata
+     * @param string   $formname
+     * @param FormData $formData
      */
-    private function redirect($formname, array $formdata)
+    private function redirect($formname, FormData $formData)
     {
         $redirect = $this->config[$formname]['feedback']['redirect'];
-        $query = $this->getRedirectQuery($redirect, $formdata);
+        $query = $this->getRedirectQuery($redirect, $formData);
 
         $response = $this->getRedirectResponse($redirect, $query);
         if ($response instanceof RedirectResponse) {
@@ -403,12 +395,12 @@ class BoltForms
     /**
      * Build a GET query if required.
      *
-     * @param array $redirect
-     * @param array $formdata
+     * @param array    $redirect
+     * @param FormData $formData
      *
      * @return string
      */
-    private function getRedirectQuery(array $redirect, $formdata)
+    private function getRedirectQuery(array $redirect, FormData $formData)
     {
         if (!isset($redirect['query']) || empty($redirect['query'])) {
             return '';
@@ -418,16 +410,16 @@ class BoltForms
         if (is_array($redirect['query'])) {
             if (Arr::isIndexedArray($redirect['query'])) {
                 foreach ($redirect['query'] as $param) {
-                    $query[$param] = $formdata[$param];
+                    $query[$param] = $formData->get($param);
                 }
             } else {
                 foreach ($redirect['query'] as $id => $param) {
-                    $query[$id] = $formdata[$param];
+                    $query[$id] = $formData->get($param);
                 }
             }
         } else {
             $param = $redirect['query'];
-            $query[$param] = $formdata[$param];
+            $query[$param] = $formData->get($param);
         }
 
         return '?' . http_build_query($query);

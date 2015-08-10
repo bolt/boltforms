@@ -42,14 +42,14 @@ class Database
     /**
      * Write out form data to a specified database table
      *
-     * @param string $tablename
-     * @param array  $data
+     * @param string   $tablename
+     * @param FormData $formData
      *
      * @return boolean
      */
-    public function writeToTable($tablename, array $data)
+    public function writeToTable($tablename, FormData $formData)
     {
-        $savedata = array();
+        $saveData = array();
 
         // Don't try to write to a non-existant table
         $sm = $this->app['db']->getSchemaManager();
@@ -60,78 +60,40 @@ class Database
         }
 
         // Build a new array with only keys that match the database table
+        /** @var \Doctrine\DBAL\Schema\Column[] $columns */
         $columns = $sm->listTableColumns($tablename);
         foreach ($columns as $column) {
             $colname = $column->getName();
-            // only attempt to insert fields with existing data
-            // this way you can have fields in your table that are not in the form
-            // eg. an auto increment id field of a field to track status of a submission
-            if (array_key_exists($colname, $data)) {
-                $savedata[$colname] = $data[$colname];
+            // Only attempt to insert fields with existing data this way you can
+            // have fields in your table that are not in the form eg. an auto
+            // increment id field of a field to track status of a submission
+            if ($formData->has($colname)) {
+                $saveData[$colname] = $formData->get($colname, true);
             }
         }
 
-        $savedata = $this->getData($savedata);
-
-        $this->app['db']->insert($tablename, $savedata);
+        $this->app['db']->insert($tablename, $saveData);
     }
 
     /**
      * Write out form data to a specified contenttype table
      *
-     * @param string $contenttype
-     * @param array  $data
+     * @param string   $contenttype
+     * @param FormData $formData
      */
-    public function writeToContentype($contenttype, array $data)
+    public function writeToContentype($contenttype, FormData $formData)
     {
         // Get an empty record for out contenttype
         $record = $this->app['storage']->getEmptyContent($contenttype);
 
-        $data = $this->getData($data);
-
         // Set a published date
-        if (empty($data['datepublish'])) {
-            $data['datepublish'] = date('Y-m-d H:i:s');
+        if (! $formData->has('datepublish')) {
+            $formData->set('datepublish', date('Y-m-d H:i:s'));
         }
 
         // Store the data array into the record
-        $record->setValues($data);
+        $record->setValues((array) $formData);
 
         $this->app['storage']->saveContent($record);
-    }
-
-    /**
-     * Get the data.
-     *
-     * @param array $data
-     *
-     * @return data
-     */
-    protected function getData(array $data)
-    {
-        foreach ($data as $key => $value) {
-            // Don't try to insert NULLs
-            if ($value === null) {
-                $data[$key] = '';
-            }
-
-            // JSON encode arrays
-            if (is_array($value)) {
-                $data[$key] = json_encode($value);
-            }
-
-            // https://github.com/bolt/bolt/issues/3459
-            // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
-            if ($value instanceof \DateTime) {
-                $data[$key] = $value->format('c');
-            }
-
-            // Handle file storage preparation here
-            if ($value instanceof FileUpload && $value->isValid()) {
-                $data[$key] = $value->relativePath();
-            }
-        }
-
-        return $data;
     }
 }

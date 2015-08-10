@@ -2,6 +2,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
 use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
+use Bolt\Extension\Bolt\BoltForms\FormData;
 
 /**
  * Email configuration for BoltForms
@@ -31,7 +32,7 @@ class EmailConfig implements \ArrayAccess
     protected $globalDebug;
     /** @var array */
     protected $formConfig;
-    /** @var array */
+    /** @var FormData */
     protected $formData;
     /** @var boolean */
     protected $attachFiles;
@@ -60,7 +61,7 @@ class EmailConfig implements \ArrayAccess
     /** @var string */
     protected $replyToEmail;
 
-    public function __construct(array $globalDebug, array $formConfig, array $formData)
+    public function __construct(array $globalDebug, array $formConfig, FormData $formData)
     {
         $this->globalDebug = $globalDebug;
         $this->formConfig = $formConfig;
@@ -273,8 +274,8 @@ class EmailConfig implements \ArrayAccess
      */
     private function getConfigValue($value)
     {
-        if (isset($this->formData[$value])) {
-            return $this->formData[$value];
+        if ($this->formData->has($value)) {
+            return $this->formData->get($value);
         }
 
         return $value;

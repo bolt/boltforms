@@ -45,14 +45,14 @@ class Email
     /**
      * Create a notification message.
      *
-     * @param array $formconfig
-     * @param array $formdata
+     * @param array    $formconfig
+     * @param FormData $formData
      */
-    public function doNotification($formconfig, $formdata)
+    public function doNotification($formconfig, $formData)
     {
-        $emailConfig = new EmailConfig($this->config['debug'], $formconfig, $formdata);
+        $emailConfig = new EmailConfig($this->config['debug'], $formconfig, $formData);
 
-        $this->doCompose($formconfig, $emailConfig, $formdata);
+        $this->doCompose($formconfig, $emailConfig, $formData);
         $this->doAddress($emailConfig);
         $this->doSend($emailConfig);
     }
@@ -62,9 +62,9 @@ class Email
      *
      * @param array       $formconfig
      * @param EmailConfig $emailConfig
-     * @param array       $formdata
+     * @param FormData    $formData
      */
-    private function doCompose($formconfig, EmailConfig $emailConfig, $formdata)
+    private function doCompose($formconfig, EmailConfig $emailConfig, $formData)
     {
         /*
          * Create message object
@@ -88,7 +88,7 @@ class Email
         $html = $this->app['render']->render($templateSubject, array(
             'subject' => $formconfig['notification']['subject'],
             'config'  => $emailConfig,
-            'data'    => $formdata
+            'data'    => $formData
         ));
 
         $subject = new \Twig_Markup($html, 'UTF-8');
@@ -99,7 +99,7 @@ class Email
         $html = $this->app['render']->render($templateEmail, array(
             'fields' => $formconfig['fields'],
             'config' => $emailConfig,
-            'data'   => $this->getBodyData($emailConfig, $formdata)
+            'data'   => $this->getBodyData($emailConfig, $formData)
         ));
 
         $body = new \Twig_Markup($html, 'UTF-8');
@@ -117,26 +117,22 @@ class Email
      * Get the data suitable for using in TWig.
      *
      * @param EmailConfig $emailConfig
-     * @param array       $formdata
+     * @param FormData    $formData
      *
      * @return array
      */
-    private function getBodyData(EmailConfig $emailConfig, array $formdata)
+    private function getBodyData(EmailConfig $emailConfig, FormData $formData)
     {
-        // https://github.com/bolt/bolt/issues/3459
-        // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
         $bodydata = array();
-        foreach ($formdata as $key => $value) {
-            if ($value instanceof \DateTime) {
-                $bodydata[$key] = $value->format('c');
-            } elseif ($value instanceof FileUpload) {
-                if ($value->isValid() && $emailConfig->attachFiles()) {
-                    $attachment = \Swift_Attachment::fromPath($value->fullPath())
-                            ->setFilename($value->getFile()->getClientOriginalName());
+        foreach ($formData->keys() as $key) {
+            if ($formData->get($key) instanceof FileUpload) {
+                if ($formData->get($key)->isValid() && $emailConfig->attachFiles()) {
+                    $attachment = \Swift_Attachment::fromPath($formData->get($key)->fullPath())
+                            ->setFilename($formData->get($key)->getFile()->getClientOriginalName());
                     $this->message->attach($attachment);
                 }
             } else {
-                $bodydata[$key] = $value;
+                $bodydata[$key] = $formData->get($key, true);
             }
         }
 

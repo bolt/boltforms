@@ -154,6 +154,6 @@ class FormData implements \ArrayAccess
 
     public function offsetGet($offset)
     {
-        $this->get($offset);
+        return $this->get($offset);
     }
 }
