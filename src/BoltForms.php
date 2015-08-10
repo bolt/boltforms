@@ -11,7 +11,6 @@ use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Bolt\Helpers\Arr;
-use ReCaptcha\ReCaptcha;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -325,7 +324,8 @@ class BoltForms
     /**
      * Process the fields to get usable data.
      *
-     * @param array $formdata
+     * @param string $formname
+     * @param array  $formdata
      *
      * @throws FileUploadException
      *

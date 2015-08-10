@@ -67,6 +67,9 @@ class Extension extends \Bolt\BaseExtension
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function initialize()
     {
         /*
@@ -101,7 +104,7 @@ class Extension extends \Bolt\BaseExtension
     /**
      * All the non-forms config keys.
      *
-     * @return array
+     * @return string[]
      */
     public function getConfigKeys()
     {

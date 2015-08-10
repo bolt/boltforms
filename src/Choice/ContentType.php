@@ -49,14 +49,14 @@ class ContentType implements ChoiceInterface
     private $choices;
 
     /**
-     * @param Silex\Application $app
-     * @param string            $name Name of the BoltForms field
-     * @param string            $key  A string that takes the format of: 'contenttype::name::labelfield::valuefield'
-     *                                Where:
-     *                                'contenttype' - String constant that always equals 'contenttype'
-     *                                'name'        - Name of the contenttype itself
-     *                                'labelfield'  - Field to use for the UI displayed to the user
-     *                                'valuefield'  - Field to use for the value stored
+     * @param Application $app
+     * @param string      $name Name of the BoltForms field
+     * @param string      $key  A string that takes the format of: 'contenttype::name::labelfield::valuefield'
+     *                          Where:
+     *                          'contenttype' - String constant that always equals 'contenttype'
+     *                          'name'        - Name of the contenttype itself
+     *                          'labelfield'  - Field to use for the UI displayed to the user
+     *                          'valuefield'  - Field to use for the value stored
      */
     public function __construct(Application $app, $name, $key)
     {
@@ -92,7 +92,7 @@ class ContentType implements ChoiceInterface
     /**
      * Get choice values from Contenttype records
      *
-     * @param string $str
+     * @param string $key
      *
      * @return array
      */

@@ -37,9 +37,8 @@ class ArrayType implements ChoiceInterface
     private $choices;
 
     /**
-     * @param Silex\Application $app
-     * @param string            $name    Name of the BoltForms field
-     * @param array             $choices Choices for field
+     * @param string $name    Name of the BoltForms field
+     * @param array  $choices Choices for field
      */
     public function __construct($name, array $choices)
     {
