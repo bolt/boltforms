@@ -5,6 +5,7 @@
  * Moved email notification configuration handling to a separate class
  * Fixed compatibility with PHP 5.3
  * Added "rossriley/formeditor" as a suggested extra package
+ * The default Twig template will now display a warning if notification debugging is on 
 
 * 2.2.2 (2015-08-09)
  * Fix reCaptch displaying error on GET
