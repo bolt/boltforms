@@ -32,7 +32,7 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
         return $app["extensions.BoltForms"];
     }
 
-    protected function formValues()
+    protected function formConfig()
     {
         return array(
             'name' => array(
@@ -134,7 +134,7 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
 
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(

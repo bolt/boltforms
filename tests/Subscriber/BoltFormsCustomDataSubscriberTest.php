@@ -31,7 +31,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
 
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $fields['next_inc'] = $nextIncField;
 
         $boltforms->addFieldArray('testing_form', $fields);
@@ -101,7 +101,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
 
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $fields['random_str'] = $randomStringField;
 
         $boltforms->addFieldArray('testing_form', $fields);
@@ -143,7 +143,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
 
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $fields['server_val'] = $serverValueField;
 
         $boltforms->addFieldArray('testing_form', $fields);
@@ -186,7 +186,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
 
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $fields['session_value'] = $sessionValueField;
 
         $boltforms->addFieldArray('testing_form', $fields);

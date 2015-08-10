@@ -21,7 +21,7 @@ class BoltFormsEventTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
 
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $evt = new FormEvent($boltforms->getForm('testing_form'), array('koala' => 'leaves'));

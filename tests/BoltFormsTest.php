@@ -47,7 +47,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
 
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
 
         $boltforms->addFieldArray('testing_form', $fields);
 
@@ -65,7 +65,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
 
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $html = $boltforms->renderForm('testing_form', null, array('recaptcha' => array('enabled' => true)));
@@ -104,7 +104,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
@@ -128,7 +128,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
@@ -171,7 +171,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
@@ -207,7 +207,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
@@ -241,7 +241,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
@@ -269,7 +269,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
@@ -297,7 +297,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
@@ -325,7 +325,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = array(
@@ -362,7 +362,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formValues();
+        $fields = $this->formConfig();
         unset($fields['array_index']);
         unset($fields['array_assoc']);
         unset($fields['lookup']);
