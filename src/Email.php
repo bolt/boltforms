@@ -151,23 +151,10 @@ class Email
      */
     private function doAddress($emailconfig)
     {
-        /*
-         * From
-         */
-        if (! empty($emailconfig['from_email'])) {
-            $recipient = array(
-                'from_email' => $emailconfig['from_email'],
-                'from_name'  => isset($emailconfig['from_name']) ? $emailconfig['from_name'] : 'BoltForms'
-            );
+        $this->setFrom($emailconfig);
+        $this->setReplyTo($emailconfig);
 
-            $this->message->setFrom(array(
-                $recipient['from_email'] => $recipient['from_name']
-            ));
-        }
-
-        /*
-         * Debug
-         */
+        // If we're in debug mode, don't set anything more
         if (! empty($emailconfig['debug']) && $emailconfig['debug']) {
             $recipient = array(
                 'to_email' => $emailconfig['debug_address'],
@@ -182,9 +169,37 @@ class Email
             return;
         }
 
-        /*
-         * To
-         */
+        $this->setTo($emailconfig);
+        $this->setCc($emailconfig);
+        $this->setBcc($emailconfig);
+    }
+
+    /**
+     * Set From
+     *
+     * @param array $emailconfig
+     */
+    private function setFrom(array $emailconfig)
+    {
+        if (! empty($emailconfig['from_email'])) {
+            $recipient = array(
+                'from_email' => $emailconfig['from_email'],
+                'from_name'  => isset($emailconfig['from_name']) ? $emailconfig['from_name'] : 'BoltForms'
+            );
+
+            $this->message->setFrom(array(
+                $recipient['from_email'] => $recipient['from_name']
+            ));
+        }
+    }
+
+    /**
+     * Set To
+     *
+     * @param array $emailconfig
+     */
+    private function setTo(array $emailconfig)
+    {
         if (! empty($emailconfig['to_email'])) {
             $recipient = array(
                 'to_email' => $emailconfig['to_email'],
@@ -195,10 +210,15 @@ class Email
                 $recipient['to_email'] => $recipient['to_name']
             ));
         }
+    }
 
-        /*
-         * CC
-         */
+    /**
+     * Set CC
+     *
+     * @param array $emailconfig
+     */
+    private function setCc(array $emailconfig)
+    {
         if (! empty($emailconfig['cc_email'])) {
             $recipient = array(
                 'cc_email' => $emailconfig['cc_email'],
@@ -211,10 +231,15 @@ class Email
                 ));
             }
         }
+    }
 
-        /*
-         * BCC
-         */
+    /**
+     * Set bCC
+     *
+     * @param array $emailconfig
+     */
+    private function setBcc(array $emailconfig)
+    {
         if (! empty($emailconfig['bcc_email'])) {
             $recipient = array(
                 'bcc_email' => $emailconfig['bcc_email'],
@@ -227,10 +252,15 @@ class Email
                 ));
             }
         }
+    }
 
-        /*
-         * ReplyTo
-         */
+    /**
+     * Set the ReplyTo
+     *
+     * @param array $emailconfig
+     */
+    private function setReplyTo(array $emailconfig)
+    {
         if (! empty($emailconfig['replyto_email'])) {
             $recipient = array(
                 'replyto_email' => $emailconfig['replyto_email'],
