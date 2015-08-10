@@ -141,8 +141,19 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
             'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
+                'message' => 'Hello',
+                'date'    => array(
+                    'date' => array(
+                        'day'   => '23',
+                        'month' => '10',
+                        'year'  => '2010',
+                    ),
+                    'time' => array(
+                        'hour'   => '18',
+                        'minute' => '15',
+                    ),
+                )
+            ),
         );
 
         $app['request'] = Request::create('/', 'POST', $parameters);
