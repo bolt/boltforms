@@ -36,7 +36,7 @@ class EmailConfig implements \ArrayAccess
     /** @var boolean */
     protected $debug;
     /** @var string */
-    protected $debugAddress;
+    protected $debugEmail;
     /** @var string */
     protected $toName;
     /** @var string */
@@ -92,15 +92,15 @@ class EmailConfig implements \ArrayAccess
             if (empty($this->globalConfig['debug']['address'])) {
                 throw new EmailException('[BoltForms] Debug email address can not be empty if debugging enabled!');
             } else {
-                $this->debugAddress = $this->globalConfig['debug']['address'];
+                $this->debugEmail = $this->globalConfig['debug']['address'];
             }
         } else {
             $this->debug = isset($this->formConfig['debug']) && $this->formConfig['debug'];
 
             if (isset($this->formConfig['debug_address'])) {
-                $this->debugAddress = $this->formConfig['debug_address'];
+                $this->debugEmail = $this->formConfig['debug_address'];
             } else {
-                $this->debugAddress = $this->globalConfig['debug']['address'];
+                $this->debugEmail = $this->globalConfig['debug']['address'];
             }
         }
     }
@@ -120,9 +120,9 @@ class EmailConfig implements \ArrayAccess
      *
      * @return string
      */
-    public function getDebugAddress()
+    public function getDebugEmail()
     {
-        return $this->debugAddress;
+        return $this->debugEmail;
     }
 
     /**
