@@ -60,7 +60,7 @@ class Email
      */
     public function doNotification($formname, $formconfig, $formdata)
     {
-        $emailConfig = new Config\EmailConfig($this->config, $formconfig, $formdata);
+        $emailConfig = new Config\EmailConfig($this->config['debug'], $formconfig, $formdata);
 
         $this->doCompose($formconfig, $emailConfig, $formdata);
         $this->doAddress($emailConfig);

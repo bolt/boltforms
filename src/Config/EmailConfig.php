@@ -28,7 +28,7 @@ use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
 class EmailConfig implements \ArrayAccess
 {
     /** @var array */
-    protected $globalConfig;
+    protected $globalDebug;
     /** @var array */
     protected $formConfig;
     /** @var array */
@@ -58,9 +58,9 @@ class EmailConfig implements \ArrayAccess
     /** @var string */
     protected $replyToEmail;
 
-    public function __construct(array $globalConfig, array $formConfig, array $formData)
+    public function __construct(array $globalDebug, array $formConfig, array $formData)
     {
-        $this->globalConfig = $globalConfig;
+        $this->globalDebug = $globalDebug;
         $this->formConfig = $formConfig;
         $this->formData = $formData;
 
@@ -86,13 +86,13 @@ class EmailConfig implements \ArrayAccess
      */
     protected function setDebugState()
     {
-        if ($this->globalConfig['debug']['enabled']) {
+        if ($this->globalDebug['enabled']) {
             $this->debug = true;
 
-            if (empty($this->globalConfig['debug']['address'])) {
+            if (empty($this->globalDebug['address'])) {
                 throw new EmailException('[BoltForms] Debug email address can not be empty if debugging enabled!');
             } else {
-                $this->debugEmail = $this->globalConfig['debug']['address'];
+                $this->debugEmail = $this->globalDebug['address'];
             }
         } else {
             $this->debug = isset($this->formConfig['notification']['debug']) && $this->formConfig['notification']['debug'];
@@ -100,7 +100,7 @@ class EmailConfig implements \ArrayAccess
             if (isset($this->formConfig['notification']['debug_address'])) {
                 $this->debugEmail = $this->formConfig['notification']['debug_address'];
             } else {
-                $this->debugEmail = $this->globalConfig['debug']['address'];
+                $this->debugEmail = $this->globalDebug['address'];
             }
         }
     }
