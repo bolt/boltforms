@@ -95,10 +95,10 @@ class EmailConfig implements \ArrayAccess
                 $this->debugEmail = $this->globalConfig['debug']['address'];
             }
         } else {
-            $this->debug = isset($this->formConfig['debug']) && $this->formConfig['debug'];
+            $this->debug = isset($this->formConfig['notification']['debug']) && $this->formConfig['notification']['debug'];
 
-            if (isset($this->formConfig['debug_address'])) {
-                $this->debugEmail = $this->formConfig['debug_address'];
+            if (isset($this->formConfig['notification']['debug_address'])) {
+                $this->debugEmail = $this->formConfig['notification']['debug_address'];
             } else {
                 $this->debugEmail = $this->globalConfig['debug']['address'];
             }
