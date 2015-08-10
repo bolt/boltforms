@@ -108,7 +108,7 @@ class Email
         $html = $this->app['render']->render($templateEmail, array(
             'fields' => $formconfig['fields'],
             'config' => $emailConfig,
-            'data'   => $this->getBodyData($formconfig, $formdata)
+            'data'   => $this->getBodyData($emailConfig, $formconfig, $formdata)
         ));
 
         $body = new \Twig_Markup($html, 'UTF-8');
