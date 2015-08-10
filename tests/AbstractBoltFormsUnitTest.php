@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Extension;
+use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Tests\BoltUnitTest;
 use Symfony\Component\HttpFoundation\Request;
 

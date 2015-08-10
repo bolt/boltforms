@@ -70,7 +70,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
-        $this->assertSame(42, $result['next_inc']);
+        $this->assertSame(42, $result->get('next_inc'));
     }
 
     public function testNextIncrementContentType()
@@ -135,7 +135,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM bolt_koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
-        $this->assertSame(42, $result['next_inc']);
+        $this->assertSame(42, $result->get('next_inc'));
     }
 
     public function testRandomString()
@@ -171,7 +171,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $result = $boltforms->processRequest('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('random_str', $result);
-        $this->assertSame(22, strlen($result['random_str']));
+        $this->assertSame(22, strlen($result->get('random_str')));
     }
 
     public function testServerValue()
@@ -207,7 +207,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $result = $boltforms->processRequest('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('server_val', $result);
-        $this->assertSame($_SERVER['SCRIPT_NAME'], $result['server_val']);
+        $this->assertSame($_SERVER['SCRIPT_NAME'], $result->get('server_val'));
     }
 
     public function testServerValueInvalid()
@@ -239,8 +239,8 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $result = $boltforms->processRequest('testing_form', array('success' => true), true);
 
-        $this->assertArrayHasKey('server_val', $result);
-        $this->assertNull($result['server_val']);
+        $this->assertArrayHasKey('server_val', $result->getPostData());
+        $this->assertNull($result->get('server_val'));
     }
 
     public function testSessionValue()
@@ -277,7 +277,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $result = $boltforms->processRequest('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('session_value', $result);
-        $this->assertSame('gum-leaves', $result['session_value']);
+        $this->assertSame('gum-leaves', $result->get('session_value'));
     }
 
     public function testSessionValueInvalid()
@@ -310,7 +310,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $result = $boltforms->processRequest('testing_form', array('success' => true), true);
 
-        $this->assertArrayHasKey('session_value', $result);
-        $this->assertNull($result['session_value']);
+        $this->assertArrayHasKey('session_value', $result->getPostData());
+        $this->assertNull($result->get('session_value'));
     }
 }

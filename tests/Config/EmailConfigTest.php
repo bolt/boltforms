@@ -3,6 +3,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
+use Bolt\Extension\Bolt\BoltForms\FormData;
 
 /**
  * BoltForms\Config\Email class tests.
@@ -26,7 +27,8 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
 
         $globalDebug = $this->getExtension($app)->config['debug'];
         $formConfig = $this->formConfig();
-        $formData = $this->formData();
+        $postData = $this->formData();
+        $formData = new FormData($postData);
 
         $emailconfig = new EmailConfig($globalDebug, $formConfig, $formData);
 
@@ -50,7 +52,8 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
 
         $globalDebug = $this->getExtension($app)->config['debug'];
         $formConfig = $this->formConfig();
-        $formData = $this->formData();
+        $postData = $this->formData();
+        $formData = new FormData($postData);
 
         // Global override
         $globalDebug['enabled'] = true;
@@ -76,7 +79,9 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
 
         $globalDebug = $this->getExtension($app)->config['debug'];
         $formConfig = $this->formConfig();
-        $formData = $this->formData();
+        $postData = $this->formData();
+        $formData = new FormData($postData);
+
         $emailconfig = new EmailConfig($globalDebug, $formConfig, $formData);
 
         $this->assertNull($emailconfig->offsetSet('debug', true));

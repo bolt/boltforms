@@ -5,6 +5,7 @@ use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Database;
 // use Bolt\Tests\Mocks\DoctrineMockBuilder;
 use Bolt\Extension\Bolt\BoltForms\FileUpload;
+use Bolt\Extension\Bolt\BoltForms\FormData;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,8 +76,9 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $logger->expects($this->atLeastOnce())
             ->method('error');
         $app['logger.system'] = $logger;
+        $formData = new FormData(array());
 
-        $retval = $app['boltforms.database']->writeToTable('nothere', array());
+        $retval = $app['boltforms.database']->writeToTable('nothere', $formData);
         $this->assertFalse($retval);
     }
 
@@ -101,8 +103,9 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $parameters['testing_form']['message'] = $parameters['testing_form']['date'];
         $parameters['testing_form']['date'] = new \DateTime();
         $parameters['testing_form']['file'] = new FileUpload($app, 'testing_form', $parameters['testing_form']['file']);
+        $formData = new FormData($parameters['testing_form']);
 
-        $retval = $app['boltforms.database']->writeToTable('koalas', $parameters['testing_form']);
+        $retval = $app['boltforms.database']->writeToTable('koalas', $formData);
         $this->assertNull($retval);
     }
 
