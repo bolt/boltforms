@@ -49,7 +49,7 @@ class UploadManagement implements ControllerProviderInterface
         /** @var $ctr \Silex\ControllerCollection */
         $ctr = $app['controllers_factory'];
 
-        $ctr->match('/download', [$this, 'download'])
+        $ctr->match('/download', array($this, 'download'))
             ->bind('BoltFormsDownload')
             ->method('GET');
 

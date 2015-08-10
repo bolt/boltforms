@@ -12,14 +12,14 @@ class ArrayTypeTest extends AbstractBoltFormsUnitTest
 {
     public function testGetName()
     {
-        $obj = new ArrayType('koala', ['gum', 'leaves']);
+        $obj = new ArrayType('koala', array('gum', 'leaves'));
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Choice\ArrayType', $obj);
         $this->assertSame($obj->getName(), 'koala');
     }
 
     public function testGetChoices()
     {
-        $obj = new ArrayType('koala', ['gum', 'leaves']);
+        $obj = new ArrayType('koala', array('gum', 'leaves'));
         $choices = $obj->getChoices();
 
         $this->assertContains('gum', $choices);
