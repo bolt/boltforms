@@ -278,7 +278,7 @@ class BoltForms
 
             // Send notification email
             if (isset($conf['notification']['enabled']) && $conf['notification']['enabled']) {
-                $this->app['boltforms.email']->doNotification($formname, $conf, $formdata);
+                $this->app['boltforms.email']->doNotification($conf, $formdata);
             }
 
             // Redirect if a redirect is set and the page exists
