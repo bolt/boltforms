@@ -34,6 +34,8 @@ class EmailConfig implements \ArrayAccess
     /** @var array */
     protected $formData;
     /** @var boolean */
+    protected $attachFiles;
+    /** @var boolean */
     protected $debug;
     /** @var string */
     protected $debugEmail;
@@ -63,6 +65,7 @@ class EmailConfig implements \ArrayAccess
         $this->globalDebug = $globalDebug;
         $this->formConfig = $formConfig;
         $this->formData = $formData;
+        $this->attachFiles = isset($formConfig['notification']['attach_files']) ? $formConfig['notification']['attach_files'] : false;
 
         $this->setDebugState();
         $this->setEmailConfig();
@@ -123,6 +126,16 @@ class EmailConfig implements \ArrayAccess
     public function getDebugEmail()
     {
         return $this->debugEmail;
+    }
+
+    /**
+     * Attach files.
+     *
+     * @return boolean
+     */
+    public function attachFiles()
+    {
+        return $this->attachFiles;
     }
 
     /**

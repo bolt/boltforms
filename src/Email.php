@@ -125,12 +125,13 @@ class Email
     /**
      * Get the data suitable for using in TWig.
      *
-     * @param array $formconfig
-     * @param array $formdata
+     * @param EmailConfig $emailConfig
+     * @param array       $formconfig
+     * @param array       $formdata
      *
      * @return array
      */
-    private function getBodyData(array $formconfig, array $formdata)
+    private function getBodyData(EmailConfig $emailConfig, array $formconfig, array $formdata)
     {
         // https://github.com/bolt/bolt/issues/3459
         // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15
@@ -139,7 +140,7 @@ class Email
             if ($value instanceof \DateTime) {
                 $bodydata[$key] = $value->format('c');
             } elseif ($value instanceof FileUpload) {
-                if ($value->isValid() && isset($formconfig['notification']['attach_files']) && $formconfig['notification']['attach_files']) {
+                if ($value->isValid() && $emailConfig->attachFiles()) {
                     $attachment = \Swift_Attachment::fromPath($value->fullPath())
                             ->setFilename($value->getFile()->getClientOriginalName());
                     $this->message->attach($attachment);
