@@ -159,11 +159,11 @@ class Email
                 'from_email' => $emailconfig['from_email'],
                 'from_name'  => isset($emailconfig['from_name']) ? $emailconfig['from_name'] : 'BoltForms'
             );
-        }
 
-        $this->message->setFrom(array(
-            $recipient['from_email'] => $recipient['from_name']
-        ));
+            $this->message->setFrom(array(
+                $recipient['from_email'] => $recipient['from_name']
+            ));
+        }
 
         /*
          * Debug
@@ -190,11 +190,11 @@ class Email
                 'to_email' => $emailconfig['to_email'],
                 'to_name'  => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : ''
             );
-        }
 
-        $this->message->setTo(array(
-            $recipient['to_email'] => $recipient['to_name']
-        ));
+            $this->message->setTo(array(
+                $recipient['to_email'] => $recipient['to_name']
+            ));
+        }
 
         /*
          * CC
@@ -206,7 +206,9 @@ class Email
             );
 
             if (isset($emailconfig['cc_email'])) {
-                $this->message->setCc($emailconfig['cc_email']);
+                $this->message->setCc(array(
+                    $recipient['cc_email'] => $recipient['cc_name']
+                ));
             }
         }
 
@@ -220,7 +222,9 @@ class Email
             );
 
             if (isset($emailconfig['bcc_email'])) {
-                $this->message->setBcc($emailconfig['bcc_email']);
+                $this->message->setBcc(array(
+                    $recipient['bcc_email'] => $recipient['bcc_name']
+                ));
             }
         }
 
@@ -232,7 +236,7 @@ class Email
                 'replyto_email' => $emailconfig['replyto_email'],
                 'replyto_name'  => isset($emailconfig['replyto_name']) ? $emailconfig['replyto_name'] : ''
             );
-            
+
             $this->message->setReplyTo(array(
                 $recipient['replyto_email'] => $recipient['replyto_name']
             ));
