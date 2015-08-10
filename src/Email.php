@@ -54,13 +54,12 @@ class Email
     /**
      * Create a notification message.
      *
-     * @param string $formname
      * @param array  $formconfig
      * @param array  $formdata
      */
-    public function doNotification($formname, $formconfig, $formdata)
+    public function doNotification($formconfig, $formdata)
     {
-        $emailConfig = new Config\EmailConfig($this->config['debug'], $formconfig, $formdata);
+        $emailConfig = new EmailConfig($this->config['debug'], $formconfig, $formdata);
 
         $this->doCompose($formconfig, $emailConfig, $formdata);
         $this->doAddress($emailConfig);
@@ -156,9 +155,9 @@ class Email
     /**
      * Set the addresses.
      *
-     * @param array $emailConfig
+     * @param EmailConfig $emailConfig
      */
-    private function doAddress($emailConfig)
+    private function doAddress(EmailConfig $emailConfig)
     {
         $this->setFrom($emailConfig);
         $this->setReplyTo($emailConfig);
