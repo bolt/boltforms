@@ -68,6 +68,44 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $this->assertTrue($result);
     }
 
+    public function testWriteToTableInvalid()
+    {
+        $app = $this->getApp();
+        $logger = $this->getMock('\Monolog\Logger', array('error'), array('testlogger'));
+        $logger->expects($this->atLeastOnce())
+            ->method('error');
+        $app['logger.system'] = $logger;
+
+        $retval = $app['boltforms.database']->writeToTable('nothere', array());
+        $this->assertFalse($retval);
+    }
+
+    public function testWriteGetData()
+    {
+        $app = $this->getApp();
+        $parameters = $this->getParameters($app);
+
+        // Mock the database query
+        $mocker = new Mock\DoctrineMockBuilder();
+        $db = $mocker->getConnectionMock();
+        $sm = $mocker->getSchemaManagerMock($db, true, array_keys($parameters['testing_form']));
+        $db->expects($this->any())
+            ->method('getSchemaManager')
+            ->will($this->returnValue($sm));
+        $db->expects($this->any())
+            ->method('insert')
+            ->will($this->returnValue(true));
+
+        $app['db'] = $db;
+
+        $parameters['testing_form']['message'] = $parameters['testing_form']['date'];
+        $parameters['testing_form']['date'] = new \DateTime();
+        $parameters['testing_form']['file'] = new FileUpload($app, 'testing_form', $parameters['testing_form']['file']);
+
+        $retval = $app['boltforms.database']->writeToTable('koalas', $parameters['testing_form']);
+        $this->assertNull($retval);
+    }
+
     public function testWriteToContentype()
     {
         $app = $this->getApp();
