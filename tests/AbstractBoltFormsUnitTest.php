@@ -35,19 +35,19 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
     protected function formNotificationConfig()
     {
         return array(
-            'enabled' => true,
-            'debug' => false,
-            'from_name' => 'Gawain Lynch',
-            'from_email' => 'gawain@example.com',
-            'replyto_name' => 'Surprised Koala',
+            'enabled'       => true,
+            'debug'         => false,
+            'from_name'     => 'Gawain Lynch',
+            'from_email'    => 'gawain@example.com',
+            'replyto_name'  => 'Surprised Koala',
             'replyto_email' => 'surprised.koala@example.com',
-            'to_name' => 'Kenny Koala',
-            'to_email' => 'kenny.koala@example.com',
-            'cc_name' => 'Bob den Otter',
-            'cc_email' => 'bob@example.com',
-            'bcc_name' => 'Lodewijk Evers',
-            'bcc_email' => 'lodewijk@example.com',
-            'attach_files' => true,
+            'to_name'       => 'Kenny Koala',
+            'to_email'      => 'kenny.koala@example.com',
+            'cc_name'       => 'Bob den Otter',
+            'cc_email'      => 'bob@example.com',
+            'bcc_name'      => 'Lodewijk Evers',
+            'bcc_email'     => 'lodewijk@example.com',
+            'attach_files'  => true,
         );
     }
 

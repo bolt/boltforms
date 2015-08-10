@@ -3,9 +3,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * BoltForms\Config\Email class tests.
@@ -17,9 +14,9 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
     public function formConfig()
     {
         return array(
-            'debug' => false,
+            'debug'        => false,
             'notification' => $this->formNotificationConfig(),
-            'fields' => $this->formFieldConfig()
+            'fields'       => $this->formFieldConfig()
         );
     }
 

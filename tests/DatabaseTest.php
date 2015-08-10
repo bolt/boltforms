@@ -5,9 +5,9 @@ use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Database;
 // use Bolt\Tests\Mocks\DoctrineMockBuilder;
 use Bolt\Extension\Bolt\BoltForms\FileUpload;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * BoltForms\Database class tests.

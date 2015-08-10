@@ -82,8 +82,8 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
                 'name'   => 'next_increment',
                 'params' => array(
                     'contenttype' => 'koalas',
-                    'column' => 'gum_leaves',
-                    'min'    => 42
+                    'column'      => 'gum_leaves',
+                    'min'         => 42
                 )
             ),
         );
