@@ -53,7 +53,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
 
         $boltforms->addFieldArray('testing_form', $fields);
 
@@ -80,7 +80,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
 
         $boltforms->addFieldArray('testing_form', $fields);
 
@@ -104,7 +104,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
 
         $boltforms->addFieldArray('testing_form', $fields);
 

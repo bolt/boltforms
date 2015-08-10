@@ -47,12 +47,12 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     public function testTwigBoltForms()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['testing_form']['fields'] = $this->formConfig();
+        $this->getExtension($app)->config['testing_form']['fields'] = $this->formFieldConfig();
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
 
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
 
         $boltforms->addFieldArray('testing_form', $fields);
 
@@ -78,7 +78,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['testing_form']['fields'] = $this->formConfig();
+        $this->getExtension($app)->config['testing_form']['fields'] = $this->formFieldConfig();
         $this->getExtension($app)->config['testing_form']['feedback']['success'] = 'Well, that worked!';
 
         $parameters = $this->formData();
@@ -86,7 +86,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
 
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
         $app['boltforms'] = $boltforms;
 
@@ -110,7 +110,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['recaptcha']['enabled'] = true;
         $this->getExtension($app)->config['recaptcha']['private_key'] = 'abc123';
         $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['testing_form']['fields'] = $this->formConfig();
+        $this->getExtension($app)->config['testing_form']['fields'] = $this->formFieldConfig();
         $this->getExtension($app)->config['testing_form']['feedback']['success'] = 'Well, that worked!';
 
         $reResponse = new \ReCaptcha\Response(true);
@@ -126,7 +126,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
 
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
         $app['boltforms'] = $boltforms;
 
@@ -154,7 +154,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
 
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
 
         $boltforms->addFieldArray('testing_form', $fields);
         $app['boltforms'] = $boltforms;

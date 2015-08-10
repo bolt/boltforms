@@ -36,7 +36,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->getParameters($app);
@@ -79,7 +79,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->getParameters($app);

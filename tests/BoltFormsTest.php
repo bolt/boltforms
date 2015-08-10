@@ -47,7 +47,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
 
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
 
         $boltforms->addFieldArray('testing_form', $fields);
 
@@ -65,7 +65,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $boltforms = new BoltForms($app);
 
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $html = $boltforms->renderForm('testing_form', null, array('recaptcha' => array('enabled' => true)));
@@ -104,7 +104,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
@@ -122,7 +122,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
@@ -147,7 +147,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
@@ -176,7 +176,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
@@ -203,7 +203,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
@@ -224,7 +224,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
@@ -246,7 +246,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
@@ -268,7 +268,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
@@ -299,7 +299,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
         $boltforms->makeForm('testing_form');
-        $fields = $this->formConfig();
+        $fields = $this->formFieldConfig();
         unset($fields['array_index']);
         unset($fields['array_assoc']);
         unset($fields['lookup']);
