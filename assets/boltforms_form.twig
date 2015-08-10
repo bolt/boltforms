@@ -6,6 +6,10 @@
 {% endblock boltforms_css %}
 
 <div class="boltform">
+{% if debug %}
+    <p class="boltform-error">[Debug] Notification debug mode enabled!</p>
+{% endif %}
+
 {% if error and app.request.get(formname) %}
     <p class="boltform-error">{{ error }}</p>
 {% endif %}

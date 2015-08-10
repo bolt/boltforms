@@ -138,7 +138,8 @@ class BoltFormsExtension extends \Twig_Extension
                 'error_codes'   => $recaptchaResponse ? $recaptchaResponse['errorCodes'] : null,
                 'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null
             ),
-            'formname'  => $formname
+            'formname'  => $formname,
+            'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formname]['notification']['debug']) && $this->config[$formname]['notification']['debug'])
         );
 
         // If the form has it's own templates defined, use those, else the globals.
