@@ -28,17 +28,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $app = $this->getApp();
         $this->getExtension($app)->config['csrf'] = false;
         $this->getExtension($app)->config['debug']['enabled'] = false;
-        $this->getExtension($app)->config['testing_form']['notification']['enabled'] = true;
-        $this->getExtension($app)->config['testing_form']['notification']['debug'] = false;
-        $this->getExtension($app)->config['testing_form']['notification']['from_name'] = 'Gawain Lynch';
-        $this->getExtension($app)->config['testing_form']['notification']['from_email'] = 'gawain@example.com';
-        $this->getExtension($app)->config['testing_form']['notification']['to_name'] = 'Kenny Koala';
-        $this->getExtension($app)->config['testing_form']['notification']['to_email'] = 'kenny.koala@example.com';
-        $this->getExtension($app)->config['testing_form']['notification']['cc_name'] = 'Bob den Otter';
-        $this->getExtension($app)->config['testing_form']['notification']['cc_email'] = 'bob@example.com';
-        $this->getExtension($app)->config['testing_form']['notification']['bcc_name'] = 'Lodewijk Evers';
-        $this->getExtension($app)->config['testing_form']['notification']['bcc_email'] = 'lodewijk@example.com';
-        $this->getExtension($app)->config['testing_form']['notification']['attach_files'] = true;
+        $this->getExtension($app)->config['testing_form']['notification'] = $this->formNotificationConfig();
 
         // Upload file set up
         $this->getExtension($app)->config['uploads']['enabled'] = true;
@@ -72,9 +62,8 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['csrf'] = false;
         $this->getExtension($app)->config['debug']['enabled'] = true;
         $this->getExtension($app)->config['debug']['address'] = 'noreply@example.com';
+        $this->getExtension($app)->config['testing_form']['notification'] = $this->formNotificationConfig();
         $this->getExtension($app)->config['testing_form']['notification']['enabled'] = true;
-        $this->getExtension($app)->config['testing_form']['notification']['from_name'] = 'Gawain Lynch';
-        $this->getExtension($app)->config['testing_form']['notification']['from_email'] = 'gawain@example.com';
 
         $app['request'] = Request::create('/');
 
