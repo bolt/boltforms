@@ -75,8 +75,8 @@ class Extension extends \Bolt\BaseExtension
         /*
          * Provider
          */
-        $this->app->register(new Provider\BoltFormsServiceProvider($this->app));
-        $this->app->register(new Provider\RecaptchaServiceProvider($this->app));
+        $this->app->register(new Provider\BoltFormsServiceProvider());
+        $this->app->register(new Provider\RecaptchaServiceProvider());
 
         /*
          * Frontend

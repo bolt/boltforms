@@ -28,7 +28,7 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class BoltFormsCustomDataEvent extends Event
 {
-    /** @var array */
+    /** @var string */
     protected $eventName;
     /** @var array */
     protected $eventParams;

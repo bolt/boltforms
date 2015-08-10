@@ -261,7 +261,6 @@ class EmailConfig implements \ArrayAccess
         foreach ($hashMap as $property => $key) {
             $this->{$property} = $this->getConfigValue($notify[$key]);
         }
-
     }
 
     /**

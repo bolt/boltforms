@@ -11,7 +11,7 @@ use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Bolt\Helpers\Arr;
-use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -54,7 +54,7 @@ class BoltForms
      */
     public function __construct(Application $app)
     {
-        $this->app = $this->config = $app;
+        $this->app = $app;
         $this->config = $app[Extension::CONTAINER]->config;
     }
 
@@ -63,7 +63,7 @@ class BoltForms
      *
      * @param string $formname
      *
-     * @return FormConfigInterface
+     * @return Form
      */
     public function getForm($formname)
     {
@@ -359,7 +359,7 @@ class BoltForms
 
             // Handle events for custom data
             if (isset($this->config[$formname]['fields'][$field]['event']['name'])) {
-                $formdata[$field] = $this->dispatchCustomDataEvent($formname, $field, $value);
+                $formdata[$field] = $this->dispatchCustomDataEvent($formname, $field);
             }
         }
 
@@ -371,9 +371,8 @@ class BoltForms
      *
      * @param string $formname
      * @param string $field
-     * @param mixed  $value
      */
-    protected function dispatchCustomDataEvent($formname, $field, $value)
+    protected function dispatchCustomDataEvent($formname, $field)
     {
         $fieldConfig = $this->config[$formname]['fields'][$field];
         if (strpos('boltforms.', $fieldConfig['event']['name']) === false) {

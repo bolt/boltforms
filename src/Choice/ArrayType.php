@@ -26,14 +26,9 @@ namespace Bolt\Extension\Bolt\BoltForms\Choice;
  */
 class ArrayType implements ChoiceInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $name;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $choices;
 
     /**

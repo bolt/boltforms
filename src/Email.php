@@ -3,7 +3,6 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
-use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
 use Silex\Application;
 
 /**
@@ -30,32 +29,24 @@ use Silex\Application;
  */
 class Email
 {
-    /**
-     * @var Application
-     */
+    /** @var Application */
     private $app;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $config;
-
-    /**
-     * \Swift_Message
-     */
+    /** \Swift_Message */
     private $message;
 
     public function __construct(Application $app)
     {
-        $this->app = $this->config = $app;
+        $this->app = $app;
         $this->config = $app[Extension::CONTAINER]->config;
     }
 
     /**
      * Create a notification message.
      *
-     * @param array  $formconfig
-     * @param array  $formdata
+     * @param array $formconfig
+     * @param array $formdata
      */
     public function doNotification($formconfig, $formdata)
     {
@@ -69,9 +60,9 @@ class Email
     /**
      * Compose the email data to be sent.
      *
-     * @param array $formconfig
+     * @param array       $formconfig
      * @param EmailConfig $emailConfig
-     * @param array $formdata
+     * @param array       $formdata
      */
     private function doCompose($formconfig, EmailConfig $emailConfig, $formdata)
     {
@@ -108,7 +99,7 @@ class Email
         $html = $this->app['render']->render($templateEmail, array(
             'fields' => $formconfig['fields'],
             'config' => $emailConfig,
-            'data'   => $this->getBodyData($emailConfig, $formconfig, $formdata)
+            'data'   => $this->getBodyData($emailConfig, $formdata)
         ));
 
         $body = new \Twig_Markup($html, 'UTF-8');
@@ -126,12 +117,11 @@ class Email
      * Get the data suitable for using in TWig.
      *
      * @param EmailConfig $emailConfig
-     * @param array       $formconfig
      * @param array       $formdata
      *
      * @return array
      */
-    private function getBodyData(EmailConfig $emailConfig, array $formconfig, array $formdata)
+    private function getBodyData(EmailConfig $emailConfig, array $formdata)
     {
         // https://github.com/bolt/bolt/issues/3459
         // https://github.com/GawainLynch/bolt-extension-boltforms/issues/15

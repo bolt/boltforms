@@ -28,24 +28,13 @@ use Silex\Application;
  */
 class ContentType implements ChoiceInterface
 {
-    /**
-     * @var Silex\Application
-     */
+    /** @var \Silex\Application */
     private $app;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     private $name;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     private $key;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $choices;
 
     /**
@@ -82,7 +71,7 @@ class ContentType implements ChoiceInterface
      */
     public function getChoices()
     {
-        if (! $this->choices) {
+        if ($this->choices === null) {
             $this->choices = $this->getChoicesFromContenttypeRecords($this->key);
         }
 

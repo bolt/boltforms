@@ -28,19 +28,14 @@ use Silex\Application;
  */
 class Database
 {
-    /**
-     * @var Application
-     */
+    /** @var Application */
     private $app;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $config;
 
     public function __construct(Application $app)
     {
-        $this->app = $this->config = $app;
+        $this->app = $app;
         $this->config = $app[Extension::CONTAINER]->config;
     }
 
