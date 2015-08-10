@@ -205,13 +205,11 @@ class BoltForms
      *
      * @param string   $formname  The name of the form
      * @param Request  $request
-     * @param callable $callback  A PHP callable to call on success
-     * @param mixed    $arguments Arguments to pass to the PHP callable
      *
      * @return mixed Success - Submitted form parameters, or passed callback function return value
      *               Failure - false
      */
-    public function handleRequest($formname, $request = null, $callback = null, $arguments = array())
+    public function handleRequest($formname, $request = null)
     {
         if (!$this->app['request']->request->has($formname)) {
             return false;
@@ -228,16 +226,7 @@ class BoltForms
         if ($this->forms[$formname]->isValid()) {
 
             // Submitted data
-            $data = $this->forms[$formname]->getData();
-
-            // If passed a callback, call it.  Else return the form data
-            if (is_callable($callback)) {
-                $arguments[] = $data;
-
-                return call_user_func_array($callback, $arguments);
-            } else {
-                return $data;
-            }
+            return $this->forms[$formname]->getData();
         }
 
         return false;
