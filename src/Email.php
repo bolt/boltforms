@@ -2,6 +2,7 @@
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
+use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
 use Silex\Application;
 
@@ -51,21 +52,29 @@ class Email
     }
 
     /**
+     * Create a notification message.
      *
+     * @param string $formname
+     * @param array  $formconfig
+     * @param array  $formdata
      */
     public function doNotification($formname, $formconfig, $formdata)
     {
-        $emailconfig = $this->getEmailConfig($formname, $formdata);
+        $emailConfig = new Config\EmailConfig($this->config, $formconfig, $formdata);
 
-        $this->doCompose($formconfig, $emailconfig, $formdata);
-        $this->doAddress($emailconfig);
-        $this->doSend($emailconfig);
+        $this->doCompose($formconfig, $emailConfig, $formdata);
+        $this->doAddress($emailConfig);
+        $this->doSend($emailConfig);
     }
 
     /**
-     * Compose the email data to be sent
+     * Compose the email data to be sent.
+     *
+     * @param array $formconfig
+     * @param EmailConfig $emailConfig
+     * @param array $formdata
      */
-    private function doCompose($formconfig, $emailconfig, $formdata)
+    private function doCompose($formconfig, EmailConfig $emailConfig, $formdata)
     {
         /*
          * Create message object
@@ -88,7 +97,7 @@ class Email
          */
         $html = $this->app['render']->render($templateSubject, array(
             'subject' => $formconfig['notification']['subject'],
-            'config'  => $emailconfig,
+            'config'  => $emailConfig,
             'data'    => $formdata
         ));
 
@@ -99,7 +108,7 @@ class Email
          */
         $html = $this->app['render']->render($templateEmail, array(
             'fields' => $formconfig['fields'],
-            'config' => $emailconfig,
+            'config' => $emailConfig,
             'data'   => $this->getBodyData($formconfig, $formdata)
         ));
 
@@ -145,130 +154,96 @@ class Email
     }
 
     /**
-     * Set the addresses
+     * Set the addresses.
      *
-     * @param array $emailconfig
+     * @param array $emailConfig
      */
-    private function doAddress($emailconfig)
+    private function doAddress($emailConfig)
     {
-        $this->setFrom($emailconfig);
-        $this->setReplyTo($emailconfig);
+        $this->setFrom($emailConfig);
+        $this->setReplyTo($emailConfig);
 
         // If we're in debug mode, don't set anything more
-        if (! empty($emailconfig['debug']) && $emailconfig['debug']) {
-            $recipient = array(
-                'to_email' => $emailconfig['debug_address'],
-                'to_name'  => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : 'BoltForms Debug'
-            );
-
+        if ($emailConfig->isDebug()) {
             $this->message->setTo(array(
-                $recipient['to_email'] => $recipient['to_name']
+                $emailConfig->getDebugEmail() => $emailConfig->getToName() ?: 'BoltForms Debug'
             ));
 
             // Don't set any further recipients
             return;
         }
 
-        $this->setTo($emailconfig);
-        $this->setCc($emailconfig);
-        $this->setBcc($emailconfig);
+        $this->setTo($emailConfig);
+        $this->setCc($emailConfig);
+        $this->setBcc($emailConfig);
     }
 
     /**
-     * Set From
+     * Set From.
      *
-     * @param array $emailconfig
+     * @param EmailConfig $emailConfig
      */
-    private function setFrom(array $emailconfig)
+    private function setFrom(EmailConfig $emailConfig)
     {
-        if (! empty($emailconfig['from_email'])) {
-            $recipient = array(
-                'from_email' => $emailconfig['from_email'],
-                'from_name'  => isset($emailconfig['from_name']) ? $emailconfig['from_name'] : 'BoltForms'
-            );
-
+        if ($emailConfig->getFromEmail()) {
             $this->message->setFrom(array(
-                $recipient['from_email'] => $recipient['from_name']
+                $emailConfig->getFromEmail() => $emailConfig->getFromName()
             ));
         }
     }
 
     /**
-     * Set To
+     * Set To.
      *
-     * @param array $emailconfig
+     * @param EmailConfig $emailConfig
      */
-    private function setTo(array $emailconfig)
+    private function setTo(EmailConfig $emailConfig)
     {
-        if (! empty($emailconfig['to_email'])) {
-            $recipient = array(
-                'to_email' => $emailconfig['to_email'],
-                'to_name'  => isset($emailconfig['to_name']) ? $emailconfig['to_name'] : ''
-            );
-
+        if ($emailConfig->getToEmail()) {
             $this->message->setTo(array(
-                $recipient['to_email'] => $recipient['to_name']
+                $emailConfig->getToEmail() => $emailConfig->getToName()
             ));
         }
     }
 
     /**
-     * Set CC
+     * Set CC.
      *
-     * @param array $emailconfig
+     * @param EmailConfig $emailConfig
      */
-    private function setCc(array $emailconfig)
+    private function setCc(EmailConfig $emailConfig)
     {
-        if (! empty($emailconfig['cc_email'])) {
-            $recipient = array(
-                'cc_email' => $emailconfig['cc_email'],
-                'cc_name'  => isset($emailconfig['cc_name']) ? $emailconfig['cc_name'] : ''
-            );
-
-            if (isset($emailconfig['cc_email'])) {
-                $this->message->setCc(array(
-                    $recipient['cc_email'] => $recipient['cc_name']
-                ));
-            }
+        if ($emailConfig->getCcEmail()) {
+            $this->message->setCc(array(
+                $emailConfig->getCcEmail() => $emailConfig->getCcName()
+            ));
         }
     }
 
     /**
-     * Set bCC
+     * Set bCC.
      *
-     * @param array $emailconfig
+     * @param EmailConfig $emailConfig
      */
-    private function setBcc(array $emailconfig)
+    private function setBcc(EmailConfig $emailConfig)
     {
-        if (! empty($emailconfig['bcc_email'])) {
-            $recipient = array(
-                'bcc_email' => $emailconfig['bcc_email'],
-                'bcc_name'  => isset($emailconfig['bcc_name']) ? $emailconfig['bcc_name'] : ''
-            );
-
-            if (isset($emailconfig['bcc_email'])) {
-                $this->message->setBcc(array(
-                    $recipient['bcc_email'] => $recipient['bcc_name']
-                ));
-            }
+        if ($emailConfig->getBccEmail()) {
+            $this->message->setCc(array(
+                $emailConfig->getBccEmail() => $emailConfig->getBccName()
+            ));
         }
     }
 
     /**
-     * Set the ReplyTo
+     * Set the ReplyTo.
      *
-     * @param array $emailconfig
+     * @param EmailConfig $emailConfig
      */
-    private function setReplyTo(array $emailconfig)
+    private function setReplyTo(EmailConfig $emailConfig)
     {
-        if (! empty($emailconfig['replyto_email'])) {
-            $recipient = array(
-                'replyto_email' => $emailconfig['replyto_email'],
-                'replyto_name'  => isset($emailconfig['replyto_name']) ? $emailconfig['replyto_name'] : ''
-            );
-
+        if ($emailConfig->getReplyToEmail()) {
             $this->message->setReplyTo(array(
-                $recipient['replyto_email'] => $recipient['replyto_name']
+                $emailConfig->getReplyToEmail() => $emailConfig->getReplyToName()
             ));
         }
     }
@@ -276,84 +251,15 @@ class Email
     /**
      * Send a notification
      *
-     * @param array $emailconfig
+     * @param EmailConfig $emailConfig
      */
-    private function doSend($emailconfig)
+    private function doSend(EmailConfig $emailConfig)
     {
         if ($this->app['mailer']->send($this->message)) {
-            $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", array('event' => 'extensions'));
+            $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", array('event' => 'extensions'));
         } else {
-            $this->app['logger.system']->info("Failed Bolt Forms notification to {$emailconfig['to_name']} <{$emailconfig['to_email']}>", array('event' => 'extensions'));
+            $this->app['logger.system']->info("Failed Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", array('event' => 'extensions'));
         }
-    }
-
-    /**
-     * Get a usable email configuration array
-     *
-     * @param string $formname
-     * @param array  $formdata
-     */
-    private function getEmailConfig($formname, $formdata)
-    {
-        $notify_form = $this->config[$formname]['notification'];
-
-        /*
-         * Global debug enabled
-         *   - Messages should always go to the global debug address only
-         *   - Takes preference over form specific settings
-         *   - To address also takes precidence
-         *
-         * Global debug disabled
-         *   - Form specific debug settings are applied
-         *
-         * Form debug enabled
-         *   - For debug address takes priority if set
-         */
-        if ($this->config['debug']['enabled']) {
-            $debug = true;
-
-            if (empty($this->config['debug']['address'])) {
-                throw new EmailException('[BoltForms] Debug email address can not be empty if debugging enabled!');
-            } else {
-                $debug_address = $this->config['debug']['address'];
-            }
-        } else {
-            $debug = isset($notify_form['debug']) && $notify_form['debug'];
-
-            if (isset($notify_form['debug_address'])) {
-                $debug_address = $notify_form['debug_address'];
-            } else {
-                $debug_address = $this->config['debug']['address'];
-            }
-        }
-
-        $emailconfig = array(
-            'debug'         => $debug,
-            'debug_address' => $debug_address,
-            'to_name'       => isset($notify_form['to_name'])       ? $notify_form['to_name']       : '',
-            'to_email'      => isset($notify_form['to_email'])      ? $notify_form['to_email']      : '',
-            'from_name'     => isset($notify_form['from_name'])     ? $notify_form['from_name']     : '',
-            'from_email'    => isset($notify_form['from_email'])    ? $notify_form['from_email']    : '',
-            'cc_name'       => isset($notify_form['cc_name'])       ? $notify_form['cc_name']       : '',
-            'cc_email'      => isset($notify_form['cc_email'])      ? $notify_form['cc_email']      : '',
-            'bcc_name'      => isset($notify_form['bcc_name'])      ? $notify_form['bcc_name']      : '',
-            'bcc_email'     => isset($notify_form['bcc_email'])     ? $notify_form['bcc_email']     : '',
-            'replyto_name'  => isset($notify_form['replyto_name'])  ? $notify_form['replyto_name']  : '',
-            'replyto_email' => isset($notify_form['replyto_email']) ? $notify_form['replyto_email'] : ''
-        );
-
-        // If any fields rely on posted data populate them now
-        foreach ($emailconfig as $key => $value) {
-            if ($key == 'debug' || $key == 'debug_address') {
-                continue;
-            }
-
-            if (isset($formdata[$value])) {
-                $emailconfig[$key] = $formdata[$value];
-            }
-        }
-
-        return $emailconfig;
     }
 
     private function addTwigPath()
