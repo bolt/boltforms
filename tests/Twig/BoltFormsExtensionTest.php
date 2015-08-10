@@ -81,13 +81,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['fields'] = $this->formConfig();
         $this->getExtension($app)->config['testing_form']['feedback']['success'] = 'Well, that worked!';
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $boltforms = new BoltForms($app);
@@ -127,13 +121,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
             ->will($this->returnValue($reResponse));
         $app['recaptcha'] = $recaptcha;
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $boltforms = new BoltForms($app);

@@ -36,14 +36,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
-
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
         $app->boot();
 
@@ -106,13 +99,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
         $app->boot();
 
@@ -148,14 +135,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
-
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters, array(), array(), array('SCRIPT_NAME' => $_SERVER['SCRIPT_NAME']));
         $app->boot();
 
@@ -191,14 +171,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
-
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
         $app->boot();
         $app['session']->set('koala', 'gum-leaves');

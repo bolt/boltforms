@@ -107,13 +107,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $result = $boltforms->processRequest('testing_form', array('success' => true));
@@ -131,25 +125,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello',
-                'file'    => null,
-                'date'    => array(
-                    'date' => array(
-                        'day'   => '23',
-                        'month' => '10',
-                        'year'  => '2010',
-                    ),
-                    'time' => array(
-                        'hour'   => '18',
-                        'minute' => '15',
-                    ),
-                )
-            )
-        );
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $result = $boltforms->processRequest('testing_form', array('success' => true));
@@ -174,15 +150,8 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello',
-                'file'    => new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, false),
-                'date'    => null
-            )
-        );
+        $parameters = $this->formData();
+        $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, false);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $this->setExpectedException('Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException');
@@ -210,15 +179,8 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello',
-                'file'    => new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true),
-                'date'    => null
-            )
-        );
+        $parameters = $this->formData();
+        $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $result = $boltforms->processRequest('testing_form', array('success' => true));
@@ -244,15 +206,8 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello',
-                'file'    => new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true),
-                'date'    => null
-            )
-        );
+        $parameters = $this->formData();
+        $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $result = $boltforms->processRequest('testing_form', array('success' => true));
@@ -272,13 +227,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $result = $boltforms->processRequest('testing_form', array('success' => true));
@@ -300,13 +249,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $result = $boltforms->processRequest('testing_form', array('success' => true));
@@ -328,13 +271,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $result = $boltforms->processRequest('testing_form', array('success' => true));
@@ -369,13 +306,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
 
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $parameters = array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello'
-            )
-        );
+        $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $result = $boltforms->processRequest('testing_form', array('success' => true));

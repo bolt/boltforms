@@ -109,24 +109,9 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $fs = new Filesystem();
         $fs->copy($srcFile, $tmpFile, true);
 
-        return array(
-            'testing_form' => array(
-                'name'    => 'Gawain Lynch',
-                'email'   => 'gawain.lynch@gmail.com',
-                'message' => 'Hello',
-                'file'    => new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true),
-                'date'    => array(
-                    'date' => array(
-                        'day'   => '23',
-                        'month' => '10',
-                        'year'  => '2010',
-                    ),
-                    'time' => array(
-                        'hour'   => '18',
-                        'minute' => '15',
-                    ),
-                )
-            )
-        );
+        $parameters = $this->formData();
+        $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
+
+        return $parameters;
     }
 }

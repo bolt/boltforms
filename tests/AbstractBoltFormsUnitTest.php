@@ -125,19 +125,9 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
         );
     }
 
-    protected function formProcessRequest($app)
+    protected function formData()
     {
-        $this->getExtension($app)->config['csrf'] = false;
-
-        $app['request'] = Request::create('/');
-
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
-
-        $fields = $this->formConfig();
-        $boltforms->addFieldArray('testing_form', $fields);
-
-        $parameters = array(
+        return array(
             'testing_form' => array(
                 'name'    => 'Gawain Lynch',
                 'email'   => 'gawain.lynch@gmail.com',
@@ -155,6 +145,21 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
                 )
             ),
         );
+    }
+
+    protected function formProcessRequest($app)
+    {
+        $this->getExtension($app)->config['csrf'] = false;
+
+        $app['request'] = Request::create('/');
+
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('testing_form');
+
+        $fields = $this->formConfig();
+        $boltforms->addFieldArray('testing_form', $fields);
+
+        $parameters = $this->formData();
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
