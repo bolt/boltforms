@@ -3,8 +3,8 @@ namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
-use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
+use Bolt\Extension\Bolt\BoltForms\FormData;
 
 /**
  * BoltForms\Config\Email class tests.

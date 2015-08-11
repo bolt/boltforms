@@ -2,7 +2,6 @@
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
-use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 
 /**
