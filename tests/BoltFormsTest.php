@@ -346,4 +346,22 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=/page/koalas\?name=Gawain\+Lynch" />#');
     }
+
+    public function testInvalidConstraint()
+    {
+        $app = $this->getApp();
+        $app['request'] = Request::create('/');
+
+        $app['boltforms']->makeForm('testing_form');
+        $fields = $this->formFieldConfig();
+        $fields['email']['options']['constraints'] = 'koala';
+
+        // Keep an eye on the logger
+        $logger = $this->getMock('\Monolog\Logger', array('error', 'debug'), array('testlogger'));
+        $logger->expects($this->atLeastOnce())
+            ->method('error');
+        $app['logger.system'] = $logger;
+
+        $app['boltforms']->addFieldArray('testing_form', $fields);
+    }
 }
