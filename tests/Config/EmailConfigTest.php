@@ -15,10 +15,12 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
 {
     public function formConfig()
     {
-        return new FormConfig(array(
-            'debug'        => false,
-            'notification' => $this->formNotificationConfig(),
-            'fields'       => $this->formFieldConfig()
+        return new FormConfig(
+            'test_form',
+            array(
+                'debug'        => false,
+                'notification' => $this->formNotificationConfig(),
+                'fields'       => $this->formFieldConfig()
         ));
     }
 
@@ -32,7 +34,7 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
         $formData = new FormData($postData);
 
         $emailconfig = new EmailConfig($globalDebug, $formConfig, $formData);
-// dump($emailconfig);
+
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Config\EmailConfig', $emailconfig);
         $this->assertSame('Gawain Lynch', $emailconfig->getFromName());
         $this->assertSame('gawain@example.com', $emailconfig->getFromEmail());

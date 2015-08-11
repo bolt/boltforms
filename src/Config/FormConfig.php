@@ -25,6 +25,8 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  */
 class FormConfig
 {
+    /** @var string */
+    protected $name;
     /** @var FormConfigSection */
     protected $database;
     /** @var FormConfigSection */
@@ -39,10 +41,13 @@ class FormConfig
     protected $uploads;
 
     /**
-     * @param array $formConfig
+     * @param string $formName
+     * @param array  $formConfig
      */
-    public function __construct(array $formConfig)
+    public function __construct($formName, array $formConfig)
     {
+        $this->name = $formName;
+
         $defaults = $this->getDefaults();
         $formConfig = $this->mergeRecursiveDistinct($defaults, $formConfig);
 
@@ -52,6 +57,16 @@ class FormConfig
         $this->notification = new FormConfigSection($formConfig['notification']);
         $this->templates    = new FormConfigSection($formConfig['templates']);
         $this->uploads      = new FormConfigSection($formConfig['uploads']);
+    }
+
+    /**
+     * Get form name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

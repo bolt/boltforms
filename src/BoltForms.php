@@ -249,31 +249,14 @@ class BoltForms
     {
         /** @var FormData $formData */
         $formData = $this->handleRequest($formName);
-        $formConfig = new FormConfig($this->config[$formName]);
+        $formConfig = new FormConfig($formName, $this->config[$formName]);
         $sent = $this->getForm($formName)->isSubmitted();
 
         if ($sent && $formData !== null && $recaptchaResponse['success']) {
             $this->processFields($formName, $formConfig, $formData);
-
-            // Write to a Contenttype
-            if ($formConfig->getDatabase()->getContenttype() !== null) {
-                $this->app['boltforms.database']->writeToContentype($formConfig->getDatabase()->getContenttype(), $formData);
-            }
-
-            // Write to a normal database table
-            if ($formConfig->getDatabase()->getTable() !== null) {
-                $this->app['boltforms.database']->writeToTable($formConfig->getDatabase()->getTable(), $formData);
-            }
-
-            // Send notification email
-            if ($formConfig->getNotification()->getEnabled()) {
-                $this->app['boltforms.email']->doNotification($formConfig, $formData);
-            }
-
-            // Redirect if a redirect is set and the page exists
-            if ($formConfig->getFeedback()->redirect['target'] !== null) {
-                $this->redirect($formName, $formData);
-            }
+            $this->processDatabase($formConfig, $formData);
+            $this->processEmailNotification($formConfig, $formData);
+            $this->processRedirect($formConfig, $formData);
 
             if ($returnData) {
                 return $formData;
@@ -322,6 +305,51 @@ class BoltForms
             if (isset($fieldConf['event']['name'])) {
                 $formData->set($fieldName, $this->dispatchCustomDataEvent($fieldConf['event']));
             }
+        }
+    }
+
+    /**
+     * Commit submitted data to the database if configured.
+     *
+     * @param FormConfig $formConfig
+     * @param FormData $formData
+     */
+    protected function processDatabase(FormConfig $formConfig, FormData $formData)
+    {
+        // Write to a Contenttype
+        if ($formConfig->getDatabase()->getContenttype() !== null) {
+            $this->app['boltforms.database']->writeToContentype($formConfig->getDatabase()->getContenttype(), $formData);
+        }
+
+        // Write to a normal database table
+        if ($formConfig->getDatabase()->getTable() !== null) {
+            $this->app['boltforms.database']->writeToTable($formConfig->getDatabase()->getTable(), $formData);
+        }
+    }
+
+    /**
+     * Send email notifications if configured.
+     *
+     * @param FormConfig $formConfig
+     * @param FormData $formData
+     */
+    protected function processEmailNotification(FormConfig $formConfig, FormData $formData)
+    {
+        if ($formConfig->getNotification()->getEnabled()) {
+            $this->app['boltforms.email']->doNotification($formConfig, $formData);
+        }
+    }
+
+    /**
+     * Redirect if a redirect is set and the page exists
+     *
+     * @param FormConfig $formConfig
+     * @param FormData $formData
+     */
+    protected function processRedirect(FormConfig $formConfig, FormData $formData)
+    {
+        if ($formConfig->getFeedback()->redirect['target'] !== null) {
+            $this->redirect($formConfig, $formData);
         }
     }
 
@@ -379,12 +407,12 @@ class BoltForms
     /**
      * Do a redirect.
      *
-     * @param string   $formname
+     * @param FormConfig $formConfig
      * @param FormData $formData
      */
-    private function redirect($formname, FormData $formData)
+    private function redirect(FormConfig $formConfig, FormData $formData)
     {
-        $redirect = $this->config[$formname]['feedback']['redirect'];
+        $redirect = $formConfig->getFeedback()->getRedirect();
         $query = $this->getRedirectQuery($redirect, $formData);
 
         $response = $this->getRedirectResponse($redirect, $query);
