@@ -53,9 +53,9 @@ class Email
     {
         $emailConfig = new EmailConfig($this->config['debug'], $formConfig, $formData);
 
-        $this->doCompose($formConfig, $emailConfig, $formData);
-        $this->doAddress($emailConfig);
-        $this->doSend($emailConfig);
+        $this->emailCompose($formConfig, $emailConfig, $formData);
+        $this->emailAddress($emailConfig);
+        $this->emailSend($emailConfig);
     }
 
     /**
@@ -65,7 +65,7 @@ class Email
      * @param EmailConfig $emailConfig
      * @param FormData    $formData
      */
-    private function doCompose(FormConfig $formConfig, EmailConfig $emailConfig, $formData)
+    private function emailCompose(FormConfig $formConfig, EmailConfig $emailConfig, $formData)
     {
         /*
          * Create message object
@@ -141,7 +141,7 @@ class Email
      *
      * @param EmailConfig $emailConfig
      */
-    private function doAddress(EmailConfig $emailConfig)
+    private function emailAddress(EmailConfig $emailConfig)
     {
         $this->setFrom($emailConfig);
         $this->setReplyTo($emailConfig);
@@ -236,7 +236,7 @@ class Email
      *
      * @param EmailConfig $emailConfig
      */
-    private function doSend(EmailConfig $emailConfig)
+    private function emailSend(EmailConfig $emailConfig)
     {
         if ($this->app['mailer']->send($this->message)) {
             $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", array('event' => 'extensions'));
