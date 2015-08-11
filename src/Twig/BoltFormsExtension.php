@@ -103,10 +103,10 @@ class BoltFormsExtension extends \Twig_Extension
         // Handle the POST
         if ($this->app['request']->isMethod('POST')) {
             // Check reCaptcha, if enabled.
-            $recaptchaResponse = $this->app['boltforms']->getReCaptchaResponses($this->app['request']);
+            $recaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($this->app['request']);
 
             try {
-                $sent = $this->app['boltforms']->processRequest($formname, $recaptchaResponse);
+                $sent = $this->app['boltforms.processor']->process($formname, $recaptchaResponse);
                 $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
             } catch (FileUploadException $e) {
                 $error = $e->getMessage();
