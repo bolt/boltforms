@@ -41,17 +41,15 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/');
 
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true));
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -76,16 +74,14 @@ class EmailTest extends AbstractBoltFormsUnitTest
             ->method('error');
         $app['logger.system'] = $logger;
 
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true));
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -101,16 +97,14 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/');
 
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true));
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -125,18 +119,16 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/');
 
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         $this->setExpectedException('\Bolt\Extension\Bolt\BoltForms\Exception\EmailException', '[BoltForms] Debug email address can not be empty if debugging enabled!');
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true));
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }

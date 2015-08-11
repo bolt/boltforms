@@ -214,16 +214,15 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
 
         $app['request'] = Request::create('/');
 
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
+        $app['boltforms']->makeForm('testing_form');
 
         $fields = $this->formFieldConfig();
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        return $boltforms->processRequest('testing_form', array('success' => true));
+        return $app['boltforms.processor']->process('testing_form', array('success' => true));
     }
 }

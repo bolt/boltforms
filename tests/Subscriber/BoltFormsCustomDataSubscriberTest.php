@@ -83,13 +83,11 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['fields']['next_inc'] = $nextIncField;
 
         $app['request'] = Request::create('/');
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
 
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
         $fields['next_inc'] = $nextIncField;
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
@@ -119,7 +117,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
             ->willReturn(array('id' => 1));
         $app['users'] = $users;
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
@@ -146,13 +144,11 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['fields']['next_inc'] = $nextIncField;
 
         $app['request'] = Request::create('/');
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
 
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
         $fields['next_inc'] = $nextIncField;
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
@@ -182,7 +178,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
             ->willReturn(array('id' => 1));
         $app['users'] = $users;
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
@@ -209,13 +205,11 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['fields']['next_inc'] = $nextIncField;
 
         $app['request'] = Request::create('/');
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
 
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
         $fields['next_inc'] = $nextIncField;
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
@@ -247,7 +241,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
             ->willReturn(array('id' => 1));
         $app['users'] = $users;
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM bolt_koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
@@ -272,19 +266,17 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['fields']['random_str'] = $randomStringField;
 
         $app['request'] = Request::create('/');
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
 
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
         $fields['random_str'] = $randomStringField;
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
         $app->boot();
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('random_str', $result);
         $this->assertSame(22, strlen($result->get('random_str')));
@@ -308,19 +300,17 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['fields']['server_val'] = $serverValueField;
 
         $app['request'] = Request::create('/');
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
 
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
         $fields['server_val'] = $serverValueField;
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters, array(), array(), array('SCRIPT_NAME' => $_SERVER['SCRIPT_NAME']));
         $app->boot();
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('server_val', $result);
         $this->assertSame($_SERVER['SCRIPT_NAME'], $result->get('server_val'));
@@ -341,19 +331,17 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['fields']['server_val'] = $serverValueField;
 
         $app['request'] = Request::create('/');
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
 
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
         $fields['server_val'] = $serverValueField;
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters, array(), array(), array('SCRIPT_NAME' => $_SERVER['SCRIPT_NAME']));
         $app->boot();
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('server_val', $result->getPostData());
         $this->assertNull($result->get('server_val'));
@@ -377,20 +365,18 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['fields']['session_value'] = $sessionValueField;
 
         $app['request'] = Request::create('/');
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
 
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
         $fields['session_value'] = $sessionValueField;
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
         $app->boot();
         $app['session']->set('koala', 'gum-leaves');
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('session_value', $result);
         $this->assertSame('gum-leaves', $result->get('session_value'));
@@ -411,20 +397,18 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['fields']['session_value'] = $sessionValueField;
 
         $app['request'] = Request::create('/');
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
 
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
         $fields['session_value'] = $sessionValueField;
-
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
         $app->boot();
         $app['session']->set('koala', 'gum-leaves');
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true), true);
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
 
         $this->assertArrayHasKey('session_value', $result->getPostData());
         $this->assertNull($result->get('session_value'));

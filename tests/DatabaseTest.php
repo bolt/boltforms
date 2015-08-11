@@ -35,10 +35,9 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/');
 
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->getParameters($app);
 
@@ -64,7 +63,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true));
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -118,10 +117,10 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $this->getExtension($app)->config['testing_form']['database']['contenttype'] = 'koala';
 
         $app['request'] = Request::create('/');
-        $boltforms = new BoltForms($app);
-        $boltforms->makeForm('testing_form');
+
+        $app['boltforms']->makeForm('testing_form');
         $fields = $this->formFieldConfig();
-        $boltforms->addFieldArray('testing_form', $fields);
+        $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->getParameters($app);
 
@@ -134,7 +133,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $boltforms->processRequest('testing_form', array('success' => true));
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }
