@@ -99,8 +99,8 @@ contact:
   fields:
     name:
       type: text
-      required: true
       options:
+        required: true
         label: Name
         attr:
           placeholder: Your name...
@@ -168,16 +168,16 @@ contact:
 #  fields:
 #    subject:
 #      type: text
-#      required: true
 #      options:
+#        required: true
 #        label: Subject of your message
 #        attr:
 #          placeholder: Just a quick message...
 #        constraints: [ NotBlank, {Length: {'min': 3, 'max': 30}} ]
 #    name:
 #      type: text
-#      required: true
 #      options:
+#        required: true
 #        label: Name
 #        attr:
 #          placeholder: Your name...
