@@ -22,6 +22,30 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
+ *
+ * @method boolean getEnabled()
+ * @method boolean getDebug()
+ * @method string  getSubject()
+ * @method string  getFromName()
+ * @method string  getFromEmail()
+ * @method string  getReplytoName()
+ * @method string  getReplytoEmail()
+ * @method string  getToName()
+ * @method string  getToEmail()
+ * @method string  getCcName()
+ * @method string  getCcEmail()
+ * @method string  getBccName()
+ * @method string  getBccEmail()
+ * @method boolean getAttachFiles()
+ * @method string  getSuccess()
+ * @method string  getError()
+ * @method array   getRedirect()
+ * @method string  getTable()
+ * @method string  getContenttype()
+ * @method string  getForm()
+ * @method string  getSubject()
+ * @method string  getEmail()
+ * @method string  getSubdirectory()
  */
 class FormConfigSection
 {
