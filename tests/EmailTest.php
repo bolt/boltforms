@@ -56,6 +56,40 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $this->assertTrue($result);
     }
 
+    public function testSendEmailFail()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['debug']['enabled'] = false;
+        $this->getExtension($app)->config['testing_form']['notification'] = $this->formNotificationConfig();
+
+        $app['request'] = Request::create('/');
+
+        $mailer = $this->getMock('\Swift_Mailer', array('send'), array($app['swiftmailer.transport']));
+        $mailer->expects($this->any())
+            ->method('send')
+            ->will($this->returnValue(false));
+        $app['mailer'] = $mailer;
+
+        $logger = $this->getMock('\Monolog\Logger', array('error'), array('testlogger'));
+        $logger->expects($this->atLeastOnce())
+            ->method('error');
+        $app['logger.system'] = $logger;
+
+        $boltforms = new BoltForms($app);
+        $boltforms->makeForm('testing_form');
+        $fields = $this->formFieldConfig();
+
+        $boltforms->addFieldArray('testing_form', $fields);
+
+        $parameters = $this->formData();
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $result = $boltforms->processRequest('testing_form', array('success' => true));
+
+        $this->assertTrue($result);
+    }
+
     public function testSendEmailDebug()
     {
         $app = $this->getApp();
