@@ -37,11 +37,11 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $twigExt = new BoltFormsExtension($app);
         $functions = $twigExt->getFunctions();
 
-        $this->assertArrayHasKey('boltforms', $functions);
-        $this->assertArrayHasKey('boltforms_uploads', $functions);
+        $this->assertSame('boltforms', $functions[0]->getName());
+        $this->assertSame('boltforms_uploads', $functions[1]->getName());
 
-        $this->assertInstanceOf('\Twig_SimpleFunction', $functions['boltforms']);
-        $this->assertInstanceOf('\Twig_SimpleFunction', $functions['boltforms_uploads']);
+        $this->assertInstanceOf('\Twig_SimpleFunction', $functions[0]);
+        $this->assertInstanceOf('\Twig_SimpleFunction', $functions[1]);
     }
 
     public function testTwigBoltForms()

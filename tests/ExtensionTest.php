@@ -60,5 +60,9 @@ class ExtensionTest extends AbstractBoltFormsUnitTest
         $twigExt = $app['twig']->getExtension('boltforms.extension');
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension', $twigExt);
         $this->assertSame('boltforms.extension', $twigExt->getName());
+
+        $twigExt = $app['safe_twig']->getExtension('boltforms.extension');
+        $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension', $twigExt);
+        $this->assertSame('boltforms.extension', $twigExt->getName());
     }
 }
