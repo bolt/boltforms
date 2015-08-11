@@ -99,12 +99,36 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
 
     public function testRenderFormDebugOn()
     {
-        //
+        $app = $this->getApp();
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+
+        $boltforms->makeForm('testing_form');
+        $fields = $this->formFieldConfig();
+        $boltforms->addFieldArray('testing_form', $fields);
+
+        $html = $boltforms->renderForm('testing_form', null, array('debug' => true));
+        $this->assertInstanceOf('\Twig_Markup', $html);
+        $html = (string) $html;
+
+        $this->assertRegExp('#\[Debug\] Notification debug mode enabled!#', $html);
     }
 
     public function testRenderFormDebugOff()
     {
-        //
+        $app = $this->getApp();
+        $app['request'] = Request::create('/');
+        $boltforms = new BoltForms($app);
+
+        $boltforms->makeForm('testing_form');
+        $fields = $this->formFieldConfig();
+        $boltforms->addFieldArray('testing_form', $fields);
+
+        $html = $boltforms->renderForm('testing_form', null, array('debug' => false));
+        $this->assertInstanceOf('\Twig_Markup', $html);
+        $html = (string) $html;
+
+        $this->assertNotRegExp('#\[Debug\] Notification debug mode enabled!#', $html);
     }
 
     public function testProcessRequest()
