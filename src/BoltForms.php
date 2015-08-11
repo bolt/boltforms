@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 
 /**
  * Core API functions for BoltForms
@@ -248,29 +249,29 @@ class BoltForms
     {
         /** @var FormData $formData */
         $formData = $this->handleRequest($formName);
+        $formConfig = New FormConfig($this->config[$formName]);
         $sent = $this->getForm($formName)->isSubmitted();
 
         if ($sent && $formData !== null && $recaptchaResponse['success']) {
-            $this->processFields($formName, $formData);
-            $formConfig = $this->config[$formName];
+            $this->processFields($formName, $formConfig, $formData);
 
             // Write to a Contenttype
-            if (isset($formConfig['database']['contenttype']) && $formConfig['database']['contenttype']) {
-                $this->app['boltforms.database']->writeToContentype($formConfig['database']['contenttype'], $formData);
+            if ($formConfig->getDatabase()->getContenttype() !== null) {
+                $this->app['boltforms.database']->writeToContentype($formConfig->getDatabase()->getContenttype(), $formData);
             }
 
             // Write to a normal database table
-            if (isset($formConfig['database']['table']) && $formConfig['database']['table']) {
-                $this->app['boltforms.database']->writeToTable($formConfig['database']['table'], $formData);
+            if ($formConfig->getDatabase()->getTable() !== null) {
+                $this->app['boltforms.database']->writeToTable($formConfig->getDatabase()->getTable(), $formData);
             }
 
             // Send notification email
-            if (isset($formConfig['notification']['enabled']) && $formConfig['notification']['enabled']) {
+            if ($formConfig->getNotification()->getEnabled()) {
                 $this->app['boltforms.email']->doNotification($formConfig, $formData);
             }
 
             // Redirect if a redirect is set and the page exists
-            if (isset($formConfig['feedback']['redirect']) && is_array($formConfig['feedback']['redirect'])) {
+            if ($formConfig->getFeedback()->redirect['target'] !== null) {
                 $this->redirect($formName, $formData);
             }
 
@@ -281,18 +282,19 @@ class BoltForms
             return true;
         }
 
-        throw new FormValidationException(isset($this->config[$formName]['feedback']['error']) ? $this->config[$formName]['feedback']['error'] : 'There are errors in the form, please fix before trying to resubmit');
+        throw new FormValidationException($formConfig->getFeedback()->getError() ?: 'There are errors in the form, please fix before trying to resubmit');
     }
 
     /**
      * Process the fields to get usable data.
      *
-     * @param string   $formName
-     * @param FormData $formData
+     * @param string     $formName
+     * @param FormConfig $formConfig
+     * @param FormData   $formData
      *
      * @throws FileUploadException
      */
-    protected function processFields($formName, FormData $formData)
+    protected function processFields($formName, FormConfig $formConfig, FormData $formData)
     {
         foreach ($formData->keys() as $fieldName) {
             $field = $formData->get($fieldName);
@@ -316,8 +318,9 @@ class BoltForms
             }
 
             // Handle events for custom data
-            if (isset($this->config[$formName]['fields'][$fieldName]['event']['name'])) {
-                $formData->set($fieldName, $this->dispatchCustomDataEvent($formName, $fieldName));
+            $fieldConf = $formConfig->getFields()->{$fieldName}();
+            if (isset($fieldConf['event']['name'])) {
+                $formData->set($fieldName, $this->dispatchCustomDataEvent($formName, $fieldConf['event']));
             }
         }
     }
@@ -351,19 +354,18 @@ class BoltForms
      * Dispatch custom data events.
      *
      * @param string $formname
-     * @param string $field
+     * @param array  $eventConfig
      */
-    protected function dispatchCustomDataEvent($formname, $field)
+    protected function dispatchCustomDataEvent($formname, $eventConfig)
     {
-        $fieldConfig = $this->config[$formname]['fields'][$field];
-        if (strpos('boltforms.', $fieldConfig['event']['name']) === false) {
-            $eventName = 'boltforms.' . $fieldConfig['event']['name'];
+        if (strpos('boltforms.', $eventConfig['name']) === false) {
+            $eventName = 'boltforms.' . $eventConfig['name'];
         } else {
-            $eventName = $fieldConfig['event']['name'];
+            $eventName = $eventConfig['name'];
         }
 
         if ($this->app['dispatcher']->hasListeners($eventName)) {
-            $eventParams = isset($fieldConfig['event']['params']) ? $fieldConfig['event']['params'] : null;
+            $eventParams = isset($eventConfig['params']) ? $eventConfig['params'] : null;
             $event = new BoltFormsCustomDataEvent($eventName, $eventParams);
             try {
                 $this->app['dispatcher']->dispatch($eventName, $event);

@@ -30,7 +30,7 @@ class EmailConfig implements \ArrayAccess
 {
     /** @var array */
     protected $globalDebug;
-    /** @var array */
+    /** @var FormConfig */
     protected $formConfig;
     /** @var FormData */
     protected $formData;
@@ -61,12 +61,12 @@ class EmailConfig implements \ArrayAccess
     /** @var string */
     protected $replyToEmail;
 
-    public function __construct(array $globalDebug, array $formConfig, FormData $formData)
+    public function __construct(array $globalDebug, FormConfig $formConfig, FormData $formData)
     {
         $this->globalDebug = $globalDebug;
         $this->formConfig = $formConfig;
         $this->formData = $formData;
-        $this->attachFiles = isset($formConfig['notification']['attach_files']) ? $formConfig['notification']['attach_files'] : false;
+        $this->attachFiles = $formConfig->getNotification()->attach_files ?: false;
 
         $this->setDebugState();
         $this->setEmailConfig();
@@ -99,13 +99,8 @@ class EmailConfig implements \ArrayAccess
                 $this->debugEmail = $this->globalDebug['address'];
             }
         } else {
-            $this->debug = isset($this->formConfig['notification']['debug']) && $this->formConfig['notification']['debug'];
-
-            if (isset($this->formConfig['notification']['debug_address'])) {
-                $this->debugEmail = $this->formConfig['notification']['debug_address'];
-            } else {
-                $this->debugEmail = $this->globalDebug['address'];
-            }
+            $this->debug = $this->formConfig->getNotification()->getDebug();
+            $this->debugEmail = $this->formConfig->getNotification()->debug_address ?: $this->globalDebug['address'];
         }
     }
 
@@ -244,7 +239,7 @@ class EmailConfig implements \ArrayAccess
      */
     private function setEmailConfig()
     {
-        $notify = $this->formConfig['notification'];
+        $notify = $this->formConfig->getNotification();
 
         $hashMap = array(
             'fromName'     => 'from_name',
@@ -260,7 +255,7 @@ class EmailConfig implements \ArrayAccess
         );
 
         foreach ($hashMap as $property => $key) {
-            $this->{$property} = $this->getConfigValue($notify[$key]);
+            $this->{$property} = $this->getConfigValue($notify->{$key});
         }
     }
 

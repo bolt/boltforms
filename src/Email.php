@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Silex\Application;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 
 /**
  * Email functions for BoltForms
@@ -45,14 +46,14 @@ class Email
     /**
      * Create a notification message.
      *
-     * @param array    $formconfig
-     * @param FormData $formData
+     * @param FormConfig $formConfig
+     * @param FormData   $formData
      */
-    public function doNotification($formconfig, $formData)
+    public function doNotification(FormConfig $formConfig, FormData $formData)
     {
-        $emailConfig = new EmailConfig($this->config['debug'], $formconfig, $formData);
+        $emailConfig = new EmailConfig($this->config['debug'], $formConfig, $formData);
 
-        $this->doCompose($formconfig, $emailConfig, $formData);
+        $this->doCompose($formConfig, $emailConfig, $formData);
         $this->doAddress($emailConfig);
         $this->doSend($emailConfig);
     }
@@ -60,11 +61,11 @@ class Email
     /**
      * Compose the email data to be sent.
      *
-     * @param array       $formconfig
+     * @param FormConfig  $formConfig
      * @param EmailConfig $emailConfig
      * @param FormData    $formData
      */
-    private function doCompose($formconfig, EmailConfig $emailConfig, $formData)
+    private function doCompose(FormConfig $formConfig, EmailConfig $emailConfig, $formData)
     {
         /*
          * Create message object
@@ -75,18 +76,14 @@ class Email
         $this->addTwigPath();
 
         // If the form has it's own templates defined, use those, else the globals.
-        $templateSubject = isset($formconfig['templates']['subject'])
-            ? $formconfig['templates']['subject']
-            : $this->config['templates']['subject'];
-        $templateEmail = isset($formconfig['templates']['email'])
-            ? $formconfig['templates']['email']
-            : $this->config['templates']['email'];
+        $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->config['templates']['subject'];
+        $templateEmail = $formConfig->getTemplates()->getEmail() ?: $this->config['templates']['email'];
 
         /*
          * Subject
          */
         $html = $this->app['render']->render($templateSubject, array(
-            'subject' => $formconfig['notification']['subject'],
+            'subject' => $formConfig->getNotification()->getSubject(),
             'config'  => $emailConfig,
             'data'    => $formData
         ));
@@ -97,7 +94,7 @@ class Email
          * Body
          */
         $html = $this->app['render']->render($templateEmail, array(
-            'fields' => $formconfig['fields'],
+            'fields' => $formConfig->getFields(),
             'config' => $emailConfig,
             'data'   => $this->getBodyData($emailConfig, $formData)
         ));
