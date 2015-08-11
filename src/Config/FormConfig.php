@@ -176,7 +176,7 @@ class FormConfig
 
         foreach ($array2 as $key => &$value) {
             if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
-                $merged[$key] = static::mergeRecursiveDistinct($merged[$key], $value);
+                $merged[$key] = self::mergeRecursiveDistinct($merged[$key], $value);
             } elseif (!empty($value)) {
                 $merged[$key] = $value;
             }
