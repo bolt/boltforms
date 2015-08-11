@@ -67,8 +67,8 @@ class BoltFormsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'boltforms'         => new \Twig_Function_Method($this, 'twigBoltForms'),
-            'boltforms_uploads' => new \Twig_Function_Method($this, 'twigBoltFormsUploads')
+            'boltforms'         => new \Twig_SimpleFunction($this, 'twigBoltForms'),
+            'boltforms_uploads' => new \Twig_SimpleFunction($this, 'twigBoltFormsUploads')
         );
     }
 
