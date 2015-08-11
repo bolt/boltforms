@@ -66,34 +66,22 @@ class BoltFormsSubscriber implements EventSubscriberInterface
      * Event triggered on FormEvents::PRE_SET_DATA
      *
      * @param FormEvent $event
+     * @param string    $eventName
      */
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event, $eventName)
     {
-        if ($this->app['dispatcher']->hasListeners(BoltFormsEvents::PRE_SET_DATA)) {
-            $event = new BoltFormsEvent($event);
-            try {
-                $this->app['dispatcher']->dispatch(BoltFormsEvents::PRE_SET_DATA, $event);
-            } catch (\Exception $e) {
-                $this->app['logger.system']->error("[BoltForms] " . BoltFormsEvents::PRE_SET_DATA. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
-            }
-        }
+        $this->dispatch(BoltFormsEvents::PRE_SET_DATA, $event, $eventName);
     }
 
     /**
      * Event triggered on FormEvents::POST_SET_DATA
      *
      * @param FormEvent $event
+     * @param string    $eventName
      */
-    public function postSetData(FormEvent $event)
+    public function postSetData(FormEvent $event, $eventName)
     {
-        if ($this->app['dispatcher']->hasListeners(BoltFormsEvents::POST_SET_DATA)) {
-            $event = new BoltFormsEvent($event);
-            try {
-                $this->app['dispatcher']->dispatch(BoltFormsEvents::POST_SET_DATA, $event);
-            } catch (\Exception $e) {
-                $this->app['logger.system']->error("[BoltForms] " . BoltFormsEvents::POST_SET_DATA. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
-            }
-        }
+        $this->dispatch(BoltFormsEvents::POST_SET_DATA, $event, $eventName);
     }
 
     /**
@@ -106,49 +94,50 @@ class BoltFormsSubscriber implements EventSubscriberInterface
      *  $event->setData($data);
      *
      * @param FormEvent $event
+     * @param string    $eventName
      */
-    public function preSubmit(FormEvent $event)
+    public function preSubmit(FormEvent $event, $eventName)
     {
-        if ($this->app['dispatcher']->hasListeners(BoltFormsEvents::PRE_SUBMIT)) {
-            $event = new BoltFormsEvent($event);
-            try {
-                $this->app['dispatcher']->dispatch(BoltFormsEvents::PRE_SUBMIT, $event);
-            } catch (\Exception $e) {
-                $this->app['logger.system']->error("[BoltForms] " . BoltFormsEvents::PRE_SUBMIT. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
-            }
-        }
+        $this->dispatch(BoltFormsEvents::PRE_SUBMIT, $event, $eventName);
     }
 
     /**
      * Event triggered on FormEvents::SUBMIT
      *
      * @param FormEvent $event
+     * @param string    $eventName
      */
-    public function submit(FormEvent $event)
+    public function submit(FormEvent $event, $eventName)
     {
-        if ($this->app['dispatcher']->hasListeners(BoltFormsEvents::SUBMIT)) {
-            $event = new BoltFormsEvent($event);
-            try {
-                $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMIT, $event);
-            } catch (\Exception $e) {
-                $this->app['logger.system']->error("[BoltForms] " . BoltFormsEvents::SUBMIT. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
-            }
-        }
+        $this->dispatch(BoltFormsEvents::SUBMIT, $event, $eventName);
     }
 
     /**
      * Event triggered on FormEvents::POST_SUBMIT
      *
      * @param FormEvent $event
+     * @param string    $eventName
      */
-    public function postSubmit(FormEvent $event)
+    public function postSubmit(FormEvent $event, $eventName)
     {
-        if ($this->app['dispatcher']->hasListeners(BoltFormsEvents::POST_SUBMIT)) {
-            $event = new BoltFormsEvent($event);
+        $this->dispatch(BoltFormsEvents::POST_SUBMIT, $event, $eventName);
+    }
+
+    /**
+     * Dispatch event.
+     *
+     * @param string    $eventName
+     * @param FormEvent $event
+     * @param string    $formsEventName
+     */
+    protected function dispatch($eventName, FormEvent $event, $formsEventName)
+    {
+        if ($this->app['dispatcher']->hasListeners($eventName)) {
+            $event = new BoltFormsEvent($event, $formsEventName);
             try {
-                $this->app['dispatcher']->dispatch(BoltFormsEvents::POST_SUBMIT, $event);
+                $this->app['dispatcher']->dispatch($eventName, $event);
             } catch (\Exception $e) {
-                $this->app['logger.system']->error("[BoltForms] " . BoltFormsEvents::POST_SUBMIT. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
+                $this->app['logger.system']->error("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
             }
         }
     }
