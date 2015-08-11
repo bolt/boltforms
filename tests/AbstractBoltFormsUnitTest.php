@@ -19,7 +19,11 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
     {
         $app = parent::getApp($boot);
         $extension = new Extension($app);
+
         $app['extensions']->register($extension);
+
+        unset($app['extensions.BoltForms']->config['contact']);
+        $app['extensions.BoltForms']->config['testing_form'] = $this->formFieldBaseConfig();
 
         return $app;
     }
@@ -30,7 +34,7 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
             $app = $this->getApp();
         }
 
-        return $app["extensions.BoltForms"];
+        return $app['extensions.BoltForms'];
     }
 
     protected function formNotificationConfig()
@@ -49,6 +53,43 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
             'bcc_name'      => 'Lodewijk Evers',
             'bcc_email'     => 'lodewijk@example.com',
             'attach_files'  => true,
+        );
+    }
+
+    protected function formFieldBaseConfig()
+    {
+        return array(
+            'notification' => array(
+                'enabled'       => false,
+                'debug'         => false,
+                'subject'       => 'Your message was submitted',
+                'from_name'     => null,
+                'from_email'    => null,
+                'replyto_name'  => null,
+                'replyto_email' => null,
+                'to_name'       => null,
+                'to_email'      => null,
+                'cc_name'       => null,
+                'cc_email'      => null,
+                'bcc_name'      => null,
+                'bcc_email'     => null,
+                'attach_files'  => false,
+            ),
+            'feedback' => array(
+                'success'  => 'Form submission sucessful',
+                'error'    => 'There are errors in the form, please fix before trying to resubmit',
+                'redirect' => array(
+                    'target' => null,
+                    'query'  => null
+                )
+            ),
+            'database'  => null,
+            'templates' => array(
+                'form'    => 'boltforms_form.twig',
+                'subject' => 'boltforms_email_subject.twig',
+                'email'   => 'boltforms_email.twig',
+            ),
+            'fields' => null,
         );
     }
 

@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Tests;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 
 /**
  * BoltForms\Config\Email class tests.
@@ -14,11 +15,11 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
 {
     public function formConfig()
     {
-        return array(
+        return new FormConfig(array(
             'debug'        => false,
             'notification' => $this->formNotificationConfig(),
             'fields'       => $this->formFieldConfig()
-        );
+        ));
     }
 
     public function testConstructor()
@@ -31,7 +32,7 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
         $formData = new FormData($postData);
 
         $emailconfig = new EmailConfig($globalDebug, $formConfig, $formData);
-
+// dump($emailconfig);
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Config\EmailConfig', $emailconfig);
         $this->assertSame('Gawain Lynch', $emailconfig->getFromName());
         $this->assertSame('gawain@example.com', $emailconfig->getFromEmail());
@@ -62,13 +63,13 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
 
         // Form level debugging
         $globalDebug['enabled'] = false;
-        $formConfig['notification']['debug'] = true;
+        $formConfig->getNotification()->debug = true;
         $emailconfig = new EmailConfig($globalDebug, $formConfig, $formData);
         $this->assertTrue($emailconfig->isDebug());
 
         // All debugging off
         $globalDebug['enabled'] = false;
-        $formConfig['notification']['debug'] = false;
+        $formConfig->getNotification()->debug = false;
         $emailconfig = new EmailConfig($globalDebug, $formConfig, $formData);
         $this->assertFalse($emailconfig->isDebug());
     }

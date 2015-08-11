@@ -97,6 +97,16 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $this->assertRegExp('#<input type="hidden" id="testing_form__token" name="testing_form\[_token\]" value=#', $html);
     }
 
+    public function testRenderFormDebugOn()
+    {
+        //
+    }
+
+    public function testRenderFormDebugOff()
+    {
+        //
+    }
+
     public function testProcessRequest()
     {
         $app = $this->getApp();
