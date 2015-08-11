@@ -55,13 +55,15 @@ class Database
         $sm = $this->app['db']->getSchemaManager();
         if (!$sm->tablesExist(array($tablename))) {
             // log failed attempt
-            $this->app['logger.system']->error("Failed attempt to save Bolt Forms submission: missing database table `$tablename`", array('event' => 'extensions'));
+            $this->app['logger.system']->error("[Bolt Forms] Failed attempt to save submission: missing database table `$tablename`", array('event' => 'extensions'));
+
             return false;
         }
 
         // Build a new array with only keys that match the database table
         /** @var \Doctrine\DBAL\Schema\Column[] $columns */
         $columns = $sm->listTableColumns($tablename);
+
         foreach ($columns as $column) {
             $colname = $column->getName();
             // Only attempt to insert fields with existing data this way you can
@@ -72,7 +74,11 @@ class Database
             }
         }
 
-        $this->app['db']->insert($tablename, $saveData);
+        try {
+            $this->app['db']->insert($tablename, $saveData);
+        } catch (\Exception $e) {
+            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to database table `$tablename`", array('event' => 'extensions', 'exception' => $e));
+        }
     }
 
     /**
@@ -91,9 +97,15 @@ class Database
             $formData->set('datepublish', date('Y-m-d H:i:s'));
         }
 
-        // Store the data array into the record
-        $record->setValues((array) $formData);
+        foreach ($formData->keys() as $name) {
+            // Store the data array into the record
+            $record->setValue($name, $formData->get($name, true));
+        }
 
-        $this->app['storage']->saveContent($record);
+        try {
+            $this->app['storage']->saveContent($record);
+        } catch (\Exception $e) {
+            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to ContentType table `$contenttype`", array('event' => 'extensions', 'exception' => $e));
+        }
     }
 }
