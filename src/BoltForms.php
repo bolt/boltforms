@@ -5,18 +5,9 @@ use Bolt;
 use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
-use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
-use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
-use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
-use Bolt\Helpers\Arr;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
  * Core API functions for BoltForms

@@ -7,13 +7,12 @@ use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
+use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Extension;
 use Bolt\Extension\Bolt\BoltForms\FileUpload;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 
 /**
  * Request processing functions for BoltForms
@@ -144,7 +143,6 @@ class Processor
     /**
      * Process the fields to get usable data.
      *
-     * @param string     $formName
      * @param FormConfig $formConfig
      * @param FormData   $formData
      *

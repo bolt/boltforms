@@ -1,13 +1,10 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
-use Bolt;
-use Bolt\Application;
-use Bolt\Routing\UrlMatcher;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Bolt\Extension\Bolt\BoltForms\Extension;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Helpers\Arr;
+use Bolt\Routing\UrlMatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RedirectableUrlMatcherInterface;
