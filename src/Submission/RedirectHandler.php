@@ -34,6 +34,8 @@ class RedirectHandler
 {
     /** @var RedirectableUrlMatcherInterface */
     private $urlMatcher;
+    /** @var boolean */
+    private $valid = true;
 
     /**
      * @param RedirectableUrlMatcherInterface $urlMatcher
@@ -58,6 +60,16 @@ class RedirectHandler
         if ($response instanceof RedirectResponse) {
             $response->send();
         }
+    }
+
+    /**
+     * Check if the redirect is valid.
+     *
+     * @return boolean
+     */
+    public function isValid()
+    {
+        return $this->valid;
     }
 
     /**
@@ -113,7 +125,7 @@ class RedirectHandler
                 return new RedirectResponse($url . $query);
             } catch (ResourceNotFoundException $e) {
                 // No route found… Go home site admin, you're… um… putting a bad route in!
-                return;
+                return $this->valid = false;
             }
         }
     }
