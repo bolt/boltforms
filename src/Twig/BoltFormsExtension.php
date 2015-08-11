@@ -35,10 +35,8 @@ class BoltFormsExtension extends \Twig_Extension
 {
     /** @var Application */
     private $app;
-
     /** @var array */
     private $config;
-
     /** @var \Twig_Environment */
     private $twig = null;
 
@@ -67,8 +65,8 @@ class BoltFormsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'boltforms'         => new \Twig_SimpleFunction($this, 'twigBoltForms'),
-            'boltforms_uploads' => new \Twig_SimpleFunction($this, 'twigBoltFormsUploads')
+            new \Twig_SimpleFunction('boltforms', array($this, 'twigBoltForms'), array('is_safe' => array('html'), 'is_safe_callback' => true)),
+            new \Twig_SimpleFunction('boltforms_uploads', array($this, 'twigBoltFormsUploads'))
         );
     }
 

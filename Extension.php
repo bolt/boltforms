@@ -28,34 +28,14 @@ use Bolt;
  */
 class Extension extends \Bolt\BaseExtension
 {
-    /**
-     * Extension name
-     *
-     * @var string
-     */
+    /** @var string Extension name */
     const NAME = 'BoltForms';
-
-    /**
-     * Extension's service container
-     *
-     * @var string
-     */
+    /** @var string Extension's service container */
     const CONTAINER = 'extensions.BoltForms';
 
     public function getName()
     {
         return Extension::NAME;
-    }
-
-    /**
-     * Allow users to place {{ boltforms() }} tags into content, if
-     * `allowtwig: true` is set in the contenttype.
-     *
-     * @return boolean
-     */
-    public function isSafe()
-    {
-        return true;
     }
 
     /**
@@ -82,14 +62,7 @@ class Extension extends \Bolt\BaseExtension
          * Frontend
          */
         if ($this->app['config']->getWhichEnd() === 'frontend') {
-            // Twig functions
-            $this->app->share($this->app->extend('twig',
-                function ($twig, $app) {
-                    $twig->addExtension(new Twig\BoltFormsExtension($app));
-
-                    return $twig;
-                })
-            );
+            $this->addTwig();
         }
 
         /*
@@ -99,6 +72,38 @@ class Extension extends \Bolt\BaseExtension
             $url = '/' . ltrim($this->config['uploads']['base_uri'], '/');
             $this->app->mount($url, new Controller\UploadManagement());
         }
+    }
+
+    /**
+     * Add the Twig functions.
+     */
+    private function addTwig()
+    {
+        $app = $this->app;
+
+        // Safe
+        $this->app->share(
+            $this->app->extend(
+                'twig',
+                function (\Twig_Environment $twig) use ($app) {
+                    $twig->addExtension(new Twig\BoltFormsExtension($app));
+
+                    return $twig;
+                }
+            )
+        );
+
+        // Normal
+        $this->app->share(
+            $this->app->extend(
+                'safe_twig',
+                function (\Twig_Environment $twig) use ($app) {
+                    $twig->addExtension(new Twig\BoltFormsExtension($app));
+
+                    return $twig;
+                }
+            )
+        );
     }
 
     /**

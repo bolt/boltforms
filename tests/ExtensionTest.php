@@ -21,9 +21,6 @@ class ExtensionTest extends AbstractBoltFormsUnitTest
         $name = $extension->getName();
         $this->assertSame($name, 'BoltForms');
 
-        // Check that we're able to use "safe Twig"
-        $this->assertTrue($extension->isSafe());
-
         // Check that we're giving warnings for mail
         $this->assertTrue($extension->sendsMail());
     }
