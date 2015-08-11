@@ -137,6 +137,8 @@ class FormData implements \ArrayAccess
         if ($value instanceof FileUpload && $value->isValid()) {
             return $value->relativePath();
         }
+
+        return $value;
     }
 
     public function offsetSet($offset, $value)
