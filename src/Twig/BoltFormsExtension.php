@@ -36,18 +36,11 @@ class BoltFormsExtension extends \Twig_Extension
     private $app;
     /** @var array */
     private $config;
-    /** @var \Twig_Environment */
-    private $twig = null;
 
     public function __construct(Application $app)
     {
         $this->app      = $app;
         $this->config   = $this->app[Extension::CONTAINER]->config;
-    }
-
-    public function initRuntime(\Twig_Environment $environment)
-    {
-        $this->twig = $environment;
     }
 
     /**

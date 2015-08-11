@@ -30,13 +30,10 @@ class Database
 {
     /** @var Application */
     private $app;
-    /** @var array */
-    private $config;
 
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->config = $app[Extension::CONTAINER]->config;
     }
 
     /**
