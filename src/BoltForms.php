@@ -320,7 +320,7 @@ class BoltForms
             // Handle events for custom data
             $fieldConf = $formConfig->getFields()->{$fieldName}();
             if (isset($fieldConf['event']['name'])) {
-                $formData->set($fieldName, $this->dispatchCustomDataEvent($formName, $fieldConf['event']));
+                $formData->set($fieldName, $this->dispatchCustomDataEvent($fieldConf['event']));
             }
         }
     }
@@ -353,10 +353,9 @@ class BoltForms
     /**
      * Dispatch custom data events.
      *
-     * @param string $formname
      * @param array  $eventConfig
      */
-    protected function dispatchCustomDataEvent($formname, $eventConfig)
+    protected function dispatchCustomDataEvent($eventConfig)
     {
         if (strpos('boltforms.', $eventConfig['name']) === false) {
             $eventName = 'boltforms.' . $eventConfig['name'];
