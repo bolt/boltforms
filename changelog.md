@@ -1,13 +1,13 @@
 # Changelog for Bolt Forms
 
-* 2.2.dev (2015-XX-XX)
- * Added the ability to use ReplyTo addresses in email notifications (credit @rudott)
- * Moved email notification configuration handling to a separate class
- * Fixed compatibility with PHP 5.3
- * Added "rossriley/formeditor" as a suggested extra package
- * The default Twig template will now display a warning if notification debugging is on
- * Fixed CC and bCC address handling in notifications
- * Refactored configuration handling to use objects
+* 2.3.0 (2015-08-11)
+ * Added: the ability to use ReplyTo addresses in email notifications (credit @rudott)
+ * Added: Display a warning if notification debugging is on in default Twig template 
+ * Added: "rossriley/formeditor" as a suggested extra package
+ * Fixed: compatibility with PHP 5.3
+ * Fixed: CC and bCC address handling in notifications
+ * Refactor: email notification configuration handling to a separate class
+ * Refactor: configuration handling to use objects
 
 * 2.2.2 (2015-08-09)
  * Fix reCaptch displaying error on GET
