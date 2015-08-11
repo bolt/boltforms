@@ -3,8 +3,8 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
-use Silex\Application;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
+use Silex\Application;
 
 /**
  * Email functions for BoltForms

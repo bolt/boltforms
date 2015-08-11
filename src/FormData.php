@@ -32,7 +32,7 @@ class FormData implements \ArrayAccess
     protected $postData;
 
     /**
-     * @param array $data
+     * @param array $postData
      */
     public function __construct(array $postData)
     {

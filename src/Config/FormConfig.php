@@ -1,8 +1,6 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Bolt\Helpers\Arr;
-
 /**
  * Form configuration for BoltForms
  *

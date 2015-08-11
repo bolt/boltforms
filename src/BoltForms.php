@@ -6,6 +6,7 @@ use Bolt;
 use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
@@ -17,7 +18,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 
 /**
  * Core API functions for BoltForms
@@ -249,7 +249,7 @@ class BoltForms
     {
         /** @var FormData $formData */
         $formData = $this->handleRequest($formName);
-        $formConfig = New FormConfig($this->config[$formName]);
+        $formConfig = new FormConfig($this->config[$formName]);
         $sent = $this->getForm($formName)->isSubmitted();
 
         if ($sent && $formData !== null && $recaptchaResponse['success']) {
