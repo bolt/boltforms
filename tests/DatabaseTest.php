@@ -81,6 +81,54 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $this->assertFalse($retval);
     }
 
+    public function testWriteToTableException()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['testing_form']['database']['table'] = 'koala';
+
+        $app['request'] = Request::create('/');
+
+        $app['boltforms']->makeForm('testing_form');
+        $fields = $this->formFieldConfig();
+        $app['boltforms']->addFieldArray('testing_form', $fields);
+
+        $parameters = $this->getParameters($app);
+
+        // Mock the database query
+        $e = new \Doctrine\DBAL\DBALException();
+        $mocker = new Mock\DoctrineMockBuilder();
+        $db = $mocker->getConnectionMock();
+        $sm = $mocker->getSchemaManagerMock($db, true, array_keys($parameters['testing_form']));
+        $db->expects($this->any())
+            ->method('getSchemaManager')
+            ->will($this->returnValue($sm));
+        $db->expects($this->any())
+            ->method('insert')
+            ->will($this->throwException($e));
+
+        $app['db'] = $db;
+
+        // Keep an eye on the logger
+        $logger = $this->getMock('\Monolog\Logger', array('critical', 'debug'), array('testlogger'));
+        $logger->expects($this->atLeastOnce())
+            ->method('critical');
+        $app['logger.system'] = $logger;
+
+        // Mock Bolt\Users
+        $users = $this->getMock('\Bolt\Users', array('getUsers'), array($app));
+        $users->expects($this->any())
+            ->method('getUsers')
+            ->willReturn(array('id' => 1));
+        $app['users'] = $users;
+
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+
+        $this->assertTrue($result);
+    }
+
     public function testWriteGetData()
     {
         $app = $this->getApp();
@@ -130,6 +178,41 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
             ->method('saveContent')
             ->willReturn(42);
         $app['storage'] = $storage;
+
+        $app['request'] = Request::create('/', 'POST', $parameters);
+
+        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+
+        $this->assertTrue($result);
+    }
+
+    public function testWriteToContentypeException()
+    {
+        $app = $this->getApp();
+        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension($app)->config['testing_form']['database']['contenttype'] = 'koala';
+
+        $app['request'] = Request::create('/');
+
+        $app['boltforms']->makeForm('testing_form');
+        $fields = $this->formFieldConfig();
+        $app['boltforms']->addFieldArray('testing_form', $fields);
+
+        $parameters = $this->getParameters($app);
+
+        // Mock Bolt\Storage
+        $e = new \Exception();
+        $storage = $this->getMock('\Bolt\Storage', array('saveContent'), array($app));
+        $storage->expects($this->any())
+            ->method('saveContent')
+            ->will($this->throwException($e));
+        $app['storage'] = $storage;
+
+        // Keep an eye on the logger
+        $logger = $this->getMock('\Monolog\Logger', array('critical', 'debug'), array('testlogger'));
+        $logger->expects($this->atLeastOnce())
+            ->method('critical');
+        $app['logger.system'] = $logger;
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
