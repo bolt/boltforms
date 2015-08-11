@@ -33,7 +33,7 @@ class Extension extends \Bolt\BaseExtension
      *
      * @var string
      */
-    const NAME = "BoltForms";
+    const NAME = 'BoltForms';
 
     /**
      * Extension's service container
