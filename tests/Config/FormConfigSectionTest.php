@@ -2,9 +2,6 @@
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * FormConfigSection class tests.

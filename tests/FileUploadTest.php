@@ -3,9 +3,8 @@ namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
 use Bolt\Extension\Bolt\BoltForms\FileUpload;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * FileUpload class tests.
