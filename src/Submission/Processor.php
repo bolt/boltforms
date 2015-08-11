@@ -3,7 +3,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
 use Bolt;
 use Bolt\Application;
-use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;

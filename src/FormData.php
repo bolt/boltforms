@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Symfony\Component\Form\Form;
 
 /**
  * Submitted form data functionality for BoltForms

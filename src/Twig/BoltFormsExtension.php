@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
-use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Extension;
