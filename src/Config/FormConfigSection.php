@@ -46,6 +46,10 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  * @method string  getSubject()
  * @method string  getEmail()
  * @method string  getSubdirectory()
+ *
+ * @property boolean attach_files
+ * @property string  debug_address
+ * @property array   redirect
  */
 class FormConfigSection
 {
