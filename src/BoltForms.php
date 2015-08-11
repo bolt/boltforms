@@ -372,7 +372,7 @@ class BoltForms
 
                 return $event->getData();
             } catch (\Exception $e) {
-                $this->app['logger.system']->info("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
+                $this->app['logger.system']->error("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
             }
         }
     }

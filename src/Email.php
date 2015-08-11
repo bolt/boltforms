@@ -241,7 +241,7 @@ class Email
         if ($this->app['mailer']->send($this->message)) {
             $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", array('event' => 'extensions'));
         } else {
-            $this->app['logger.system']->info("Failed Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", array('event' => 'extensions'));
+            $this->app['logger.system']->error("Failed Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", array('event' => 'extensions'));
         }
     }
 

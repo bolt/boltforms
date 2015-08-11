@@ -74,7 +74,7 @@ class BoltFormsSubscriber implements EventSubscriberInterface
             try {
                 $this->app['dispatcher']->dispatch(BoltFormsEvents::PRE_SET_DATA, $event);
             } catch (\Exception $e) {
-                $this->app['logger.system']->info("[BoltForms] " . BoltFormsEvents::PRE_SET_DATA. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
+                $this->app['logger.system']->error("[BoltForms] " . BoltFormsEvents::PRE_SET_DATA. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
             }
         }
     }
@@ -91,7 +91,7 @@ class BoltFormsSubscriber implements EventSubscriberInterface
             try {
                 $this->app['dispatcher']->dispatch(BoltFormsEvents::POST_SET_DATA, $event);
             } catch (\Exception $e) {
-                $this->app['logger.system']->info("[BoltForms] " . BoltFormsEvents::POST_SET_DATA. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
+                $this->app['logger.system']->error("[BoltForms] " . BoltFormsEvents::POST_SET_DATA. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
             }
         }
     }
@@ -114,7 +114,7 @@ class BoltFormsSubscriber implements EventSubscriberInterface
             try {
                 $this->app['dispatcher']->dispatch(BoltFormsEvents::PRE_SUBMIT, $event);
             } catch (\Exception $e) {
-                $this->app['logger.system']->info("[BoltForms] " . BoltFormsEvents::PRE_SUBMIT. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
+                $this->app['logger.system']->error("[BoltForms] " . BoltFormsEvents::PRE_SUBMIT. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
             }
         }
     }
@@ -131,7 +131,7 @@ class BoltFormsSubscriber implements EventSubscriberInterface
             try {
                 $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMIT, $event);
             } catch (\Exception $e) {
-                $this->app['logger.system']->info("[BoltForms] " . BoltFormsEvents::SUBMIT. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
+                $this->app['logger.system']->error("[BoltForms] " . BoltFormsEvents::SUBMIT. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
             }
         }
     }
@@ -148,7 +148,7 @@ class BoltFormsSubscriber implements EventSubscriberInterface
             try {
                 $this->app['dispatcher']->dispatch(BoltFormsEvents::POST_SUBMIT, $event);
             } catch (\Exception $e) {
-                $this->app['logger.system']->info("[BoltForms] " . BoltFormsEvents::POST_SUBMIT. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
+                $this->app['logger.system']->error("[BoltForms] " . BoltFormsEvents::POST_SUBMIT. " subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
             }
         }
     }

@@ -127,7 +127,7 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
         try {
             $sequence = $this->app['db']->executeQuery($query)->fetchColumn();
         } catch (\Doctrine\DBAL\DBALException $e) {
-            $this->app['logger.system']->info("[BoltForms] Could not fetch next sequence number from table '$table'. Check if the table exists.", array('event' => 'extensions'));
+            $this->app['logger.system']->error("[BoltForms] Could not fetch next sequence number from table '$table'. Check if the table exists.", array('event' => 'extensions'));
 
             return null;
         }
