@@ -52,7 +52,7 @@
             {% endif %}
 
             <div class="boltform-row">
-                <label for="form_message" class="required">{{ recaptcha.label }}</label>
+                <label for="form_message" class="required">{{ recaptcha.label|trans({}, translation_domain) }}</label>
                 <script src="https://www.google.com/recaptcha/api.js?hl={{ htmllang() }}" async defer></script>
                 <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
             </div>
