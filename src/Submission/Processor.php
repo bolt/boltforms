@@ -55,6 +55,7 @@ class Processor
      * Process a form's POST request.
      *
      * @param string  $formName
+     * @param array   $formDefinition
      * @param array   $recaptchaResponse
      * @param boolean $returnData
      *
@@ -62,11 +63,11 @@ class Processor
      *
      * @return boolean|array
      */
-    public function process($formName, array $recaptchaResponse, $returnData = false)
+    public function process($formName, array $formDefinition, array $recaptchaResponse, $returnData = false)
     {
         /** @var FormData $formData */
         $formData = $this->getRequestData($formName);
-        $formConfig = new FormConfig($formName, $this->config[$formName]);
+        $formConfig = new FormConfig($formName, $formDefinition);
         $sent = $this->app['boltforms']->getForm($formName)->isSubmitted();
 
         if ($sent && $formData !== null && $recaptchaResponse['success']) {

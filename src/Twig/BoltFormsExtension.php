@@ -65,16 +65,16 @@ class BoltFormsExtension extends \Twig_Extension
     /**
      * Twig function for form generation
      *
-     * @param string $formname
+     * @param string $formName
      * @param string $html_pre  Intro HTML to display BEFORE successful submit
      * @param string $html_post Intro HTML to display AFTER successful submit
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formname, $html_pre = '', $html_post = '', $data = array(), $options = array())
+    public function twigBoltForms($formName, $html_pre = '', $html_post = '', $data = array(), $options = array())
     {
-        if (!isset($this->config[$formname])) {
-            return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formname'!</strong></p>", 'UTF-8');
+        if (!isset($this->config[$formName])) {
+            return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>", 'UTF-8');
         }
 
         $sent = false;
@@ -85,12 +85,12 @@ class BoltFormsExtension extends \Twig_Extension
             'errorCodes' => null
         );
 
-        $this->app['boltforms']->makeForm($formname, 'form', $data, $options);
+        $this->app['boltforms']->makeForm($formName, 'form', $data, $options);
 
-        $fields = $this->config[$formname]['fields'];
+        $fields = $this->config[$formName]['fields'];
 
         // Add our fields all at once
-        $this->app['boltforms']->addFieldArray($formname, $fields);
+        $this->app['boltforms']->addFieldArray($formName, $fields);
 
         // Handle the POST
         if ($this->app['request']->isMethod('POST')) {
@@ -98,8 +98,8 @@ class BoltFormsExtension extends \Twig_Extension
             $recaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($this->app['request']);
 
             try {
-                $sent = $this->app['boltforms.processor']->process($formname, $recaptchaResponse);
-                $message = isset($this->config[$formname]['feedback']['success']) ? $this->config[$formname]['feedback']['success'] : 'Form submitted sucessfully';
+                $sent = $this->app['boltforms.processor']->process($formName, $this->config[$formName], $recaptchaResponse);
+                $message = isset($this->config[$formName]['feedback']['success']) ? $this->config[$formName]['feedback']['success'] : 'Form submitted sucessfully';
             } catch (FileUploadException $e) {
                 $error = $e->getMessage();
                 $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, array('event' => 'extensions'));
@@ -110,7 +110,7 @@ class BoltFormsExtension extends \Twig_Extension
         }
 
         // Get our values to be passed to Twig
-        $fields = $this->app['boltforms']->getForm($formname)->all();
+        $fields = $this->app['boltforms']->getForm($formName)->all();
         $twigvalues = array(
             'fields'    => $fields,
             'html_pre'  => $html_pre,
@@ -127,17 +127,17 @@ class BoltFormsExtension extends \Twig_Extension
                 'error_codes'   => $recaptchaResponse ? $recaptchaResponse['errorCodes'] : null,
                 'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null
             ),
-            'formname'  => $formname,
-            'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formname]['notification']['debug']) && $this->config[$formname]['notification']['debug'])
+            'formname'  => $formName,
+            'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug'])
         );
 
         // If the form has it's own templates defined, use those, else the globals.
-        $template = isset($this->config[$formname]['templates']['form'])
-            ? $this->config[$formname]['templates']['form']
+        $template = isset($this->config[$formName]['templates']['form'])
+            ? $this->config[$formName]['templates']['form']
             : $this->config['templates']['form'];
 
         // Render the Twig_Markup
-        return $this->app['boltforms']->renderForm($formname, $template, $twigvalues);
+        return $this->app['boltforms']->renderForm($formName, $template, $twigvalues);
     }
 
     /**
