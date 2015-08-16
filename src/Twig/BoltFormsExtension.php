@@ -66,12 +66,12 @@ class BoltFormsExtension extends \Twig_Extension
      * Twig function for form generation
      *
      * @param string $formName
-     * @param string $html_pre  Intro HTML to display BEFORE successful submit
-     * @param string $html_post Intro HTML to display AFTER successful submit
+     * @param string $htmlPreSubmit  Intro HTML to display BEFORE successful submit
+     * @param string $htmlPostSubmit Intro HTML to display AFTER successful submit
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formName, $html_pre = '', $html_post = '', $data = array(), $options = array())
+    public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = array(), $options = array())
     {
         if (!isset($this->config[$formName])) {
             return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>", 'UTF-8');
@@ -113,8 +113,8 @@ class BoltFormsExtension extends \Twig_Extension
         $fields = $this->app['boltforms']->getForm($formName)->all();
         $twigvalues = array(
             'fields'    => $fields,
-            'html_pre'  => $html_pre,
-            'html_post' => $html_post,
+            'html_pre'  => $htmlPreSubmit,
+            'html_post' => $htmlPostSubmit,
             'error'     => $error,
             'message'   => $message,
             'sent'      => $sent,
