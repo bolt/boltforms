@@ -71,6 +71,7 @@ class Email
          * Create message object
          */
         $this->message = \Swift_Message::newInstance();
+        $this->message->setEncoder(\Swift_Encoding::get8BitEncoding());
 
         // Set our Twig lookup path
         $this->addTwigPath();
