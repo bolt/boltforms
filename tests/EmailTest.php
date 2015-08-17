@@ -49,7 +49,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor($app)->process('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -81,7 +81,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor($app)->process('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -104,7 +104,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor($app)->process('testing_form', array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -128,8 +128,16 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $this->setExpectedException('\Bolt\Extension\Bolt\BoltForms\Exception\EmailException', '[BoltForms] Debug email address can not be empty if debugging enabled!');
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor($app)->process('testing_form', array('success' => true));
 
         $this->assertTrue($result);
+    }
+
+    /**
+     * @return \Bolt\Extension\Bolt\BoltForms\Submission\Processor
+     */
+    protected function processor($app)
+    {
+        return $app['boltforms.processor'];
     }
 }

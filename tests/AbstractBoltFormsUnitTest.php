@@ -15,8 +15,15 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
 {
-    public function getApp($boot = true)
+    /** \Bolt\Application */
+    protected $app;
+
+    protected function getApp($boot = true)
     {
+        if ($this->app) {
+            return $this->app;
+        }
+
         $app = parent::getApp($boot);
         $extension = new Extension($app);
 
@@ -25,10 +32,10 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
         unset($app['extensions.BoltForms']->config['contact']);
         $app['extensions.BoltForms']->config['testing_form'] = $this->formFieldBaseConfig();
 
-        return $app;
+        return $this->app = $app;
     }
 
-    public function getExtension($app = null)
+    protected function getExtension($app = null)
     {
         if ($app === null) {
             $app = $this->getApp();
@@ -224,5 +231,13 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
         $app['request'] = Request::create('/', 'POST', $parameters);
 
         return $app['boltforms.processor']->process('testing_form', array('success' => true));
+    }
+
+    /**
+     * @return \Bolt\Extension\Bolt\BoltForms\Submission\Processor
+     */
+    protected function processor()
+    {
+        return $this->app['boltforms.processor'];
     }
 }
