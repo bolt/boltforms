@@ -211,7 +211,7 @@ class Email
     private function setBcc(EmailConfig $emailConfig)
     {
         if ($emailConfig->getBccEmail()) {
-            $this->message->setCc(array(
+            $this->message->setBcc(array(
                 $emailConfig->getBccEmail() => $emailConfig->getBccName()
             ));
         }
