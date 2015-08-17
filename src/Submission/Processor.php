@@ -5,6 +5,8 @@ use Bolt;
 use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Extension;
@@ -110,14 +112,14 @@ class Processor
     /**
      * Handle the request. Caller must test for POST.
      *
-     * @param string  $formname The name of the form
+     * @param string  $formName The name of the form
      * @param Request $request
      *
      * @return FormData|null
      */
-    protected function getRequestData($formname, $request = null)
+    protected function getRequestData($formName, $request = null)
     {
-        if (!$this->app['request']->request->has($formname)) {
+        if (!$this->app['request']->request->has($formName)) {
             return;
         }
 
@@ -126,15 +128,18 @@ class Processor
         }
 
         // Handle the Request object to check if the data sent is valid
-        $this->app['boltforms']->getForm($formname)->handleRequest($request);
+        $this->app['boltforms']->getForm($formName)->handleRequest($request);
 
         // Test if form, as submitted, passes validation
-        if ($this->app['boltforms']->getForm($formname)->isValid()) {
+        if ($this->app['boltforms']->getForm($formName)->isValid()) {
 
             // Submitted data
-            $data = $this->app['boltforms']->getForm($formname)->getData();
+            $data = $this->app['boltforms']->getForm($formName)->getData();
 
-            return new FormData($data);
+            $event = new BoltFormsProcessorEvent($formName, $data);
+            $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_PROCESSOR, $event);
+
+            return new FormData($event->getData());
         }
 
         return;

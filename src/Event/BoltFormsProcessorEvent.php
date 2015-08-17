@@ -2,8 +2,11 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Event;
 
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\Form\FormEvent;
+
 /**
- * External event constants for BoltForms
+ * External event interface for BoltForms
  *
  * Copyright (C) 2014-2015 Gawain Lynch
  *
@@ -24,31 +27,35 @@ namespace Bolt\Extension\Bolt\BoltForms\Event;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-final class BoltFormsEvents
+class BoltFormsProcessorEvent extends Event
 {
-    /*
-     * Symfony Forms events
-     */
-    const PRE_SUBMIT = 'boltforms.pre_bind';
-    const SUBMIT = 'boltforms.bind';
-    const POST_SUBMIT = 'boltforms.post_bind';
-    const PRE_SET_DATA = 'boltforms.pre_set_data';
-    const POST_SET_DATA = 'boltforms.post_set_data';
+    /** @var string */
+    protected $formName;
+    /** @var array */
+    protected $data;
 
-    /*
-     * Events in the data processor
+    /**
+     * @param string $formName
+     * @param array  $data
      */
-    const SUBMISSION_PROCESSOR = 'boltforms.submission_processor';
-
-    /*
-     * Custom data events
-     */
-    const DATA_NEXT_INCREMENT = 'boltforms.next_increment';
-    const DATA_RANDOM_STRING = 'boltforms.random_string';
-    const DATA_SERVER_VALUE = 'boltforms.server_value';
-    const DATA_SESSION_VALUE = 'boltforms.session_value';
-
-    private function __construct()
+    public function __construct($formName, array $data)
     {
+        $this->formName = $formName;
+        $this->data = $data;
+    }
+
+    public function getFormName()
+    {
+        return $this->formName;
+    }
+
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    public function setData(array $data)
+    {
+        $this->data = $data;
     }
 }

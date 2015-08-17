@@ -2,6 +2,7 @@
 
 * 2.x.x (2015-xx-xx)
  * Added: Form specific template 
+ * Added: Submissions processor event for final data manipulation
  * Fixed: Sending of CC and bCC recipients
  * Break: Parameters for Processor::process() changed to allow better API use of custom form values
 
