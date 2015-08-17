@@ -78,14 +78,15 @@ class Email
         // If the form has it's own templates defined, use those, else the globals.
         $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->config['templates']['subject'];
         $templateEmail = $formConfig->getTemplates()->getEmail() ?: $this->config['templates']['email'];
+        $fieldmap = $this->app['boltforms.fieldmap'];
 
         /*
          * Subject
          */
         $html = $this->app['render']->render($templateSubject, array(
-            'subject' => $formConfig->getNotification()->getSubject(),
-            'config'  => $emailConfig,
-            'data'    => $formData
+            $fieldmap['subject'] => $formConfig->getNotification()->getSubject(),
+            $fieldmap['config']  => $emailConfig,
+            $fieldmap['data']    => $formData
         ));
 
         $subject = new \Twig_Markup($html, 'UTF-8');
@@ -94,9 +95,9 @@ class Email
          * Body
          */
         $html = $this->app['render']->render($templateEmail, array(
-            'fields' => $formConfig->getFields(),
-            'config' => $emailConfig,
-            'data'   => $this->getBodyData($emailConfig, $formData)
+            $fieldmap['fields'] => $formConfig->getFields(),
+            $fieldmap['config'] => $emailConfig,
+            $fieldmap['data']   => $this->getBodyData($emailConfig, $formData)
         ));
 
         $body = new \Twig_Markup($html, 'UTF-8');
