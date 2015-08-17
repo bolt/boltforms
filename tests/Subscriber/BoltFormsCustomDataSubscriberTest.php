@@ -117,7 +117,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
             ->willReturn(array('id' => 1));
         $app['users'] = $users;
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true), true);
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
@@ -178,7 +178,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
             ->willReturn(array('id' => 1));
         $app['users'] = $users;
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true), true);
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
@@ -241,7 +241,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
             ->willReturn(array('id' => 1));
         $app['users'] = $users;
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true), true);
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM bolt_koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
@@ -276,7 +276,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/', 'POST', $parameters);
         $app->boot();
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true), true);
 
         $this->assertArrayHasKey('random_str', $result);
         $this->assertSame(22, strlen($result->get('random_str')));
@@ -310,7 +310,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/', 'POST', $parameters, array(), array(), array('SCRIPT_NAME' => $_SERVER['SCRIPT_NAME']));
         $app->boot();
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true), true);
 
         $this->assertArrayHasKey('server_val', $result);
         $this->assertSame($_SERVER['SCRIPT_NAME'], $result->get('server_val'));
@@ -341,7 +341,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/', 'POST', $parameters, array(), array(), array('SCRIPT_NAME' => $_SERVER['SCRIPT_NAME']));
         $app->boot();
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true), true);
 
         $this->assertArrayHasKey('server_val', $result->getPostData());
         $this->assertNull($result->get('server_val'));
@@ -376,7 +376,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app->boot();
         $app['session']->set('koala', 'gum-leaves');
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true), true);
 
         $this->assertArrayHasKey('session_value', $result);
         $this->assertSame('gum-leaves', $result->get('session_value'));
@@ -408,7 +408,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app->boot();
         $app['session']->set('koala', 'gum-leaves');
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true), true);
 
         $this->assertArrayHasKey('session_value', $result->getPostData());
         $this->assertNull($result->get('session_value'));

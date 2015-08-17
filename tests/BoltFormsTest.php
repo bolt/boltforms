@@ -142,7 +142,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -160,7 +160,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -188,7 +188,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
 
         $this->setExpectedException('Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException');
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertFalse($result);
     }
@@ -215,7 +215,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -242,7 +242,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -262,7 +262,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com" />#');
@@ -284,7 +284,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com\?name=Gawain\+Lynch&amp;email=gawain.lynch%40gmail.com" />#');
@@ -306,7 +306,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com\?person=Gawain\+Lynch&amp;address=gawain.lynch%40gmail.com" />#');
@@ -341,7 +341,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=/page/koalas\?name=Gawain\+Lynch" />#');

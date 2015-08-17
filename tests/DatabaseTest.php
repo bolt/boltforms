@@ -63,7 +63,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -124,7 +124,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -181,7 +181,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -216,7 +216,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $app['boltforms.processor']->process('testing_form', array('success' => true));
+        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
 
         $this->assertTrue($result);
     }

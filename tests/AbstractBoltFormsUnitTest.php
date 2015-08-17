@@ -230,7 +230,7 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        return $app['boltforms.processor']->process('testing_form', array('success' => true));
+        return $this->processor()->process('testing_form', $fields, array('success' => true));
     }
 
     /**
