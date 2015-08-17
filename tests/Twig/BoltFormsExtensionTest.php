@@ -47,7 +47,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     public function testTwigBoltForms()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['testing_form']['fields'] = $this->formFieldConfig();
+        $this->getExtension()->config['testing_form']['fields'] = $this->formFieldConfig();
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);
 
@@ -77,9 +77,9 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     public function testTwigBoltFormsPost()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['testing_form']['fields'] = $this->formFieldConfig();
-        $this->getExtension($app)->config['testing_form']['feedback']['success'] = 'Well, that worked!';
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['testing_form']['fields'] = $this->formFieldConfig();
+        $this->getExtension()->config['testing_form']['feedback']['success'] = 'Well, that worked!';
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
@@ -107,11 +107,11 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     public function testTwigBoltFormsPostReCaptcha()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['recaptcha']['enabled'] = true;
-        $this->getExtension($app)->config['recaptcha']['private_key'] = 'abc123';
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['testing_form']['fields'] = $this->formFieldConfig();
-        $this->getExtension($app)->config['testing_form']['feedback']['success'] = 'Well, that worked!';
+        $this->getExtension()->config['recaptcha']['enabled'] = true;
+        $this->getExtension()->config['recaptcha']['private_key'] = 'abc123';
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['testing_form']['fields'] = $this->formFieldConfig();
+        $this->getExtension()->config['testing_form']['feedback']['success'] = 'Well, that worked!';
 
         $reResponse = new \ReCaptcha\Response(true);
         $recaptcha = $this->getMock('\ReCaptcha\ReCaptcha', array('verify'), array('abc123'));
@@ -147,8 +147,8 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     public function testTwigBoltFormsUploads()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
 
         $app['request'] = Request::create('/');
         $boltforms = new BoltForms($app);

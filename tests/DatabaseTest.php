@@ -28,10 +28,10 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
     public function testWriteToTable()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['uploads']['enabled'] = true;
-        $this->getExtension($app)->config['uploads']['base_directory'] = __DIR__;
-        $this->getExtension($app)->config['testing_form']['database']['table'] = 'koala';
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['uploads']['enabled'] = true;
+        $this->getExtension()->config['uploads']['base_directory'] = __DIR__;
+        $this->getExtension()->config['testing_form']['database']['table'] = 'koala';
 
         $app['request'] = Request::create('/');
 
@@ -63,7 +63,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -84,8 +84,8 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
     public function testWriteToTableException()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['testing_form']['database']['table'] = 'koala';
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['testing_form']['database']['table'] = 'koala';
 
         $app['request'] = Request::create('/');
 
@@ -124,7 +124,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -159,10 +159,10 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
     public function testWriteToContentype()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['uploads']['enabled'] = true;
-        $this->getExtension($app)->config['uploads']['base_directory'] = __DIR__;
-        $this->getExtension($app)->config['testing_form']['database']['contenttype'] = 'koala';
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['uploads']['enabled'] = true;
+        $this->getExtension()->config['uploads']['base_directory'] = __DIR__;
+        $this->getExtension()->config['testing_form']['database']['contenttype'] = 'koala';
 
         $app['request'] = Request::create('/');
 
@@ -181,7 +181,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -189,8 +189,8 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
     public function testWriteToContentypeException()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['testing_form']['database']['contenttype'] = 'koala';
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['testing_form']['database']['contenttype'] = 'koala';
 
         $app['request'] = Request::create('/');
 
@@ -216,7 +216,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -224,8 +224,8 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
     protected function getParameters($app)
     {
         // Upload file set up
-        $this->getExtension($app)->config['uploads']['enabled'] = true;
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['uploads']['enabled'] = true;
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
 

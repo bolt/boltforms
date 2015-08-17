@@ -28,7 +28,7 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
 
-        $globalDebug = $this->getExtension($app)->config['debug'];
+        $globalDebug = $this->getExtension()->config['debug'];
         $formConfig = $this->formConfig();
         $postData = $this->formData();
         $formData = new FormData($postData);
@@ -53,7 +53,7 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
 
-        $globalDebug = $this->getExtension($app)->config['debug'];
+        $globalDebug = $this->getExtension()->config['debug'];
         $formConfig = $this->formConfig();
         $postData = $this->formData();
         $formData = new FormData($postData);
@@ -80,7 +80,7 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
 
-        $globalDebug = $this->getExtension($app)->config['debug'];
+        $globalDebug = $this->getExtension()->config['debug'];
         $formConfig = $this->formConfig();
         $postData = $this->formData();
         $formData = new FormData($postData);

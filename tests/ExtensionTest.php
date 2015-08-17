@@ -15,7 +15,7 @@ class ExtensionTest extends AbstractBoltFormsUnitTest
     public function testExtensionRegister()
     {
         $app = $this->getApp();
-        $extension = $this->getExtension($app);
+        $extension = $this->getExtension();
 
         // Check getName() returns the correct value
         $name = $extension->getName();
@@ -41,8 +41,8 @@ class ExtensionTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $app['request'] = Request::create('/');
-        $this->getExtension($app)->config['uploads']['management_controller'] = true;
-        $this->getExtension($app)->config['uploads']['base_uri'] = 'koala-country';
+        $this->getExtension()->config['uploads']['management_controller'] = true;
+        $this->getExtension()->config['uploads']['base_uri'] = 'koala-country';
 
         $app[Extension::CONTAINER]->initialize();
     }

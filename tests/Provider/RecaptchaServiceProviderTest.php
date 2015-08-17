@@ -12,7 +12,7 @@ class RecaptchaServiceProviderTest extends AbstractBoltFormsUnitTest
     public function testProviderRegister()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['recaptcha']['private_key'] = 'abc123';
+        $this->getExtension()->config['recaptcha']['private_key'] = 'abc123';
 
         $this->assertInstanceOf('\ReCaptcha\ReCaptcha', $app['recaptcha']);
     }

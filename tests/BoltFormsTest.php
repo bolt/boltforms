@@ -132,7 +132,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
     public function testProcessRequest()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension()->config['csrf'] = false;
         $app['request'] = Request::create('/');
 
         $app['boltforms']->makeForm('testing_form');
@@ -142,7 +142,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -150,7 +150,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
     public function testProcessRequestDateTime()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension()->config['csrf'] = false;
         $app['request'] = Request::create('/');
 
         $app['boltforms']->makeForm('testing_form');
@@ -160,7 +160,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -168,8 +168,8 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
     public function testProcessRequestFileUploadInvalid()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
 
@@ -188,7 +188,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
 
         $this->setExpectedException('Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException');
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertFalse($result);
     }
@@ -196,9 +196,9 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
     public function testProcessRequestFileUploadDisabled()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['uploads']['enabled'] = false;
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['uploads']['enabled'] = false;
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
 
@@ -215,7 +215,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -223,9 +223,9 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
     public function testProcessRequestFileUploadEnabled()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['uploads']['enabled'] = true;
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['uploads']['enabled'] = true;
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
 
@@ -242,7 +242,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -250,8 +250,8 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
     public function testRedirectUrl()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['testing_form']['feedback']['redirect']['target'] = 'http://example.com';
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['testing_form']['feedback']['redirect']['target'] = 'http://example.com';
 
         $app['request'] = Request::create('/');
 
@@ -262,7 +262,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com" />#');
@@ -271,20 +271,21 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
     public function testRedirectUrlQueryIndex()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['testing_form']['feedback']['redirect']['target'] = 'http://example.com';
-        $this->getExtension($app)->config['testing_form']['feedback']['redirect']['query'] = array('name', 'email');
+        $fields = $this->formFieldConfig();
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['testing_form']['feedback']['redirect']['target'] = 'http://example.com';
+        $this->getExtension()->config['testing_form']['feedback']['redirect']['query'] = array('name', 'email');
+        $this->getExtension()->config['testing_form']['fields'] = $fields;
 
         $app['request'] = Request::create('/');
 
         $app['boltforms']->makeForm('testing_form');
-        $fields = $this->formFieldConfig();
         $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com\?name=Gawain\+Lynch&amp;email=gawain.lynch%40gmail.com" />#');
@@ -293,9 +294,9 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
     public function testRedirectUrlQueryAssoc()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['testing_form']['feedback']['redirect']['target'] = 'http://example.com';
-        $this->getExtension($app)->config['testing_form']['feedback']['redirect']['query'] = array('person' => 'name', 'address' => 'email');
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['testing_form']['feedback']['redirect']['target'] = 'http://example.com';
+        $this->getExtension()->config['testing_form']['feedback']['redirect']['query'] = array('person' => 'name', 'address' => 'email');
 
         $app['request'] = Request::create('/');
 
@@ -306,7 +307,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com\?person=Gawain\+Lynch&amp;address=gawain.lynch%40gmail.com" />#');
@@ -315,9 +316,9 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
     public function testRedirectRecord()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['testing_form']['feedback']['redirect']['target'] = 'page/koalas';
-        $this->getExtension($app)->config['testing_form']['feedback']['redirect']['query'] = 'name';
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['testing_form']['feedback']['redirect']['target'] = 'page/koalas';
+        $this->getExtension()->config['testing_form']['feedback']['redirect']['query'] = 'name';
 
         $matcher = $this->getMockBuilder('\Bolt\Routing\UrlMatcher')
             ->disableOriginalConstructor()
@@ -341,7 +342,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=/page/koalas\?name=Gawain\+Lynch" />#');

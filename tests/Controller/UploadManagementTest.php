@@ -19,7 +19,7 @@ class UploadManagementTest extends AbstractBoltFormsUnitTest
     public function testDownloadRoute()
     {
         $app = $this->getApp(false);
-        $this->getExtension($app)->config['uploads']['base_directory'] = __DIR__;
+        $this->getExtension()->config['uploads']['base_directory'] = __DIR__;
         $controller = new UploadManagement();
         $controller->connect($app);
         $request = Request::create('/download', 'GET', array('file' => basename(__FILE__)));
@@ -33,7 +33,7 @@ class UploadManagementTest extends AbstractBoltFormsUnitTest
     public function testDownloadRoute404()
     {
         $app = $this->getApp(false);
-        $this->getExtension($app)->config['uploads']['base_directory'] = '/koala';
+        $this->getExtension()->config['uploads']['base_directory'] = '/koala';
         $controller = new UploadManagement();
         $controller->connect($app);
         $request = Request::createFromGlobals();

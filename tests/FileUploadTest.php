@@ -37,7 +37,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testRelativePathExceptionDisabled()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['enabled'] = false;
+        $this->getExtension()->config['uploads']['enabled'] = false;
 
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
         $upload = new FileUpload($app, 'testing_form', $fileUpload);
@@ -49,7 +49,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testRelativePathExceptionEnabled()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['enabled'] = true;
+        $this->getExtension()->config['uploads']['enabled'] = true;
 
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
         $upload = new FileUpload($app, 'testing_form', $fileUpload);
@@ -61,8 +61,8 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testRelativePath()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['enabled'] = true;
-        $this->getExtension($app)->config['uploads']['base_directory'] = dirname(__FILE__);
+        $this->getExtension()->config['uploads']['enabled'] = true;
+        $this->getExtension()->config['uploads']['base_directory'] = dirname(__FILE__);
 
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
         $upload = new FileUpload($app, 'testing_form', $fileUpload);
@@ -74,7 +74,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testMoveUploadedFileBaseDirectory()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
 
@@ -91,8 +91,8 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testMoveUploadedFileSubDirectory()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
 
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
@@ -110,9 +110,9 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testMoveUploadedFilePrefix()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
-        $this->getExtension($app)->config['uploads']['filename_handling'] = 'prefix';
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
+        $this->getExtension()->config['uploads']['filename_handling'] = 'prefix';
 
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
@@ -135,9 +135,9 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testMoveUploadedFileSufix()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
-        $this->getExtension($app)->config['uploads']['filename_handling'] = 'suffix';
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
+        $this->getExtension()->config['uploads']['filename_handling'] = 'suffix';
 
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
@@ -160,9 +160,9 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testMoveUploadedFileKeep()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $this->getExtension($app)->config['uploads']['filename_handling'] = 'keep';
-        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['uploads']['filename_handling'] = 'keep';
+        $this->getExtension()->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
 
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
@@ -185,9 +185,9 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testMoveUploadedFileDuplicates()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $this->getExtension($app)->config['uploads']['filename_handling'] = 'keep';
-        $this->getExtension($app)->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['uploads']['filename_handling'] = 'keep';
+        $this->getExtension()->config['testing_form']['uploads']['subdirectory'] = 'testing_form';
 
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
@@ -216,7 +216,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testMoveUploadedFileException()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'koala');
         $e = new FileException();
@@ -243,7 +243,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testInvalidDirectoryException()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['base_directory'] = '/nowhere';
+        $this->getExtension()->config['uploads']['base_directory'] = '/nowhere';
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'koala');
         $e = new FileException();
@@ -270,7 +270,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     public function testUnwritableDirectoryException()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['uploads']['base_directory'] = '/proc';
+        $this->getExtension()->config['uploads']['base_directory'] = '/proc';
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'koala');
         $e = new FileException();

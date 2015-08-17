@@ -26,13 +26,13 @@ class EmailTest extends AbstractBoltFormsUnitTest
     public function testSendEmail()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['debug']['enabled'] = false;
-        $this->getExtension($app)->config['testing_form']['notification'] = $this->formNotificationConfig();
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['debug']['enabled'] = false;
+        $this->getExtension()->config['testing_form']['notification'] = $this->formNotificationConfig();
 
         // Upload file set up
-        $this->getExtension($app)->config['uploads']['enabled'] = true;
-        $this->getExtension($app)->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $this->getExtension()->config['uploads']['enabled'] = true;
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
         $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
         $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
 
@@ -49,7 +49,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -57,9 +57,9 @@ class EmailTest extends AbstractBoltFormsUnitTest
     public function testSendEmailFail()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['debug']['enabled'] = false;
-        $this->getExtension($app)->config['testing_form']['notification'] = $this->formNotificationConfig();
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['debug']['enabled'] = false;
+        $this->getExtension()->config['testing_form']['notification'] = $this->formNotificationConfig();
 
         $app['request'] = Request::create('/');
 
@@ -81,7 +81,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -89,11 +89,11 @@ class EmailTest extends AbstractBoltFormsUnitTest
     public function testSendEmailDebug()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['debug']['enabled'] = true;
-        $this->getExtension($app)->config['debug']['address'] = 'noreply@example.com';
-        $this->getExtension($app)->config['testing_form']['notification'] = $this->formNotificationConfig();
-        $this->getExtension($app)->config['testing_form']['notification']['enabled'] = true;
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['debug']['enabled'] = true;
+        $this->getExtension()->config['debug']['address'] = 'noreply@example.com';
+        $this->getExtension()->config['testing_form']['notification'] = $this->formNotificationConfig();
+        $this->getExtension()->config['testing_form']['notification']['enabled'] = true;
 
         $app['request'] = Request::create('/');
 
@@ -104,7 +104,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }
@@ -112,10 +112,10 @@ class EmailTest extends AbstractBoltFormsUnitTest
     public function testSendEmailDebugFail()
     {
         $app = $this->getApp();
-        $this->getExtension($app)->config['csrf'] = false;
-        $this->getExtension($app)->config['debug']['enabled'] = true;
-        $this->getExtension($app)->config['debug']['address'] = null;
-        $this->getExtension($app)->config['testing_form']['notification']['enabled'] = true;
+        $this->getExtension()->config['csrf'] = false;
+        $this->getExtension()->config['debug']['enabled'] = true;
+        $this->getExtension()->config['debug']['address'] = null;
+        $this->getExtension()->config['testing_form']['notification']['enabled'] = true;
 
         $app['request'] = Request::create('/');
 
@@ -128,7 +128,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $this->setExpectedException('\Bolt\Extension\Bolt\BoltForms\Exception\EmailException', '[BoltForms] Debug email address can not be empty if debugging enabled!');
 
-        $result = $this->processor()->process('testing_form', $fields, array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
 
         $this->assertTrue($result);
     }

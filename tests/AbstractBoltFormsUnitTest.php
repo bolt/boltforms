@@ -35,13 +35,13 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
         return $this->app = $app;
     }
 
-    protected function getExtension($app = null)
+    protected function getExtension()
     {
-        if ($app === null) {
-            $app = $this->getApp();
+        if ($this->app === null) {
+            $this->getApp();
         }
 
-        return $app['extensions.BoltForms'];
+        return $this->app['extensions.BoltForms'];
     }
 
     protected function formNotificationConfig()
@@ -217,7 +217,7 @@ abstract class AbstractBoltFormsUnitTest extends BoltUnitTest
 
     protected function formProcessRequest($app)
     {
-        $this->getExtension($app)->config['csrf'] = false;
+        $this->getExtension()->config['csrf'] = false;
 
         $app['request'] = Request::create('/');
 
