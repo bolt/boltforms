@@ -250,4 +250,22 @@ class Processor
             }
         }
     }
+
+    /**
+     * Enable handling of form specific templates.
+     *
+     * @param array $formDefinition
+     *
+     * @return array
+     */
+    protected function getFormTemplates(array $formDefinition)
+    {
+        if (isset($formDefinition['templates']) && is_array($formDefinition['templates'])) {
+            array_merge($this->config['templates'], $formDefinition['templates']);
+        } else {
+            $formDefinition['templates'] = $this->config['templates'];
+        }
+
+        return $formDefinition;
+    }
 }
