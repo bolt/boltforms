@@ -1,5 +1,9 @@
 # Changelog for Bolt Forms
 
+* 2.x.x (2015-xx-xx)
+ * Fixed: Sending of CC and bCC recipients
+ * Break: Parameters for Processor::process() changed to allow better API use of custom form values
+
 * 2.3.0 (2015-08-11)
  * Added: the ability to use ReplyTo addresses in email notifications (credit @rudott)
  * Added: Display a warning if notification debugging is on in default Twig template 
