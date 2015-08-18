@@ -166,6 +166,7 @@ The default events that can be used to get field data are:
   - random_string
   - server_value
   - session_value
+  - timestamp_formatted
 
 #### Examples
 
@@ -224,6 +225,19 @@ Set the `testkey` field value to the value for the session variable named "testk
         name: session_value
         params:
           key: testkey
+```
+
+Set the `sent_on` field value to the current date and/or time as formatted.
+
+```yaml
+    sent_on:
+      type: hidden
+      options:
+        label: false
+      event: 
+        name: timestamp
+        params:
+          format: '%F %T'
 ```
 
 #### Extending Available Events

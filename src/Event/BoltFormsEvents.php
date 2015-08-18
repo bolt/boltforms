@@ -47,6 +47,7 @@ final class BoltFormsEvents
     const DATA_RANDOM_STRING = 'boltforms.random_string';
     const DATA_SERVER_VALUE = 'boltforms.server_value';
     const DATA_SESSION_VALUE = 'boltforms.session_value';
+    const DATA_TIMESTAMP = 'boltforms.timestamp';
 
     private function __construct()
     {

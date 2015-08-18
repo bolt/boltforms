@@ -111,6 +111,21 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * Fetch the current (formatted) timestamp.
+     *
+     * @param BoltFormsCustomDataEvent $event
+     */
+    public function timestamp(BoltFormsCustomDataEvent $event)
+    {
+        $params = $event->getParameters();
+        if (!isset($params['format'])) {
+            return;
+        }
+
+        $event->setData(strftime($params['format']));
+    }
+
+    /**
      * Attempt get the next sequence from a table, if specified.
      *
      * @param string  $table
@@ -153,6 +168,7 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
             BoltFormsEvents::DATA_RANDOM_STRING  => 'randomString',
             BoltFormsEvents::DATA_SERVER_VALUE   => 'serverValue',
             BoltFormsEvents::DATA_SESSION_VALUE  => 'sessionValue',
+            BoltFormsEvents::DATA_TIMESTAMP      => 'timeStamp',
         );
     }
 }
