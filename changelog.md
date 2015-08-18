@@ -1,8 +1,9 @@
 # Changelog for Bolt Forms
 
-* 2.x.x (2015-xx-xx)
+* 2.4.0 (2015-08-18)
  * Added: Form specific template 
  * Added: Submissions processor event for final data manipulation
+ * Added: Timestamp field event
  * Fixed: Sending of CC and bCC recipients
  * Break: Parameters for Processor::process() changed to allow better API use of custom form values
 
