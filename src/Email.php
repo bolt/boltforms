@@ -79,7 +79,7 @@ class Email
         // If the form has it's own templates defined, use those, else the globals.
         $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->config['templates']['subject'];
         $templateEmail = $formConfig->getTemplates()->getEmail() ?: $this->config['templates']['email'];
-        $fieldmap = $this->app['boltforms.fieldmap'];
+        $fieldmap = $this->config['fieldmap']['email'];
 
         /*
          * Subject

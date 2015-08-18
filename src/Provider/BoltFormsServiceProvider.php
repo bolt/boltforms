@@ -30,17 +30,6 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             }
         );
 
-        $app['boltforms.fieldmap'] = $app->share(
-            function () {
-                return array(
-                    'config'  => 'config',
-                    'data'    => 'data',
-                    'fields'  => 'fields',
-                    'subject' => 'subject',
-                );
-            }
-        );
-
         $app['boltforms.database'] = $app->share(
             function ($app) {
                 $database = new Database($app);

@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Bolt;
+use Bolt\BaseExtension;
 
 /**
  * BoltForms a Symfony Forms interface for Bolt
@@ -26,7 +26,7 @@ use Bolt;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Extension extends \Bolt\BaseExtension
+class Extension extends BaseExtension
 {
     /** @var string Extension name */
     const NAME = 'BoltForms';
@@ -118,7 +118,8 @@ class Extension extends \Bolt\BaseExtension
             'recaptcha',
             'templates',
             'debug',
-            'uploads'
+            'uploads',
+            'fieldmap'
         );
     }
 
@@ -156,7 +157,15 @@ class Extension extends \Bolt\BaseExtension
                 'filename_handling'     => 'suffix',
                 'management_controller' => false,
                 'base_uri'              => 'boltforms'
-            )
+            ),
+            'fieldmap' => array(
+                'email' => array(
+                    'config'  => 'config',
+                    'data'    => 'data',
+                    'fields'  => 'fields',
+                    'subject' => 'subject',
+                )
+            ),
         );
     }
 }
