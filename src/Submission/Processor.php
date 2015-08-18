@@ -94,7 +94,7 @@ class Processor
     public function reCaptchaResponse(Request $request)
     {
         // Check reCaptcha, if enabled.  If not just return true
-        if (!$this->config['recaptcha']['enabled']) {
+        if ($this->config['recaptcha']['enabled'] === false) {
             return array(
                 'success'    => true,
                 'errorCodes' => null
