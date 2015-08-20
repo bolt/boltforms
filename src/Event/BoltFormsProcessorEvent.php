@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\BoltForms\Event;
 
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\Form\FormEvent;
 
 /**
  * External event interface for BoltForms
