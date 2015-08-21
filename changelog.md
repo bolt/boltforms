@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 2.x.x (2015-xx-xx)
+ * Added: Information to the readme on how to have individual templates for each form (credit @Raistlfiren)
+
 * 2.4.0 (2015-08-18)
  * Added: Form specific template 
  * Added: Submissions processor event for final data manipulation
