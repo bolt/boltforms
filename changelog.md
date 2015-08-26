@@ -1,7 +1,9 @@
 # Changelog for Bolt Forms
 
-* 2.x.x (2015-xx-xx)
+* 2.4.1 (2015-08-26)
  * Added: Information to the readme on how to have individual templates for each form (credit @Raistlfiren)
+ * Fixed: Twig parameter errors
+ * Fixed: Email template overrides
 
 * 2.4.0 (2015-08-18)
  * Added: Form specific template 
