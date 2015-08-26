@@ -166,9 +166,9 @@ class FormConfig
                 'contenttype' => null,
             ),
             'templates' => array(
-                'form'    => 'boltforms_form.twig',
-                'subject' => 'boltforms_email_subject.twig',
-                'email'   => 'boltforms_email.twig',
+                'form'    => null,
+                'subject' => null,
+                'email'   => null,
             ),
             'uploads' => array(
                 'subdirectory' => null
