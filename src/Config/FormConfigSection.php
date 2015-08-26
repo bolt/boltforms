@@ -51,7 +51,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  * @property string  debug_address
  * @property array   redirect
  */
-class FormConfigSection
+class FormConfigSection implements \ArrayAccess
 {
     /** @var array */
     private $config;
@@ -89,5 +89,25 @@ class FormConfigSection
     public function __unset($name)
     {
         unset($this->config[$name]);
+    }
+
+    public function offsetSet($name, $value)
+    {
+        $this->config[$name] = $value;
+    }
+
+    public function offsetExists($name)
+    {
+        return isset($this->config[$name]);
+    }
+
+    public function offsetUnset($name)
+    {
+        unset($this->config[$name]);
+    }
+
+    public function offsetGet($name)
+    {
+        return isset($this->config[$name]) ? $this->config[$name] : null;
     }
 }
