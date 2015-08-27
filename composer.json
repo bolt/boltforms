@@ -42,7 +42,7 @@
 		}
 	},
 	"extra" : {
-		"bolt-assets" : "css/boltforms.css",
+		"bolt-assets" : "css/boltforms",
 		"branch-alias" : {
 			"dev-master" : "2.3.*-dev"
 		}
