@@ -43,6 +43,7 @@
 	},
 	"extra" : {
 		"bolt-assets" : "css/boltforms",
+		"bolt-icon" : "assets/icon-boltforms.png",
 		"branch-alias" : {
 			"dev-master" : "2.3.*-dev"
 		}

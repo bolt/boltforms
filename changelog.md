@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 2.x.x (2015-xx-xx)
+ * Added: Icon (credit @Mikescops)
+
 * 2.4.2 (2015-08-28)
  * Fixed: bolt-assets was incorrectly specified as a file instead of a directory (credit @emarref)
 
