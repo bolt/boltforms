@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 2.4.2 (2015-08-28)
+ * Fixed: bolt-assets was incorrectly specified as a file instead of a directory (credit @emarref)
+
 * 2.4.1 (2015-08-26)
  * Added: Information to the readme on how to have individual templates for each form (credit @Raistlfiren)
  * Fixed: Twig parameter errors
