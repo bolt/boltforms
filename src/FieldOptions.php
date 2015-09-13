@@ -44,6 +44,8 @@ class FieldOptions
     private $storage;
     /** @var LoggerInterface */
     private $logger;
+    /** @var boolean */
+    private $initialised;
 
     /**
      * @params array $options
@@ -156,7 +158,7 @@ class FieldOptions
     {
         $options = $this->baseOptions;
         if ($this->type === 'choice') {
-            $options['choices'] = $this->getChoiceValues();
+            $options['choices'] = $this->getChoiceValues($options);
         }
 
         $this->options = $options;
@@ -167,10 +169,14 @@ class FieldOptions
      *
      * @return array
      */
-    protected function getChoiceValues()
+    protected function getChoiceValues(array &$options)
     {
         if (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'contenttype::') === 0) {
             $choice = new ContentType($this->storage, $this->fieldname, $this->baseOptions);
+
+            // Only unset for a this type as it's custom
+            unset ($options['sort']);
+            unset ($options['filters']);
         } else {
             $choice = new ArrayType($this->fieldname, $this->baseOptions['choices']);
         }
