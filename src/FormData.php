@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
-
 /**
  * Submitted form data functionality for BoltForms
  *

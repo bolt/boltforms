@@ -175,9 +175,9 @@ class FieldOptions
             $choice = new ContentType($this->storage, $this->fieldname, $this->baseOptions);
 
             // Only unset for a this type as it's custom
-            unset ($options['sort']);
-            unset ($options['limit']);
-            unset ($options['filters']);
+            unset($options['sort']);
+            unset($options['limit']);
+            unset($options['filters']);
         } else {
             $choice = new ArrayType($this->fieldname, $this->baseOptions['choices']);
         }

@@ -113,15 +113,15 @@ class ContentType implements ChoiceInterface
     {
         $parameters = array();
         // ORDER BY field
-        if(isset($this->options['sort'])) {
+        if (isset($this->options['sort'])) {
             $parameters['order'] = $this->options['sort'];
         }
         // LIMIT count
-        if(isset($this->options['limit'])) {
+        if (isset($this->options['limit'])) {
             $parameters['limit'] = (integer) $this->options['limit'];
         }
         // WHERE filters
-        if(isset($this->options['filters'])) {
+        if (isset($this->options['filters'])) {
             $parameters = $this->getFilters($parameters);
         }
 

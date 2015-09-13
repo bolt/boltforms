@@ -3,8 +3,6 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 use Bolt\Application;
-use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
-use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormTypeInterface;
