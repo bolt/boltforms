@@ -40,7 +40,7 @@ class ContentType implements ChoiceInterface
     /**
      * @param Storage $storage
      * @param string  $name    Name of the BoltForms field
-     * @param string  $options A the 'choices' key is a string that takes
+     * @param array   $options The 'choices' key is a string that takes
      *                         the format of: 'contenttype::name::labelfield::valuefield'
      *                         Where:
      *                         'contenttype' - String constant that always equals 'contenttype'
@@ -48,7 +48,7 @@ class ContentType implements ChoiceInterface
      *                         'labelfield'  - Field to use for the UI displayed to the user
      *                         'valuefield'  - Field to use for the value stored
      */
-    public function __construct($storage, $name, $options)
+    public function __construct($storage, $name, array $options)
     {
         $this->storage = $storage;
         $this->name    = $name;
@@ -94,7 +94,7 @@ class ContentType implements ChoiceInterface
         }
 
         /** @var $records Bolt\Content[] */
-        $records = $this->storage->getContent($params[1]);
+        $records = $this->storage->getContent($params[1], $this->getQueryParameters());
         $choices = array();
 
         foreach ($records as $record) {
@@ -102,5 +102,20 @@ class ContentType implements ChoiceInterface
         }
 
         return $choices;
+    }
+
+    /**
+     * Determine the parameters passed to getContent() for sorting and filtering.
+     *
+     * @return array
+     */
+    private function getQueryParameters()
+    {
+        $parameters = array();
+        if(isset($this->options['sort'])) {
+            $parameters['order'] = $this->options['sort'];
+        }
+
+        return $parameters;
     }
 }
