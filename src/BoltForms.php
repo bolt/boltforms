@@ -107,39 +107,6 @@ class BoltForms
     }
 
     /**
-     * Extract, expand and set & create validator instance array(s)
-     *
-     * @param string $formname
-     * @param mixed  $input
-     *
-     * @return Symfony\Component\Validator\Constraint
-     */
-    private function getConstraint($formname, $input)
-    {
-        $params = null;
-
-        $namespace = "\\Symfony\\Component\\Validator\\Constraints\\";
-
-        if (gettype($input) === 'string') {
-            $class = $namespace . $input;
-        } elseif (gettype($input) === 'array') {
-            $input = current($input);
-            if (gettype($input) === 'string') {
-                $class = $namespace . $input;
-            } elseif (gettype($input) === 'array') {
-                $class = $namespace . key($input);
-                $params = array_pop($input);
-            }
-        }
-
-        if (class_exists($class)) {
-            return new $class($params);
-        }
-
-        $this->app['logger.system']->error("[BoltForms] The form '$formname' has an invalid field constraint: '$class'.", array('event' => 'extensions'));
-    }
-
-    /**
      * Render our form into HTML
      *
      * @param string $formname   Name of the form
