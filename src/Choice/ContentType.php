@@ -112,11 +112,33 @@ class ContentType implements ChoiceInterface
     private function getQueryParameters()
     {
         $parameters = array();
+        // ORDER BY field
         if(isset($this->options['sort'])) {
             $parameters['order'] = $this->options['sort'];
         }
+        // LIMIT count
         if(isset($this->options['limit'])) {
             $parameters['limit'] = (integer) $this->options['limit'];
+        }
+        // WHERE filters
+        if(isset($this->options['filters'])) {
+            $parameters = $this->getFilters($parameters);
+        }
+
+        return $parameters;
+    }
+
+    /**
+     * Get the filters.
+     *
+     * @param array $parameters
+     *
+     * @return array[]
+     */
+    private function getFilters(array $parameters)
+    {
+        foreach ($this->options['filters'] as $filter) {
+            $parameters[$filter['field']] = $filter['value'];
         }
 
         return $parameters;
