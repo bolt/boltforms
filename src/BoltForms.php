@@ -86,27 +86,8 @@ class BoltForms
      */
     public function addField($formname, $fieldname, $type, array $options)
     {
-        if (isset($options['constraints'])) {
-            if (gettype($options['constraints']) == 'string') {
-                $options['constraints'] = $this->getConstraint($formname, $options['constraints']);
-            } else {
-                foreach ($options['constraints'] as $key => $constraint) {
-                    $options['constraints'][$key] = $this->getConstraint($formname, array($key => $constraint));
-                }
-            }
-        }
-
-        if ($type === 'choice') {
-            if (is_string($options['choices']) && strpos($options['choices'], 'contenttype::') === 0) {
-                $choice = new ContentType($this->app, $fieldname, $options['choices']);
-            } else {
-                $choice = new ArrayType($fieldname, $options['choices']);
-            }
-
-            $options['choices'] = $choice->getChoices();
-        }
-
-        $this->forms[$formname]->add($fieldname, $type, $options);
+        $fieldOptions = new FieldOptions($formname, $fieldname, $type, $options, $this->app['storage'], $this->app['logger.system']);
+        $this->forms[$formname]->add($fieldname, $type, $fieldOptions->toArray());
     }
 
     /**
