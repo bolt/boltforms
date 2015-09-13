@@ -176,6 +176,7 @@ class FieldOptions
 
             // Only unset for a this type as it's custom
             unset ($options['sort']);
+            unset ($options['limit']);
             unset ($options['filters']);
         } else {
             $choice = new ArrayType($this->fieldname, $this->baseOptions['choices']);

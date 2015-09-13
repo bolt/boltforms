@@ -115,6 +115,9 @@ class ContentType implements ChoiceInterface
         if(isset($this->options['sort'])) {
             $parameters['order'] = $this->options['sort'];
         }
+        if(isset($this->options['limit'])) {
+            $parameters['limit'] = (integer) $this->options['limit'];
+        }
 
         return $parameters;
     }
