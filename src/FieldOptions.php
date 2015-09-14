@@ -50,12 +50,12 @@ class FieldOptions
     /**
      * @params array $options
      */
-    public function __construct($formname, $fieldname, $type, array $options, $storage, LoggerInterface $logger)
+    public function __construct($formname, $fieldname, $type, array $baseOptions, $storage, LoggerInterface $logger)
     {
         $this->formname = $formname;
         $this->fieldname = $fieldname;
         $this->type = $type;
-        $this->baseOptions = $options;
+        $this->baseOptions = $baseOptions;
         $this->storage = $storage;
         $this->logger = $logger;
     }
@@ -91,10 +91,46 @@ class FieldOptions
             return;
         }
 
-        $this->setContraints();
         $this->setValidOptions();
-
         $this->initialised = true;
+    }
+
+    /**
+     * Get a clean array of options to be passed to Symfony Forms.
+     *
+     * @return array
+     */
+    protected function setValidOptions()
+    {
+        $options = $this->baseOptions;
+        if ($this->type === 'choice') {
+            $options['choices'] = $this->getChoiceValues($options);
+        }
+        $this->options = $options;
+
+        // Set up contraint objects
+        $this->setContraints();
+    }
+
+    /**
+     * Get customised value parameters for choice field types.
+     *
+     * @return array
+     */
+    protected function getChoiceValues(array &$options)
+    {
+        if (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'contenttype::') === 0) {
+            $choice = new ContentType($this->storage, $this->fieldname, $this->baseOptions);
+
+            // Only unset for a this type as it's custom
+            unset($options['sort']);
+            unset($options['limit']);
+            unset($options['filters']);
+        } else {
+            $choice = new ArrayType($this->fieldname, $this->baseOptions['choices']);
+        }
+
+        return $choice->getChoices();
     }
 
     /**
@@ -148,41 +184,5 @@ class FieldOptions
         }
 
         $this->logger->error("[BoltForms] The form '$formname' has an invalid field constraint: '$class'.", array('event' => 'extensions'));
-    }
-
-    /**
-     * Get a clean array of options to be passed to Symfony Forms.
-     *
-     * @return array
-     */
-    protected function setValidOptions()
-    {
-        $options = $this->baseOptions;
-        if ($this->type === 'choice') {
-            $options['choices'] = $this->getChoiceValues($options);
-        }
-
-        $this->options = $options;
-    }
-
-    /**
-     * Get customised value parameters for choice field types.
-     *
-     * @return array
-     */
-    protected function getChoiceValues(array &$options)
-    {
-        if (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'contenttype::') === 0) {
-            $choice = new ContentType($this->storage, $this->fieldname, $this->baseOptions);
-
-            // Only unset for a this type as it's custom
-            unset($options['sort']);
-            unset($options['limit']);
-            unset($options['filters']);
-        } else {
-            $choice = new ArrayType($this->fieldname, $this->baseOptions['choices']);
-        }
-
-        return $choice->getChoices();
     }
 }
