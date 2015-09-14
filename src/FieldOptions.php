@@ -48,7 +48,14 @@ class FieldOptions
     private $initialised;
 
     /**
-     * @params array $options
+     * Constructor.
+     *
+     * @param string          $formname
+     * @param string          $fieldname
+     * @param string          $type
+     * @param array           $baseOptions
+     * @param \Bolt\Storage   $storage
+     * @param LoggerInterface $logger
      */
     public function __construct($formname, $fieldname, $type, array $baseOptions, $storage, LoggerInterface $logger)
     {
