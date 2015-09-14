@@ -1,6 +1,6 @@
 # Changelog for Bolt Forms
 
-* 2.5.x (2015-xx-xx)
+* 2.5.0 (2015-09-14)
  * Added: ContentType choice control with sorting, limiting and filtering
  * Added: Moved logic handling for the field's to class
  * Break: [Minor] Choice\ContentType constructor takes different parameters
