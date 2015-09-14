@@ -72,17 +72,6 @@ class FieldOptions
     }
 
     /**
-     * Get the options choice value.
-     *
-     * @return array|string
-     */
-    public function getChoices()
-    {
-        $this->initialise();
-        return $this->options['choices'];
-    }
-
-    /**
      * Build the options.
      */
     protected function initialise()
