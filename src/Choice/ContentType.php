@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
-use Silex\Application;
+use Bolt\Storage;
 
 /**
  * ContentType choices for BoltForms
@@ -28,30 +28,31 @@ use Silex\Application;
  */
 class ContentType implements ChoiceInterface
 {
-    /** @var \Silex\Application */
-    private $app;
+    /** @var \Bolt\Storage */
+    private $storage;
     /** @var string */
     private $name;
-    /** @var string */
-    private $key;
+    /** @var array */
+    private $options;
     /** @var array */
     private $choices;
 
     /**
-     * @param Application $app
-     * @param string      $name Name of the BoltForms field
-     * @param string      $key  A string that takes the format of: 'contenttype::name::labelfield::valuefield'
-     *                          Where:
-     *                          'contenttype' - String constant that always equals 'contenttype'
-     *                          'name'        - Name of the contenttype itself
-     *                          'labelfield'  - Field to use for the UI displayed to the user
-     *                          'valuefield'  - Field to use for the value stored
+     * @param Storage $storage
+     * @param string  $name    Name of the BoltForms field
+     * @param array   $options The 'choices' key is a string that takes
+     *                         the format of: 'contenttype::name::labelfield::valuefield'
+     *                         Where:
+     *                         'contenttype' - String constant that always equals 'contenttype'
+     *                         'name'        - Name of the contenttype itself
+     *                         'labelfield'  - Field to use for the UI displayed to the user
+     *                         'valuefield'  - Field to use for the value stored
      */
-    public function __construct(Application $app, $name, $key)
+    public function __construct($storage, $name, array $options)
     {
-        $this->app  = $app;
-        $this->name = $name;
-        $this->key  = $key;
+        $this->storage = $storage;
+        $this->name    = $name;
+        $this->options = $options;
     }
 
     /**
@@ -72,7 +73,7 @@ class ContentType implements ChoiceInterface
     public function getChoices()
     {
         if ($this->choices === null) {
-            $this->choices = $this->getChoicesFromContenttypeRecords($this->key);
+            $this->choices = $this->getChoicesFromContenttypeRecords();
         }
 
         return $this->choices;
@@ -81,12 +82,11 @@ class ContentType implements ChoiceInterface
     /**
      * Get choice values from Contenttype records
      *
-     * @param string $key
-     *
      * @return array
      */
-    private function getChoicesFromContenttypeRecords($key)
+    private function getChoicesFromContenttypeRecords()
     {
+        $key = $this->options['choices'];
         $params = explode('::', $key);
 
         if ($params === false || count($params) !== 4) {
@@ -94,7 +94,7 @@ class ContentType implements ChoiceInterface
         }
 
         /** @var $records Bolt\Content[] */
-        $records = $this->app['storage']->getContent($params[1]);
+        $records = $this->storage->getContent($params[1], $this->getQueryParameters());
         $choices = array();
 
         foreach ($records as $record) {
@@ -102,5 +102,45 @@ class ContentType implements ChoiceInterface
         }
 
         return $choices;
+    }
+
+    /**
+     * Determine the parameters passed to getContent() for sorting and filtering.
+     *
+     * @return array
+     */
+    private function getQueryParameters()
+    {
+        $parameters = array();
+        // ORDER BY field
+        if (isset($this->options['sort'])) {
+            $parameters['order'] = $this->options['sort'];
+        }
+        // LIMIT count
+        if (isset($this->options['limit'])) {
+            $parameters['limit'] = (integer) $this->options['limit'];
+        }
+        // WHERE filters
+        if (isset($this->options['filters'])) {
+            $parameters = $this->getFilters($parameters);
+        }
+
+        return $parameters;
+    }
+
+    /**
+     * Get the filters.
+     *
+     * @param array $parameters
+     *
+     * @return array[]
+     */
+    private function getFilters(array $parameters)
+    {
+        foreach ($this->options['filters'] as $filter) {
+            $parameters[$filter['field']] = $filter['value'];
+        }
+
+        return $parameters;
     }
 }

@@ -69,6 +69,43 @@ double-colon delimiters, where:
     'labelfield'  - Field to use for the UI displayed to the user
     'valuefield'  - Field to use for the value stored
 
+#### ContentType Choice Control
+
+ContentType choice value lookups can optionally be sorted (`sort:`), limited 
+number of records retrieved (`limit:`), or filtered based upon one or more of
+the ContentType's field values (`filters:`).
+
+```
+    best_pet_page:
+      type: choice
+      options:
+        required: false
+        label: What is our best pets page?
+        choices: 'contenttype::pets::title::slug'
+        sort: title
+        limit: 5
+        filters: 
+          by_kenny:
+            field: ownerid
+            value: 42
+          light_fur:
+            field: colour
+            value: white || grey 
+          cute_factor:
+            field: checkbox
+            value: >11
+```
+
+The `sort` option takes a field name. Sorting by default happens in assending
+order. To sort in a descending order, negate the field name, e.g. `-title` 
+
+The `limit` option takes an integer that sets the maximum number of records to
+be return, and in turn the maximum number of options in the select list.
+
+The `filters` option takes an array of one or more associative arrays with
+`field` and `value` keys. These filters behave the same as `where` parameters
+in Bolt's twig function `{% setcontent %}` 
+
 File Upload Types
 -----------------
 

@@ -1,5 +1,10 @@
 # Changelog for Bolt Forms
 
+* 2.5.x (2015-xx-xx)
+ * Added: ContentType choice control with sorting, limiting and filtering
+ * Added: Moved logic handling for the field's to class
+ * Break: [Minor] Choice\ContentType constructor takes different parameters
+
 * 2.4.3 (2015-08-29)
  * Added: Icon (credit @Mikescops)
  * Fixed: Additional fix for bolt-assets path

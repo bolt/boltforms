@@ -3,8 +3,6 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt;
 use Bolt\Application;
-use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
-use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormTypeInterface;
@@ -86,27 +84,9 @@ class BoltForms
      */
     public function addField($formname, $fieldname, $type, array $options)
     {
-        if (isset($options['constraints'])) {
-            if (gettype($options['constraints']) == 'string') {
-                $options['constraints'] = $this->getConstraint($formname, $options['constraints']);
-            } else {
-                foreach ($options['constraints'] as $key => $constraint) {
-                    $options['constraints'][$key] = $this->getConstraint($formname, array($key => $constraint));
-                }
-            }
-        }
+        $fieldOptions = new FieldOptions($formname, $fieldname, $type, $options, $this->app['storage'], $this->app['logger.system']);
 
-        if ($type === 'choice') {
-            if (is_string($options['choices']) && strpos($options['choices'], 'contenttype::') === 0) {
-                $choice = new ContentType($this->app, $fieldname, $options['choices']);
-            } else {
-                $choice = new ArrayType($fieldname, $options['choices']);
-            }
-
-            $options['choices'] = $choice->getChoices();
-        }
-
-        $this->forms[$formname]->add($fieldname, $type, $options);
+        $this->forms[$formname]->add($fieldname, $type, $fieldOptions->toArray());
     }
 
     /**
@@ -123,39 +103,6 @@ class BoltForms
             $field['options'] = empty($field['options']) ? array() : $field['options'];
             $this->addField($formname, $fieldname, $field['type'], $field['options']);
         }
-    }
-
-    /**
-     * Extract, expand and set & create validator instance array(s)
-     *
-     * @param string $formname
-     * @param mixed  $input
-     *
-     * @return Symfony\Component\Validator\Constraint
-     */
-    private function getConstraint($formname, $input)
-    {
-        $params = null;
-
-        $namespace = "\\Symfony\\Component\\Validator\\Constraints\\";
-
-        if (gettype($input) === 'string') {
-            $class = $namespace . $input;
-        } elseif (gettype($input) === 'array') {
-            $input = current($input);
-            if (gettype($input) === 'string') {
-                $class = $namespace . $input;
-            } elseif (gettype($input) === 'array') {
-                $class = $namespace . key($input);
-                $params = array_pop($input);
-            }
-        }
-
-        if (class_exists($class)) {
-            return new $class($params);
-        }
-
-        $this->app['logger.system']->error("[BoltForms] The form '$formname' has an invalid field constraint: '$class'.", array('event' => 'extensions'));
     }
 
     /**
