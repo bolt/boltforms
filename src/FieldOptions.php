@@ -102,7 +102,7 @@ class FieldOptions
      */
     protected function setContraints()
     {
-        if (!isset($this->options['constraints'])) {
+        if (!isset($this->baseOptions['constraints'])) {
             return;
         }
 
@@ -134,6 +134,7 @@ class FieldOptions
             $class = $namespace . $input;
         } elseif ($inputType === 'array') {
             $input = current($input);
+            $inputType = gettype($input);
             if ($inputType === 'string') {
                 $class = $namespace . $input;
             } elseif ($inputType === 'array') {
