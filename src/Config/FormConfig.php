@@ -154,7 +154,7 @@ class FormConfig
                 'attach_files'  => false,
             ),
             'feedback' => array(
-                'success'  => 'Form submission sucessful',
+                'success'  => 'Form submission successful',
                 'error'    => 'There are errors in the form, please fix before trying to resubmit',
                 'redirect' => array(
                     'target' => null,
