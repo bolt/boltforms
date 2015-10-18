@@ -82,7 +82,7 @@ class Extension extends BaseExtension
         $app = $this->app;
         $config = $this->config;
 
-        // Safe
+        // Normal
         $this->app->share(
             $this->app->extend(
                 'twig',
@@ -94,7 +94,7 @@ class Extension extends BaseExtension
             )
         );
 
-        // Normal
+        // Safe
         $this->app->share(
             $this->app->extend(
                 'safe_twig',
