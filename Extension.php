@@ -70,7 +70,7 @@ class Extension extends BaseExtension
          */
         if ($this->config['uploads']['management_controller']) {
             $url = '/' . ltrim($this->config['uploads']['base_uri'], '/');
-            $this->app->mount($url, new Controller\UploadManagement());
+            $this->app->mount($url, new Controller\UploadManagement($this->config));
         }
     }
 
@@ -80,13 +80,14 @@ class Extension extends BaseExtension
     private function addTwig()
     {
         $app = $this->app;
+        $config = $this->config;
 
         // Safe
         $this->app->share(
             $this->app->extend(
                 'twig',
-                function (\Twig_Environment $twig) use ($app) {
-                    $twig->addExtension(new Twig\BoltFormsExtension($app));
+                function (\Twig_Environment $twig) use ($app, $config) {
+                    $twig->addExtension(new Twig\BoltFormsExtension($app, $config));
 
                     return $twig;
                 }
@@ -97,8 +98,8 @@ class Extension extends BaseExtension
         $this->app->share(
             $this->app->extend(
                 'safe_twig',
-                function (\Twig_Environment $twig) use ($app) {
-                    $twig->addExtension(new Twig\BoltFormsExtension($app));
+                function (\Twig_Environment $twig) use ($app, $config) {
+                    $twig->addExtension(new Twig\BoltFormsExtension($app, $config));
 
                     return $twig;
                 }

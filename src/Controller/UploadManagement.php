@@ -38,14 +38,22 @@ class UploadManagement implements ControllerProviderInterface
     private $config;
 
     /**
+     * Constructor.
+     *
+     * @param $config
+     */
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
      * @param \Silex\Application $app
      *
      * @return \Silex\ControllerCollection
      */
     public function connect(Application $app)
     {
-        $this->config = $app[Extension::CONTAINER]->config;
-
         /** @var $ctr \Silex\ControllerCollection */
         $ctr = $app['controllers_factory'];
 

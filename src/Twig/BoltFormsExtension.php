@@ -37,10 +37,10 @@ class BoltFormsExtension extends \Twig_Extension
     /** @var array */
     private $config;
 
-    public function __construct(Application $app)
+    public function __construct(Application $app, array $config)
     {
         $this->app      = $app;
-        $this->config   = $this->app[Extension::CONTAINER]->config;
+        $this->config   = $config;
     }
 
     /**
