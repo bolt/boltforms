@@ -17,7 +17,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     public function testConstructor()
     {
         $app = $this->getApp();
-        $twigExt = new BoltFormsExtension($app);
+        $twigExt = new BoltFormsExtension($app, $this->getExtension()->config);
 
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Twig\BoltFormsExtension', $twigExt);
         $this->assertSame($twigExt->getName(), 'boltforms.extension');
@@ -26,7 +26,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     public function testInitRuntime()
     {
         $app = $this->getApp();
-        $twigExt = new BoltFormsExtension($app);
+        $twigExt = new BoltFormsExtension($app, $this->getExtension()->config);
         $environment = new \Twig_Environment();
         $twigExt->initRuntime($environment);
     }
@@ -34,7 +34,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
     public function testFunctions()
     {
         $app = $this->getApp();
-        $twigExt = new BoltFormsExtension($app);
+        $twigExt = new BoltFormsExtension($app, $this->getExtension()->config);
         $functions = $twigExt->getFunctions();
 
         $this->assertSame('boltforms', $functions[0]->getName());
@@ -61,7 +61,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $data = array();
         $options = array();
 
-        $twigExt = new BoltFormsExtension($app);
+        $twigExt = new BoltFormsExtension($app, $this->getExtension()->config);
 
         // Request a non-exist form
         $html = $twigExt->twigBoltForms('koalas');
@@ -95,7 +95,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $data = array();
         $options = array();
 
-        $twigExt = new BoltFormsExtension($app);
+        $twigExt = new BoltFormsExtension($app, $this->getExtension()->config);
 
         $html = $twigExt->twigBoltForms('testing_form', $html_pre, $html_post, $data, $options);
         $this->assertInstanceOf('\Twig_Markup', $html);
@@ -135,7 +135,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $data = array();
         $options = array();
 
-        $twigExt = new BoltFormsExtension($app);
+        $twigExt = new BoltFormsExtension($app, $this->getExtension()->config);
 
         $html = $twigExt->twigBoltForms('testing_form', $html_pre, $html_post, $data, $options);
         $this->assertInstanceOf('\Twig_Markup', $html);
@@ -159,7 +159,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $boltforms->addFieldArray('testing_form', $fields);
         $app['boltforms'] = $boltforms;
 
-        $twigExt = new BoltFormsExtension($app);
+        $twigExt = new BoltFormsExtension($app, $this->getExtension()->config);
 
         // Invalid directory
         $html = $twigExt->twigBoltFormsUploads('koala');
