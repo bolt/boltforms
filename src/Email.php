@@ -5,6 +5,8 @@ use Bolt;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Silex\Application;
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 
 /**
  * Email functions for BoltForms
@@ -52,6 +54,9 @@ class Email
     public function doNotification(FormConfig $formConfig, FormData $formData)
     {
         $emailConfig = new EmailConfig($this->config['debug'], $formConfig, $formData);
+
+        $event = new BoltFormsEmailEvent($emailConfig, $formConfig, $formData);
+        $this->app['dispatcher']->dispatch(BoltFormsEvents::PRE_EMAIL_SEND, $event);
 
         $this->emailCompose($formConfig, $emailConfig, $formData);
         $this->emailAddress($emailConfig);
