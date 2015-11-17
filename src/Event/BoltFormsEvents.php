@@ -49,6 +49,11 @@ final class BoltFormsEvents
     const DATA_SESSION_VALUE = 'boltforms.session_value';
     const DATA_TIMESTAMP = 'boltforms.timestamp';
 
+    /*
+     * Email notification
+     */
+    const PRE_EMAIL_SEND = 'boltforms.pre_email_send';
+
     private function __construct()
     {
     }
