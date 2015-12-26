@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 2.5.1 (2015-12-12)
+ * Added: BoltFormsEvents::PRE_EMAIL_SEND event
+
 * 2.5.0 (2015-09-14)
  * Added: ContentType choice control with sorting, limiting and filtering
  * Added: Moved logic handling for the field's to class
