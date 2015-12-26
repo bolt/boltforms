@@ -379,7 +379,7 @@ if ($app['request']->getMethod() == 'POST') {
 Event Listeners
 ---------------
 
-BoltForms exposes a number of listners, that proxy Symfony Forms listeners.
+BoltForms exposes a number of listeners, that proxy Symfony Forms listeners.
   * BoltFormsEvents::PRE_SUBMIT
   * BoltFormsEvents::SUBMIT
   * BoltFormsEvents::POST_SUBMIT
@@ -419,6 +419,30 @@ class Extension extends \Bolt\BaseExtension
     }
 }
 ```
+
+Custom Event Listeners
+======================
+
+BoltForms provides a `BoltFormsEmailEvent` that is dispatched immediately prior to emails being sent.
+
+This event object will contain the EmailConfig, FormConfig and FormData objects.
+
+```php
+//use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
+
+    public function initialize()
+    {
+        $this->app['dispatcher']->addListener(BoltFormsEvents::PRE_EMAIL_SEND,  array($this, 'myPreEmailSend'));
+    }
+
+    public function myPreEmailSend(BoltFormsEmailEvent $event)
+    {
+        $emailConfig = $event->getEmailConfig();
+        $formConfig = $event->getFormConfig();
+        $formData = $event->getFormData();
+    }
+```
+
 
 Templates for Custom Displays
 -----------------------------
