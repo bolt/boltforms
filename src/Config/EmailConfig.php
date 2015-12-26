@@ -145,6 +145,16 @@ class EmailConfig implements \ArrayAccess
     }
 
     /**
+     * Set the 'from' name.
+     *
+     * @param string
+     */
+    public function setFromName($fromName)
+    {
+        $this->fromName = $fromName;
+    }
+
+    /**
      * Get the 'from' email address.
      *
      * @return string
@@ -152,6 +162,16 @@ class EmailConfig implements \ArrayAccess
     public function getFromEmail()
     {
         return $this->fromEmail;
+    }
+
+    /**
+     * Set the 'from' email address.
+     *
+     * @param string
+     */
+    public function setFromEmail($fromEmail)
+    {
+        $this->fromEmail = $fromEmail;
     }
 
     /**
@@ -165,6 +185,16 @@ class EmailConfig implements \ArrayAccess
     }
 
     /**
+     * Set the 'replyto' name.
+     *
+     * @param string
+     */
+    public function setReplyToName($replyToName)
+    {
+        $this->replyToName = $replyToName;
+    }
+
+    /**
      * Get the 'replyto' email address.
      *
      * @return string
@@ -172,6 +202,16 @@ class EmailConfig implements \ArrayAccess
     public function getReplyToEmail()
     {
         return $this->replyToEmail;
+    }
+
+    /**
+     * Set the 'replyto' email address.
+     *
+     * @param string
+     */
+    public function setReplyToEmail($replyToEmail)
+    {
+        $this->replyToEmail = $replyToEmail;
     }
 
     /**
@@ -185,6 +225,16 @@ class EmailConfig implements \ArrayAccess
     }
 
     /**
+     * Set the 'To' name.
+     *
+     * @param string
+     */
+    public function setToName($toName)
+    {
+        $this->toName = $toName;
+    }
+
+    /**
      * Get the 'To' email address.
      *
      * @return string
@@ -192,6 +242,16 @@ class EmailConfig implements \ArrayAccess
     public function getToEmail()
     {
         return $this->toEmail;
+    }
+
+    /**
+     * Set the 'To' email address.
+     *
+     * @param string
+     */
+    public function setToEmail($toEmail)
+    {
+        $this->toEmail = $toEmail;
     }
 
     /**
@@ -205,6 +265,16 @@ class EmailConfig implements \ArrayAccess
     }
 
     /**
+     * Set the 'CC' name.
+     *
+     * @param string
+     */
+    public function setCcName($ccName)
+    {
+        $this->ccName = $ccName;
+    }
+
+    /**
      * Get the 'CC' email address.
      *
      * @return string
@@ -212,6 +282,16 @@ class EmailConfig implements \ArrayAccess
     public function getCcEmail()
     {
         return $this->ccEmail;
+    }
+
+    /**
+     * Set the 'CC' email address.
+     *
+     * @param string
+     */
+    public function setCcEmail($ccEmail)
+    {
+        $this->ccEmail = $ccEmail;
     }
 
     /**
@@ -225,6 +305,16 @@ class EmailConfig implements \ArrayAccess
     }
 
     /**
+     * Set the 'bCC' name.
+     *
+     * @param string
+     */
+    public function setBccName($bccName)
+    {
+        $this->bccName = $bccName;
+    }
+
+    /**
      * Get the 'bCC' email address.
      *
      * @return string
@@ -232,6 +322,16 @@ class EmailConfig implements \ArrayAccess
     public function getBccEmail()
     {
         return $this->bccEmail;
+    }
+
+    /**
+     * Set the 'bCC' email address.
+     *
+     * @param string
+     */
+    public function setBccEmail($bccEmail)
+    {
+        $this->bccEmail = $bccEmail;
     }
 
     /**
