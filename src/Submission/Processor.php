@@ -50,7 +50,8 @@ class Processor
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->config = $app[Extension::CONTAINER]->config;
+        $extension = $app['extensions']->get('BoltForms');
+        $this->config = $extension->getConfig();
     }
 
     /**
