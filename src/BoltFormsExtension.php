@@ -2,10 +2,13 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Extension\SimpleExtension;
+use Silex\Application;
+
 /**
  * BoltForms a Symfony Forms interface for Bolt
  *
- * Copyright (C) 2014-2015 Gawain Lynch
+ * Copyright (C) 2014-2016 Gawain Lynch
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +24,10 @@ namespace Bolt\Extension\Bolt\BoltForms;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014, Gawain Lynch
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class BoltFormsExtension
+class BoltFormsExtension extends SimpleExtension
 {
     /**
      * {@inheritdoc}
@@ -35,52 +38,71 @@ class BoltFormsExtension
     }
 
     /**
-     * Let Bolt know this extension sends emails. The user will see a
-     * notification on the dashboard if mail is not set up correctly.
+     * {@inheritdoc}
      */
-    public function sendsMail()
+    public function register(Application $app)
     {
-        return true;
+        parent::register($app);
+
+        // Providers
+        $app->register(new Provider\BoltFormsServiceProvider());
+        $app->register(new Provider\RecaptchaServiceProvider());
+
+        // Twig
+        $this->addTwig($app);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function initialize()
+    protected function registerFrontendControllers()
     {
-        /*
-         * Provider
-         */
-        $this->app->register(new Provider\BoltFormsServiceProvider());
-        $this->app->register(new Provider\RecaptchaServiceProvider());
-
-        /*
-         * Frontend
-         */
-        if ($this->app['config']->getWhichEnd() === 'frontend') {
-            $this->addTwig();
+        if ($this->getConfig()['uploads']['management_controller']) {
+            $url = '/' . ltrim($this->getConfig()['uploads']['base_uri'], '/');
+            return [
+                $url=> new Controller\UploadManagement($this->getConfig()),
+            ];
         }
 
-        /*
-         * Management controller
-         */
-        if ($this->config['uploads']['management_controller']) {
-            $url = '/' . ltrim($this->config['uploads']['base_uri'], '/');
-            $this->app->mount($url, new Controller\UploadManagement($this->config));
-        }
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerTwigPaths()
+    {
+        return ['templates'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerTwigFunctions()
+    {
+        return [
+
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isSafe()
+    {
+        return true;
     }
 
     /**
      * Add the Twig functions.
      */
-    private function addTwig()
+    private function addTwig(Application $app)
     {
-        $app = $this->app;
-        $config = $this->config;
+        $config = $this->getConfig();
 
         // Normal
-        $this->app->share(
-            $this->app->extend(
+        $app->share(
+            $app->extend(
                 'twig',
                 function (\Twig_Environment $twig) use ($app, $config) {
                     $twig->addExtension(new Twig\BoltFormsExtension($app, $config));
@@ -91,8 +113,8 @@ class BoltFormsExtension
         );
 
         // Safe
-        $this->app->share(
-            $this->app->extend(
+        $app->share(
+            $app->extend(
                 'safe_twig',
                 function (\Twig_Environment $twig) use ($app, $config) {
                     $twig->addExtension(new Twig\BoltFormsExtension($app, $config));
