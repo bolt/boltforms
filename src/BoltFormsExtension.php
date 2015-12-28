@@ -134,7 +134,7 @@ class BoltFormsExtension extends SimpleExtension
     /**
      * Set the defaults for configuration parameters
      *
-     * @return array
+     * {@inheritdoc}
      */
     protected function getDefaultConfig()
     {
