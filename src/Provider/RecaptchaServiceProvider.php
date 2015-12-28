@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Provider;
 
-use Bolt\Extension\Bolt\BoltForms\Extension;
+use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
 use ReCaptcha\ReCaptcha;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -13,7 +13,9 @@ class RecaptchaServiceProvider implements ServiceProviderInterface
     {
         $app['recaptcha'] = $app->share(
             function ($app) {
-                $key = $app[Extension::CONTAINER]->config['recaptcha']['private_key'];
+                /** @var BoltFormsExtension $extension */
+                $extension = $app['extensions']->get('BoltForms');
+                $key = $extension->getConfig()['recaptcha']['private_key'];
                 $reCaptcha = new ReCaptcha($key);
 
                 return $reCaptcha;
