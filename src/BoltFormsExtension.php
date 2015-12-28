@@ -115,6 +115,14 @@ class BoltFormsExtension extends SimpleExtension
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getConfig()
+    {
+        return parent::getConfig();
+    }
+
+    /**
      * All the non-forms config keys.
      *
      * @return string[]
