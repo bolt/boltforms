@@ -28,14 +28,12 @@ use Bolt\BaseExtension;
  */
 class BoltFormsExtension extends BaseExtension
 {
-    /** @var string Extension name */
-    const NAME = 'BoltForms';
-    /** @var string Extension's service container */
-    const CONTAINER = 'extensions.BoltForms';
-
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
-        return Extension::NAME;
+        return 'BoltForms';
     }
 
     /**
