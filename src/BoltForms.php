@@ -129,11 +129,8 @@ class BoltForms
             $renderdata[$twigname] = $data;
         }
 
-        //
-        $this->app['twig.loader.filesystem']->addPath(dirname(__DIR__) . '/assets');
-
         // Pray and do the render
-        $html = $this->app['render']->render($template, $renderdata);
+        $html = $this->app['twig']->render($template, $renderdata);
 
         // Return the result
         return new \Twig_Markup($html, 'UTF-8');

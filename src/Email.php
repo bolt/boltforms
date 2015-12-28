@@ -79,9 +79,6 @@ class Email
         $this->message = \Swift_Message::newInstance();
         $this->message->setEncoder(\Swift_Encoding::get8BitEncoding());
 
-        // Set our Twig lookup path
-        $this->addTwigPath();
-
         // If the form has it's own templates defined, use those, else the globals.
         $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->config['templates']['subject'];
         $templateEmail = $formConfig->getTemplates()->getEmail() ?: $this->config['templates']['email'];
@@ -251,10 +248,5 @@ class Email
         } else {
             $this->app['logger.system']->error("Failed Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", ['event' => 'extensions']);
         }
-    }
-
-    private function addTwigPath()
-    {
-        $this->app['twig.loader.filesystem']->addPath(dirname(__DIR__) . '/assets');
     }
 }
