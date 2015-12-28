@@ -4,9 +4,9 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Silex\Application;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Silex\Application;
 
 /**
  * Email functions for BoltForms
@@ -89,22 +89,22 @@ class Email
         /*
          * Subject
          */
-        $html = $this->app['render']->render($templateSubject, array(
+        $html = $this->app['render']->render($templateSubject, [
             $fieldmap['subject'] => $formConfig->getNotification()->getSubject(),
             $fieldmap['config']  => $emailConfig,
-            $fieldmap['data']    => $formData
-        ));
+            $fieldmap['data']    => $formData,
+        ]);
 
         $subject = new \Twig_Markup($html, 'UTF-8');
 
         /*
          * Body
          */
-        $html = $this->app['render']->render($templateEmail, array(
+        $html = $this->app['render']->render($templateEmail, [
             $fieldmap['fields'] => $formConfig->getFields(),
             $fieldmap['config'] => $emailConfig,
-            $fieldmap['data']   => $this->getBodyData($emailConfig, $formData)
-        ));
+            $fieldmap['data']   => $this->getBodyData($emailConfig, $formData),
+        ]);
 
         $body = new \Twig_Markup($html, 'UTF-8');
 
@@ -127,7 +127,7 @@ class Email
      */
     private function getBodyData(EmailConfig $emailConfig, FormData $formData)
     {
-        $bodydata = array();
+        $bodydata = [];
         foreach ($formData->keys() as $key) {
             if ($formData->get($key) instanceof FileUpload) {
                 if ($formData->get($key)->isValid() && $emailConfig->attachFiles()) {
@@ -155,9 +155,9 @@ class Email
 
         // If we're in debug mode, don't set anything more
         if ($emailConfig->isDebug()) {
-            $this->message->setTo(array(
-                $emailConfig->getDebugEmail() => $emailConfig->getToName() ?: 'BoltForms Debug'
-            ));
+            $this->message->setTo([
+                $emailConfig->getDebugEmail() => $emailConfig->getToName() ?: 'BoltForms Debug',
+            ]);
 
             // Don't set any further recipients
             return;
@@ -176,9 +176,9 @@ class Email
     private function setFrom(EmailConfig $emailConfig)
     {
         if ($emailConfig->getFromEmail()) {
-            $this->message->setFrom(array(
-                $emailConfig->getFromEmail() => $emailConfig->getFromName()
-            ));
+            $this->message->setFrom([
+                $emailConfig->getFromEmail() => $emailConfig->getFromName(),
+            ]);
         }
     }
 
@@ -190,9 +190,9 @@ class Email
     private function setTo(EmailConfig $emailConfig)
     {
         if ($emailConfig->getToEmail()) {
-            $this->message->setTo(array(
-                $emailConfig->getToEmail() => $emailConfig->getToName()
-            ));
+            $this->message->setTo([
+                $emailConfig->getToEmail() => $emailConfig->getToName(),
+            ]);
         }
     }
 
@@ -204,9 +204,9 @@ class Email
     private function setCc(EmailConfig $emailConfig)
     {
         if ($emailConfig->getCcEmail()) {
-            $this->message->setCc(array(
-                $emailConfig->getCcEmail() => $emailConfig->getCcName()
-            ));
+            $this->message->setCc([
+                $emailConfig->getCcEmail() => $emailConfig->getCcName(),
+            ]);
         }
     }
 
@@ -218,9 +218,9 @@ class Email
     private function setBcc(EmailConfig $emailConfig)
     {
         if ($emailConfig->getBccEmail()) {
-            $this->message->setBcc(array(
-                $emailConfig->getBccEmail() => $emailConfig->getBccName()
-            ));
+            $this->message->setBcc([
+                $emailConfig->getBccEmail() => $emailConfig->getBccName(),
+            ]);
         }
     }
 
@@ -232,9 +232,9 @@ class Email
     private function setReplyTo(EmailConfig $emailConfig)
     {
         if ($emailConfig->getReplyToEmail()) {
-            $this->message->setReplyTo(array(
-                $emailConfig->getReplyToEmail() => $emailConfig->getReplyToName()
-            ));
+            $this->message->setReplyTo([
+                $emailConfig->getReplyToEmail() => $emailConfig->getReplyToName(),
+            ]);
         }
     }
 
@@ -246,9 +246,9 @@ class Email
     private function emailSend(EmailConfig $emailConfig)
     {
         if ($this->app['mailer']->send($this->message)) {
-            $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", array('event' => 'extensions'));
+            $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", ['event' => 'extensions']);
         } else {
-            $this->app['logger.system']->error("Failed Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", array('event' => 'extensions'));
+            $this->app['logger.system']->error("Failed Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", ['event' => 'extensions']);
         }
     }
 

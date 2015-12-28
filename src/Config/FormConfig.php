@@ -136,8 +136,8 @@ class FormConfig
      */
     protected function getDefaults()
     {
-        return array(
-            'notification' => array(
+        return [
+            'notification' => [
                 'enabled'       => false,
                 'debug'         => false,
                 'subject'       => 'Your message was submitted',
@@ -152,29 +152,29 @@ class FormConfig
                 'bcc_name'      => null,
                 'bcc_email'     => null,
                 'attach_files'  => false,
-            ),
-            'feedback' => array(
+            ],
+            'feedback' => [
                 'success'  => 'Form submission successful',
                 'error'    => 'There are errors in the form, please fix before trying to resubmit',
-                'redirect' => array(
+                'redirect' => [
                     'target' => null,
-                    'query'  => null
-                )
-            ),
-            'database'  => array(
+                    'query'  => null,
+                ],
+            ],
+            'database'  => [
                 'table'       => null,
                 'contenttype' => null,
-            ),
-            'templates' => array(
+            ],
+            'templates' => [
                 'form'    => null,
                 'subject' => null,
                 'email'   => null,
-            ),
-            'uploads' => array(
-                'subdirectory' => null
-            ),
-            'fields' => array(),
-        );
+            ],
+            'uploads' => [
+                'subdirectory' => null,
+            ],
+            'fields' => [],
+        ];
     }
 
     /**

@@ -141,10 +141,10 @@ class FileUpload
         try {
             $this->file->move($targetDir, $targetFile);
             $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
-            $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', array('event' => 'extensions'));
+            $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', ['event' => 'extensions']);
         } catch (FileException $e) {
             $error = 'File upload aborted as the target directory could not be writen to.';
-            $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $targetDir, array('event' => 'extensions'));
+            $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $targetDir, ['event' => 'extensions']);
             throw new FileUploadException('File upload aborted as the target directory could not be writen to.');
         }
 
@@ -169,14 +169,14 @@ class FileUpload
                 $fs->mkdir($dir);
             } catch (IOException $e) {
                 $error = 'File upload aborted as the target directory could not be created.';
-                $this->app['logger.system']->error('[BoltForms] ' . error . ' Check permissions on ' . $dir, array('event' => 'extensions'));
+                $this->app['logger.system']->error('[BoltForms] ' . error . ' Check permissions on ' . $dir, ['event' => 'extensions']);
                 throw new FileUploadException($error);
             }
         }
 
         if (!is_writeable($dir)) {
             $error = 'File upload aborted as the target directory is not writable.';
-            $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $dir, array('event' => 'extensions'));
+            $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $dir, ['event' => 'extensions']);
             throw new FileUploadException($error);
         }
 
@@ -214,7 +214,7 @@ class FileUpload
 
         // Create a unique filename with a simple pattern
         $originalName = $this->file->getClientOriginalName();
-        $extension = $this->file->guessExtension() ? : pathinfo($originalName, PATHINFO_EXTENSION);
+        $extension = $this->file->guessExtension() ?: pathinfo($originalName, PATHINFO_EXTENSION);
         $pattern = $this->getTargetFileNamePattern();
         $fileName = sprintf(
             $pattern,
@@ -234,7 +234,7 @@ class FileUpload
             $i++;
         }
 
-        $this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", array('event' => 'extensions'));
+        $this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
         $this->final = true;
 
         return $this->fileName = $fileName;

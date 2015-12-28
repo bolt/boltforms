@@ -46,13 +46,13 @@ class Database
      */
     public function writeToTable($tablename, FormData $formData)
     {
-        $saveData = array();
+        $saveData = [];
 
         // Don't try to write to a non-existant table
         $sm = $this->app['db']->getSchemaManager();
-        if (!$sm->tablesExist(array($tablename))) {
+        if (!$sm->tablesExist([$tablename])) {
             // log failed attempt
-            $this->app['logger.system']->error("[Bolt Forms] Failed attempt to save submission: missing database table `$tablename`", array('event' => 'extensions'));
+            $this->app['logger.system']->error("[Bolt Forms] Failed attempt to save submission: missing database table `$tablename`", ['event' => 'extensions']);
 
             return false;
         }
@@ -74,7 +74,7 @@ class Database
         try {
             $this->app['db']->insert($tablename, $saveData);
         } catch (\Exception $e) {
-            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to database table `$tablename`", array('event' => 'extensions', 'exception' => $e));
+            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to database table `$tablename`", ['event' => 'extensions', 'exception' => $e]);
         }
     }
 
@@ -102,7 +102,7 @@ class Database
         try {
             $this->app['storage']->saveContent($record);
         } catch (\Exception $e) {
-            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to ContentType table `$contenttype`", array('event' => 'extensions', 'exception' => $e));
+            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to ContentType table `$contenttype`", ['event' => 'extensions', 'exception' => $e]);
         }
     }
 }

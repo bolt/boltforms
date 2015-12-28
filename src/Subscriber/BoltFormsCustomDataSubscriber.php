@@ -137,7 +137,7 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     private function getNextNumber($table, $column, $minValue = 0)
     {
         if (empty($table)) {
-            $this->app['logger.system']->error("[BoltForms] No table name specified for `next_increment` event.", array('event' => 'extensions'));
+            $this->app['logger.system']->error('[BoltForms] No table name specified for `next_increment` event.', ['event' => 'extensions']);
 
             return null;
         }
@@ -146,7 +146,7 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
         try {
             $sequence = $this->app['db']->executeQuery($query)->fetchColumn();
         } catch (\Doctrine\DBAL\DBALException $e) {
-            $this->app['logger.system']->error("[BoltForms] Could not fetch next sequence number from table '$table'. Check if the table exists.", array('event' => 'extensions'));
+            $this->app['logger.system']->error("[BoltForms] Could not fetch next sequence number from table '$table'. Check if the table exists.", ['event' => 'extensions']);
 
             return null;
         }
@@ -163,12 +163,12 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             BoltFormsEvents::DATA_NEXT_INCREMENT => 'nextIncrement',
             BoltFormsEvents::DATA_RANDOM_STRING  => 'randomString',
             BoltFormsEvents::DATA_SERVER_VALUE   => 'serverValue',
             BoltFormsEvents::DATA_SESSION_VALUE  => 'sessionValue',
             BoltFormsEvents::DATA_TIMESTAMP      => 'timeStamp',
-        );
+        ];
     }
 }

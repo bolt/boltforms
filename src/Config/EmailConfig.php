@@ -341,7 +341,7 @@ class EmailConfig implements \ArrayAccess
     {
         $notify = $this->formConfig->getNotification();
 
-        $hashMap = array(
+        $hashMap = [
             'fromName'     => 'from_name',
             'fromEmail'    => 'from_email',
             'replyToName'  => 'replyto_name',
@@ -352,7 +352,7 @@ class EmailConfig implements \ArrayAccess
             'ccEmail'      => 'cc_email',
             'bccName'      => 'bcc_name',
             'bccEmail'     => 'bcc_email',
-        );
+        ];
 
         foreach ($hashMap as $property => $key) {
             $this->{$property} = $this->getConfigValue($notify->{$key});

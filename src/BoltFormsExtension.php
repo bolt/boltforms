@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Bolt\BaseExtension;
-
 /**
  * BoltForms a Symfony Forms interface for Bolt
  *
@@ -26,7 +24,7 @@ use Bolt\BaseExtension;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class BoltFormsExtension extends BaseExtension
+class BoltFormsExtension
 {
     /**
      * {@inheritdoc}
@@ -112,14 +110,14 @@ class BoltFormsExtension extends BaseExtension
      */
     public function getConfigKeys()
     {
-        return array(
+        return [
             'csrf',
             'recaptcha',
             'templates',
             'debug',
             'uploads',
-            'fieldmap'
-        );
+            'fieldmap',
+        ];
     }
 
     /**
@@ -129,42 +127,42 @@ class BoltFormsExtension extends BaseExtension
      */
     protected function getDefaultConfig()
     {
-        return array(
+        return [
             'csrf'      => true,
-            'recaptcha' => array(
+            'recaptcha' => [
                 'enabled'       => false,
                 'label'         => "Please enter the reCaptch text to prove you're a human",
                 'public_key'    => '',
                 'private_key'   => '',
                 'error_message' => "The CAPTCHA wasn't entered correctly. Please try again.",
-                'theme'         => 'clean'
-            ),
-            'templates' => array(
+                'theme'         => 'clean',
+            ],
+            'templates' => [
                 'fields'  => 'boltforms_fields.twig',
                 'form'    => 'boltforms_form.twig',
                 'email'   => 'boltforms_email.twig',
                 'subject' => 'boltforms_email_subject.twig',
-                'files'   => 'boltforms_file_browser.twig'
-            ),
-            'debug' => array(
+                'files'   => 'boltforms_file_browser.twig',
+            ],
+            'debug' => [
                 'enabled' => false,
-                'address' => ''
-            ),
-            'uploads' => array(
+                'address' => '',
+            ],
+            'uploads' => [
                 'enabled'               => false,
                 'base_directory'        => '/tmp/',
                 'filename_handling'     => 'suffix',
                 'management_controller' => false,
-                'base_uri'              => 'boltforms'
-            ),
-            'fieldmap' => array(
-                'email' => array(
+                'base_uri'              => 'boltforms',
+            ],
+            'fieldmap' => [
+                'email' => [
                     'config'  => 'config',
                     'data'    => 'data',
                     'fields'  => 'fields',
                     'subject' => 'subject',
-                )
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

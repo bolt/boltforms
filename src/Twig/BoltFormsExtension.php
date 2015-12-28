@@ -56,10 +56,10 @@ class BoltFormsExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
-            new \Twig_SimpleFunction('boltforms', array($this, 'twigBoltForms'), array('is_safe' => array('html'), 'is_safe_callback' => true)),
-            new \Twig_SimpleFunction('boltforms_uploads', array($this, 'twigBoltFormsUploads'))
-        );
+        return [
+            new \Twig_SimpleFunction('boltforms', [$this, 'twigBoltForms'], ['is_safe' => ['html'], 'is_safe_callback' => true]),
+            new \Twig_SimpleFunction('boltforms_uploads', [$this, 'twigBoltFormsUploads']),
+        ];
     }
 
     /**
@@ -71,7 +71,7 @@ class BoltFormsExtension extends \Twig_Extension
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = array(), $options = array())
+    public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [])
     {
         if (!isset($this->config[$formName])) {
             return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>", 'UTF-8');
@@ -80,10 +80,10 @@ class BoltFormsExtension extends \Twig_Extension
         $sent = false;
         $message = '';
         $error = '';
-        $recaptchaResponse = array(
+        $recaptchaResponse = [
             'success'    => true,
-            'errorCodes' => null
-        );
+            'errorCodes' => null,
+        ];
 
         $this->app['boltforms']->makeForm($formName, 'form', $data, $options);
 
@@ -102,34 +102,34 @@ class BoltFormsExtension extends \Twig_Extension
                 $message = isset($this->config[$formName]['feedback']['success']) ? $this->config[$formName]['feedback']['success'] : 'Form submitted sucessfully';
             } catch (FileUploadException $e) {
                 $error = $e->getMessage();
-                $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, array('event' => 'extensions'));
+                $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, ['event' => 'extensions']);
             } catch (FormValidationException $e) {
                 $error = $e->getMessage();
-                $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $error, array('event' => 'extensions'));
+                $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $error, ['event' => 'extensions']);
             }
         }
 
         // Get our values to be passed to Twig
         $fields = $this->app['boltforms']->getForm($formName)->all();
-        $twigvalues = array(
+        $twigvalues = [
             'fields'    => $fields,
             'html_pre'  => $htmlPreSubmit,
             'html_post' => $htmlPostSubmit,
             'error'     => $error,
             'message'   => $message,
             'sent'      => $sent,
-            'recaptcha' => array(
+            'recaptcha' => [
                 'enabled'       => $this->config['recaptcha']['enabled'],
                 'label'         => $this->config['recaptcha']['label'],
                 'public_key'    => $this->config['recaptcha']['public_key'],
                 'theme'         => $this->config['recaptcha']['theme'],
                 'error_message' => $this->config['recaptcha']['error_message'],
                 'error_codes'   => $recaptchaResponse ? $recaptchaResponse['errorCodes'] : null,
-                'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null
-            ),
+                'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null,
+            ],
             'formname'  => $formName,
-            'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug'])
-        );
+            'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug']),
+        ];
 
         // If the form has it's own templates defined, use those, else the globals.
         $template = isset($this->config[$formName]['templates']['form'])
@@ -162,11 +162,11 @@ class BoltFormsExtension extends \Twig_Extension
             ->ignoreVCS(true)
         ;
 
-        $twigvalues = array(
+        $twigvalues = [
             'directories' => $finder->directories(),
             'files'       => $finder->files(),
-            'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download'
-        );
+            'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download',
+        ];
 
         // Render the Twig
         $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets');

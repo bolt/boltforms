@@ -2,10 +2,10 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Event interface for BoltForms email notifications.

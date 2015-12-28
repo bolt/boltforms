@@ -95,18 +95,18 @@ class Processor
     {
         // Check reCaptcha, if enabled.  If not just return true
         if ($this->config['recaptcha']['enabled'] === false) {
-            return array(
+            return [
                 'success'    => true,
-                'errorCodes' => null
-            );
+                'errorCodes' => null,
+            ];
         }
 
         $reCaptchaResponse = $this->app['recaptcha']->verify($request->get('g-recaptcha-response'), $request->getClientIp());
 
-        return array(
+        return [
             'success'    => $reCaptchaResponse->isSuccess(),
-            'errorCodes' => $reCaptchaResponse->getErrorCodes()
-        );
+            'errorCodes' => $reCaptchaResponse->getErrorCodes(),
+        ];
     }
 
     /**
@@ -168,7 +168,7 @@ class Processor
                 $formData->set($fieldName, new FileUpload($this->app, $formConfig->getName(), $field));
 
                 if (!$this->config['uploads']['enabled']) {
-                    $this->app['logger.system']->debug('[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.', array('event' => 'extensions'));
+                    $this->app['logger.system']->debug('[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.', ['event' => 'extensions']);
                     continue;
                 }
 
@@ -251,7 +251,7 @@ class Processor
 
                 return $event->getData();
             } catch (\Exception $e) {
-                $this->app['logger.system']->error("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
+                $this->app['logger.system']->error("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), ['event' => 'extensions']);
             }
         }
     }

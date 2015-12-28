@@ -86,7 +86,7 @@ class RedirectHandler
             return '';
         }
 
-        $query = array();
+        $query = [];
         if (is_array($redirect['query'])) {
             if (Arr::isIndexedArray($redirect['query'])) {
                 foreach ($redirect['query'] as $param) {

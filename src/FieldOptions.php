@@ -75,6 +75,7 @@ class FieldOptions
     public function toArray()
     {
         $this->initialise();
+
         return $this->options;
     }
 
@@ -142,7 +143,7 @@ class FieldOptions
             $this->options['constraints'] = $this->getConstraintObject($this->formname, $this->baseOptions['constraints']);
         } else {
             foreach ($this->baseOptions['constraints'] as $key => $constraint) {
-                $this->options['constraints'][$key] = $this->getConstraintObject($this->formname, array($key => $constraint));
+                $this->options['constraints'][$key] = $this->getConstraintObject($this->formname, [$key => $constraint]);
             }
         }
     }
@@ -159,7 +160,7 @@ class FieldOptions
     {
         $params = null;
 
-        $namespace = "\\Symfony\\Component\\Validator\\Constraints\\";
+        $namespace = '\\Symfony\\Component\\Validator\\Constraints\\';
         $inputType = gettype($input);
 
         if ($inputType === 'string') {
@@ -179,6 +180,6 @@ class FieldOptions
             return new $class($params);
         }
 
-        $this->logger->error("[BoltForms] The form '$formname' has an invalid field constraint: '$class'.", array('event' => 'extensions'));
+        $this->logger->error("[BoltForms] The form '$formname' has an invalid field constraint: '$class'.", ['event' => 'extensions']);
     }
 }
