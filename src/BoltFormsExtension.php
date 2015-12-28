@@ -26,7 +26,7 @@ use Bolt\BaseExtension;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Extension extends BaseExtension
+class BoltFormsExtension extends BaseExtension
 {
     /** @var string Extension name */
     const NAME = 'BoltForms';
