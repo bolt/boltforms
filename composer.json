@@ -1,54 +1,52 @@
 {
-	"name" : "bolt/boltforms",
-	"description" : "Symfony Forms API for bolt",
-	"type" : "bolt-extension",
-	"keywords" : [
-		"forms",
-		"contact",
-		"comments",
-		"reCaptcha",
-		"uploads"
-	],
-    "require" : {
-        "bolt/bolt" : ">=2.1.0,<3.0.0"
+    "name": "bolt/boltforms",
+    "description": "Symfony Forms API for bolt",
+    "type": "bolt-extension",
+    "keywords": [
+        "forms",
+        "contact",
+        "comments",
+        "reCaptcha",
+        "uploads"
+    ],
+    "require": {
+        "bolt/bolt": "^3.0"
     },
-    "require-dev" : {
-        "phpunit/phpunit" : "^4.7"
+    "require-dev": {
+        "phpunit/phpunit": "^4.7"
     },
-	"suggest" : {
-		"rossriley/formeditor" : "A UI editor for form configuration."
-	},
-	"license" : "GPL-3.0+",
-	"authors" : [{
-			"name" : "Gawain Lynch",
-			"email" : "gawain.lynch@gmail.com"
-		}
-	],
-	"minimum-stability" : "dev",
-	"prefer-stable" : true,
-	"autoload" : {
-		"files" : [
-			"init.php"
-		],
-		"psr-4" : {
-			"Bolt\\Extension\\Bolt\\BoltForms\\" : [
-				"",
-				"src/"
-			],
-			"ReCaptcha\\" : "lib/ReCaptcha/"
-		}
-	},
-	"autoload-dev" : {
-		"psr-4" : {
-			"Bolt\\Extension\\Bolt\\BoltForms\\Tests\\" : "tests/",
-			"Bolt\\Tests\\" : "vendor/bolt/bolt/tests/phpunit/unit/"
-		}
-	},
-	"extra" : {
-		"bolt-assets" : "css",
-		"bolt-icon" : "assets/icon-boltforms.png",
-		"branch-alias" : {
-			"dev-master" : "2.3.*-dev"
-		}
-	}
+    "suggest": {
+        "rossriley/formeditor": "A UI editor for form configuration."
+    },
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Gawain Lynch",
+            "email": "gawain.lynch@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Bolt\\Extension\\Bolt\\BoltForms\\": [
+                "src/"
+            ],
+            "ReCaptcha\\": "lib/ReCaptcha/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bolt\\Extension\\Bolt\\BoltForms\\Tests\\": "tests/",
+            "Bolt\\Tests\\": "vendor/bolt/bolt/tests/phpunit/unit/"
+        }
+    },
+    "extra": {
+        "bolt-assets": "css",
+        "bolt-class": "Bolt\\Extension\\Bolt\\BoltForms\\BoltFormsExtension.php",
+        "bolt-icon": "assets/icon-boltforms.png",
+        "branch-alias": {
+            "dev-master": "3.0.x-dev"
+        }
+    }
 }
