@@ -44,7 +44,7 @@
     "extra": {
         "bolt-assets": "css",
         "bolt-class": "Bolt\\Extension\\Bolt\\BoltForms\\BoltFormsExtension.php",
-        "bolt-icon": "assets/icon-boltforms.png",
+        "bolt-icon": "icon-boltforms.png",
         "branch-alias": {
             "dev-master": "3.0.x-dev"
         }
