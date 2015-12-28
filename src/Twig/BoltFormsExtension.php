@@ -4,14 +4,13 @@ namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
-use Bolt\Extension\Bolt\BoltForms\Extension;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
 
 /**
  * Twig functions for BoltForms
  *
- * Copyright (C) 2014-2015 Gawain Lynch
+ * Copyright (C) 2014-2016 Gawain Lynch
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +29,7 @@ use Symfony\Component\Finder\Finder;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class BoltFormsExtension extends \Twig_Extension
+class BoltFormsExtension
 {
     /** @var Application */
     private $app;
@@ -44,30 +43,13 @@ class BoltFormsExtension extends \Twig_Extension
     }
 
     /**
-     * Return the name of the extension
-     */
-    public function getName()
-    {
-        return 'boltforms.extension';
-    }
-
-    /**
-     * The functions we add
-     */
-    public function getFunctions()
-    {
-        return [
-            new \Twig_SimpleFunction('boltforms', [$this, 'twigBoltForms'], ['is_safe' => ['html'], 'is_safe_callback' => true]),
-            new \Twig_SimpleFunction('boltforms_uploads', [$this, 'twigBoltFormsUploads']),
-        ];
-    }
-
-    /**
      * Twig function for form generation
      *
      * @param string $formName
      * @param string $htmlPreSubmit  Intro HTML to display BEFORE successful submit
      * @param string $htmlPostSubmit Intro HTML to display AFTER successful submit
+     * @param array  $data
+     * @param array  $options
      *
      * @return \Twig_Markup
      */
@@ -169,7 +151,7 @@ class BoltFormsExtension extends \Twig_Extension
         ];
 
         // Render the Twig
-        $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets');
+        $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/templates');
         $html = $this->app['render']->render($this->config['templates']['files'], $twigvalues);
 
         return new \Twig_Markup($html, 'UTF-8');
