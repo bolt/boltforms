@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt\Extension\SimpleExtension;
+use Pimple as Container;
 use Silex\Application;
 
 /**
@@ -47,9 +48,6 @@ class BoltFormsExtension extends SimpleExtension
         // Providers
         $app->register(new Provider\BoltFormsServiceProvider());
         $app->register(new Provider\RecaptchaServiceProvider());
-
-        // Twig
-        $this->addTwig($app);
     }
 
     /**
@@ -80,8 +78,31 @@ class BoltFormsExtension extends SimpleExtension
      */
     protected function registerTwigFunctions()
     {
-        return [
+        $twig = Container::share(
+            function () {
+                return new Twig\BoltFormsExtension($this->getContainer(), $this->getConfig());
+            }
+        );
+        $forms = Container::share(
+            function ($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = []) use ($twig) {
+                return $twig(true)->twigBoltForms($formName, $htmlPreSubmit, $htmlPostSubmit, $data, $options);
+            }
+        );
+        $uploads = Container::share(
+            function () use ($twig) {
+                return $twig(true)->twigBoltFormsUploads();
+            }
+        );
 
+        return [
+            'boltforms'         => [
+                $forms,
+                ['is_safe' => ['html'], 'is_safe_callback' => true],
+            ],
+            'boltforms_uploads' => [
+                $uploads,
+                [],
+            ],
         ];
     }
 
@@ -91,38 +112,6 @@ class BoltFormsExtension extends SimpleExtension
     protected function isSafe()
     {
         return true;
-    }
-
-    /**
-     * Add the Twig functions.
-     */
-    private function addTwig(Application $app)
-    {
-        $config = $this->getConfig();
-
-        // Normal
-        $app->share(
-            $app->extend(
-                'twig',
-                function (\Twig_Environment $twig) use ($app, $config) {
-                    $twig->addExtension(new Twig\BoltFormsExtension($app, $config));
-
-                    return $twig;
-                }
-            )
-        );
-
-        // Safe
-        $app->share(
-            $app->extend(
-                'safe_twig',
-                function (\Twig_Environment $twig) use ($app, $config) {
-                    $twig->addExtension(new Twig\BoltFormsExtension($app, $config));
-
-                    return $twig;
-                }
-            )
-        );
     }
 
     /**
