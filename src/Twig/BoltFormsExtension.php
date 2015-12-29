@@ -110,6 +110,7 @@ class BoltFormsExtension
                 'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null,
             ],
             'formname'  => $formName,
+            'webpath'   => $this->app['resources']->getUrl('extensions') . $this->app['extensions']->getAutoload()['bolt/boltforms']['path'] . '/web',
             'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug']),
         ];
 
@@ -148,6 +149,7 @@ class BoltFormsExtension
             'directories' => $finder->directories(),
             'files'       => $finder->files(),
             'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download',
+            'webpath'     => $this->app['resources']->getUrl('extensions') . $this->app['extensions']->getAutoload()['bolt/boltforms']['path'] . '/web',
         ];
 
         // Render the Twig

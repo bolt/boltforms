@@ -1,8 +1,11 @@
-
+{#
+ # Passed in variables:
+ #   webpath     - URI for the default web assets
+ #}
 {% form_theme form 'boltforms_custom.twig' %}
 
 {% block boltforms_css %}
-<link href="{{ app.paths.extensions }}vendor/bolt/boltforms/css/boltforms.css" rel="stylesheet" type="text/css" />
+<link href="{{ webpath }}/boltforms.css" rel="stylesheet" type="text/css" />
 {% endblock boltforms_css %}
 
 <div class="boltform">
