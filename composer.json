@@ -42,7 +42,7 @@
         }
     },
     "extra": {
-        "bolt-assets": "css",
+        "bolt-assets": "web",
         "bolt-class": "Bolt\\Extension\\Bolt\\BoltForms\\BoltFormsExtension",
         "bolt-icon": "icon-boltforms.png",
         "branch-alias": {
