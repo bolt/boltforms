@@ -110,7 +110,7 @@ class BoltFormsExtension
                 'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null,
             ],
             'formname'  => $formName,
-            'webpath'   => $this->app['resources']->getUrl('extensions') . $this->app['extensions']->getAutoload()['bolt/boltforms']['path'] . '/web',
+            'webpath'   => $this->app['resources']->getUrl('extensions') . $this->getAutoload()->getPath() . '/web',
             'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug']),
         ];
 
@@ -149,7 +149,7 @@ class BoltFormsExtension
             'directories' => $finder->directories(),
             'files'       => $finder->files(),
             'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download',
-            'webpath'     => $this->app['resources']->getUrl('extensions') . $this->app['extensions']->getAutoload()['bolt/boltforms']['path'] . '/web',
+            'webpath'     => $this->app['resources']->getUrl('extensions') . $this->getAutoload()->getPath() . '/web',
         ];
 
         // Render the Twig
@@ -157,5 +157,17 @@ class BoltFormsExtension
         $html = $this->app['render']->render($this->config['templates']['files'], $twigvalues);
 
         return new \Twig_Markup($html, 'UTF-8');
+    }
+
+    /**
+     * Get the BoltForms autoload PackageDescriptor object.
+     *
+     * @return \Bolt\Composer\EventListener\PackageDescriptor
+     */
+    private function getAutoload()
+    {
+        $autoload = $this->app['extensions']->getAutoload();
+
+        return $autoload['bolt/boltforms'];
     }
 }
