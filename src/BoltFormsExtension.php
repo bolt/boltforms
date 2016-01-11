@@ -33,21 +33,13 @@ class BoltFormsExtension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getServiceProviders()
     {
-        return 'BoltForms';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function register(Application $app)
-    {
-        parent::register($app);
-
-        // Providers
-        $app->register(new Provider\BoltFormsServiceProvider());
-        $app->register(new Provider\RecaptchaServiceProvider());
+        return [
+            $this,
+            new Provider\BoltFormsServiceProvider(),
+            new Provider\RecaptchaServiceProvider(),
+        ];
     }
 
     /**
@@ -78,6 +70,14 @@ class BoltFormsExtension extends SimpleExtension
      */
     protected function registerTwigFunctions()
     {
+        //$twig = new Twig\BoltFormsExtension($this->getContainer(), $this->getConfig());
+        //
+        //return [
+        //    'boltforms'         => [[$twig, 'twigBoltForms'], ['is_safe' => ['html'], 'is_safe_callback' => true]],
+        //    'boltforms_uploads' => [[$twig, 'twigBoltFormsUploads'], []],
+        //];
+
+
         $twig = Container::share(
             function () {
                 return new Twig\BoltFormsExtension($this->getContainer(), $this->getConfig());
@@ -95,14 +95,8 @@ class BoltFormsExtension extends SimpleExtension
         );
 
         return [
-            'boltforms'         => [
-                $forms,
-                ['is_safe' => ['html'], 'is_safe_callback' => true],
-            ],
-            'boltforms_uploads' => [
-                $uploads,
-                [],
-            ],
+            'boltforms'         => [$forms, ['is_safe' => ['html'], 'is_safe_callback' => true]],
+            'boltforms_uploads' => [$uploads, []],
         ];
     }
 

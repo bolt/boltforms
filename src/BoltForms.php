@@ -44,7 +44,7 @@ class BoltForms
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $extension = $app['extensions']->get('BoltForms');
+        $extension = $app['extensions']->get('Bolt/BoltForms');
         $this->config = $extension->getConfig();
     }
 

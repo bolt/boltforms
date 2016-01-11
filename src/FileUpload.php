@@ -67,7 +67,7 @@ class FileUpload
         $this->fullPath = (string) $file;
         $this->fileName = basename($this->fullPath);
         $this->valid = $file->isValid();
-        $extension = $app['extensions']->get('BoltForms');
+        $extension = $app['extensions']->get('Bolt/BoltForms');
         $this->config = $extension->getConfig();
     }
 
