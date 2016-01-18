@@ -53,13 +53,13 @@ class BoltFormsSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA  => 'preSetData',
             FormEvents::POST_SET_DATA => 'postSetData',
             FormEvents::PRE_SUBMIT    => 'preSubmit',
             FormEvents::SUBMIT        => 'submit',
-            FormEvents::POST_SUBMIT   => 'postSubmit'
-        );
+            FormEvents::POST_SUBMIT   => 'postSubmit',
+        ];
     }
 
     /**
@@ -137,7 +137,7 @@ class BoltFormsSubscriber implements EventSubscriberInterface
             try {
                 $this->app['dispatcher']->dispatch($eventName, $event);
             } catch (\Exception $e) {
-                $this->app['logger.system']->error("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), array('event' => 'extensions'));
+                $this->app['logger.system']->error("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), ['event' => 'extensions']);
             }
         }
     }

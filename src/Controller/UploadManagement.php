@@ -1,7 +1,6 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Controller;
 
-use Bolt\Extension\Bolt\BoltForms\Extension;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -57,7 +56,7 @@ class UploadManagement implements ControllerProviderInterface
         /** @var $ctr \Silex\ControllerCollection */
         $ctr = $app['controllers_factory'];
 
-        $ctr->match('/download', array($this, 'download'))
+        $ctr->match('/download', [$this, 'download'])
             ->bind('BoltFormsDownload')
             ->method('GET');
 

@@ -61,7 +61,7 @@ class FormConfigSection implements \ArrayAccess
         $this->config = $config;
     }
 
-    public function __call($name, $args = array())
+    public function __call($name, $args = [])
     {
         $name = strtolower(preg_replace('/^get/', '', $name));
         if (isset($this->config[$name])) {

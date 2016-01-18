@@ -95,7 +95,7 @@ class ContentType implements ChoiceInterface
 
         /** @var $records Bolt\Content[] */
         $records = $this->storage->getContent($params[1], $this->getQueryParameters());
-        $choices = array();
+        $choices = [];
 
         foreach ($records as $record) {
             $choices[$record->get($params[3])] = $record->get($params[2]);
@@ -111,7 +111,7 @@ class ContentType implements ChoiceInterface
      */
     private function getQueryParameters()
     {
-        $parameters = array();
+        $parameters = [];
         // ORDER BY field
         if (isset($this->options['sort'])) {
             $parameters['order'] = $this->options['sort'];

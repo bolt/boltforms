@@ -4,14 +4,13 @@ namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
-use Bolt\Extension\Bolt\BoltForms\Extension;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
 
 /**
  * Twig functions for BoltForms
  *
- * Copyright (C) 2014-2015 Gawain Lynch
+ * Copyright (C) 2014-2016 Gawain Lynch
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +29,7 @@ use Symfony\Component\Finder\Finder;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class BoltFormsExtension extends \Twig_Extension
+class BoltFormsExtension
 {
     /** @var Application */
     private $app;
@@ -44,34 +43,17 @@ class BoltFormsExtension extends \Twig_Extension
     }
 
     /**
-     * Return the name of the extension
-     */
-    public function getName()
-    {
-        return 'boltforms.extension';
-    }
-
-    /**
-     * The functions we add
-     */
-    public function getFunctions()
-    {
-        return array(
-            new \Twig_SimpleFunction('boltforms', array($this, 'twigBoltForms'), array('is_safe' => array('html'), 'is_safe_callback' => true)),
-            new \Twig_SimpleFunction('boltforms_uploads', array($this, 'twigBoltFormsUploads'))
-        );
-    }
-
-    /**
      * Twig function for form generation
      *
      * @param string $formName
      * @param string $htmlPreSubmit  Intro HTML to display BEFORE successful submit
      * @param string $htmlPostSubmit Intro HTML to display AFTER successful submit
+     * @param array  $data
+     * @param array  $options
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = array(), $options = array())
+    public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [])
     {
         if (!isset($this->config[$formName])) {
             return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>", 'UTF-8');
@@ -80,10 +62,10 @@ class BoltFormsExtension extends \Twig_Extension
         $sent = false;
         $message = '';
         $error = '';
-        $recaptchaResponse = array(
+        $recaptchaResponse = [
             'success'    => true,
-            'errorCodes' => null
-        );
+            'errorCodes' => null,
+        ];
 
         $this->app['boltforms']->makeForm($formName, 'form', $data, $options);
 
@@ -102,34 +84,35 @@ class BoltFormsExtension extends \Twig_Extension
                 $message = isset($this->config[$formName]['feedback']['success']) ? $this->config[$formName]['feedback']['success'] : 'Form submitted sucessfully';
             } catch (FileUploadException $e) {
                 $error = $e->getMessage();
-                $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, array('event' => 'extensions'));
+                $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, ['event' => 'extensions']);
             } catch (FormValidationException $e) {
                 $error = $e->getMessage();
-                $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $error, array('event' => 'extensions'));
+                $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $error, ['event' => 'extensions']);
             }
         }
 
         // Get our values to be passed to Twig
         $fields = $this->app['boltforms']->getForm($formName)->all();
-        $twigvalues = array(
+        $twigvalues = [
             'fields'    => $fields,
             'html_pre'  => $htmlPreSubmit,
             'html_post' => $htmlPostSubmit,
             'error'     => $error,
             'message'   => $message,
             'sent'      => $sent,
-            'recaptcha' => array(
+            'recaptcha' => [
                 'enabled'       => $this->config['recaptcha']['enabled'],
                 'label'         => $this->config['recaptcha']['label'],
                 'public_key'    => $this->config['recaptcha']['public_key'],
                 'theme'         => $this->config['recaptcha']['theme'],
                 'error_message' => $this->config['recaptcha']['error_message'],
                 'error_codes'   => $recaptchaResponse ? $recaptchaResponse['errorCodes'] : null,
-                'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null
-            ),
+                'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null,
+            ],
             'formname'  => $formName,
-            'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug'])
-        );
+            'webpath'   => $this->app['extensions']->get('bolt/boltforms')->getRelativeUrl(),
+            'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug']),
+        ];
 
         // If the form has it's own templates defined, use those, else the globals.
         $template = isset($this->config[$formName]['templates']['form'])
@@ -162,14 +145,15 @@ class BoltFormsExtension extends \Twig_Extension
             ->ignoreVCS(true)
         ;
 
-        $twigvalues = array(
+        $twigvalues = [
             'directories' => $finder->directories(),
             'files'       => $finder->files(),
-            'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download'
-        );
+            'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download',
+            'webpath'     => $this->app['extensions']->get('bolt/boltforms')->getRelativeUrl(),
+        ];
 
         // Render the Twig
-        $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets');
+        $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/templates');
         $html = $this->app['render']->render($this->config['templates']['files'], $twigvalues);
 
         return new \Twig_Markup($html, 'UTF-8');

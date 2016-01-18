@@ -44,7 +44,8 @@ class BoltForms
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->config = $app[Extension::CONTAINER]->config;
+        $extension = $app['extensions']->get('Bolt/BoltForms');
+        $this->config = $extension->getConfig();
     }
 
     /**
@@ -67,7 +68,7 @@ class BoltForms
      * @param mixed                    $data
      * @param array                    $options
      */
-    public function makeForm($formname, $type = 'form', $data = null, $options = array())
+    public function makeForm($formname, $type = 'form', $data = null, $options = [])
     {
         $options['csrf_protection'] = $this->config['csrf'];
         $this->forms[$formname] = $this->app['form.factory']->createNamedBuilder($formname, $type, $data, $options)
@@ -100,7 +101,7 @@ class BoltForms
     public function addFieldArray($formname, array $fields)
     {
         foreach ($fields as $fieldname => $field) {
-            $field['options'] = empty($field['options']) ? array() : $field['options'];
+            $field['options'] = empty($field['options']) ? [] : $field['options'];
             $this->addField($formname, $fieldname, $field['type'], $field['options']);
         }
     }
@@ -114,25 +115,22 @@ class BoltForms
      *
      * @return \Twig_Markup
      */
-    public function renderForm($formname, $template = '', array $twigvalues = array())
+    public function renderForm($formname, $template = '', array $twigvalues = [])
     {
         if (empty($template)) {
             $template = $this->config['templates']['form'];
         }
 
         // Add the form object for use in the template
-        $renderdata = array('form' => $this->forms[$formname]->createView());
+        $renderdata = ['form' => $this->forms[$formname]->createView()];
 
         // Add out passed values to the array to be given to render()
         foreach ($twigvalues as $twigname => $data) {
             $renderdata[$twigname] = $data;
         }
 
-        //
-        $this->app['twig.loader.filesystem']->addPath(dirname(__DIR__) . '/assets');
-
         // Pray and do the render
-        $html = $this->app['render']->render($template, $renderdata);
+        $html = $this->app['twig']->render($template, $renderdata);
 
         // Return the result
         return new \Twig_Markup($html, 'UTF-8');
