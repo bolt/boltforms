@@ -51,6 +51,41 @@ Symfony Forms.  See [the Symfony documentation](http://symfony.com/doc/current/r
         constraints: [ NotBlank, {Length: {'min': 3}} ]
 ```
 
+Field with default value
+------------------------
+
+If you want a field to have a default value you can add it by using a `value` attribute.
+This value can be overwritten by the person who is submitting the form unless you have locked it.
+To lock the value, you may use the attribute `readonly: true`.
+If you use a `value` the `placeholder` will not be used.
+
+```yaml
+    fieldname:
+      type: text
+      required: true
+      options:
+        label: My Field
+        attr:
+          readonly: true      # optional attribute if you want a readonly field
+          value: "My value"
+```
+
+Hidden field
+------------
+
+If you want to have a hidden field with a default value you can add it by using
+the 'hidden' `type`, and setting a `value`.
+Use the option `label: false` to hide the field from the html output.
+
+```yaml
+    fieldname:
+      type: hidden
+      options:
+        label: false
+        attr:
+          value: "My hidden value"
+```
+
 Choice Types
 ------------
 
