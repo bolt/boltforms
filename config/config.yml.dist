@@ -223,4 +223,5 @@ contact:
 #      options:
 #        required: false
 #        label: Picture of your pet that you want us to add to our site
-#
+#    submit:
+#      type: submit
