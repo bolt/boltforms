@@ -14,7 +14,7 @@ class RecaptchaServiceProvider implements ServiceProviderInterface
         $app['recaptcha'] = $app->share(
             function ($app) {
                 /** @var BoltFormsExtension $extension */
-                $extension = $app['extensions']->get('BoltForms');
+                $extension = $app['extensions']->get('Bolt/BoltForms');
                 $key = $extension->getConfig()['recaptcha']['private_key'];
                 $reCaptcha = new ReCaptcha($key);
 
