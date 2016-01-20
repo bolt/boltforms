@@ -2,10 +2,12 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
+use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Form\Form;
 
 /**
  * Twig functions for BoltForms
@@ -50,37 +52,40 @@ class BoltFormsExtension
      * @param string $htmlPostSubmit Intro HTML to display AFTER successful submit
      * @param array  $data
      * @param array  $options
+     * @param array  $defaults
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [])
+    public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [], $defaults = [])
     {
         if (!isset($this->config[$formName])) {
             return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>", 'UTF-8');
         }
 
+        /** @var BoltForms $boltForms */
+        $boltForms = $this->app['boltforms'];
         $sent = false;
         $message = '';
         $error = '';
-        $recaptchaResponse = [
+        $reCaptchaResponse = [
             'success'    => true,
             'errorCodes' => null,
         ];
 
-        $this->app['boltforms']->makeForm($formName, 'form', $data, $options);
+        $boltForms->makeForm($formName, 'form', $data, $options);
 
         $fields = $this->config[$formName]['fields'];
 
         // Add our fields all at once
-        $this->app['boltforms']->addFieldArray($formName, $fields);
+        $boltForms->addFieldArray($formName, $fields);
 
         // Handle the POST
         if ($this->app['request']->isMethod('POST')) {
             // Check reCaptcha, if enabled.
-            $recaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($this->app['request']);
+            $reCaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($this->app['request']);
 
             try {
-                $sent = $this->app['boltforms.processor']->process($formName, $this->config[$formName], $recaptchaResponse);
+                $sent = $this->app['boltforms.processor']->process($formName, $this->config[$formName], $reCaptchaResponse);
                 $message = isset($this->config[$formName]['feedback']['success']) ? $this->config[$formName]['feedback']['success'] : 'Form submitted sucessfully';
             } catch (FileUploadException $e) {
                 $error = $e->getMessage();
@@ -91,10 +96,11 @@ class BoltFormsExtension
             }
         }
 
-        // Get our values to be passed to Twig
-        $fields = $this->app['boltforms']->getForm($formName)->all();
+        /** @var Form[] $fields Values to be passed to Twig */
+        $fields = $boltForms->getForm($formName)->all();
         $twigvalues = [
             'fields'    => $fields,
+            'defaults'  => $defaults,
             'html_pre'  => $htmlPreSubmit,
             'html_post' => $htmlPostSubmit,
             'error'     => $error,
@@ -106,11 +112,11 @@ class BoltFormsExtension
                 'public_key'    => $this->config['recaptcha']['public_key'],
                 'theme'         => $this->config['recaptcha']['theme'],
                 'error_message' => $this->config['recaptcha']['error_message'],
-                'error_codes'   => $recaptchaResponse ? $recaptchaResponse['errorCodes'] : null,
-                'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null,
+                'error_codes'   => $reCaptchaResponse ? $reCaptchaResponse['errorCodes'] : null,
+                'valid'         => $reCaptchaResponse ? $reCaptchaResponse['success'] : null,
             ],
             'formname'  => $formName,
-            'webpath'   => $this->app['extensions']->get('bolt/boltforms')->getRelativeUrl(),
+            'webpath'   => $this->app['extensions']->get('Bolt/BoltForms')->getRelativeUrl(),
             'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug']),
         ];
 
@@ -120,7 +126,7 @@ class BoltFormsExtension
             : $this->config['templates']['form'];
 
         // Render the Twig_Markup
-        return $this->app['boltforms']->renderForm($formName, $template, $twigvalues);
+        return $boltForms->renderForm($formName, $template, $twigvalues);
     }
 
     /**
