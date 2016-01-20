@@ -39,9 +39,9 @@
         {% for key, value in fields  %}
             {% if value.config.name != 'submit' %}
             <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
-                {{ form_label(form[key]) }}
-                {{ form_errors(form[key]) }}
-                {{ form_widget(form[key], {'value': defaults[key]|default()}) }}
+                <span class="boltforms-label">{{ form_label(form[key]) }}</span>
+                <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
+                <span class="boltforms-value">{{ form_widget(form[key], {'value': defaults[key]|default()}) }}</span>
             </div>
             {% endif %}
         {% endfor %}
