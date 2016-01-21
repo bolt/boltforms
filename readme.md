@@ -51,13 +51,15 @@ Symfony Forms.  See [the Symfony documentation](http://symfony.com/doc/current/r
         constraints: [ NotBlank, {Length: {'min': 3}} ]
 ```
 
-Field with default value
-------------------------
+Field(s) default values
+-----------------------
 
-If you want a field to have a default value you can add it by using a `value` attribute.
-This value can be overwritten by the person who is submitting the form unless you have locked it.
+If you want a field to have a default value you can add it by using a `value` attribute. This value can be overwritten 
+by the person who is submitting the form unless you have locked it.
+
 To lock the value, you may use the attribute `readonly: true`.
-If you use a `value` the `placeholder` will not be used.
+
+**Note:** If you use a `value` the `placeholder` will not be used.
 
 ```yaml
     fieldname:
@@ -67,7 +69,13 @@ If you use a `value` the `placeholder` will not be used.
         label: My Field
         attr:
           readonly: true      # optional attribute if you want a readonly field
-          value: "My value"
+          value: My value
+```
+
+Alternatively, you can pass in a parameter to the Twig function:
+
+```twig
+    {{ boltforms('myform', defaults={fieldname: 'My value'}) }}
 ```
 
 Hidden field
