@@ -70,33 +70,12 @@ class BoltFormsExtension extends SimpleExtension
      */
     protected function registerTwigFunctions()
     {
-        $twig = new Twig\BoltFormsExtension($this->getContainer(), $this->getConfig());
+        $app = $this->getContainer();
 
         return [
-            'boltforms'         => [[$twig, 'twigBoltForms'], ['is_safe' => ['html'], 'is_safe_callback' => true]],
-            'boltforms_uploads' => [[$twig, 'twigBoltFormsUploads'], []],
+            'boltforms'         => [[$app['boltforms.twig'], 'twigBoltForms'], ['is_safe' => ['html'], 'is_safe_callback' => true]],
+            'boltforms_uploads' => [[$app['boltforms.twig'], 'twigBoltFormsUploads'], []],
         ];
-
-        //$twig = Container::share(
-        //    function () {
-        //        return new Twig\BoltFormsExtension($this->getContainer(), $this->getConfig());
-        //    }
-        //);
-        //$forms = Container::share(
-        //    function ($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [], $defaults = []) use ($twig) {
-        //        return $twig(true)->twigBoltForms($formName, $htmlPreSubmit, $htmlPostSubmit, $data, $options, $defaults);
-        //    }
-        //);
-        //$uploads = Container::share(
-        //    function () use ($twig) {
-        //        return $twig(true)->twigBoltFormsUploads();
-        //    }
-        //);
-        //
-        //return [
-        //    'boltforms'         => [$forms, ['is_safe' => ['html'], 'is_safe_callback' => true]],
-        //    'boltforms_uploads' => [$uploads, []],
-        //];
     }
 
     /**

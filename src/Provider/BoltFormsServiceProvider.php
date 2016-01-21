@@ -3,10 +3,12 @@
 namespace Bolt\Extension\Bolt\BoltForms\Provider;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
+use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
 use Bolt\Extension\Bolt\BoltForms\Database;
 use Bolt\Extension\Bolt\BoltForms\Email;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsCustomDataSubscriber;
+use Bolt\Extension\Bolt\BoltForms\Twig;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
@@ -43,6 +45,16 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 $email = new Email($app);
 
                 return $email;
+            }
+        );
+
+        $app['boltforms.twig'] = $app->share(
+            function ($app) {
+                /** @var BoltFormsExtension $extension */
+                $extension = $app['extensions']->get('Bolt/BoltForms');
+                $twig = new Twig\BoltFormsExtension($app, $extension->getConfig());
+
+                return $twig;
             }
         );
 
