@@ -70,7 +70,7 @@ class Email
      * @param EmailConfig $emailConfig
      * @param FormData    $formData
      */
-    private function emailCompose(FormConfig $formConfig, EmailConfig $emailConfig, $formData)
+    private function emailCompose(FormConfig $formConfig, EmailConfig $emailConfig, FormData $formData)
     {
         /*
          * Create message object
