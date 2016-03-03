@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 2.5.2 (2016-03-03)
+ * Decode JSON in email template if value is JSON (credit: @SahAssar)
+
 * 2.5.1 (2015-12-12)
  * Added: BoltFormsEvents::PRE_EMAIL_SEND event
 
