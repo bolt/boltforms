@@ -10,7 +10,7 @@
 		"uploads"
 	],
     "require" : {
-        "bolt/bolt" : ">=2.1.0,<3.0.0"
+        "bolt/bolt" : "^2.1"
     },
     "require-dev" : {
         "phpunit/phpunit" : "^4.7"
