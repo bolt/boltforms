@@ -91,7 +91,7 @@ contact:
     bcc_email: manager@example.com
     attach_files: false
   feedback:
-    success: Message submission sucessful
+    success: Message submission successful
     error: There are errors in the form, please fix before trying to resubmit 
 #  database:
 #    contenttype: mycontenttype  # ContentType record to create
