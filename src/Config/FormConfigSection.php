@@ -43,7 +43,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  * @method string  getTable()
  * @method string  getContenttype()
  * @method string  getForm()
- * @method string  getSubject()
  * @method string  getEmail()
  * @method string  getSubdirectory()
  *
