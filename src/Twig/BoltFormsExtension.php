@@ -93,7 +93,7 @@ class BoltFormsExtension extends \Twig_Extension
         $this->app['boltforms']->addFieldArray($formName, $fields);
 
         // Handle the POST
-        if ($this->app['request']->isMethod('POST')) {
+        if ($this->app['request_stack']->getCurrentRequest()->isMethod('POST') && !empty($this->app['request']->get($formName))) {
             // Check reCaptcha, if enabled.
             $recaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($this->app['request']);
 
