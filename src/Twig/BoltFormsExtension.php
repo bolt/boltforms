@@ -80,7 +80,8 @@ class BoltFormsExtension
         $boltForms->addFieldArray($formName, $fields);
 
         // Handle the POST
-        if ($this->app['request_stack']->getCurrentRequest()->isMethod('POST') && !empty($this->app['request']->get($formName))) {
+        $request = $this->app['request_stack']->getCurrentRequest();
+        if ($request && $request->isMethod('POST') && $request->get($formName) !== null) {
             // Check reCaptcha, if enabled.
             $reCaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($this->app['request']);
 
