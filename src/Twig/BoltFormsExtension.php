@@ -156,7 +156,7 @@ class BoltFormsExtension
             'directories' => $finder->directories(),
             'files'       => $finder->files(),
             'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download',
-            'webpath'     => $this->app['extensions']->get('bolt/boltforms')->getWebDirectory(),
+            'webpath'     => $this->app['extensions']->get('bolt/boltforms')->getWebDirectory()->getPath(),
         ];
 
         // Render the Twig
