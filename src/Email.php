@@ -106,7 +106,7 @@ class Email
 
         $body = new \Twig_Markup($html, 'UTF-8');
 
-        $text = preg_replace("/<style\\b[^>]*>(.*?)<\\/style>/s", "", $body);
+        $text = preg_replace('/<style\\b[^>]*>(.*?)<\\/style>/s', '', $body);
 
         /*
          * Build email

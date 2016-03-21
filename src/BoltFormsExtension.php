@@ -3,8 +3,6 @@
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt\Extension\SimpleExtension;
-use Pimple as Container;
-use Silex\Application;
 
 /**
  * BoltForms a Symfony Forms interface for Bolt
@@ -49,8 +47,9 @@ class BoltFormsExtension extends SimpleExtension
     {
         if ($this->getConfig()['uploads']['management_controller']) {
             $url = '/' . ltrim($this->getConfig()['uploads']['base_uri'], '/');
+
             return [
-                $url=> new Controller\UploadManagement($this->getConfig()),
+                $url => new Controller\UploadManagement($this->getConfig()),
             ];
         }
 
