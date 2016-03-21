@@ -4,9 +4,9 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Silex\Application;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Silex\Application;
 
 /**
  * Email functions for BoltForms
@@ -92,7 +92,7 @@ class Email
         $html = $this->app['render']->render($templateSubject, array(
             $fieldmap['subject'] => $formConfig->getNotification()->getSubject(),
             $fieldmap['config']  => $emailConfig,
-            $fieldmap['data']    => $formData
+            $fieldmap['data']    => $formData,
         ));
 
         $subject = new \Twig_Markup($html, 'UTF-8');
@@ -103,12 +103,12 @@ class Email
         $html = $this->app['render']->render($templateEmail, array(
             $fieldmap['fields'] => $formConfig->getFields(),
             $fieldmap['config'] => $emailConfig,
-            $fieldmap['data']   => $this->getBodyData($emailConfig, $formData)
+            $fieldmap['data']   => $this->getBodyData($emailConfig, $formData),
         ));
 
         $body = new \Twig_Markup($html, 'UTF-8');
 
-        $text = preg_replace("/<style\\b[^>]*>(.*?)<\\/style>/s", "", $body);
+        $text = preg_replace('/<style\\b[^>]*>(.*?)<\\/style>/s', '', $body);
 
         /*
          * Build email
@@ -158,7 +158,7 @@ class Email
         // If we're in debug mode, don't set anything more
         if ($emailConfig->isDebug()) {
             $this->message->setTo(array(
-                $emailConfig->getDebugEmail() => $emailConfig->getToName() ?: 'BoltForms Debug'
+                $emailConfig->getDebugEmail() => $emailConfig->getToName() ?: 'BoltForms Debug',
             ));
 
             // Don't set any further recipients
@@ -179,7 +179,7 @@ class Email
     {
         if ($emailConfig->getFromEmail()) {
             $this->message->setFrom(array(
-                $emailConfig->getFromEmail() => $emailConfig->getFromName()
+                $emailConfig->getFromEmail() => $emailConfig->getFromName(),
             ));
         }
     }
@@ -193,7 +193,7 @@ class Email
     {
         if ($emailConfig->getToEmail()) {
             $this->message->setTo(array(
-                $emailConfig->getToEmail() => $emailConfig->getToName()
+                $emailConfig->getToEmail() => $emailConfig->getToName(),
             ));
         }
     }
@@ -207,7 +207,7 @@ class Email
     {
         if ($emailConfig->getCcEmail()) {
             $this->message->setCc(array(
-                $emailConfig->getCcEmail() => $emailConfig->getCcName()
+                $emailConfig->getCcEmail() => $emailConfig->getCcName(),
             ));
         }
     }
@@ -221,7 +221,7 @@ class Email
     {
         if ($emailConfig->getBccEmail()) {
             $this->message->setBcc(array(
-                $emailConfig->getBccEmail() => $emailConfig->getBccName()
+                $emailConfig->getBccEmail() => $emailConfig->getBccName(),
             ));
         }
     }
@@ -235,7 +235,7 @@ class Email
     {
         if ($emailConfig->getReplyToEmail()) {
             $this->message->setReplyTo(array(
-                $emailConfig->getReplyToEmail() => $emailConfig->getReplyToName()
+                $emailConfig->getReplyToEmail() => $emailConfig->getReplyToName(),
             ));
         }
     }

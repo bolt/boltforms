@@ -58,7 +58,7 @@ class BoltFormsExtension extends \Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('boltforms', array($this, 'twigBoltForms'), array('is_safe' => array('html'), 'is_safe_callback' => true)),
-            new \Twig_SimpleFunction('boltforms_uploads', array($this, 'twigBoltFormsUploads'))
+            new \Twig_SimpleFunction('boltforms_uploads', array($this, 'twigBoltFormsUploads')),
         );
     }
 
@@ -82,7 +82,7 @@ class BoltFormsExtension extends \Twig_Extension
         $error = '';
         $recaptchaResponse = array(
             'success'    => true,
-            'errorCodes' => null
+            'errorCodes' => null,
         );
 
         $this->app['boltforms']->makeForm($formName, 'form', $data, $options);
@@ -126,10 +126,10 @@ class BoltFormsExtension extends \Twig_Extension
                 'theme'         => $this->config['recaptcha']['theme'],
                 'error_message' => $this->config['recaptcha']['error_message'],
                 'error_codes'   => $recaptchaResponse ? $recaptchaResponse['errorCodes'] : null,
-                'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null
+                'valid'         => $recaptchaResponse ? $recaptchaResponse['success'] : null,
             ),
             'formname'  => $formName,
-            'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug'])
+            'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug']),
         );
 
         // If the form has it's own templates defined, use those, else the globals.
@@ -166,7 +166,7 @@ class BoltFormsExtension extends \Twig_Extension
         $twigvalues = array(
             'directories' => $finder->directories(),
             'files'       => $finder->files(),
-            'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download'
+            'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download',
         );
 
         // Render the Twig

@@ -75,6 +75,7 @@ class FieldOptions
     public function toArray()
     {
         $this->initialise();
+
         return $this->options;
     }
 
@@ -159,7 +160,7 @@ class FieldOptions
     {
         $params = null;
 
-        $namespace = "\\Symfony\\Component\\Validator\\Constraints\\";
+        $namespace = '\\Symfony\\Component\\Validator\\Constraints\\';
         $inputType = gettype($input);
 
         if ($inputType === 'string') {

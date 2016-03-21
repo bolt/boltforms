@@ -1,7 +1,6 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Controller;
 
-use Bolt\Extension\Bolt\BoltForms\Extension;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\Filesystem\Filesystem;

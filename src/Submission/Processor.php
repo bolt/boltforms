@@ -97,7 +97,7 @@ class Processor
         if ($this->config['recaptcha']['enabled'] === false) {
             return array(
                 'success'    => true,
-                'errorCodes' => null
+                'errorCodes' => null,
             );
         }
 
@@ -105,7 +105,7 @@ class Processor
 
         return array(
             'success'    => $reCaptchaResponse->isSuccess(),
-            'errorCodes' => $reCaptchaResponse->getErrorCodes()
+            'errorCodes' => $reCaptchaResponse->getErrorCodes(),
         );
     }
 

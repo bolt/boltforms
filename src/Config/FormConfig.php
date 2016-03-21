@@ -158,8 +158,8 @@ class FormConfig
                 'error'    => 'There are errors in the form, please fix before trying to resubmit',
                 'redirect' => array(
                     'target' => null,
-                    'query'  => null
-                )
+                    'query'  => null,
+                ),
             ),
             'database'  => array(
                 'table'       => null,
@@ -171,7 +171,7 @@ class FormConfig
                 'email'   => null,
             ),
             'uploads' => array(
-                'subdirectory' => null
+                'subdirectory' => null,
             ),
             'fields' => array(),
         );

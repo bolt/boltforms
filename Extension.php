@@ -35,7 +35,7 @@ class Extension extends BaseExtension
 
     public function getName()
     {
-        return Extension::NAME;
+        return self::NAME;
     }
 
     /**
@@ -120,7 +120,7 @@ class Extension extends BaseExtension
             'templates',
             'debug',
             'uploads',
-            'fieldmap'
+            'fieldmap',
         );
     }
 
@@ -139,25 +139,25 @@ class Extension extends BaseExtension
                 'public_key'    => '',
                 'private_key'   => '',
                 'error_message' => "The CAPTCHA wasn't entered correctly. Please try again.",
-                'theme'         => 'clean'
+                'theme'         => 'clean',
             ),
             'templates' => array(
                 'fields'  => 'boltforms_fields.twig',
                 'form'    => 'boltforms_form.twig',
                 'email'   => 'boltforms_email.twig',
                 'subject' => 'boltforms_email_subject.twig',
-                'files'   => 'boltforms_file_browser.twig'
+                'files'   => 'boltforms_file_browser.twig',
             ),
             'debug' => array(
                 'enabled' => false,
-                'address' => ''
+                'address' => '',
             ),
             'uploads' => array(
                 'enabled'               => false,
                 'base_directory'        => '/tmp/',
                 'filename_handling'     => 'suffix',
                 'management_controller' => false,
-                'base_uri'              => 'boltforms'
+                'base_uri'              => 'boltforms',
             ),
             'fieldmap' => array(
                 'email' => array(
@@ -165,7 +165,7 @@ class Extension extends BaseExtension
                     'data'    => 'data',
                     'fields'  => 'fields',
                     'subject' => 'subject',
-                )
+                ),
             ),
         );
     }

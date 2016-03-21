@@ -214,7 +214,7 @@ class FileUpload
 
         // Create a unique filename with a simple pattern
         $originalName = $this->file->getClientOriginalName();
-        $extension = $this->file->guessExtension() ? : pathinfo($originalName, PATHINFO_EXTENSION);
+        $extension = $this->file->guessExtension() ?: pathinfo($originalName, PATHINFO_EXTENSION);
         $pattern = $this->getTargetFileNamePattern();
         $fileName = sprintf(
             $pattern,

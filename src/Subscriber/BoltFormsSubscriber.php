@@ -58,7 +58,7 @@ class BoltFormsSubscriber implements EventSubscriberInterface
             FormEvents::POST_SET_DATA => 'postSetData',
             FormEvents::PRE_SUBMIT    => 'preSubmit',
             FormEvents::SUBMIT        => 'submit',
-            FormEvents::POST_SUBMIT   => 'postSubmit'
+            FormEvents::POST_SUBMIT   => 'postSubmit',
         );
     }
 

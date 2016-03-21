@@ -137,7 +137,7 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     private function getNextNumber($table, $column, $minValue = 0)
     {
         if (empty($table)) {
-            $this->app['logger.system']->error("[BoltForms] No table name specified for `next_increment` event.", array('event' => 'extensions'));
+            $this->app['logger.system']->error('[BoltForms] No table name specified for `next_increment` event.', array('event' => 'extensions'));
 
             return null;
         }
