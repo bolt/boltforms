@@ -106,12 +106,14 @@ class Email
 
         $body = new \Twig_Markup($html, 'UTF-8');
 
+        $text = preg_replace("/<style\\b[^>]*>(.*?)<\\/style>/s", "", $body);
+
         /*
          * Build email
          */
         $this->message
                 ->setSubject($subject)
-                ->setBody(strip_tags($body))
+                ->setBody(strip_tags($text))
                 ->addPart($body, 'text/html');
     }
 
