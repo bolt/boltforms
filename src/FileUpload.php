@@ -116,7 +116,7 @@ class FileUpload
             throw new \RuntimeException('The relative path is not valid when uploads are disabled!');
         }
 
-        if (strpos($this->fullPath, $this->config['uploads']['base_directory']) !== 0) {
+        if (strpos($this->fullPath, realpath($this->config['uploads']['base_directory'])) !== 0) {
             throw new \RuntimeException('The relative path is not valid before the file is moved!');
         }
 
