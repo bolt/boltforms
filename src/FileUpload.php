@@ -195,12 +195,15 @@ class FileUpload
             return $this->baseDirName;
         }
 
+        $realUploadPath = realpath($this->config['uploads']['base_directory']);
+
         if (isset($this->config[$this->formName]['uploads']['subdirectory'])) {
-            return $this->baseDirName = $this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $this->config[$this->formName]['uploads']['subdirectory'];
+            return $this->baseDirName = $realUploadPath . DIRECTORY_SEPARATOR . $this->config[$this->formName]['uploads']['subdirectory'];
         }
 
-        return $this->baseDirName = $this->config['uploads']['base_directory'];
+        return $this->baseDirName = $realUploadPath;
     }
+
 
     /**
      * Get the full target name for the uploaded file.
