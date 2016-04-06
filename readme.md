@@ -434,7 +434,7 @@ if ($app['request']->getMethod() == 'POST') {
 Event Listeners
 ---------------
 
-BoltForms exposes a number of listeners, that proxy Symfony Forms listeners.
+BoltForms exposes a number of listeners, that proxy Symfony Forms listeners:
   * BoltFormsEvents::PRE_SUBMIT
   * BoltFormsEvents::SUBMIT
   * BoltFormsEvents::POST_SUBMIT
@@ -442,6 +442,10 @@ BoltForms exposes a number of listeners, that proxy Symfony Forms listeners.
   * BoltFormsEvents::POST_SET_DATA
 
 Each of these match Symfony's constants, just with the BoltForms class name/prefix.
+
+There are also events that trigger during the data processing:
+  * BoltFormsEvents::SUBMISSION_PRE_PROCESSOR
+  * BoltFormsEvents::SUBMISSION_POST_PROCESSOR
 
 Below is an example of setting a field's data to upper case on submission:
 

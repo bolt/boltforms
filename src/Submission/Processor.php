@@ -1,8 +1,7 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
-use Bolt;
-use Bolt\Application;
+use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
@@ -11,6 +10,7 @@ use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\FileUpload;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Silex\Application;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -44,11 +44,12 @@ class Processor
     private $config;
 
     /**
-     * @param Bolt\Application $app
+     * @param Application $app
      */
     public function __construct(Application $app)
     {
         $this->app = $app;
+        /** @var BoltFormsExtension $extension */
         $extension = $app['extensions']->get('Bolt/BoltForms');
         $this->config = $extension->getConfig();
     }
@@ -77,6 +78,9 @@ class Processor
             $this->processDatabase($formConfig, $formData);
             $this->processEmailNotification($formConfig, $formData);
             $this->processRedirect($formConfig, $formData);
+
+            $event = new BoltFormsProcessorEvent($formName, $formData->getPostData());
+            $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $event);
 
             return $returnData ? $formData : true;
         }
@@ -120,11 +124,11 @@ class Processor
     protected function getRequestData($formName, $request = null)
     {
         if (!$this->app['request']->request->has($formName)) {
-            return;
+            return null;
         }
 
         if (!$request) {
-            $request = $this->app['request'];
+            $request = $this->app['request_stack']->getCurrentRequest();
         }
 
         // Handle the Request object to check if the data sent is valid
@@ -137,12 +141,15 @@ class Processor
             $data = $this->app['boltforms']->getForm($formName)->getData();
 
             $event = new BoltFormsProcessorEvent($formName, $data);
+            $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
+
+            /** @deprecated will be removed in v4 */
             $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_PROCESSOR, $event);
 
             return new FormData($event->getData());
         }
 
-        return;
+        return null;
     }
 
     /**
