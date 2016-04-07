@@ -55,9 +55,9 @@ class FileUpload
     /**
      * Constructor.
      *
-     * @param Application $app
-     * @param string      $formName
-     * @param File        $file
+     * @param Application  $app
+     * @param string       $formName
+     * @param UploadedFile $file
      */
     public function __construct(Application $app, $formName, UploadedFile $file)
     {
