@@ -77,10 +77,11 @@ class Processor
             $this->processFields($formConfig, $formData);
             $this->processDatabase($formConfig, $formData);
             $this->processEmailNotification($formConfig, $formData);
-            $this->processRedirect($formConfig, $formData);
 
             $event = new BoltFormsProcessorEvent($formName, $formData->getPostData());
             $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $event);
+
+            $this->processRedirect($formConfig, $formData);
 
             return $returnData ? $formData : true;
         }
