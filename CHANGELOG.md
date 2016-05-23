@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 3.0.1 (2016-05-23)
+ * Use FQCN for form types (credit @psychonaut)
+
 * 3.0.0 (2016-04-26)
  * Release compatible with Bolt v3
 
