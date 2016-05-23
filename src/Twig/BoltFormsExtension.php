@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
 
 /**
@@ -72,7 +73,7 @@ class BoltFormsExtension
             'errorCodes' => null,
         ];
 
-        $boltForms->makeForm($formName, 'form', $data, $options);
+        $boltForms->makeForm($formName, FormType::class, $data, $options);
 
         $fields = $this->config[$formName]['fields'];
 

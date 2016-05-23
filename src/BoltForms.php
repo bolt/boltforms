@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt;
 use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormTypeInterface;
 
@@ -68,7 +69,7 @@ class BoltForms
      * @param mixed                    $data
      * @param array                    $options
      */
-    public function makeForm($formname, $type = 'form', $data = null, $options = [])
+    public function makeForm($formname, $type = FormType::class, $data = null, $options = [])
     {
         $options['csrf_protection'] = $this->config['csrf'];
         $this->forms[$formname] = $this->app['form.factory']->createNamedBuilder($formname, $type, $data, $options)
