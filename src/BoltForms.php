@@ -45,6 +45,7 @@ class BoltForms
     public function __construct(Application $app)
     {
         $this->app = $app;
+        /** @var BoltFormsExtension $extension */
         $extension = $app['extensions']->get('Bolt/BoltForms');
         $this->config = $extension->getConfig();
     }
@@ -52,86 +53,90 @@ class BoltForms
     /**
      * Get a particular form
      *
-     * @param string $formname
+     * @param string $formName
      *
      * @return Form
      */
-    public function getForm($formname)
+    public function getForm($formName)
     {
-        return $this->forms[$formname];
+        return $this->forms[$formName];
     }
 
     /**
      * Initial form object constructor
      *
-     * @param string                   $formname
+     * @param string                   $formName
      * @param string|FormTypeInterface $type
      * @param mixed                    $data
      * @param array                    $options
      */
-    public function makeForm($formname, $type = FormType::class, $data = null, $options = [])
+    public function makeForm($formName, $type = FormType::class, $data = null, $options = [])
     {
         $options['csrf_protection'] = $this->config['csrf'];
-        $this->forms[$formname] = $this->app['form.factory']->createNamedBuilder($formname, $type, $data, $options)
-                                                            ->addEventSubscriber(new BoltFormsSubscriber($this->app))
-                                                            ->getForm();
+        $this->forms[$formName] = $this->app['form.factory']
+            ->createNamedBuilder($formName, $type, $data, $options)
+            ->addEventSubscriber(new BoltFormsSubscriber($this->app))
+            ->getForm()
+        ;
     }
 
     /**
      * Add a field to the form
      *
-     * @param string $formname Name of the form
+     * @param string $formName Name of the form
+     * @param string $fieldName
      * @param string $type
      * @param array  $options
      */
-    public function addField($formname, $fieldname, $type, array $options)
+    public function addField($formName, $fieldName, $type, array $options)
     {
-        $fieldOptions = new FieldOptions($formname, $fieldname, $type, $options, $this->app['storage'], $this->app['logger.system']);
+        $em = $this->app['storage'];
+        $fieldOptions = new FieldOptions($formName, $fieldName, $type, $options, $em, $this->app['logger.system']);
 
-        $this->forms[$formname]->add($fieldname, $type, $fieldOptions->toArray());
+        $this->getForm($formName)->add($fieldName, $type, $fieldOptions->toArray());
     }
 
     /**
      * Add an array of fields to the form
      *
-     * @param string $formname Name of the form
+     * @param string $formName Name of the form
      * @param array  $fields   Associative array keyed on field name => array('type' => '', 'options => array())
      *
      * @return void
      */
-    public function addFieldArray($formname, array $fields)
+    public function addFieldArray($formName, array $fields)
     {
-        foreach ($fields as $fieldname => $field) {
+        foreach ($fields as $fieldName => $field) {
             $field['options'] = empty($field['options']) ? [] : $field['options'];
-            $this->addField($formname, $fieldname, $field['type'], $field['options']);
+            $this->addField($formName, $fieldName, $field['type'], $field['options']);
         }
     }
 
     /**
      * Render our form into HTML
      *
-     * @param string $formname   Name of the form
+     * @param string $formName   Name of the form
      * @param string $template   A Twig template file name in Twig's path
-     * @param array  $twigvalues Associative array of key/value pairs to pass to Twig's render of $template
+     * @param array  $twigValues Associative array of key/value pairs to pass to Twig's render of $template
      *
      * @return \Twig_Markup
      */
-    public function renderForm($formname, $template = '', array $twigvalues = [])
+    public function renderForm($formName, $template = '', array $twigValues = [])
     {
         if (empty($template)) {
             $template = $this->config['templates']['form'];
         }
 
         // Add the form object for use in the template
-        $renderdata = ['form' => $this->forms[$formname]->createView()];
+        $context = ['form' => $this->getForm($formName)->createView()];
 
         // Add out passed values to the array to be given to render()
-        foreach ($twigvalues as $twigname => $data) {
-            $renderdata[$twigname] = $data;
+        foreach ($twigValues as $twigName => $data) {
+            $context[$twigName] = $data;
         }
 
         // Pray and do the render
-        $html = $this->app['twig']->render($template, $renderdata);
+        $html = $this->app['twig']->render($template, $context);
 
         // Return the result
         return new \Twig_Markup($html, 'UTF-8');
