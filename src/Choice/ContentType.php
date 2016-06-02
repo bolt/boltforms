@@ -2,7 +2,10 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
-use Bolt\Storage;
+use Bolt\Storage\Entity;
+use Bolt\Storage\EntityManager;
+use Bolt\Storage\Repository;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
  * ContentType choices for BoltForms
@@ -28,8 +31,8 @@ use Bolt\Storage;
  */
 class ContentType implements ChoiceInterface
 {
-    /** @var \Bolt\Storage */
-    private $storage;
+    /** @var EntityManager */
+    private $em;
     /** @var string */
     private $name;
     /** @var array */
@@ -38,20 +41,20 @@ class ContentType implements ChoiceInterface
     private $choices;
 
     /**
-     * @param Storage $storage
-     * @param string  $name    Name of the BoltForms field
-     * @param array   $options The 'choices' key is a string that takes
-     *                         the format of: 'contenttype::name::labelfield::valuefield'
-     *                         Where:
-     *                         'contenttype' - String constant that always equals 'contenttype'
-     *                         'name'        - Name of the contenttype itself
-     *                         'labelfield'  - Field to use for the UI displayed to the user
-     *                         'valuefield'  - Field to use for the value stored
+     * @param EntityManager $em
+     * @param string        $name    Name of the BoltForms field
+     * @param array         $options The 'choices' key is a string that takes
+     *                               the format of: 'contenttype::name::labelfield::valuefield'
+     *                               Where:
+     *                               'contenttype' - String constant that always equals 'contenttype'
+     *                               'name'        - Name of the contenttype itself
+     *                               'labelfield'  - Field to use for the UI displayed to the user
+     *                               'valuefield'  - Field to use for the value stored
      */
-    public function __construct($storage, $name, array $options)
+    public function __construct(EntityManager $em, $name, array $options)
     {
-        $this->storage = $storage;
-        $this->name    = $name;
+        $this->em = $em;
+        $this->name = $name;
         $this->options = $options;
     }
 
@@ -73,7 +76,7 @@ class ContentType implements ChoiceInterface
     public function getChoices()
     {
         if ($this->choices === null) {
-            $this->choices = $this->getChoicesFromContenttypeRecords();
+            $this->choices = $this->getChoicesFromContentTypeRecords();
         }
 
         return $this->choices;
@@ -84,21 +87,23 @@ class ContentType implements ChoiceInterface
      *
      * @return array
      */
-    private function getChoicesFromContenttypeRecords()
+    private function getChoicesFromContentTypeRecords()
     {
         $key = $this->options['choices'];
         $params = explode('::', $key);
-
         if ($params === false || count($params) !== 4) {
             throw new \UnexpectedValueException("The configured Contenttype choice field '$this->name' has an invalid key string: '$key'");
         }
+        list($contentType, $name, $labelField, $valueField) = $params;
 
-        /** @var $records Bolt\Content[] */
-        $records = $this->storage->getContent($params[1], $this->getQueryParameters());
         $choices = [];
+        /** @var Repository\ContentRepository $repo */
+        $repo = $this->em->getRepository($name);
+        /** @var $records Entity\Content[] */
+        $records = $repo->findWith($this->getQueryParameters());
 
         foreach ($records as $record) {
-            $choices[$record->get($params[3])] = $record->get($params[2]);
+            $choices[$record->get($valueField)] = $record->get($labelField);
         }
 
         return $choices;
@@ -107,40 +112,44 @@ class ContentType implements ChoiceInterface
     /**
      * Determine the parameters passed to getContent() for sorting and filtering.
      *
-     * @return array
+     * @return QueryBuilder
      */
     private function getQueryParameters()
     {
-        $parameters = [];
+        $query = $this->em
+            ->createQueryBuilder()
+            ->select('*')
+        ;
+
         // ORDER BY field
         if (isset($this->options['sort'])) {
-            $parameters['order'] = $this->options['sort'];
+            $query->orderBy($this->options['sort']);
         }
         // LIMIT count
         if (isset($this->options['limit'])) {
-            $parameters['limit'] = (integer) $this->options['limit'];
+            $query->setMaxResults((integer) $this->options['limit']);
         }
         // WHERE filters
         if (isset($this->options['filters'])) {
-            $parameters = $this->getFilters($parameters);
+            $this->getFilters($query);
         }
 
-        return $parameters;
+        return $query;
     }
 
     /**
      * Get the filters.
      *
-     * @param array $parameters
-     *
-     * @return array[]
+     * @param QueryBuilder $query
      */
-    private function getFilters(array $parameters)
+    private function getFilters(QueryBuilder $query)
     {
         foreach ($this->options['filters'] as $filter) {
             $parameters[$filter['field']] = $filter['value'];
+            $query
+                ->andWhere($filter['field'] . ' = :' . $filter['field'])
+                ->setParameter($filter['field'], $filter['value'])
+            ;
         }
-
-        return $parameters;
     }
 }
