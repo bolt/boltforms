@@ -380,14 +380,21 @@ class EmailConfig implements \ArrayAccess
 
     public function offsetSet($offset, $value)
     {
+        $offset = $this->toPsr2CamelCase($offset);
+        $this->{$offset} = $value;
     }
 
     public function offsetExists($offset)
     {
+        $offset = $this->toPsr2CamelCase($offset);
+
+        return isset($this->{$offset});
     }
 
     public function offsetUnset($offset)
     {
+        $offset = $this->toPsr2CamelCase($offset);
+        unset ($this->{$offset});
     }
 
     public function offsetGet($offset)
