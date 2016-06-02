@@ -25,7 +25,7 @@ use Silex\Application;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014, Gawain Lynch
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
 class Database
@@ -41,42 +41,42 @@ class Database
     /**
      * Write out form data to a specified database table
      *
-     * @param string   $tablename
+     * @param string   $tableName
      * @param FormData $formData
      *
      * @return boolean
      */
-    public function writeToTable($tablename, FormData $formData)
+    public function writeToTable($tableName, FormData $formData)
     {
         $saveData = [];
 
         // Don't try to write to a non-existant table
         $sm = $this->app['db']->getSchemaManager();
-        if (!$sm->tablesExist([$tablename])) {
+        if (!$sm->tablesExist([$tableName])) {
             // log failed attempt
-            $this->app['logger.system']->error("[Bolt Forms] Failed attempt to save submission: missing database table `$tablename`", ['event' => 'extensions']);
+            $this->app['logger.system']->error("[Bolt Forms] Failed attempt to save submission: missing database table `$tableName`", ['event' => 'extensions']);
 
             return false;
         }
 
         // Build a new array with only keys that match the database table
         /** @var \Doctrine\DBAL\Schema\Column[] $columns */
-        $columns = $sm->listTableColumns($tablename);
+        $columns = $sm->listTableColumns($tableName);
 
         foreach ($columns as $column) {
-            $colname = $column->getName();
+            $colName = $column->getName();
             // Only attempt to insert fields with existing data this way you can
             // have fields in your table that are not in the form eg. an auto
             // increment id field of a field to track status of a submission
-            if ($formData->has($colname)) {
-                $saveData[$colname] = $formData->get($colname, true);
+            if ($formData->has($colName)) {
+                $saveData[$colName] = $formData->get($colName, true);
             }
         }
 
         try {
-            $this->app['db']->insert($tablename, $saveData);
+            $this->app['db']->insert($tableName, $saveData);
         } catch (\Exception $e) {
-            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to database table `$tablename`", ['event' => 'extensions', 'exception' => $e]);
+            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to database table `$tableName`", ['event' => 'extensions', 'exception' => $e]);
         }
     }
 
