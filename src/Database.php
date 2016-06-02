@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Exception\StorageException;
+use Bolt\Storage\Entity\Content;
 use Silex\Application;
 
 /**
@@ -81,28 +83,37 @@ class Database
     /**
      * Write out form data to a specified contenttype table
      *
-     * @param string   $contenttype
+     * @param string   $contentType
      * @param FormData $formData
      */
-    public function writeToContentype($contenttype, FormData $formData)
+    public function writeToContenType($contentType, FormData $formData)
     {
+        try {
+            $repo = $this->app['storage']->getRepository($contentType);
+        } catch (StorageException $e) {
+            $this->app['logger.system']->critical("[Bolt Forms] Invalid ContentType name `$contentType` specified.", ['event' => 'extensions', 'exception' => $e]);
+
+            return;
+        }
+
         // Get an empty record for out contenttype
-        $record = $this->app['storage']->getEmptyContent($contenttype);
+        $record = new Content();
 
         // Set a published date
-        if (! $formData->has('datepublish')) {
-            $formData->set('datepublish', date('Y-m-d H:i:s'));
+        $record->setStatus('published');
+        if (!$formData->has('datepublish')) {
+            $record->setDatepublish(date('Y-m-d H:i:s'));
         }
 
         foreach ($formData->keys() as $name) {
             // Store the data array into the record
-            $record->setValue($name, $formData->get($name, true));
+            $record->set($name, $formData->get($name, true));
         }
 
         try {
-            $this->app['storage']->saveContent($record);
+            $repo->save($record);
         } catch (\Exception $e) {
-            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to ContentType table `$contenttype`", ['event' => 'extensions', 'exception' => $e]);
+            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to ContentType table `$contentType`", ['event' => 'extensions', 'exception' => $e]);
         }
     }
 }

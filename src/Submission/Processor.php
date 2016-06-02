@@ -246,7 +246,7 @@ class Processor implements EventSubscriberInterface
 
         // Write to a Contenttype
         if ($formConfig->getDatabase()->getContenttype() !== null) {
-            $this->app['boltforms.database']->writeToContentype($formConfig->getDatabase()->getContenttype(), $formData);
+            $this->app['boltforms.database']->writeToContenType($formConfig->getDatabase()->getContenttype(), $formData);
         }
 
         // Write to a normal database table
