@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
+use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -40,8 +41,8 @@ class FieldOptions
     private $baseOptions;
     /** @var array */
     private $options;
-    /** @var \Bolt\Storage */
-    private $storage;
+    /** @var EntityManager */
+    private $em;
     /** @var LoggerInterface */
     private $logger;
     /** @var boolean */
@@ -54,16 +55,16 @@ class FieldOptions
      * @param string          $fieldname
      * @param string          $type
      * @param array           $baseOptions
-     * @param \Bolt\Storage   $storage
+     * @param EntityManager   $storage
      * @param LoggerInterface $logger
      */
-    public function __construct($formname, $fieldname, $type, array $baseOptions, $storage, LoggerInterface $logger)
+    public function __construct($formname, $fieldname, $type, array $baseOptions, EntityManager $storage, LoggerInterface $logger)
     {
         $this->formname = $formname;
         $this->fieldname = $fieldname;
         $this->type = $type;
         $this->baseOptions = $baseOptions;
-        $this->storage = $storage;
+        $this->em = $storage;
         $this->logger = $logger;
     }
 
@@ -105,19 +106,21 @@ class FieldOptions
         }
         $this->options = $options;
 
-        // Set up contraint objects
-        $this->setContraints();
+        // Set up constraint objects
+        $this->setConstraints();
     }
 
     /**
      * Get customised value parameters for choice field types.
+     *
+     * @param array $options
      *
      * @return array
      */
     protected function getChoiceValues(array &$options)
     {
         if (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'contenttype::') === 0) {
-            $choice = new ContentType($this->storage, $this->fieldname, $this->baseOptions);
+            $choice = new ContentType($this->em, $this->fieldname, $this->baseOptions);
 
             // Only unset for a this type as it's custom
             unset($options['sort']);
@@ -131,9 +134,9 @@ class FieldOptions
     }
 
     /**
-     * Set the contraints classes properly.
+     * Set the constraints classes properly.
      */
-    protected function setContraints()
+    protected function setConstraints()
     {
         if (!isset($this->baseOptions['constraints'])) {
             return;
@@ -151,12 +154,12 @@ class FieldOptions
     /**
      * Extract, expand and set & create validator instance array(s)
      *
-     * @param string $formname
+     * @param string $formName
      * @param mixed  $input
      *
      * @return \Symfony\Component\Validator\Constraint
      */
-    protected function getConstraintObject($formname, $input)
+    protected function getConstraintObject($formName, $input)
     {
         $params = null;
 
@@ -180,6 +183,6 @@ class FieldOptions
             return new $class($params);
         }
 
-        $this->logger->error("[BoltForms] The form '$formname' has an invalid field constraint: '$class'.", ['event' => 'extensions']);
+        $this->logger->error(sprintf('[BoltForms] The form "%s" has an invalid field constraint: "%s".', $formName, $class), ['event' => 'extensions']);
     }
 }
