@@ -6,11 +6,14 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\FileUpload;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Silex\Application;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -36,7 +39,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Processor
+class Processor implements EventSubscriberInterface
 {
     /** @var Application */
     private $app;
@@ -52,6 +55,34 @@ class Processor
         /** @var BoltFormsExtension $extension */
         $extension = $app['extensions']->get('Bolt/BoltForms');
         $this->config = $extension->getConfig();
+    }
+
+    /**
+     * Returns an array of event names this subscriber wants to listen to.
+     *
+     * The array keys are event names and the value can be:
+     *
+     *  * The method name to call (priority defaults to 0)
+     *  * An array composed of the method name to call and the priority
+     *  * An array of arrays composed of the method names to call and respective
+     *    priorities, or 0 if unset
+     *
+     * For instance:
+     *
+     *  * array('eventName' => 'methodName')
+     *  * array('eventName' => array('methodName', $priority))
+     *  * array('eventName' => array(array('methodName1', $priority), array('methodName2')))
+     *
+     * @return array The event names to listen to
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            BoltFormsEvents::SUBMISSION_PROCESS_FIELDS   => ['processFields', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_DATABASE => ['processDatabase', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_EMAIL    => ['processEmailNotification', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT => ['processRedirect', 0],
+        ];
     }
 
     /**
@@ -74,14 +105,21 @@ class Processor
         $sent = $this->app['boltforms']->getForm($formName)->isSubmitted();
 
         if ($sent && $formData !== null && $recaptchaResponse['success']) {
-            $this->processFields($formConfig, $formData);
-            $this->processDatabase($formConfig, $formData);
-            $this->processEmailNotification($formConfig, $formData);
+            /** @var EventDispatcherInterface $dispatcher */
+            $dispatcher = $this->app['dispatcher'];
+            $lifeEvent = new LifecycleEvent($formConfig, $formData);
 
-            $event = new BoltFormsProcessorEvent($formName, $formData->getPostData());
-            $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $event);
+            // Process
+            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
+            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
+            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
 
-            $this->processRedirect($formConfig, $formData);
+            // Post processing event
+            $processorEvent = new BoltFormsProcessorEvent($formName, $formData->getPostData());
+            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
+
+            // Redirect if a redirect is set and the page exists.
+            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT, $lifeEvent);
 
             return $returnData ? $formData : true;
         }
@@ -106,7 +144,9 @@ class Processor
             ];
         }
 
-        $reCaptchaResponse = $this->app['recaptcha']->verify($request->get('g-recaptcha-response'), $request->getClientIp());
+        /** @var \ReCaptcha\ReCaptcha $reCaptcha */
+        $reCaptcha = $this->app['recaptcha'];
+        $reCaptchaResponse = $reCaptcha->verify($request->get('g-recaptcha-response'), $request->getClientIp());
 
         return [
             'success'    => $reCaptchaResponse->isSuccess(),
@@ -156,19 +196,21 @@ class Processor
     /**
      * Process the fields to get usable data.
      *
-     * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param LifecycleEvent $lifeEvent
      *
      * @throws FileUploadException
      */
-    protected function processFields(FormConfig $formConfig, FormData $formData)
+    public function processFields(LifecycleEvent $lifeEvent)
     {
+        $formConfig = $lifeEvent->getFormConfig();
+        $formData = $lifeEvent->getFormData();
+
         foreach ($formData->keys() as $fieldName) {
             $field = $formData->get($fieldName);
 
             // Handle file uploads
             if ($field instanceof UploadedFile) {
-                if (! $field->isValid()) {
+                if (!$field->isValid()) {
                     throw new FileUploadException($field->getErrorMessage());
                 }
 
@@ -195,11 +237,13 @@ class Processor
     /**
      * Commit submitted data to the database if configured.
      *
-     * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param LifecycleEvent $lifeEvent
      */
-    protected function processDatabase(FormConfig $formConfig, FormData $formData)
+    public function processDatabase(LifecycleEvent $lifeEvent)
     {
+        $formConfig = $lifeEvent->getFormConfig();
+        $formData = $lifeEvent->getFormData();
+
         // Write to a Contenttype
         if ($formConfig->getDatabase()->getContenttype() !== null) {
             $this->app['boltforms.database']->writeToContentype($formConfig->getDatabase()->getContenttype(), $formData);
@@ -214,24 +258,28 @@ class Processor
     /**
      * Send email notifications if configured.
      *
-     * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param LifecycleEvent $lifeEvent
      */
-    protected function processEmailNotification(FormConfig $formConfig, FormData $formData)
+    public function processEmailNotification(LifecycleEvent $lifeEvent)
     {
+        $formConfig = $lifeEvent->getFormConfig();
+        $formData = $lifeEvent->getFormData();
+
         if ($formConfig->getNotification()->getEnabled()) {
             $this->app['boltforms.email']->doNotification($formConfig, $formData);
         }
     }
 
     /**
-     * Redirect if a redirect is set and the page exists
+     * Redirect if a redirect is set and the page exists.
      *
-     * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param LifecycleEvent $lifeEvent
      */
-    protected function processRedirect(FormConfig $formConfig, FormData $formData)
+    public function processRedirect(LifecycleEvent $lifeEvent)
     {
+        $formConfig = $lifeEvent->getFormConfig();
+        $formData = $lifeEvent->getFormData();
+
         if ($formConfig->getFeedback()->redirect['target'] !== null) {
             $redirect = new RedirectHandler($this->app['url_matcher']);
             $redirect->redirect($formConfig, $formData);
@@ -242,6 +290,8 @@ class Processor
      * Dispatch custom data events.
      *
      * @param array $eventConfig
+     *
+     * @return mixed
      */
     protected function dispatchCustomDataEvent($eventConfig)
     {
@@ -251,7 +301,7 @@ class Processor
             $eventName = $eventConfig['name'];
         }
 
-        if ($this->app['dispatcher']->hasListeners($eventName)) {
+        if (!$this->app['dispatcher']->hasListeners($eventName)) {
             $eventParams = isset($eventConfig['params']) ? $eventConfig['params'] : null;
             $event = new BoltFormsCustomDataEvent($eventName, $eventParams);
             try {

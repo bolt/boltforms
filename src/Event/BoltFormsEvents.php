@@ -42,6 +42,11 @@ final class BoltFormsEvents
     const SUBMISSION_PRE_PROCESSOR = 'boltforms.submission_pre_processor';
     const SUBMISSION_POST_PROCESSOR = 'boltforms.submission_post_processor';
 
+    const SUBMISSION_PROCESS_FIELDS = 'boltforms.submission_process_fields';
+    const SUBMISSION_PROCESS_DATABASE = 'boltforms.submission_process_database';
+    const SUBMISSION_PROCESS_EMAIL = 'boltforms.submission_process_email';
+    const SUBMISSION_PROCESS_REDIRECT = 'boltforms.submission_process_redirect';
+
     /*
      * Custom data events
      */

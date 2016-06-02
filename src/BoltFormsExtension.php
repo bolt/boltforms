@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt\Extension\SimpleExtension;
+use Silex\Application;
 
 /**
  * BoltForms a Symfony Forms interface for Bolt
@@ -38,6 +39,16 @@ class BoltFormsExtension extends SimpleExtension
             new Provider\BoltFormsServiceProvider(),
             new Provider\RecaptchaServiceProvider(),
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function boot(Application $app)
+    {
+        parent::boot($app);
+
+        $this->container['dispatcher']->addSubscriber($app['boltforms.processor']);
     }
 
     /**
