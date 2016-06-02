@@ -115,7 +115,7 @@ class Processor implements EventSubscriberInterface
             $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
 
             // Post processing event
-            $processorEvent = new BoltFormsProcessorEvent($formName, $formData->getPostData());
+            $processorEvent = new BoltFormsProcessorEvent($formName, $formData->all());
             $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
 
             // Redirect if a redirect is set and the page exists.

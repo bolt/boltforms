@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 /**
  * Submitted form data functionality for BoltForms
  *
@@ -21,59 +23,32 @@ namespace Bolt\Extension\Bolt\BoltForms;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014, Gawain Lynch
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class FormData implements \ArrayAccess
+class FormData extends ParameterBag
 {
-    /** @var array */
-    protected $postData;
-
     /**
-     * @param array $postData
+     * @param array $parameters
      */
-    public function __construct(array $postData)
+    public function __construct(array $parameters)
     {
-        $this->postData = $postData;
+        parent::__construct($parameters);
 
         // Don't keep token data around where not needed
-        unset($this->postData['_token']);
+        unset($this->parameters['_token']);
     }
 
     /**
-     * Get the data that was recived during the POST.
+     * Get the data that was received during the POST.
+     *
+     * @deprecated Deprecated since 3.0 and to be removed in 4.0
      *
      * @return array
      */
     public function getPostData()
     {
-        return $this->postData;
-    }
-
-    /**
-     * Return the data key names.
-     *
-     * @return string[]
-     */
-    public function keys()
-    {
-        return array_keys($this->postData);
-    }
-
-    /**
-     * Check if we have a posted value.
-     *
-     * @param string $name
-     *
-     * @return boolean
-     */
-    public function has($name)
-    {
-        if (isset($this->postData[$name])) {
-            return true;
-        }
-
-        return false;
+        return $this->parameters;
     }
 
     /**
@@ -81,29 +56,17 @@ class FormData implements \ArrayAccess
      *
      * @param string  $name
      * @param boolean $transform
+     * @param mixed   $default
      *
      * @return mixed
      */
-    public function get($name, $transform = false)
+    public function get($name, $transform = false, $default = null)
     {
         if ($transform === false) {
-            return $this->postData[$name];
+            return array_key_exists($name, $this->parameters) ? $this->parameters[$name] : $default;
         }
 
         return $this->getTransform($name);
-    }
-
-    /**
-     * Set a POST value.
-     *
-     * @param string $name
-     * @param mixed  $value
-     *
-     * @return mixed
-     */
-    public function set($name, $value)
-    {
-        $this->postData[$name] = $value;
     }
 
     /**
@@ -115,7 +78,7 @@ class FormData implements \ArrayAccess
      */
     protected function getTransform($name)
     {
-        $value = $this->postData[$name];
+        $value = $this->parameters[$name];
 
         // Don't try to insert NULLs
         if ($value === null) {
@@ -137,23 +100,5 @@ class FormData implements \ArrayAccess
         }
 
         return $value;
-    }
-
-    public function offsetSet($offset, $value)
-    {
-    }
-
-    public function offsetExists($offset)
-    {
-        return $this->has($offset);
-    }
-
-    public function offsetUnset($offset)
-    {
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->get($offset);
     }
 }
