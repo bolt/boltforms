@@ -83,7 +83,7 @@ class BoltForms
     /**
      * Add a field to the form
      *
-     * @param string $formName Name of the form
+     * @param string $formName  Name of the form
      * @param string $fieldName
      * @param string $type
      * @param array  $options

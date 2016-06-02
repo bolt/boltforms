@@ -205,7 +205,6 @@ class FileUpload
         return $this->baseDirName = $realUploadPath;
     }
 
-
     /**
      * Get the full target name for the uploaded file.
      *

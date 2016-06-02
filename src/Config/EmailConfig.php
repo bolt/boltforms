@@ -366,6 +366,8 @@ class EmailConfig implements \ArrayAccess
      * a submitted field we use this, otherwise the configured parameter.
      *
      * @param string $value
+     *
+     * @return string
      */
     private function getConfigValue($value)
     {
