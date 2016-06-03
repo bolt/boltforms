@@ -1,9 +1,8 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Bolt;
-use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
+use Silex\Application;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormTypeInterface;
@@ -40,7 +39,9 @@ class BoltForms
     private $forms;
 
     /**
-     * @param Bolt\Application $app
+     * Constructor.
+     *
+     * @param Application $app
      */
     public function __construct(Application $app)
     {

@@ -2,9 +2,9 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 
-use Bolt\Application;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
