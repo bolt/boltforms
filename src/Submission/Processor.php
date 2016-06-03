@@ -13,6 +13,7 @@ use Bolt\Extension\Bolt\BoltForms\FormData;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -102,9 +103,10 @@ class Processor implements EventSubscriberInterface
         /** @var FormData $formData */
         $formData = $this->getRequestData($formName);
         $formConfig = $this->app['boltforms']->getFormConfig($formName);
-        $sent = $this->app['boltforms']->getForm($formName)->isSubmitted();
+        $form = $this->app['boltforms']->getForm($formName);
+        $complete = $form->isSubmitted() && $form->isValid();
 
-        if ($sent && $formData !== null && $recaptchaResponse['success']) {
+        if ($complete && $formData !== null && $recaptchaResponse['success']) {
             /** @var EventDispatcherInterface $dispatcher */
             $dispatcher = $this->app['dispatcher'];
             $lifeEvent = new LifecycleEvent($formConfig, $formData);
@@ -167,22 +169,23 @@ class Processor implements EventSubscriberInterface
      */
     protected function getRequestData($formName, $request = null)
     {
-        if (!$this->app['request']->request->has($formName)) {
-            return null;
-        }
-
         if (!$request) {
             $request = $this->app['request_stack']->getCurrentRequest();
         }
 
+        if (!$request->request->has($formName)) {
+            return null;
+        }
+
+        /** @var Form $form */
+        $form = $this->app['boltforms']->getForm($formName);
         // Handle the Request object to check if the data sent is valid
-        $this->app['boltforms']->getForm($formName)->handleRequest($request);
+        $form->handleRequest($request);
 
         // Test if form, as submitted, passes validation
-        if ($this->app['boltforms']->getForm($formName)->isValid()) {
-
+        if ($form->isValid()) {
             // Submitted data
-            $data = $this->app['boltforms']->getForm($formName)->getData();
+            $data = $form->getData();
 
             $event = new BoltFormsProcessorEvent($formName, $data);
             $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
