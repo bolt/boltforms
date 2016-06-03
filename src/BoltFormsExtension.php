@@ -57,15 +57,17 @@ class BoltFormsExtension extends SimpleExtension
      */
     protected function registerFrontendControllers()
     {
+        $app = $this->getContainer();
+        $controllers = [
+            '/async/boltforms' => new Controller\Async($app['boltforms.config'])
+        ];
+        
         if ($this->getConfig()['uploads']['management_controller']) {
             $url = '/' . ltrim($this->getConfig()['uploads']['base_uri'], '/');
-
-            return [
-                $url => new Controller\UploadManagement($this->getConfig()),
-            ];
+            $controllers[$url] = new Controller\UploadManagement($this->getConfig());
         }
 
-        return [];
+        return $controllers;
     }
 
     /**
@@ -123,7 +125,7 @@ class BoltFormsExtension extends SimpleExtension
     }
 
     /**
-     * Set the defaults for configuration parameters
+     * Set the defaults for configuration parameters.
      *
      * {@inheritdoc}
      */
