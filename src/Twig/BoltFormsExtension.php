@@ -116,6 +116,7 @@ class BoltFormsExtension
             ->setSent($sent)
             ->setErrors([$error])
             ->setReCaptchaResponse($reCaptchaResponse)
+            ->setDefaults($defaults)
         ;
         $this->app['session']->set('boltforms_compiler_' . $formName, $compiler);
 
