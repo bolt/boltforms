@@ -2,11 +2,12 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Helpers\Arr;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\RedirectableUrlMatcherInterface;
+use Symfony\Component\Routing\Matcher\RedirectableUrlMatcher;
 
 /**
  * Redirect handler processing functions for BoltForms
@@ -32,15 +33,15 @@ use Symfony\Component\Routing\Matcher\RedirectableUrlMatcherInterface;
  */
 class RedirectHandler
 {
-    /** @var RedirectableUrlMatcherInterface */
+    /** @var RedirectableUrlMatcher */
     private $urlMatcher;
     /** @var boolean */
     private $valid = true;
 
     /**
-     * @param RedirectableUrlMatcherInterface $urlMatcher
+     * @param RedirectableUrlMatcher $urlMatcher
      */
-    public function __construct(RedirectableUrlMatcherInterface $urlMatcher)
+    public function __construct(RedirectableUrlMatcher $urlMatcher)
     {
         $this->urlMatcher = $urlMatcher;
     }
@@ -75,45 +76,47 @@ class RedirectHandler
     /**
      * Build a GET query if required.
      *
-     * @param array    $redirect
-     * @param FormData $formData
+     * @param FormConfigSection $redirect
+     * @param FormData          $formData
      *
      * @return string
      */
-    protected function getRedirectQuery(array $redirect, FormData $formData)
+    protected function getRedirectQuery(FormConfigSection $redirect, FormData $formData)
     {
-        if (!isset($redirect['query']) || empty($redirect['query'])) {
+        $query = $redirect->getQuery();
+
+        if ($query === null) {
             return '';
         }
 
-        $query = [];
-        if (is_array($redirect['query'])) {
-            if (Arr::isIndexedArray($redirect['query'])) {
-                foreach ($redirect['query'] as $param) {
-                    $query[$param] = $formData->get($param);
+        $queryParams = [];
+        if (is_array($query)) {
+            if (Arr::isIndexedArray($redirect->getQuery())) {
+                foreach ($query as $param) {
+                    $queryParams[$param] = $formData->get($param);
                 }
             } else {
-                foreach ($redirect['query'] as $id => $param) {
-                    $query[$id] = $formData->get($param);
+                foreach ($query as $id => $param) {
+                    $queryParams[$id] = $formData->get($param);
                 }
             }
         } else {
-            $param = $redirect['query'];
-            $query[$param] = $formData->get($param);
+            $param = $query;
+            $queryParams[$param] = $formData->get($param);
         }
 
-        return '?' . http_build_query($query);
+        return '?' . http_build_query($queryParams);
     }
 
     /**
      * Get the redirect response object.
      *
-     * @param array  $redirect
-     * @param string $query
+     * @param FormConfigSection $redirect
+     * @param string            $query
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|null
+     * @return null|RedirectResponse
      */
-    protected function getRedirectResponse(array $redirect, $query)
+    protected function getRedirectResponse(FormConfigSection $redirect, $query)
     {
         if (strpos($redirect['target'], 'http') === 0) {
             return new RedirectResponse($redirect['target'] . $query);
