@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Provider;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
+use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Database;
 use Bolt\Extension\Bolt\BoltForms\Email;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
@@ -31,6 +32,16 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 $forms = new BoltForms($app);
 
                 return $forms;
+            }
+        );
+
+        $app['boltforms.config'] = $app->share(
+            function ($app) {
+                /** @var BoltFormsExtension $boltForms */
+                $boltForms = $app['extensions']->get('Bolt/BoltForms');
+                $config = new Config\Config($boltForms->getConfig());
+
+                return $config;
             }
         );
 
