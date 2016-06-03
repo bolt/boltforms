@@ -11,16 +11,35 @@ use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsCustomDataSubscriber;
 use Bolt\Extension\Bolt\BoltForms\Twig;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 class BoltFormsServiceProvider implements ServiceProviderInterface
 {
     public function register(Application $app)
     {
+        $app['session'] = $app->extend(
+            'session',
+            function ($session) use ($app) {
+                $session->registerBag($app['boltforms.feedback']);
+
+                return $session;
+            }
+        );
+
         $app['boltforms'] = $app->share(
             function ($app) {
                 $forms = new BoltForms($app);
 
                 return $forms;
+            }
+        );
+
+        $app['boltforms.feedback'] = $app->share(
+            function () {
+                $bag = new FlashBag('_boltforms');
+                $bag->setName('boltforms');
+
+                return $bag;
             }
         );
 
