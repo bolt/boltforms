@@ -245,8 +245,8 @@ class Processor implements EventSubscriberInterface
         $formData = $lifeEvent->getFormData();
 
         // Write to a Contenttype
-        if ($formConfig->getDatabase()->getContenttype() !== null) {
-            $this->app['boltforms.database']->writeToContenType($formConfig->getDatabase()->getContenttype(), $formData);
+        if ($formConfig->getDatabase()->getContentType() !== null) {
+            $this->app['boltforms.database']->writeToContenType($formConfig->getDatabase()->getContentType(), $formData);
         }
 
         // Write to a normal database table
@@ -280,7 +280,7 @@ class Processor implements EventSubscriberInterface
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
 
-        if ($formConfig->getFeedback()->redirect['target'] !== null) {
+        if ($formConfig->getFeedback()->getRedirect()->getTarget() !== null) {
             $redirect = new RedirectHandler($this->app['url_matcher']);
             $redirect->redirect($formConfig, $formData);
         }
@@ -312,6 +312,8 @@ class Processor implements EventSubscriberInterface
                 $this->app['logger.system']->error("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), ['event' => 'extensions']);
             }
         }
+
+        return null;
     }
 
     /**

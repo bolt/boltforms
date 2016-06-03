@@ -23,32 +23,33 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  *
- * @method boolean getEnabled()
- * @method boolean getDebug()
- * @method string  getSubject()
- * @method string  getFromName()
- * @method string  getFromEmail()
- * @method string  getReplytoName()
- * @method string  getReplytoEmail()
- * @method string  getToName()
- * @method string  getToEmail()
- * @method string  getCcName()
- * @method string  getCcEmail()
- * @method string  getBccName()
- * @method string  getBccEmail()
- * @method boolean getAttachFiles()
- * @method string  getSuccess()
- * @method string  getError()
- * @method array   getRedirect()
- * @method string  getTable()
- * @method string  getContenttype()
- * @method string  getForm()
- * @method string  getEmail()
- * @method string  getSubdirectory()
+ * @method boolean           getEnabled()
+ * @method boolean           getDebug()
+ * @method string            getSubject()
+ * @method string            getFromName()
+ * @method string            getFromEmail()
+ * @method string            getReplyToName()
+ * @method string            getReplyToEmail()
+ * @method string            getToName()
+ * @method string            getToEmail()
+ * @method string            getCcName()
+ * @method string            getCcEmail()
+ * @method string            getBccName()
+ * @method string            getBccEmail()
+ * @method boolean           getAttachFiles()
+ * @method string            getSuccess()
+ * @method string            getError()
+ * @method string            getQuery()
+ * @method FormConfigSection getRedirect()
+ * @method string            getTable()
+ * @method string            getTarget()
+ * @method string            getContentType()
+ * @method string            getForm()
+ * @method string            getEmail()
+ * @method string            getSubdirectory()
  *
  * @property boolean attach_files
  * @property string  debug_address
- * @property array   redirect
  */
 class FormConfigSection implements \ArrayAccess
 {
@@ -57,7 +58,12 @@ class FormConfigSection implements \ArrayAccess
 
     public function __construct(array $config)
     {
-        $this->config = $config;
+        foreach ($config as $key => $value) {
+            if (is_array($value)) {
+                $value = new self($value);
+            }
+            $this->config[$key] = $value;
+        }
     }
 
     public function __call($name, $args = [])
@@ -66,6 +72,8 @@ class FormConfigSection implements \ArrayAccess
         if (isset($this->config[$name])) {
             return $this->config[$name];
         }
+        
+        return null;
     }
 
     public function __get($name)
@@ -73,6 +81,8 @@ class FormConfigSection implements \ArrayAccess
         if (isset($this->config[$name])) {
             return $this->config[$name];
         }
+        
+        return null;
     }
 
     public function __set($name, $value)
