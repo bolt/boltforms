@@ -9,6 +9,7 @@ use Silex\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Twig functions for BoltForms
@@ -82,13 +83,13 @@ class BoltFormsExtension
 
         // Handle the POST
         $request = $this->app['request_stack']->getCurrentRequest();
-        if ($request && $request->isMethod('POST') && $request->get($formName) !== null) {
+        if ($request && $request->isMethod(Request::METHOD_POST) && $request->get($formName) !== null) {
             // Check reCaptcha, if enabled.
-            $reCaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($this->app['request']);
+            $reCaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($request);
 
             try {
                 $sent = $this->app['boltforms.processor']->process($formName, $this->config[$formName], $reCaptchaResponse);
-                $message = isset($this->config[$formName]['feedback']['success']) ? $this->config[$formName]['feedback']['success'] : 'Form submitted sucessfully';
+                $message = isset($this->config[$formName]['feedback']['success']) ? $this->config[$formName]['feedback']['success'] : 'Form submitted successfully';
             } catch (FileUploadException $e) {
                 $error = $e->getMessage();
                 $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, ['event' => 'extensions']);
