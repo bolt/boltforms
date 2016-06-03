@@ -71,6 +71,19 @@ class FormConfigSection implements \ArrayAccess
         }
     }
 
+    public function toArray()
+    {
+        $config = [];
+        foreach ($this->config as $key => $value) {
+            if ($value instanceof FormConfigSection) {
+                $config[$key] = $value->toArray();
+            } else {
+                $config[$key] = $value;
+            }
+        }
+        return $config;
+    }
+
     public function __call($name, $args = [])
     {
         $name = strtolower(preg_replace('/^get/', '', $name));
