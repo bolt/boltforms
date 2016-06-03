@@ -136,7 +136,8 @@ class BoltFormsExtension
      */
     public function twigBoltFormsUploads($formName = null)
     {
-        $dir = realpath($this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $formName);
+        $uploadConfig = $this->config->getUploads();
+        $dir = realpath($uploadConfig['base_directory'] . DIRECTORY_SEPARATOR . $formName);
         if ($dir === false) {
             return new \Twig_Markup('<p><strong>Invalid upload directory</strong></p>', 'UTF-8');
         }
@@ -152,13 +153,13 @@ class BoltFormsExtension
         $context = [
             'directories' => $finder->directories(),
             'files'       => $finder->files(),
-            'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download',
+            'base_uri'    => '/' . $uploadConfig['base_uri'] . '/download',
             'webpath'     => $this->app['extensions']->get('bolt/boltforms')->getWebDirectory()->getPath(),
         ];
 
         // Render the Twig
         $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/templates');
-        $html = $this->app['render']->render($this->config['templates']['files'], $context);
+        $html = $this->app['render']->render($this->config->getTemplates()['files'], $context);
 
         return new \Twig_Markup($html, 'UTF-8');
     }
