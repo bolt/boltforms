@@ -43,8 +43,8 @@ class BoltFormsExtension
 
     public function __construct(Application $app, Config $config)
     {
-        $this->app      = $app;
-        $this->config   = $config;
+        $this->app    = $app;
+        $this->config = $config;
     }
 
     /**
@@ -120,7 +120,7 @@ class BoltFormsExtension
         $this->app['session']->set('boltforms_compiler_' . $formName, $compiler);
 
         // If the form has it's own templates defined, use those, else the globals.
-        $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()['form'];
+        $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
         $context = $compiler->build($boltForms, $formName);
 
         // Render the Twig_Markup
@@ -137,7 +137,7 @@ class BoltFormsExtension
     public function twigBoltFormsUploads($formName = null)
     {
         $uploadConfig = $this->config->getUploads();
-        $dir = realpath($uploadConfig['base_directory'] . DIRECTORY_SEPARATOR . $formName);
+        $dir = realpath($uploadConfig->get('base_directory') . DIRECTORY_SEPARATOR . $formName);
         if ($dir === false) {
             return new \Twig_Markup('<p><strong>Invalid upload directory</strong></p>', 'UTF-8');
         }
@@ -153,13 +153,13 @@ class BoltFormsExtension
         $context = [
             'directories' => $finder->directories(),
             'files'       => $finder->files(),
-            'base_uri'    => '/' . $uploadConfig['base_uri'] . '/download',
+            'base_uri'    => '/' . $uploadConfig->get('base_uri') . '/download',
             'webpath'     => $this->app['extensions']->get('bolt/boltforms')->getWebDirectory()->getPath(),
         ];
 
         // Render the Twig
         $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/templates');
-        $html = $this->app['render']->render($this->config->getTemplates()['files'], $context);
+        $html = $this->app['render']->render($this->config->getTemplates()->get('files'), $context);
 
         return new \Twig_Markup($html, 'UTF-8');
     }

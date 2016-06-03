@@ -97,11 +97,11 @@ class FormContext
             'messages'  => $messages,
             'sent'      => $this->sent,
             'recaptcha' => [
-                'enabled'       => $reCaptchaConfig['enabled'],
-                'label'         => $reCaptchaConfig['label'],
-                'public_key'    => $reCaptchaConfig['public_key'],
-                'theme'         => $reCaptchaConfig['theme'],
-                'error_message' => $reCaptchaConfig['error_message'],
+                'enabled'       => $reCaptchaConfig->get('enabled'),
+                'label'         => $reCaptchaConfig->get('label'),
+                'public_key'    => $reCaptchaConfig->get('public_key'),
+                'theme'         => $reCaptchaConfig->get('theme'),
+                'error_message' => $reCaptchaConfig->get('error_message'),
                 'error_codes'   => $this->reCaptchaResponse ? $this->reCaptchaResponse['errorCodes'] : null,
                 'valid'         => $this->reCaptchaResponse ? $this->reCaptchaResponse['success'] : null,
             ],
@@ -114,7 +114,7 @@ class FormContext
                 'action' => $this->action,
             ],
             'webpath'   => $this->webPath,
-            'debug'     => $this->config->getDebug()['enabled'] || $formConfig->getNotification()->getDebug(),
+            'debug'     => $this->config->getDebug()->get('enabled') || $formConfig->getNotification()->getDebug(),
         ];
 
         return $context;

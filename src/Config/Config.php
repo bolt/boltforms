@@ -28,19 +28,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class Config extends ParameterBag
 {
-    /** @var bool */
-    protected $csrf;
-    /** @var array */
-    protected $recaptcha;
-    /** @var array */
-    protected $templates;
-    /** @var array */
-    protected $debug;
-    /** @var array */
-    protected $uploads;
-    /** @var array */
-    protected $fieldMap;
-
     /**
      * Constructor.
      *
@@ -48,7 +35,16 @@ class Config extends ParameterBag
      */
     public function __construct(array $parameters = [])
     {
-        parent::__construct($parameters);
+        parent::__construct();
+        foreach ($parameters as $key => $value) {
+            if ($value instanceof FieldMap\Email) {
+                $this->set($key, $value);
+            } elseif (is_array($value)) {
+                $this->set($key, new ParameterBag($value));
+            } else {
+                $this->set($key, $value);
+            }
+        }
     }
 
     /**
@@ -60,15 +56,15 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return array
+     * @return $debug
      */
-    public function getRecaptcha()
+    public function getReCaptcha()
     {
         return $this->get('recaptcha');
     }
 
     /**
-     * @return array
+     * @return $debug
      */
     public function getTemplates()
     {
@@ -76,7 +72,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return array
+     * @return $debug
      */
     public function getDebug()
     {
@@ -84,7 +80,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return array
+     * @return $debug
      */
     public function getUploads()
     {
@@ -92,7 +88,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return array
+     * @return FieldMap\Email[]
      */
     public function getFieldMap()
     {
