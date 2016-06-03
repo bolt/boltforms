@@ -39,7 +39,8 @@
     </script>
     {% endif %}
 
-    {{ form_start(form, {'attr': {'name': formname}}) }}
+    {{ form_start(form, form_start_param) }}
+
         {{ form_errors(form) }}
 
         {% for key, value in fields  %}

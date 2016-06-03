@@ -127,6 +127,13 @@ class BoltFormsExtension
                 'valid'         => $reCaptchaResponse ? $reCaptchaResponse['success'] : null,
             ],
             'formname'  => $formName,
+            'form_start_param' => [
+                'attr' => [
+                    'name' => $formName
+                ],
+                'method' => 'POST',
+                'action' => $request->getRequestUri(),
+            ],
             'webpath'   => $this->app['extensions']->get('Bolt/BoltForms')->getWebDirectory()->getPath(),
             'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug']),
         ];
