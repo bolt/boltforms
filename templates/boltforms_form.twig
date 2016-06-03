@@ -13,18 +13,16 @@
     <p class="boltform-error">[Debug] Notification debug mode enabled!</p>
 {% endif %}
 
-{% if error and app.request.get(formname) %}
-    <p class="boltform-error">{{ error }}</p>
+{% if errors and app.request.get(formname) %}
+    {% for error in errors %}
+        <p class="boltform-error">{{ error }}</p>
+    {% endfor %}
 {% endif %}
 
-{% if message and app.request.get(formname) %}
-    {% if messages %}
-        {% for message in messages %}
-            <p class="boltform-message">{{ message }}</p>
-        {% endfor %}
-    {% elseif message %}
+{% if messages and app.request.get(formname) %}
+    {% for message in messages %}
         <p class="boltform-message">{{ message }}</p>
-    {% endif %}
+    {% endfor %}
 {% endif %}
 
 {% if not sent %}
