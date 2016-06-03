@@ -1,6 +1,9 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Asset\Snippet\Snippet;
+use Bolt\Asset\Target;
+use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Silex\Application;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -37,6 +40,8 @@ class BoltForms
     private $config;
     /** @var array */
     private $forms;
+    /** @var boolean */
+    private $jsQueued;
 
     /**
      * Constructor.
@@ -116,24 +121,25 @@ class BoltForms
     /**
      * Render our form into HTML
      *
-     * @param string $formName   Name of the form
-     * @param string $template   A Twig template file name in Twig's path
-     * @param array  $twigValues Associative array of key/value pairs to pass to Twig's render of $template
+     * @param string $formName Name of the form
+     * @param string $template A Twig template file name in Twig's path
+     * @param array  $context  Associative array of key/value pairs to pass to Twig's render of $template
+     * @param bool   $loadAjax Load JavaScript for AJAX form handling
      *
      * @return \Twig_Markup
      */
-    public function renderForm($formName, $template = '', array $twigValues = [])
+    public function renderForm($formName, $template = '', array $context = [], $loadAjax = false)
     {
         if (empty($template)) {
             $template = $this->config['templates']['form'];
         }
 
         // Add the form object for use in the template
-        $context = ['form' => $this->getForm($formName)->createView()];
+        $context['form'] = $this->getForm($formName)->createView();
 
-        // Add out passed values to the array to be given to render()
-        foreach ($twigValues as $twigName => $data) {
-            $context[$twigName] = $data;
+        // Add JavaScript if doing the AJAX dance.
+        if ($loadAjax) {
+            $this->queueJavaScript($context);
         }
 
         // Pray and do the render
@@ -141,5 +147,30 @@ class BoltForms
 
         // Return the result
         return new \Twig_Markup($html, 'UTF-8');
+    }
+
+    /**
+     * Conditionally add form handling JavaScript to the end of the HTML body.
+     *
+     * @param array $context
+     */
+    private function queueJavaScript(array $context)
+    {
+        if ($this->jsQueued) {
+            return;
+        }
+
+        $snippet = new Snippet();
+        $snippet->setCallback(
+                function () use ($context) {
+                    return $this->app['twig']->render('_boltforms_js.twig', $context);
+                }
+            )
+            ->setLocation(Target::END_OF_BODY)
+            ->setZone(Zone::FRONTEND)
+        ;
+
+        $this->app['asset.queue.snippet']->add($snippet);
+        $this->jsQueued = true;
     }
 }
