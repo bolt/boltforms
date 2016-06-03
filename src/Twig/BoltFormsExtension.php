@@ -9,7 +9,6 @@ use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -67,6 +66,7 @@ class BoltFormsExtension
 
         /** @var BoltForms $boltForms */
         $boltForms = $this->app['boltforms'];
+        $session = $this->app['session'];
 
         $sent = false;
         $error = null;
@@ -80,7 +80,7 @@ class BoltFormsExtension
         // Add our fields all at once
         $boltForms->addFieldArray($formName, $fields->toArray());
 
-        $compiler = $this->app['session']->get('boltforms_compiler_' . $formName);
+        $compiler = $session->get('boltforms_compiler_' . $formName);
         if ($compiler === null) {
             $webPath = $this->app['extensions']->get('Bolt/BoltForms')->getWebDirectory()->getPath();
             $compiler = new FormContext($this->config, $this->app['boltforms.feedback'], $webPath);
@@ -103,8 +103,8 @@ class BoltFormsExtension
             }
         } elseif ($request->isMethod(Request::METHOD_GET)) {
             $sessionKey = sprintf('boltforms_submit_%s', $formName);
-            $sent = $this->app['session']->get($sessionKey);
-            $this->app['session']->remove($sessionKey);
+            $sent = $session->get($sessionKey);
+            $session->remove($sessionKey);
             // For BC on templates
             $request->attributes->set($formName, $formName);
         }
@@ -118,7 +118,7 @@ class BoltFormsExtension
             ->setReCaptchaResponse($reCaptchaResponse)
             ->setDefaults($defaults)
         ;
-        $this->app['session']->set('boltforms_compiler_' . $formName, $compiler);
+        $session->set('boltforms_compiler_' . $formName, $compiler);
 
         // If the form has it's own templates defined, use those, else the globals.
         $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
