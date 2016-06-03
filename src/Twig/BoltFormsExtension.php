@@ -80,6 +80,9 @@ class BoltFormsExtension
         // Add our fields all at once
         $boltForms->addFieldArray($formName, $fields);
 
+        $formConfig = $this->app['boltforms']->getFormConfig($formName);
+        $loadAjax = $formConfig->getSubmission()->getAjax();
+
         // Handle the POST
         $request = $this->app['request_stack']->getCurrentRequest();
         if ($request && $request->isMethod(Request::METHOD_POST) && $request->request->get($formName) !== null) {
@@ -102,8 +105,6 @@ class BoltFormsExtension
             // For BC on templates
             $request->attributes->set($formName, $formName);
         }
-
-        $formConfig = $this->app['boltforms']->getFormConfig($formName);
 
         // Stored messages
         $messages = $this->app['boltforms.feedback']->get('message', []);
@@ -134,7 +135,7 @@ class BoltFormsExtension
                     'name' => $formName
                 ],
                 'method' => 'POST',
-                'action' => $request->getRequestUri(),
+                'action' => $loadAjax ? $this->app['url_generator']->generate('boltFormsAsyncSubmit', ['form' => $formName]) : $request->getRequestUri(),
             ],
             'webpath'   => $this->app['extensions']->get('Bolt/BoltForms')->getWebDirectory()->getPath(),
             'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug']),
@@ -146,7 +147,7 @@ class BoltFormsExtension
             : $this->config['templates']['form'];
 
         // Render the Twig_Markup
-        return $boltForms->renderForm($formName, $template, $context);
+        return $boltForms->renderForm($formName, $template, $context, $loadAjax);
     }
 
     /**
