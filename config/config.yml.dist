@@ -75,6 +75,8 @@ debug:
 #
 # Contact Form
 contact:
+  submission:
+    ajax: false                   # Use AJAX for form submission and handling
   notification:
     enabled: true
     debug: false
@@ -138,6 +140,8 @@ contact:
 #
 # Example Showcase Form
 #showcase:
+#  submission:
+#    ajax: false                   # Use AJAX for form submission and handling
 #  notification:
 #    enabled: true
 #    debug: false

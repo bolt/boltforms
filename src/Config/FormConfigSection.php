@@ -23,6 +23,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  *
+ * @method boolean           getAjax()
  * @method boolean           getEnabled()
  * @method boolean           getDebug()
  * @method string            getSubject()
@@ -50,6 +51,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  * @method string            getSubdirectory()
  * @method FormConfigSection getOptions()
  * @method FormConfigSection getRedirect()
+ * @method FormConfigSection getSubmission()
  *
  * @property boolean attach_files
  * @property string  debug_address
@@ -75,7 +77,7 @@ class FormConfigSection implements \ArrayAccess
         if (isset($this->config[$name])) {
             return $this->config[$name];
         }
-        
+
         return null;
     }
 
@@ -84,7 +86,7 @@ class FormConfigSection implements \ArrayAccess
         if (isset($this->config[$name])) {
             return $this->config[$name];
         }
-        
+
         return null;
     }
 

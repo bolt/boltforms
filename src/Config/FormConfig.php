@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
 /**
  * Form configuration for BoltForms
  *
- * Copyright (C) 2014-2015 Gawain Lynch
+ * Copyright (C) 2014-2016 Gawain Lynch
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014, Gawain Lynch
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
 class FormConfig
@@ -33,6 +33,8 @@ class FormConfig
     protected $feedback;
     /** @var FormConfigSection */
     protected $fields;
+    /** @var FormConfigSection */
+    protected $submission;
     /** @var FormConfigSection */
     protected $notification;
     /** @var FormConfigSection */
@@ -54,6 +56,7 @@ class FormConfig
         $this->database     = new FormConfigSection($formConfig['database']);
         $this->feedback     = new FormConfigSection($formConfig['feedback']);
         $this->fields       = new FormConfigSection($formConfig['fields']);
+        $this->submission   = new FormConfigSection($formConfig['submission']);
         $this->notification = new FormConfigSection($formConfig['notification']);
         $this->templates    = new FormConfigSection($formConfig['templates']);
         $this->uploads      = new FormConfigSection($formConfig['uploads']);
@@ -100,6 +103,16 @@ class FormConfig
     }
 
     /**
+     * Get form submission configuration object.
+     *
+     * @return FormConfigSection
+     */
+    public function getSubmission()
+    {
+        return $this->submission;
+    }
+
+    /**
      * Get form notification configuration object.
      *
      * @return FormConfigSection
@@ -137,6 +150,9 @@ class FormConfig
     protected function getDefaults()
     {
         return [
+            'submission'   => [
+                'ajax' => false,
+            ],
             'notification' => [
                 'enabled'       => false,
                 'debug'         => false,
