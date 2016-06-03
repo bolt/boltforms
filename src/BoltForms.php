@@ -78,7 +78,7 @@ class BoltForms
 
     /**
      * Get the configuration object for a form.
-     * 
+     *
      * @param $formName
      *
      * @return FormConfig
