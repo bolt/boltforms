@@ -296,8 +296,12 @@ class Processor implements EventSubscriberInterface
     {
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
-        $redirect = new RedirectHandler($this->app['url_matcher']);
 
+        if ($formConfig->getSubmission()->getAjax()) {
+            return;
+        }
+
+        $redirect = new RedirectHandler($this->app['url_matcher']);
         if ($formConfig->getFeedback()->getRedirect()->getTarget() !== null) {
             $redirect->redirect($formConfig, $formData);
         }
