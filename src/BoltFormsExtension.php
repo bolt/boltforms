@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\SimpleExtension;
 use Silex\Application;
 
@@ -157,12 +158,7 @@ class BoltFormsExtension extends SimpleExtension
                 'base_uri'              => 'boltforms',
             ],
             'fieldmap' => [
-                'email' => [
-                    'config'  => 'config',
-                    'data'    => 'data',
-                    'fields'  => 'fields',
-                    'subject' => 'subject',
-                ],
+                'email' => new FieldMap\Email(),
             ],
         ];
     }

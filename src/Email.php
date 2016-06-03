@@ -1,8 +1,8 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Bolt;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
+use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
@@ -82,15 +82,16 @@ class Email
         // If the form has it's own templates defined, use those, else the globals.
         $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->config['templates']['subject'];
         $templateEmail = $formConfig->getTemplates()->getEmail() ?: $this->config['templates']['email'];
-        $fieldmap = $this->config['fieldmap']['email'];
+        /** @var FieldMap\Email $fieldMap */
+        $fieldMap = $this->config['fieldmap']['email'];
 
         /*
          * Subject
          */
         $html = $this->app['render']->render($templateSubject, [
-            $fieldmap['subject'] => $formConfig->getNotification()->getSubject(),
-            $fieldmap['config']  => $emailConfig,
-            $fieldmap['data']    => $formData,
+            $fieldMap->getSubject() => $formConfig->getNotification()->getSubject(),
+            $fieldMap->getConfig()  => $emailConfig,
+            $fieldMap->getData()    => $formData,
         ]);
 
         $subject = new \Twig_Markup($html, 'UTF-8');
@@ -99,9 +100,9 @@ class Email
          * Body
          */
         $html = $this->app['render']->render($templateEmail, [
-            $fieldmap['fields'] => $formConfig->getFields(),
-            $fieldmap['config'] => $emailConfig,
-            $fieldmap['data']   => $this->getBodyData($emailConfig, $formData),
+            $fieldMap->getFields() => $formConfig->getFields(),
+            $fieldMap->getConfig() => $emailConfig,
+            $fieldMap->getData()   => $this->getBodyData($emailConfig, $formData),
         ]);
 
         $body = new \Twig_Markup($html, 'UTF-8');
