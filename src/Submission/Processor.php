@@ -2,7 +2,6 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
 use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
-use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
@@ -90,7 +89,7 @@ class Processor implements EventSubscriberInterface
      * Process a form's POST request.
      *
      * @param string  $formName
-     * @param array   $formDefinition
+     * @param null    $formDefinition    @deprecated — To be removed in 4.0
      * @param array   $recaptchaResponse
      * @param boolean $returnData
      *
@@ -98,11 +97,11 @@ class Processor implements EventSubscriberInterface
      *
      * @return boolean|array
      */
-    public function process($formName, array $formDefinition, array $recaptchaResponse, $returnData = false)
+    public function process($formName, $formDefinition = null, array $recaptchaResponse, $returnData = false)
     {
         /** @var FormData $formData */
         $formData = $this->getRequestData($formName);
-        $formConfig = new FormConfig($formName, $formDefinition);
+        $formConfig = $this->app['boltforms']->getFormConfig($formName);
         $sent = $this->app['boltforms']->getForm($formName)->isSubmitted();
 
         if ($sent && $formData !== null && $recaptchaResponse['success']) {
@@ -276,13 +275,13 @@ class Processor implements EventSubscriberInterface
 
     /**
      * Set feedback notices.
-     * 
+     *
      * @param LifecycleEvent $lifeEvent
      */
     public function processFeedback(LifecycleEvent $lifeEvent)
     {
         $formConfig = $lifeEvent->getFormConfig();
-        
+
         $this->app['boltforms.feedback']->set('message', $formConfig->getFeedback()->getSuccess());
         $this->app['session']->set(sprintf('boltforms_submit_%s', $formConfig->getName()), true);
         $this->app['session']->save();

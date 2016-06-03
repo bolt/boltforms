@@ -4,6 +4,8 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt\Asset\Snippet\Snippet;
 use Bolt\Asset\Target;
 use Bolt\Controller\Zone;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
+use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Silex\Application;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -40,6 +42,8 @@ class BoltForms
     private $config;
     /** @var array */
     private $forms;
+    /** @var FormConfig[] */
+    private $formsConfig;
     /** @var boolean */
     private $jsQueued;
 
@@ -65,7 +69,33 @@ class BoltForms
      */
     public function getForm($formName)
     {
-        return $this->forms[$formName];
+        if (isset($this->forms[$formName])) {
+            return $this->forms[$formName];
+        }
+
+        throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
+    }
+
+    /**
+     * Get the configuration object for a form.
+     * 
+     * @param $formName
+     *
+     * @return FormConfig
+     */
+    public function getFormConfig($formName)
+    {
+        if (!isset($this->forms[$formName])) {
+            throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
+        }
+
+        if (isset($this->formsConfig[$formName])) {
+            return $this->formsConfig[$formName];
+        }
+
+        $this->formsConfig[$formName] = new FormConfig($formName, $this->config[$formName]);
+
+        return $this->formsConfig[$formName];
     }
 
     /**

@@ -87,7 +87,7 @@ class BoltFormsExtension
             $reCaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($request);
 
             try {
-                $sent = $this->app['boltforms.processor']->process($formName, $this->config[$formName], $reCaptchaResponse);
+                $sent = $this->app['boltforms.processor']->process($formName, null, $reCaptchaResponse);
             } catch (FileUploadException $e) {
                 $error = $e->getMessage();
                 $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, ['event' => 'extensions']);
@@ -102,6 +102,8 @@ class BoltFormsExtension
             // For BC on templates
             $request->attributes->set($formName, $formName);
         }
+
+        $formConfig = $this->app['boltforms']->getFormConfig($formName);
 
         // Stored messages
         $messages = $this->app['boltforms.feedback']->get('message', []);
