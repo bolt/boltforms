@@ -6,6 +6,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Helpers\Arr;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RedirectableUrlMatcher;
 
@@ -64,6 +65,18 @@ class RedirectHandler
     }
 
     /**
+     * Refresh the current page.
+     * 
+     * @param Request $request
+     */
+    public function refresh(Request $request)
+    {
+        $response = new RedirectResponse($request->getRequestUri());
+
+        $response->send();
+    }
+
+    /**
      * Check if the redirect is valid.
      *
      * @return boolean
@@ -118,11 +131,11 @@ class RedirectHandler
      */
     protected function getRedirectResponse(FormConfigSection $redirect, $query)
     {
-        if (strpos($redirect['target'], 'http') === 0) {
-            return new RedirectResponse($redirect['target'] . $query);
+        if (strpos($redirect->getTarget(), 'http') === 0) {
+            return new RedirectResponse($redirect->getTarget() . $query);
         } else {
             try {
-                $url = '/' . ltrim($redirect['target'], '/');
+                $url = '/' . ltrim($redirect->getTarget(), '/');
                 $this->urlMatcher->match($url);
 
                 return new RedirectResponse($url . $query);
