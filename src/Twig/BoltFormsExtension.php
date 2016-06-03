@@ -67,7 +67,6 @@ class BoltFormsExtension
         /** @var BoltForms $boltForms */
         $boltForms = $this->app['boltforms'];
         $sent = false;
-        $message = '';
         $error = '';
         $reCaptchaResponse = [
             'success'    => true,
@@ -83,13 +82,12 @@ class BoltFormsExtension
 
         // Handle the POST
         $request = $this->app['request_stack']->getCurrentRequest();
-        if ($request && $request->isMethod(Request::METHOD_POST) && $request->get($formName) !== null) {
+        if ($request && $request->isMethod(Request::METHOD_POST) && $request->request->get($formName) !== null) {
             // Check reCaptcha, if enabled.
             $reCaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($request);
 
             try {
                 $sent = $this->app['boltforms.processor']->process($formName, $this->config[$formName], $reCaptchaResponse);
-                $message = isset($this->config[$formName]['feedback']['success']) ? $this->config[$formName]['feedback']['success'] : 'Form submitted successfully';
             } catch (FileUploadException $e) {
                 $error = $e->getMessage();
                 $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, ['event' => 'extensions']);
@@ -97,7 +95,16 @@ class BoltFormsExtension
                 $error = $e->getMessage();
                 $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $error, ['event' => 'extensions']);
             }
+        } elseif ($request->isMethod(Request::METHOD_GET)) {
+            $sessionKey = sprintf('boltforms_submit_%s', $formName);
+            $sent = $this->app['session']->get($sessionKey);
+            $this->app['session']->remove($sessionKey);
+            // For BC on templates
+            $request->attributes->set($formName, $formName);
         }
+
+        // Stored messages
+        $messages = $this->app['boltforms.feedback']->get('message', []);
 
         /** @var Form[] $fields Values to be passed to Twig */
         $fields = $boltForms->getForm($formName)->all();
@@ -107,7 +114,8 @@ class BoltFormsExtension
             'html_pre'  => $htmlPreSubmit,
             'html_post' => $htmlPostSubmit,
             'error'     => $error,
-            'message'   => $message,
+            'message'   => !empty($messages) ? $messages[0] : null,
+            'messages'  => $messages,
             'sent'      => $sent,
             'recaptcha' => [
                 'enabled'       => $this->config['recaptcha']['enabled'],

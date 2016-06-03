@@ -18,7 +18,13 @@
 {% endif %}
 
 {% if message and app.request.get(formname) %}
-    <p class="boltform-message">{{ message }}</p>
+    {% if messages %}
+        {% for message in messages %}
+            <p class="boltform-message">{{ message }}</p>
+        {% endfor %}
+    {% elseif message %}
+        <p class="boltform-message">{{ message }}</p>
+    {% endif %}
 {% endif %}
 
 {% if not sent %}

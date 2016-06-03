@@ -45,6 +45,7 @@ final class BoltFormsEvents
     const SUBMISSION_PROCESS_FIELDS = 'boltforms.submission_process_fields';
     const SUBMISSION_PROCESS_DATABASE = 'boltforms.submission_process_database';
     const SUBMISSION_PROCESS_EMAIL = 'boltforms.submission_process_email';
+    const SUBMISSION_PROCESS_FEEDBACK = 'boltforms.submission_process_feedback';
     const SUBMISSION_PROCESS_REDIRECT = 'boltforms.submission_process_redirect';
 
     /*

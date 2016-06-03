@@ -81,6 +81,7 @@ class Processor implements EventSubscriberInterface
             BoltFormsEvents::SUBMISSION_PROCESS_FIELDS   => ['processFields', 0],
             BoltFormsEvents::SUBMISSION_PROCESS_DATABASE => ['processDatabase', 0],
             BoltFormsEvents::SUBMISSION_PROCESS_EMAIL    => ['processEmailNotification', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK => ['processFeedback', 0],
             BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT => ['processRedirect', 0],
         ];
     }
@@ -117,6 +118,9 @@ class Processor implements EventSubscriberInterface
             // Post processing event
             $processorEvent = new BoltFormsProcessorEvent($formName, $formData->all());
             $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
+
+            // Feedback notices
+            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK, $lifeEvent);
 
             // Redirect if a redirect is set and the page exists.
             $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT, $lifeEvent);
@@ -271,6 +275,20 @@ class Processor implements EventSubscriberInterface
     }
 
     /**
+     * Set feedback notices.
+     * 
+     * @param LifecycleEvent $lifeEvent
+     */
+    public function processFeedback(LifecycleEvent $lifeEvent)
+    {
+        $formConfig = $lifeEvent->getFormConfig();
+        
+        $this->app['boltforms.feedback']->set('message', $formConfig->getFeedback()->getSuccess());
+        $this->app['session']->set(sprintf('boltforms_submit_%s', $formConfig->getName()), true);
+        $this->app['session']->save();
+    }
+
+    /**
      * Redirect if a redirect is set and the page exists.
      *
      * @param LifecycleEvent $lifeEvent
@@ -279,11 +297,14 @@ class Processor implements EventSubscriberInterface
     {
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
+        $redirect = new RedirectHandler($this->app['url_matcher']);
 
         if ($formConfig->getFeedback()->getRedirect()->getTarget() !== null) {
-            $redirect = new RedirectHandler($this->app['url_matcher']);
             $redirect->redirect($formConfig, $formData);
         }
+
+        $request = $this->app['request_stack']->getCurrentRequest();
+        $redirect->refresh($request);
     }
 
     /**
