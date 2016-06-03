@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Silex\Application;
@@ -93,7 +94,6 @@ class Email
             $fieldMap->getConfig()  => $emailConfig,
             $fieldMap->getData()    => $formData,
         ]);
-
         $subject = new \Twig_Markup($html, 'UTF-8');
 
         /*
@@ -102,46 +102,53 @@ class Email
         $html = $this->app['render']->render($templateEmail, [
             $fieldMap->getFields() => $formConfig->getFields(),
             $fieldMap->getConfig() => $emailConfig,
-            $fieldMap->getData()   => $this->getBodyData($emailConfig, $formData),
+            $fieldMap->getData()   => $this->getBodyData($formConfig, $emailConfig, $formData),
         ]);
-
         $body = new \Twig_Markup($html, 'UTF-8');
 
-        $text = preg_replace('/<style\\b[^>]*>(.*?)<\\/style>/s', '', $body);
+        $text = strip_tags(preg_replace('/<style\\b[^>]*>(.*?)<\\/style>/s', '', $body));
 
         /*
          * Build email
          */
         $this->message
                 ->setSubject($subject)
-                ->setBody(strip_tags($text))
+                ->setBody($text)
                 ->addPart($body, 'text/html');
     }
 
     /**
      * Get the data suitable for using in TWig.
      *
+     * @param FormConfig  $formConfig
      * @param EmailConfig $emailConfig
      * @param FormData    $formData
      *
      * @return array
      */
-    private function getBodyData(EmailConfig $emailConfig, FormData $formData)
+    private function getBodyData(FormConfig $formConfig, EmailConfig $emailConfig, FormData $formData)
     {
-        $bodydata = [];
-        foreach ($formData->keys() as $key) {
+        $bodyData = [];
+        foreach ($formData->keys() as $key => $value) {
+            /** @var FormConfigSection $config */
+            $config = $formConfig->getFields()->{$value}();
+            $formValue = $formData->get($value);
+
             if ($formData->get($key) instanceof FileUpload) {
                 if ($formData->get($key)->isValid() && $emailConfig->attachFiles()) {
                     $attachment = \Swift_Attachment::fromPath($formData->get($key)->fullPath())
                             ->setFilename($formData->get($key)->getFile()->getClientOriginalName());
                     $this->message->attach($attachment);
                 }
+            } elseif ($config->getType() === 'choice') {
+                $choices = $config->getOptions()->getChoices();
+                $bodyData[$value] = isset($choices[$formValue]) ? $choices[$formValue] : $formValue;
             } else {
-                $bodydata[$key] = $formData->get($key, true);
+                $bodyData[$value] = $formData->get($value, true);
             }
         }
 
-        return $bodydata;
+        return $bodyData;
     }
 
     /**

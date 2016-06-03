@@ -40,13 +40,16 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  * @method string            getSuccess()
  * @method string            getError()
  * @method string            getQuery()
- * @method FormConfigSection getRedirect()
+ * @method string            getChoices()
  * @method string            getTable()
  * @method string            getTarget()
+ * @method string            getType()
  * @method string            getContentType()
  * @method string            getForm()
  * @method string            getEmail()
  * @method string            getSubdirectory()
+ * @method FormConfigSection getOptions()
+ * @method FormConfigSection getRedirect()
  *
  * @property boolean attach_files
  * @property string  debug_address
