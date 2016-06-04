@@ -8,6 +8,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 /**
  * Email functions for BoltForms
@@ -43,6 +44,7 @@ class Email
     public function __construct(Application $app)
     {
         $this->app = $app;
+        /** @var BoltFormsExtension $extension */
         $extension = $app['extensions']->get('Bolt/BoltForms');
         $this->config = $extension->getConfig();
     }
@@ -63,6 +65,26 @@ class Email
         $this->emailCompose($formConfig, $emailConfig, $formData);
         $this->emailAddress($emailConfig);
         $this->emailSend($emailConfig);
+
+        // @TODO
+        //$this-> doDebugLogging();
+    }
+
+    /**
+     * @TODO
+     */
+    private function doDebugLogging()
+    {
+        /** @var FlashBag $feedBack */
+        $feedBack = $this->app['boltforms.feedback'];
+
+        $from = trim($this->message->getHeaders()->get('from'));
+        $to = trim($this->message->getHeaders()->get('to'));
+        $cc = trim($this->message->getHeaders()->get('cc'));
+        $bcc = trim($this->message->getHeaders()->get('bcc'));
+        $replyTo = trim($this->message->getHeaders()->get('reply-to'));
+        $subject = trim($this->message->getHeaders()->get('subject'));
+        $body = $this->message->getBody();
     }
 
     /**
