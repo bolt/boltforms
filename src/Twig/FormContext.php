@@ -50,8 +50,6 @@ class FormContext
     /** @var bool */
     protected $sent = false;
     /** @var array */
-    protected $errors;
-    /** @var array */
     protected  $reCaptchaResponse;
 
     /**
@@ -76,8 +74,6 @@ class FormContext
     public function build(BoltForms $boltForms, $formName, FlashBag $feedBack)
     {
         $formConfig = $boltForms->getFormConfig($formName);
-        // Stored messages
-        $messages = $feedBack->get('message', []);
         // reCaptcha configuration
         $reCaptchaConfig = $this->config->getReCaptcha();
 
@@ -89,9 +85,12 @@ class FormContext
             'html_pre'  => $this->htmlPreSubmit,
             'html_post' => $this->htmlPostSubmit,
             'error'     => !empty($this->errors) ? $this->errors[0] : null, // @deprecated
-            'errors'    => $this->errors,
             'message'   => !empty($messages) ? $messages[0] : null,         // @deprecated
-            'messages'  => $messages,
+            'messages'  => [
+                'message' => $feedBack->get('message', []),
+                'error'   => $feedBack->get('error', []),
+                'debug'   => $feedBack->get('debug', []),
+            ],
             'sent'      => $this->sent,
             'recaptcha' => [
                 'enabled'       => $reCaptchaConfig->get('enabled'),
@@ -173,30 +172,6 @@ class FormContext
     public function setSent($sent)
     {
         $this->sent = $sent;
-
-        return $this;
-    }
-
-    /**
-     * @param string $error
-     *
-     * @return FormContext
-     */
-    public function setError($error)
-    {
-        $this->errors[] = $error;
-
-        return $this;
-    }
-
-    /**
-     * @param array $errors
-     *
-     * @return FormContext
-     */
-    public function setErrors(array $errors)
-    {
-        $this->errors = $errors;
 
         return $this;
     }

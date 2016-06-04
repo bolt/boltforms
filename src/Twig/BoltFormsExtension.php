@@ -97,7 +97,6 @@ class BoltFormsExtension
                 $this->app['boltforms.feedback']->add('debug', $e->getMessage());
                 $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $e->getMessage(), ['event' => 'extensions']);
             } catch (FormValidationException $e) {
-                $error = $e->getMessage();
                 $this->app['boltforms.feedback']->add('debug', $e->getMessage());
                 $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
             }
@@ -114,7 +113,6 @@ class BoltFormsExtension
             ->setHtmlPreSubmit($htmlPreSubmit)
             ->setHtmlPostSubmit($htmlPostSubmit)
             ->setSent($sent)
-            ->setErrors([$error])
             ->setReCaptchaResponse($reCaptchaResponse)
             ->setDefaults($defaults)
         ;

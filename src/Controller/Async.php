@@ -85,7 +85,6 @@ class Async implements ControllerProviderInterface
         }
 
         $sent = false;
-        $error = null;
 
         /** @var BoltForms $boltForms */
         $boltForms = $app['boltforms'];
@@ -104,15 +103,11 @@ class Async implements ControllerProviderInterface
             $app['boltforms.feedback']->add('debug', $e->getMessage());
             $app['logger.system']->debug('[BoltForms] File upload exception: ' . $e->getMessage(), ['event' => 'extensions']);
         } catch (FormValidationException $e) {
-            $error = $e->getMessage();
             $app['boltforms.feedback']->add('debug', $e->getMessage());
             $app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
         }
 
-        $compiler
-            ->setSent($sent)
-            ->setErrors([$error])
-        ;
+        $compiler->setSent($sent);
         $context = $compiler->build($boltForms, $formName, $app['boltforms.feedback']);
         $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
 
