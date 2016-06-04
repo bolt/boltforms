@@ -35,14 +35,12 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class UploadedFileHandler
 {
-    /** @var Application */
-    private $app;
+    /** @var Config */
+    private $config;
     /** @var FormConfig */
     private $formConfig;
     /** @var \Symfony\Component\HttpFoundation\File\UploadedFile */
     private $file;
-    /** @var Config */
-    private $config;
     /** @var string */
     private $fileName;
     /** @var string */
@@ -57,19 +55,19 @@ class UploadedFileHandler
     /**
      * Constructor.
      *
-     * @param Application  $app
+     * @param Config       $config
      * @param FormConfig   $formConfig
      * @param UploadedFile $file
      */
-    public function __construct(Application $app, FormConfig $formConfig, UploadedFile $file)
+    public function __construct(Config $config, FormConfig $formConfig, UploadedFile $file)
     {
-        $this->app = $app;
+        $this->config = $config;
         $this->formConfig = $formConfig;
         $this->file = $file;
+
         $this->fullPath = (string) $file;
         $this->fileName = basename($this->fullPath);
         $this->valid = $file->isValid();
-        $this->config = $app['boltforms.config'];
     }
 
     public function __toString()
@@ -143,7 +141,7 @@ class UploadedFileHandler
 
         $this->file->move($targetDir, $targetFile);
         $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
-        
+
         return true;
     }
 
@@ -235,7 +233,7 @@ class UploadedFileHandler
             $i++;
         }
 
-        $this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
+        //$this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
         $this->final = true;
 
         return $this->fileName = $fileName;

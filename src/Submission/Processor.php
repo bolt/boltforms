@@ -246,7 +246,7 @@ class Processor implements EventSubscriberInterface
 
         // Get the upload object
         /** @var UploadedFileHandler $fileHandler */
-        $fileHandler = new UploadedFileHandler($this->app, $formConfig, $field);
+        $fileHandler = new UploadedFileHandler($this->app['boltforms.config'], $formConfig, $field);
         $formData->set($fieldName, $fileHandler);
 
         if (!$this->config['uploads']['enabled']) {
