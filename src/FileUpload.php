@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Extension\Bolt\BoltForms\Config\Config;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Silex\Application;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -35,11 +37,11 @@ class FileUpload
 {
     /** @var Application */
     private $app;
-    /** @var string */
-    private $formName;
+    /** @var FormConfig */
+    private $formConfig;
     /** @var \Symfony\Component\HttpFoundation\File\UploadedFile */
     private $file;
-    /** @var array */
+    /** @var Config */
     private $config;
     /** @var string */
     private $fileName;
@@ -56,20 +58,18 @@ class FileUpload
      * Constructor.
      *
      * @param Application  $app
-     * @param string       $formName
+     * @param FormConfig   $formConfig
      * @param UploadedFile $file
      */
-    public function __construct(Application $app, $formName, UploadedFile $file)
+    public function __construct(Application $app, FormConfig $formConfig, UploadedFile $file)
     {
         $this->app = $app;
-        $this->formName = $formName;
+        $this->formConfig = $formConfig;
         $this->file = $file;
         $this->fullPath = (string) $file;
         $this->fileName = basename($this->fullPath);
         $this->valid = $file->isValid();
-        /** @var BoltFormsExtension $extension */
-        $extension = $app['extensions']->get('Bolt/BoltForms');
-        $this->config = $extension->getConfig();
+        $this->config = $app['boltforms.config'];
     }
 
     public function __toString()
@@ -114,11 +114,11 @@ class FileUpload
      */
     public function relativePath()
     {
-        if (!$this->config['uploads']['enabled']) {
+        if (!$this->config->getUploads()->get('enabled')) {
             throw new \RuntimeException('The relative path is not valid when uploads are disabled!');
         }
 
-        $realUploadPath = realpath($this->config['uploads']['base_directory']);
+        $realUploadPath = realpath($this->config->getUploads()->get('base_directory'));
         if (strpos($this->fullPath, $realUploadPath) !== 0) {
             throw new \RuntimeException('The relative path is not valid before the file is moved!');
         }
@@ -171,7 +171,7 @@ class FileUpload
             try {
                 $fs->mkdir($dir);
             } catch (IOException $e) {
-                $error = 'File upload aborted as the target directory could not be created.';
+                $error = 'File upload aborted as the target directory could not be created: ' . $e->getMessage();
                 $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $dir, ['event' => 'extensions']);
                 throw new FileUploadException($error);
             }
@@ -197,10 +197,11 @@ class FileUpload
             return $this->baseDirName;
         }
 
-        $realUploadPath = realpath($this->config['uploads']['base_directory']);
+        $realUploadPath = realpath($this->config->getUploads()->get('base_directory'));
 
-        if (isset($this->config[$this->formName]['uploads']['subdirectory'])) {
-            return $this->baseDirName = $realUploadPath . DIRECTORY_SEPARATOR . $this->config[$this->formName]['uploads']['subdirectory'];
+        $subDir = $this->formConfig->getUploads()->getSubdirectory();
+        if ($subDir !== null) {
+            return $this->baseDirName = $realUploadPath . DIRECTORY_SEPARATOR . $subDir;
         }
 
         return $this->baseDirName = $realUploadPath;
@@ -252,15 +253,15 @@ class FileUpload
      */
     protected function getTargetFileNamePattern()
     {
-        if ($this->config['uploads']['filename_handling'] === 'keep') {
+        if ($this->config->getUploads()->get('filename_handling') === 'keep') {
             return '%s.%s';
         }
 
         $key = $this->app['randomgenerator']->generateString(12, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890');
-        if ($this->config['uploads']['filename_handling'] === 'prefix') {
+        if ($this->config->getUploads()->get('filename_handling') === 'prefix') {
             return "%s.$key.%s";
-        } else {
-            return "%s.%s.$key";
         }
+
+        return "%s.%s.$key";
     }
 }
