@@ -141,15 +141,9 @@ class UploadedFileHandler
         $targetDir = $this->getTargetFileDirectory();
         $targetFile = $this->getTargetFileName();
 
-        try {
-            $this->file->move($targetDir, $targetFile);
-            $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
-            $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', ['event' => 'extensions']);
-        } catch (FileException $e) {
-            $error = 'File upload aborted as the target directory could not be writen to.';
-            $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $targetDir, ['event' => 'extensions']);
-            throw new FileUploadException('File upload aborted as the target directory could not be writen to.');
-        }
+        $this->file->move($targetDir, $targetFile);
+        $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
+        $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', ['event' => 'extensions']);
 
         return true;
     }
@@ -172,15 +166,17 @@ class UploadedFileHandler
                 $fs->mkdir($dir);
             } catch (IOException $e) {
                 $error = 'File upload aborted as the target directory could not be created: ' . $e->getMessage();
-                $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $dir, ['event' => 'extensions']);
-                throw new FileUploadException($error);
+                $systemMessage = sprintf('[BoltForms] %s Check permissions on %s', $error, $dir);
+                
+                throw new FileUploadException($error, $systemMessage);
             }
         }
 
         if (!is_writeable($dir)) {
             $error = 'File upload aborted as the target directory is not writable.';
-            $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $dir, ['event' => 'extensions']);
-            throw new FileUploadException($error);
+            $systemMessage = sprintf('[BoltForms] %s Check permissions on %s', $error, $dir);
+            
+            throw new FileUploadException($error, $systemMessage);
         }
 
         $this->baseDirName = realpath($dir);

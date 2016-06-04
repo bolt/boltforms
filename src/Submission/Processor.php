@@ -14,6 +14,7 @@ use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -216,23 +217,7 @@ class Processor implements EventSubscriberInterface
 
             // Handle file uploads
             if ($field instanceof UploadedFile) {
-                if (!$field->isValid()) {
-                    throw new FileUploadException($field->getErrorMessage());
-                }
-
-                // Get the upload object
-                /** @var UploadedFileHandler $fileHandler */
-                $fileHandler = new UploadedFileHandler($this->app, $formConfig, $field);
-                $formData->set($fieldName, $fileHandler);
-
-                if (!$this->config['uploads']['enabled']) {
-                    $message = '[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.';
-                    $this->app['boltforms.feedback']->add('debug', $message);
-                    $this->app['logger.system']->debug($message, ['event' => 'extensions']);
-                    continue;
-                }
-
-                $fileHandler->move();
+                $this->processFieldFile($fieldName, $lifeEvent, $field);
             }
 
             // Handle events for custom data
@@ -240,6 +225,46 @@ class Processor implements EventSubscriberInterface
             if (isset($fieldConf['event']['name'])) {
                 $formData->set($fieldName, $this->dispatchCustomDataEvent($fieldConf['event']));
             }
+        }
+    }
+
+    /**
+     * @param string         $fieldName
+     * @param LifecycleEvent $lifeEvent
+     * @param UploadedFile   $field
+     *
+     * @throws FileUploadException
+     */
+    protected function processFieldFile($fieldName, LifecycleEvent $lifeEvent, UploadedFile $field)
+    {
+        if (!$field->isValid()) {
+            throw new FileUploadException($field->getErrorMessage(), $field->getErrorMessage());
+        }
+
+        $formConfig = $lifeEvent->getFormConfig();
+        $formData = $lifeEvent->getFormData();
+
+        // Get the upload object
+        /** @var UploadedFileHandler $fileHandler */
+        $fileHandler = new UploadedFileHandler($this->app, $formConfig, $field);
+        $formData->set($fieldName, $fileHandler);
+
+        if (!$this->config['uploads']['enabled']) {
+            $message = '[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.';
+            $this->app['boltforms.feedback']->add('debug', $message);
+            $this->app['logger.system']->debug($message, ['event' => 'extensions']);
+
+            return;
+        }
+
+        try {
+            $fileHandler->move();
+        } catch (FileException $e) {
+            $this->app['boltforms.feedback']->add('debug', $e->getMessage());
+            $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
+        } catch (FileUploadException $e) {
+            $this->app['boltforms.feedback']->add('debug', $e->getMessage());
+            $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
         }
     }
 
