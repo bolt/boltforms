@@ -36,8 +36,6 @@ class FormContext
 {
     /** @var Config */
     protected $config;
-    /** @var FlashBag */
-    protected $feedBack;
     /** @var string */
     protected $webPath;
 
@@ -60,27 +58,26 @@ class FormContext
      * Constructor.
      *
      * @param Config                $config
-     * @param FlashBag              $feedBack
      * @param string                $webPath
      */
-    public function __construct(Config $config, FlashBag $feedBack, $webPath)
+    public function __construct(Config $config, $webPath)
     {
         $this->config = $config;
-        $this->feedBack = $feedBack;
         $this->webPath = $webPath;
     }
 
     /**
      * @param BoltForms $boltForms
      * @param string    $formName
+     * @param FlashBag  $feedBack
      *
      * @return array
      */
-    public function build(BoltForms $boltForms, $formName)
+    public function build(BoltForms $boltForms, $formName, FlashBag $feedBack)
     {
         $formConfig = $boltForms->getFormConfig($formName);
         // Stored messages
-        $messages = $this->feedBack->get('message', []);
+        $messages = $feedBack->get('message', []);
         // reCaptcha configuration
         $reCaptchaConfig = $this->config->getReCaptcha();
 

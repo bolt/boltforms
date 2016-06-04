@@ -80,6 +80,7 @@ class BoltFormsExtension
         // Add our fields all at once
         $boltForms->addFieldArray($formName, $fields->toArray());
 
+        /** @var FormContext $compiler */
         $compiler = $session->get('boltforms_compiler_' . $formName);
         if ($compiler === null) {
             $compiler = $this->app['boltforms.form.context.factory']();
@@ -103,7 +104,7 @@ class BoltFormsExtension
         } elseif ($request->isMethod(Request::METHOD_GET)) {
             $sessionKey = sprintf('boltforms_submit_%s', $formName);
             $sent = $session->get($sessionKey);
-            
+
             // For BC on templates
             $request->attributes->set($formName, $formName);
         }
@@ -121,7 +122,7 @@ class BoltFormsExtension
 
         // If the form has it's own templates defined, use those, else the globals.
         $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
-        $context = $compiler->build($boltForms, $formName);
+        $context = $compiler->build($boltForms, $formName, $this->app['boltforms.feedback']);
 
         // Render the Twig_Markup
         return $boltForms->renderForm($formName, $template, $context, $loadAjax);

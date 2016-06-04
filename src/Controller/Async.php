@@ -112,7 +112,7 @@ class Async implements ControllerProviderInterface
             ->setSent($sent)
             ->setErrors([$error])
         ;
-        $context = $compiler->build($boltForms, $formName);
+        $context = $compiler->build($boltForms, $formName, $app['boltforms.feedback']);
         $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
 
         // Render the Twig_Markup

@@ -57,7 +57,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         $app['boltforms.form.context.factory'] = $app->protect(
             function () use ($app) {
                 $webPath = $app['extensions']->get('Bolt/BoltForms')->getWebDirectory()->getPath();
-                $compiler = new Twig\FormContext($app['boltforms.config'], $app['boltforms.feedback'], $webPath);
+                $compiler = new Twig\FormContext($app['boltforms.config'], $webPath);
 
                 return $compiler;
             }
