@@ -394,7 +394,7 @@ class EmailConfig implements \ArrayAccess
     public function offsetUnset($offset)
     {
         $offset = $this->toPsr2CamelCase($offset);
-        unset ($this->{$offset});
+        unset($this->{$offset});
     }
 
     public function offsetGet($offset)

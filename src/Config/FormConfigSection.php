@@ -75,12 +75,13 @@ class FormConfigSection implements \ArrayAccess
     {
         $config = [];
         foreach ($this->config as $key => $value) {
-            if ($value instanceof FormConfigSection) {
+            if ($value instanceof self) {
                 $config[$key] = $value->toArray();
             } else {
                 $config[$key] = $value;
             }
         }
+
         return $config;
     }
 

@@ -59,7 +59,7 @@ class BoltFormsExtension extends SimpleExtension
     {
         $app = $this->getContainer();
         $controllers = [
-            '/async/boltforms' => new Controller\Async($app['boltforms.config'])
+            '/async/boltforms' => new Controller\Async($app['boltforms.config']),
         ];
         
         if ($this->getConfig()['uploads']['management_controller']) {

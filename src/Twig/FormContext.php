@@ -4,11 +4,8 @@ namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
-use Silex\Application;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Form context compiler.
@@ -50,13 +47,13 @@ class FormContext
     /** @var bool */
     protected $sent = false;
     /** @var array */
-    protected  $reCaptchaResponse;
+    protected $reCaptchaResponse;
 
     /**
      * Constructor.
      *
-     * @param Config                $config
-     * @param string                $webPath
+     * @param Config $config
+     * @param string $webPath
      */
     public function __construct(Config $config, $webPath)
     {
@@ -105,10 +102,10 @@ class FormContext
                 'error_codes'   => $this->reCaptchaResponse ? $this->reCaptchaResponse['errorCodes'] : null,
                 'valid'         => $this->reCaptchaResponse ? $this->reCaptchaResponse['success'] : null,
             ],
-            'formname'  => $formName,
+            'formname'         => $formName,
             'form_start_param' => [
                 'attr' => [
-                    'name' => $formName
+                    'name' => $formName,
                 ],
                 'method' => 'POST',
                 'action' => $this->action,
