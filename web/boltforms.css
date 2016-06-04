@@ -4,38 +4,35 @@
     font-weight: bold;
 }
 
-p.boltform-error {
+p.boltform-debug, p.boltform-error, li.boltform-error, p.boltform-info, p.boltform-message {
     padding: 8px 35px 8px 14px;
     margin-bottom: 20px;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-    border: 1px solid #EED3D7;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+}
+
+p.boltform-debug {
+    border: 1px solid #EED3D7;
+    color: #B94A48;
+    background-color: #F2DEDE;
+}
+
+p.boltform-error {
+    border: 1px solid #EED3D7;
     color: #B94A48;
     background-color: #F2DEDE;
 }
 
 li.boltform-error {
-    padding: 8px 35px 8px 14px;
-    margin-bottom: 20px;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
     border: 1px solid #EED3D7;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
     color: #B94A48;
     background-color: #F2DEDE;
 }
 
 p.boltform-message {
-    padding: 8px 35px 8px 14px;
-    margin-bottom: 20px;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
     border: 1px solid #D6E9C6;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
     color: #468847;
     background-color: #DFF0D8;
 }

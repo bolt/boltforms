@@ -10,11 +10,11 @@
 
 <div class="boltform">
 {% if debug %}
-    <p class="boltform-error">[Debug] Notification debug mode enabled!</p>
+    <p class="boltform-debug">[Debug] Notification debug mode enabled!</p>
 
     {% if messages.debug and app.request.get(formname) %}
         {% for debug in messages.debug %}
-            <p class="boltform-error">[Debug] {{ debug }}</p>
+            <p class="boltform-debug">[Debug] {{ debug }}</p>
         {% endfor %}
     {% endif %}
 {% endif %}
@@ -27,7 +27,7 @@
 
 {% if messages.info and app.request.get(formname) %}
     {% for info in messages.info %}
-        <p class="boltform-message">{{ info }}</p>
+        <p class="boltform-info boltform-message">{{ info }}</p>
     {% endfor %}
 {% endif %}
 
@@ -50,6 +50,7 @@
 
         {% for key, value in fields  %}
             {% if value.config.type.name != 'submit' %}
+
             <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
                 <span class="boltforms-label">{{ form_label(form[key]) }}</span>
                 <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
