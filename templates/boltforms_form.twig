@@ -41,7 +41,11 @@
             <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
                 <span class="boltforms-label">{{ form_label(form[key]) }}</span>
                 <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
-                <span class="boltforms-value">{{ form_widget(form[key], {'value': defaults[key]|default()}) }}</span>
+                {% set value = {} %}
+                {% if defaults[key]|default() %}
+                    {% set value = { 'value': defaults[key]|default() } %}
+                {% endif %}
+                <span class="boltforms-value">{{ form_widget(form[key], value) }}</span>
             </div>
             {% endif %}
         {% endfor %}
