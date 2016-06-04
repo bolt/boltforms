@@ -94,10 +94,10 @@ class BoltFormsExtension
             try {
                 $sent = $this->app['boltforms.processor']->process($formName, null, $reCaptchaResponse);
             } catch (FileUploadException $e) {
-                $this->app['boltforms.feedback']->add('debug', $e->getMessage());
+                $this->app['boltforms.feedback']->add('error', $e->getMessage());
                 $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $e->getMessage(), ['event' => 'extensions']);
             } catch (FormValidationException $e) {
-                $this->app['boltforms.feedback']->add('debug', $e->getMessage());
+                $this->app['boltforms.feedback']->add('error', $e->getMessage());
                 $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
             }
         } elseif ($request->isMethod(Request::METHOD_GET)) {
