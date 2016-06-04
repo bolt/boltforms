@@ -285,7 +285,7 @@ class Processor implements EventSubscriberInterface
     {
         $formConfig = $lifeEvent->getFormConfig();
 
-        $this->app['boltforms.feedback']->set('message', $formConfig->getFeedback()->getSuccess());
+        $this->app['boltforms.feedback']->add('message', $formConfig->getFeedback()->getSuccess());
         $this->app['session']->set(sprintf('boltforms_submit_%s', $formConfig->getName()), true);
         $this->app['session']->save();
     }
