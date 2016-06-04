@@ -11,10 +11,16 @@
 <div class="boltform">
 {% if debug %}
     <p class="boltform-error">[Debug] Notification debug mode enabled!</p>
+
+    {% if messages.debug and app.request.get(formname) %}
+        {% for debug in messages.debug %}
+            <p class="boltform-error">[Debug] {{ debug }}</p>
+        {% endfor %}
+    {% endif %}
 {% endif %}
 
-{% if messages.errors and app.request.get(formname) %}
-    {% for error in messages.errors %}
+{% if messages.error and app.request.get(formname) %}
+    {% for error in messages.error %}
         <p class="boltform-error">{{ error }}</p>
     {% endfor %}
 {% endif %}
