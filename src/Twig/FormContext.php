@@ -77,6 +77,10 @@ class FormContext
         // reCaptcha configuration
         $reCaptchaConfig = $this->config->getReCaptcha();
 
+        $messages = $feedBack->get('message', []);
+        $errors = $feedBack->get('error', []);
+        $debugs = $feedBack->get('debug', []);
+
         /** @var Form[] $fields Values to be passed to Twig */
         $fields = $boltForms->getForm($formName)->all();
         $context = [
@@ -84,12 +88,12 @@ class FormContext
             'defaults'  => $this->defaults,
             'html_pre'  => $this->htmlPreSubmit,
             'html_post' => $this->htmlPostSubmit,
-            'error'     => !empty($this->errors) ? $this->errors[0] : null, // @deprecated
-            'message'   => !empty($messages) ? $messages[0] : null,         // @deprecated
+            'error'     => !empty($errors) ? $errors[0] : null,     // @deprecated
+            'message'   => !empty($messages) ? $messages[0] : null, // @deprecated
             'messages'  => [
-                'message' => $feedBack->get('message', []),
-                'error'   => $feedBack->get('error', []),
-                'debug'   => $feedBack->get('debug', []),
+                'message' => $messages,
+                'error'   => $errors,
+                'debug'   => $debugs,
             ],
             'sent'      => $this->sent,
             'recaptcha' => [
