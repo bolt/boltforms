@@ -67,6 +67,7 @@ class FileUpload
         $this->fullPath = (string) $file;
         $this->fileName = basename($this->fullPath);
         $this->valid = $file->isValid();
+        /** @var BoltFormsExtension $extension */
         $extension = $app['extensions']->get('Bolt/BoltForms');
         $this->config = $extension->getConfig();
     }
@@ -171,7 +172,7 @@ class FileUpload
                 $fs->mkdir($dir);
             } catch (IOException $e) {
                 $error = 'File upload aborted as the target directory could not be created.';
-                $this->app['logger.system']->error('[BoltForms] ' . error . ' Check permissions on ' . $dir, ['event' => 'extensions']);
+                $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $dir, ['event' => 'extensions']);
                 throw new FileUploadException($error);
             }
         }
