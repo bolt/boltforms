@@ -56,7 +56,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return $debug
+     * @return ParameterBag
      */
     public function getReCaptcha()
     {
@@ -64,7 +64,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return $debug
+     * @return ParameterBag
      */
     public function getTemplates()
     {
@@ -72,7 +72,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return $debug
+     * @return ParameterBag
      */
     public function getDebug()
     {
@@ -80,7 +80,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return $debug
+     * @return ParameterBag
      */
     public function getUploads()
     {
