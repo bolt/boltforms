@@ -1,0 +1,48 @@
+
+<script>
+    function postForm($form, values, callback) {
+
+        $.ajax({
+            method:   $form.attr('method'),
+            url:      $form.attr('action'),
+            data:     values,
+            success:  function(data, textStatus, jqXHR) {
+                // Call the callback
+                callback(data);
+                // Output returned data
+                $('.boltform').html(data);
+                // Reactivate listener
+                addListner();
+            },
+            error:    function(jqXHR, textStatus, errorThrown) {
+                alert('Oh noes!');
+            },
+            complete: function(jqXHR, textStatus) {
+            }
+        });
+    }
+
+    function addListner() {
+        // On click we serialise the form data and add the button used form Symfony.
+        $(['[name="{{ form.vars.full_name }}"] button[type="submit"]'].join(',')).each(function() {
+            $(this).click(function(e) {
+                e.preventDefault();
+
+                var form = $(this).closest('form');
+                var formData = form.serializeArray();
+                formData.push({
+                    name:  $(this).attr('name'),
+                    value: $(this).val()
+                });
+
+                postForm(form, formData, function(response) {});
+            });
+        });
+    }
+
+    $(document).ready(
+        function() {
+            addListner();
+        }
+    );
+</script>

@@ -2,7 +2,9 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\SimpleExtension;
+use Silex\Application;
 
 /**
  * BoltForms a Symfony Forms interface for Bolt
@@ -43,17 +45,29 @@ class BoltFormsExtension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
+    public function boot(Application $app)
+    {
+        parent::boot($app);
+
+        $this->container['dispatcher']->addSubscriber($app['boltforms.processor']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function registerFrontendControllers()
     {
+        $app = $this->getContainer();
+        $controllers = [
+            '/async/boltforms' => new Controller\Async($app['boltforms.config']),
+        ];
+        
         if ($this->getConfig()['uploads']['management_controller']) {
             $url = '/' . ltrim($this->getConfig()['uploads']['base_uri'], '/');
-
-            return [
-                $url => new Controller\UploadManagement($this->getConfig()),
-            ];
+            $controllers[$url] = new Controller\UploadManagement($this->getConfig());
         }
 
-        return [];
+        return $controllers;
     }
 
     /**
@@ -111,7 +125,7 @@ class BoltFormsExtension extends SimpleExtension
     }
 
     /**
-     * Set the defaults for configuration parameters
+     * Set the defaults for configuration parameters.
      *
      * {@inheritdoc}
      */
@@ -146,12 +160,7 @@ class BoltFormsExtension extends SimpleExtension
                 'base_uri'              => 'boltforms',
             ],
             'fieldmap' => [
-                'email' => [
-                    'config'  => 'config',
-                    'data'    => 'data',
-                    'fields'  => 'fields',
-                    'subject' => 'subject',
-                ],
+                'email' => new FieldMap\Email(),
             ],
         ];
     }

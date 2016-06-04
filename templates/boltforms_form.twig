@@ -5,24 +5,35 @@
 {% form_theme form 'boltforms_custom.twig' %}
 
 {% block boltforms_css %}
-<link href="{{ webpath }}/boltforms.css" rel="stylesheet" type="text/css" />
+    {{ include('_boltforms_css.twig') }}
 {% endblock boltforms_css %}
 
 <div class="boltform">
 {% if debug %}
-    <p class="boltform-error">[Debug] Notification debug mode enabled!</p>
+    <p class="boltform-debug">[Debug] Notification debug mode enabled!</p>
+
+    {% if messages.debug and app.request.get(formname) %}
+        {% for debug in messages.debug %}
+            <p class="boltform-debug">[Debug] {{ debug }}</p>
+        {% endfor %}
+    {% endif %}
 {% endif %}
 
-{% if error and app.request.get(formname) %}
-    <p class="boltform-error">{{ error }}</p>
+{% if messages.error and app.request.get(formname) %}
+    {% for error in messages.error %}
+        <p class="boltform-error">{{ error }}</p>
+    {% endfor %}
 {% endif %}
 
-{% if message and app.request.get(formname) %}
-    <p class="boltform-message">{{ message }}</p>
+{% if messages.info and app.request.get(formname) %}
+    {% for info in messages.info %}
+        <p class="boltform-info boltform-message">{{ info }}</p>
+    {% endfor %}
 {% endif %}
 
-{% if not sent %}
-
+{% if sent %}
+    {{ html_post }}
+{% else %}
     {{ html_pre }}
 
     {% if recaptcha.enabled and recaptcha.theme|default('clean') %}
@@ -33,11 +44,13 @@
     </script>
     {% endif %}
 
-    {{ form_start(form, {'attr': {'name': formname}}) }}
+    {{ form_start(form, form_start_param) }}
+
         {{ form_errors(form) }}
 
         {% for key, value in fields  %}
-            {% if value.config.name != 'submit' %}
+            {% if value.config.type.name != 'submit' %}
+
             <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
                 <span class="boltforms-label">{{ form_label(form[key]) }}</span>
                 <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
@@ -68,14 +81,17 @@
 
         <br>
 
-        <div class="boltforms-row{% if form.submit.vars.attr.class is defined %} boltforms-{{ form.submit.vars.attr.class }}-row{% endif %}">
-            {{ form_widget(form.submit) }}
-        </div>
+        {% for key, value in fields  %}
+            {% if value.config.type.name == 'submit' %}
+                <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
+                    {{ form_widget(form[key]) }}
+                </div>
+            {% endif %}
+        {% endfor %}
+
 
     {{ form_end(form) }}
 
-{% else %}
-    {{ html_post }}
 {% endif %}
 </div>
 

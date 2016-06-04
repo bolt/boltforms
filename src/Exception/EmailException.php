@@ -1,6 +1,6 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Exception;
 
-class EmailException extends \Exception
+class EmailException extends \Exception implements BoltFormsException
 {
 }

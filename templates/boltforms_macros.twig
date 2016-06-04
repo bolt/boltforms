@@ -1,6 +1,6 @@
 {# Render a single line label #}
 {% macro label(label) %}
-{{ label }}:<ul>
+{{ label }}:
 {% endmacro %}
 
 {# Render a list item value #}
@@ -13,3 +13,11 @@
 <p>{{ label }}: {{ value }}</p>
 {% endmacro %}
 
+{% macro label_array(label, value) %}
+    {{ label }}:
+    <ul>
+        {% for val in value %}
+            {{ _self.value(val) }}
+        {% endfor %}
+    </ul>
+{% endmacro %}

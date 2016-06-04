@@ -18,11 +18,10 @@
 {{ macros.label_value(label, value) }}
     {%- else -%}
         {%- if value is iterable -%}
-<p>{{ macros.label(label) -}}
-        {%- for val in value -%}
-{{ macros.value(val) }}
-            {%- endfor -%}
-</ul></p>
+<p>
+{{ macros.label(label) }}
+{{ macros.label_array(label, value) }}
+</p>
         {%- else %}
 {{ macros.label_value(label, value) }}
         {%- endif -%}

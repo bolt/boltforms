@@ -34,11 +34,11 @@ csrf: true
 # BoltForms does a few things to help increase slightly the security of handling
 # file uploads.
 #
-# Firstly, the directory that you specify for "base_directory" below should NOT 
+# Firstly, the directory that you specify for "base_directory" below should NOT
 # be an route accessible to the outside world. We provide a special route should
-# you wish to make the files browsable after upload. 
-# 
-# Secondly, is the "filename_handling" parameter. If an attacker knows the 
+# you wish to make the files browsable after upload.
+#
+# Secondly, is the "filename_handling" parameter. If an attacker knows the
 # uploaded file name, this can make their job a bit easier. So we provide three
 # options, e.g. uploading the file kitten.jpg:
 #
@@ -49,7 +49,7 @@ csrf: true
 # | suffix  | kitten.jpg.Ze1d352rrI3p |
 # | keep    | kitten.jpg              |
 # -------------------------------------
-#  
+#
 # We recommend "suffix" as this is the most secure, alternatively "prefix" will
 # aid in file browsing. However "keep" should always be used with caution!
 #
@@ -68,13 +68,15 @@ uploads:
 # If enabled, ALL forms will go into debug mode.  However, when disabled an individual
 # form can still enable it's own debug — specific for and to that form
 debug:
-  enabled: true  
+  enabled: true
   address: noreply@example.com
 
 ## Example 1
 #
 # Contact Form
 contact:
+  submission:
+    ajax: false                   # Use AJAX for form submission and handling
   notification:
     enabled: true
     debug: false
@@ -85,14 +87,17 @@ contact:
     replyto_email: email          # A field name, specified in the fields: section below
     to_name: My Site              # Must be valid text
     to_email: noreply@example.com # Must be valid email address
-    cc_name: Info Person
-    cc_email: info@example.com
-    bcc_name: Manager Person
-    bcc_email: manager@example.com
-    attach_files: false
+#    cc_name: Info Person
+#    cc_email: info@example.com
+#    bcc_name: Manager Person
+#    bcc_email: manager@example.com
+#    attach_files: false
   feedback:
     success: Message submission successful
-    error: There are errors in the form, please fix before trying to resubmit 
+    error: There are errors in the form, please fix before trying to resubmit
+#    redirect:
+#      target: page/another-page  # A page path, or URL
+#      query: [ name, email ]     # Optional keys for the GET parameters
 #  database:
 #    contenttype: mycontenttype  # ContentType record to create
 #    table: bolt_secret_table    # Specific database table to write to
@@ -135,10 +140,12 @@ contact:
 #
 # Example Showcase Form
 #showcase:
+#  submission:
+#    ajax: false                   # Use AJAX for form submission and handling
 #  notification:
 #    enabled: true
 #    debug: false
-#    subject: "[TESTING] A showcase form was just submitted" 
+#    subject: "[TESTING] A showcase form was just submitted"
 #    from_name: name               # A field name, specified in the fields: section below
 #    replyto_email: email          # A field name, specified in the fields: section below
 #    replyto_name: name            # A field name, specified in the fields: section below
@@ -164,7 +171,7 @@ contact:
 #    contenttype: mycontenttype  # ContentType record to create
 #    table: bolt_secret_table    # Specific database table to write to
 #  uploads:
-#    subdirectory: showcase_files # The (optional) subdirectory for uploaded files 
+#    subdirectory: showcase_files # The (optional) subdirectory for uploaded files
 #  fields:
 #    subject:
 #      type: text

@@ -3,12 +3,13 @@
 namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
+use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Twig functions for BoltForms
@@ -36,13 +37,13 @@ class BoltFormsExtension
 {
     /** @var Application */
     private $app;
-    /** @var array */
+    /** @var Config */
     private $config;
 
-    public function __construct(Application $app, array $config)
+    public function __construct(Application $app, Config $config)
     {
-        $this->app      = $app;
-        $this->config   = $config;
+        $this->app    = $app;
+        $this->config = $config;
     }
 
     /**
@@ -59,76 +60,70 @@ class BoltFormsExtension
      */
     public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [], $defaults = [])
     {
-        if (!isset($this->config[$formName])) {
+        if (!$this->config->has($formName)) {
             return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>", 'UTF-8');
         }
 
         /** @var BoltForms $boltForms */
         $boltForms = $this->app['boltforms'];
+        $session = $this->app['session'];
+
         $sent = false;
-        $message = '';
-        $error = '';
-        $reCaptchaResponse = [
-            'success'    => true,
-            'errorCodes' => null,
-        ];
+        $reCaptchaResponse = null;
 
         $boltForms->makeForm($formName, FormType::class, $data, $options);
-
-        $fields = $this->config[$formName]['fields'];
+        $formConfig = $boltForms->getFormConfig($formName);
+        $loadAjax = $formConfig->getSubmission()->getAjax();
+        $fields = $formConfig->getFields();
 
         // Add our fields all at once
-        $boltForms->addFieldArray($formName, $fields);
+        $boltForms->addFieldArray($formName, $fields->toArray());
+
+        /** @var FormContext $compiler */
+        $compiler = $session->get('boltforms_compiler_' . $formName);
+        if ($compiler === null) {
+            $compiler = $this->app['boltforms.form.context.factory']();
+        }
 
         // Handle the POST
         $request = $this->app['request_stack']->getCurrentRequest();
-        if ($request && $request->isMethod('POST') && $request->get($formName) !== null) {
+        if ($request && $request->isMethod(Request::METHOD_POST) && $request->request->get($formName) !== null) {
             // Check reCaptcha, if enabled.
-            $reCaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($this->app['request']);
+            $reCaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($request);
 
             try {
-                $sent = $this->app['boltforms.processor']->process($formName, $this->config[$formName], $reCaptchaResponse);
-                $message = isset($this->config[$formName]['feedback']['success']) ? $this->config[$formName]['feedback']['success'] : 'Form submitted sucessfully';
+                $sent = $this->app['boltforms.processor']->process($formName, null, $reCaptchaResponse);
             } catch (FileUploadException $e) {
-                $error = $e->getMessage();
-                $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, ['event' => 'extensions']);
+                $this->app['boltforms.feedback']->add('error', $e->getMessage());
+                $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $e->getMessage(), ['event' => 'extensions']);
             } catch (FormValidationException $e) {
-                $error = $e->getMessage();
-                $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $error, ['event' => 'extensions']);
+                $this->app['boltforms.feedback']->add('error', $e->getMessage());
+                $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
             }
+        } elseif ($request->isMethod(Request::METHOD_GET)) {
+            $sessionKey = sprintf('boltforms_submit_%s', $formName);
+            $sent = $session->get($sessionKey);
+
+            // For BC on templates
+            $request->attributes->set($formName, $formName);
         }
 
-        /** @var Form[] $fields Values to be passed to Twig */
-        $fields = $boltForms->getForm($formName)->all();
-        $context = [
-            'fields'    => $fields,
-            'defaults'  => $defaults,
-            'html_pre'  => $htmlPreSubmit,
-            'html_post' => $htmlPostSubmit,
-            'error'     => $error,
-            'message'   => $message,
-            'sent'      => $sent,
-            'recaptcha' => [
-                'enabled'       => $this->config['recaptcha']['enabled'],
-                'label'         => $this->config['recaptcha']['label'],
-                'public_key'    => $this->config['recaptcha']['public_key'],
-                'theme'         => $this->config['recaptcha']['theme'],
-                'error_message' => $this->config['recaptcha']['error_message'],
-                'error_codes'   => $reCaptchaResponse ? $reCaptchaResponse['errorCodes'] : null,
-                'valid'         => $reCaptchaResponse ? $reCaptchaResponse['success'] : null,
-            ],
-            'formname'  => $formName,
-            'webpath'   => $this->app['extensions']->get('Bolt/BoltForms')->getWebDirectory()->getPath(),
-            'debug'     => $this->config['debug']['enabled'] || (isset($this->config[$formName]['notification']['debug']) && $this->config[$formName]['notification']['debug']),
-        ];
+        $compiler
+            ->setAction($loadAjax ? $this->app['url_generator']->generate('boltFormsAsyncSubmit', ['form' => $formName]) : $request->getRequestUri())
+            ->setHtmlPreSubmit($htmlPreSubmit)
+            ->setHtmlPostSubmit($htmlPostSubmit)
+            ->setSent($sent)
+            ->setReCaptchaResponse($reCaptchaResponse)
+            ->setDefaults($defaults)
+        ;
+        $session->set('boltforms_compiler_' . $formName, $compiler);
 
         // If the form has it's own templates defined, use those, else the globals.
-        $template = isset($this->config[$formName]['templates']['form'])
-            ? $this->config[$formName]['templates']['form']
-            : $this->config['templates']['form'];
+        $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
+        $context = $compiler->build($boltForms, $formName, $this->app['boltforms.feedback']);
 
         // Render the Twig_Markup
-        return $boltForms->renderForm($formName, $template, $context);
+        return $boltForms->renderForm($formName, $template, $context, $loadAjax);
     }
 
     /**
@@ -140,7 +135,8 @@ class BoltFormsExtension
      */
     public function twigBoltFormsUploads($formName = null)
     {
-        $dir = realpath($this->config['uploads']['base_directory'] . DIRECTORY_SEPARATOR . $formName);
+        $uploadConfig = $this->config->getUploads();
+        $dir = realpath($uploadConfig->get('base_directory') . DIRECTORY_SEPARATOR . $formName);
         if ($dir === false) {
             return new \Twig_Markup('<p><strong>Invalid upload directory</strong></p>', 'UTF-8');
         }
@@ -156,13 +152,13 @@ class BoltFormsExtension
         $context = [
             'directories' => $finder->directories(),
             'files'       => $finder->files(),
-            'base_uri'    => '/' . $this->config['uploads']['base_uri'] . '/download',
+            'base_uri'    => '/' . $uploadConfig->get('base_uri') . '/download',
             'webpath'     => $this->app['extensions']->get('bolt/boltforms')->getWebDirectory()->getPath(),
         ];
 
         // Render the Twig
         $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/templates');
-        $html = $this->app['render']->render($this->config['templates']['files'], $context);
+        $html = $this->app['render']->render($this->config->getTemplates()->get('files'), $context);
 
         return new \Twig_Markup($html, 'UTF-8');
     }
