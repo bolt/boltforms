@@ -175,6 +175,9 @@ class BoltForms
         // Pray and do the render
         $html = $this->app['twig']->render($template, $context);
 
+        $sessionKey = sprintf('boltforms_submit_%s', $formName);
+        $this->app['session']->remove($sessionKey);
+
         // Return the result
         return new \Twig_Markup($html, 'UTF-8');
     }

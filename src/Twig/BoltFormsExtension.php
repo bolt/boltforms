@@ -103,7 +103,7 @@ class BoltFormsExtension
         } elseif ($request->isMethod(Request::METHOD_GET)) {
             $sessionKey = sprintf('boltforms_submit_%s', $formName);
             $sent = $session->get($sessionKey);
-            $session->remove($sessionKey);
+            
             // For BC on templates
             $request->attributes->set($formName, $formName);
         }
