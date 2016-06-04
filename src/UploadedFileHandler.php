@@ -143,8 +143,7 @@ class UploadedFileHandler
 
         $this->file->move($targetDir, $targetFile);
         $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
-        $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', ['event' => 'extensions']);
-
+        
         return true;
     }
 

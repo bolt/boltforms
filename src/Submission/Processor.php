@@ -259,6 +259,7 @@ class Processor implements EventSubscriberInterface
 
         try {
             $fileHandler->move();
+            $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $fileHandler->fullPath() . '.', ['event' => 'extensions']);
         } catch (FileException $e) {
             $this->app['boltforms.feedback']->add('debug', $e->getMessage());
             $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
