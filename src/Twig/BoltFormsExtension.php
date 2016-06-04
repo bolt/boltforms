@@ -69,7 +69,6 @@ class BoltFormsExtension
         $session = $this->app['session'];
 
         $sent = false;
-        $error = null;
         $reCaptchaResponse = null;
 
         $boltForms->makeForm($formName, FormType::class, $data, $options);
@@ -95,11 +94,12 @@ class BoltFormsExtension
             try {
                 $sent = $this->app['boltforms.processor']->process($formName, null, $reCaptchaResponse);
             } catch (FileUploadException $e) {
-                $error = $e->getMessage();
-                $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, ['event' => 'extensions']);
+                $this->app['boltforms.feedback']->add('debug', $e->getMessage());
+                $this->app['logger.system']->debug('[BoltForms] File upload exception: ' . $e->getMessage(), ['event' => 'extensions']);
             } catch (FormValidationException $e) {
                 $error = $e->getMessage();
-                $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $error, ['event' => 'extensions']);
+                $this->app['boltforms.feedback']->add('debug', $e->getMessage());
+                $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
             }
         } elseif ($request->isMethod(Request::METHOD_GET)) {
             $sessionKey = sprintf('boltforms_submit_%s', $formName);

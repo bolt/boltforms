@@ -336,7 +336,9 @@ class Processor implements EventSubscriberInterface
 
                 return $event->getData();
             } catch (\Exception $e) {
-                $this->app['logger.system']->error("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), ['event' => 'extensions']);
+                $message = sprintf('[BoltForms] %s subscriber had an error: %s', $eventName, $e->getMessage());
+                $this->app['boltforms.feedback']->add('debug', $message);
+                $this->app['logger.system']->error($message, ['event' => 'extensions']);
             }
         }
 

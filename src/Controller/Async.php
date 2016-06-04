@@ -101,11 +101,12 @@ class Async implements ControllerProviderInterface
         try {
             $sent = $app['boltforms.processor']->process($formName, null, $reCaptchaResponse);
         } catch (FileUploadException $e) {
-            $error = $e->getMessage();
-            $app['logger.system']->debug('[BoltForms] File upload exception: ' . $error, ['event' => 'extensions']);
+            $app['boltforms.feedback']->add('debug', $e->getMessage());
+            $app['logger.system']->debug('[BoltForms] File upload exception: ' . $e->getMessage(), ['event' => 'extensions']);
         } catch (FormValidationException $e) {
             $error = $e->getMessage();
-            $app['logger.system']->debug('[BoltForms] Form validation exception: ' . $error, ['event' => 'extensions']);
+            $app['boltforms.feedback']->add('debug', $e->getMessage());
+            $app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
         }
 
         $compiler
