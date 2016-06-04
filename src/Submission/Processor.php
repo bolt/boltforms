@@ -221,7 +221,9 @@ class Processor implements EventSubscriberInterface
                 }
 
                 // Get the upload object
-                $formData->set($fieldName, new UploadedFileHandler($this->app, $formConfig, $field));
+                /** @var UploadedFileHandler $fileHandler */
+                $fileHandler = new UploadedFileHandler($this->app, $formConfig, $field);
+                $formData->set($fieldName, $fileHandler);
 
                 if (!$this->config['uploads']['enabled']) {
                     $message = '[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.';
@@ -230,8 +232,7 @@ class Processor implements EventSubscriberInterface
                     continue;
                 }
 
-                // Take configured actions on the file
-                $formData->get($fieldName)->move();
+                $fileHandler->move();
             }
 
             // Handle events for custom data
