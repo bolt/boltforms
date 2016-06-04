@@ -82,8 +82,7 @@ class BoltFormsExtension
 
         $compiler = $session->get('boltforms_compiler_' . $formName);
         if ($compiler === null) {
-            $webPath = $this->app['extensions']->get('Bolt/BoltForms')->getWebDirectory()->getPath();
-            $compiler = new FormContext($this->config, $this->app['boltforms.feedback'], $webPath);
+            $compiler = $this->app['boltforms.form.context.factory']();
         }
 
         // Handle the POST
