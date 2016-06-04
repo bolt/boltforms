@@ -19,9 +19,9 @@
     {% endfor %}
 {% endif %}
 
-{% if messages.message and app.request.get(formname) %}
-    {% for message in messages.message %}
-        <p class="boltform-message">{{ message }}</p>
+{% if messages.info and app.request.get(formname) %}
+    {% for info in messages.info %}
+        <p class="boltform-message">{{ info }}</p>
     {% endfor %}
 {% endif %}
 

@@ -77,7 +77,7 @@ class FormContext
         // reCaptcha configuration
         $reCaptchaConfig = $this->config->getReCaptcha();
 
-        $messages = $feedBack->get('message', []);
+        $info = $feedBack->get('info', []);
         $errors = $feedBack->get('error', []);
         $debugs = $feedBack->get('debug', []);
 
@@ -88,12 +88,12 @@ class FormContext
             'defaults'  => $this->defaults,
             'html_pre'  => $this->htmlPreSubmit,
             'html_post' => $this->htmlPostSubmit,
-            'error'     => !empty($errors) ? $errors[0] : null,     // @deprecated
-            'message'   => !empty($messages) ? $messages[0] : null, // @deprecated
+            'error'     => !empty($errors) ? $errors[0] : null, // @deprecated
+            'message'   => !empty($info) ? $info[0] : null,     // @deprecated
             'messages'  => [
-                'message' => $messages,
-                'error'   => $errors,
-                'debug'   => $debugs,
+                'info'  => $info,
+                'error' => $errors,
+                'debug' => $debugs,
             ],
             'sent'      => $this->sent,
             'recaptcha' => [
