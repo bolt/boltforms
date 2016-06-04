@@ -1,7 +1,7 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
-use Bolt\Extension\Bolt\BoltForms\FileUpload;
+use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -17,7 +17,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
-        $boltforms = new FileUpload($app, 'testing_form', $fileUpload);
+        $boltforms = new UploadedFileHandler($app, 'testing_form', $fileUpload);
 
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\FileUpload', $boltforms);
     }
@@ -26,7 +26,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
     {
         $app = $this->getApp();
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
 
         $this->assertSame(__FILE__, $upload->__toString());
         $this->assertSame(__FILE__, $upload->fullPath());
@@ -40,7 +40,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $this->getExtension()->config['uploads']['enabled'] = false;
 
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
 
         $this->setExpectedException('\RuntimeException', 'The relative path is not valid when uploads are disabled!');
         $upload->relativePath();
@@ -52,7 +52,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $this->getExtension()->config['uploads']['enabled'] = true;
 
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
 
         $this->setExpectedException('\RuntimeException', 'The relative path is not valid before the file is moved!');
         $upload->relativePath();
@@ -65,7 +65,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $this->getExtension()->config['uploads']['base_directory'] = dirname(__FILE__);
 
         $fileUpload = new UploadedFile(__FILE__, __FILE__, null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
 
         $path = $upload->relativePath();
         $this->assertSame($path, basename(__FILE__));
@@ -82,7 +82,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -101,7 +101,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -125,7 +125,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -150,7 +150,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -175,7 +175,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -200,13 +200,13 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $fs->copy($srcFile, $tmpFile, true);
 
         $fileUpload = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
         $upload->move();
 
         $this->assertFileExists($upload->fullPath());
@@ -236,7 +236,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
             ->method('error');
         $app['logger.system'] = $logger;
 
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
         $upload->move();
     }
 
@@ -263,7 +263,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         ->method('error');
         $app['logger.system'] = $logger;
 
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
         $upload->move();
     }
 
@@ -290,7 +290,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
             ->method('error');
         $app['logger.system'] = $logger;
 
-        $upload = new FileUpload($app, 'testing_form', $fileUpload);
+        $upload = new UploadedFileHandler($app, 'testing_form', $fileUpload);
         $upload->move();
     }
 }
