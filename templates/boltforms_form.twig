@@ -25,8 +25,9 @@
     {% endfor %}
 {% endif %}
 
-{% if not sent %}
-
+{% if sent %}
+    {{ html_post }}
+{% else %}
     {{ html_pre }}
 
     {% if recaptcha.enabled and recaptcha.theme|default('clean') %}
@@ -84,8 +85,6 @@
 
     {{ form_end(form) }}
 
-{% else %}
-    {{ html_post }}
 {% endif %}
 </div>
 
