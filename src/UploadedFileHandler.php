@@ -167,7 +167,7 @@ class UploadedFileHandler
             } catch (IOException $e) {
                 $error = 'File upload aborted as the target directory could not be created: ' . $e->getMessage();
                 $systemMessage = sprintf('[BoltForms] %s Check permissions on %s', $error, $dir);
-                
+
                 throw new FileUploadException($error, $systemMessage);
             }
         }
@@ -175,7 +175,7 @@ class UploadedFileHandler
         if (!is_writeable($dir)) {
             $error = 'File upload aborted as the target directory is not writable.';
             $systemMessage = sprintf('[BoltForms] %s Check permissions on %s', $error, $dir);
-            
+
             throw new FileUploadException($error, $systemMessage);
         }
 
@@ -253,7 +253,7 @@ class UploadedFileHandler
             return '%s.%s';
         }
 
-        $key = $this->app['randomgenerator']->generateString(12, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890');
+        $key = bin2hex(random_bytes(12));
         if ($this->config->getUploads()->get('filename_handling') === 'prefix') {
             return "%s.$key.%s";
         }
