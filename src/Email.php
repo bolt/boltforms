@@ -156,7 +156,7 @@ class Email
             $config = $formConfig->getFields()->{$value}();
             $formValue = $formData->get($value);
 
-            if ($formData->get($key) instanceof FileUpload) {
+            if ($formData->get($key) instanceof UploadedFileHandler) {
                 if ($formData->get($key)->isValid() && $emailConfig->attachFiles()) {
                     $attachment = \Swift_Attachment::fromPath($formData->get($key)->fullPath())
                             ->setFilename($formData->get($key)->getFile()->getClientOriginalName());

@@ -8,7 +8,7 @@ use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
-use Bolt\Extension\Bolt\BoltForms\FileUpload;
+use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -221,7 +221,7 @@ class Processor implements EventSubscriberInterface
                 }
 
                 // Get the upload object
-                $formData->set($fieldName, new FileUpload($this->app, $formConfig, $field));
+                $formData->set($fieldName, new UploadedFileHandler($this->app, $formConfig, $field));
 
                 if (!$this->config['uploads']['enabled']) {
                     $message = '[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.';
