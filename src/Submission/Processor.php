@@ -15,7 +15,6 @@ use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -257,16 +256,11 @@ class Processor implements EventSubscriberInterface
             return;
         }
 
-        try {
-            $fileHandler->move();
-            $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $fileHandler->fullPath() . '.', ['event' => 'extensions']);
-        } catch (FileException $e) {
-            $this->app['boltforms.feedback']->add('debug', $e->getMessage());
-            $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
-        } catch (FileUploadException $e) {
-            $this->app['boltforms.feedback']->add('debug', $e->getMessage());
-            $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
-        }
+        $fileHandler->move();
+
+        $message = '[BoltForms] Moving uploaded file to ' . $fileHandler->fullPath() . '.';
+        $this->app['boltforms.feedback']->add('debug', $message);
+        $this->app['logger.system']->debug($message, ['event' => 'extensions']);
     }
 
     /**

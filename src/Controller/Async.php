@@ -10,6 +10,7 @@ use Bolt\Extension\Bolt\BoltForms\Twig\FormContext;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -100,11 +101,14 @@ class Async implements ControllerProviderInterface
         try {
             $sent = $app['boltforms.processor']->process($formName, null, $reCaptchaResponse);
         } catch (FileUploadException $e) {
-            $app['boltforms.feedback']->add('debug', $e->getMessage());
-            $app['logger.system']->debug('[BoltForms] File upload exception: ' . $e->getMessage(), ['event' => 'extensions']);
+            $app['boltforms.feedback']->add('error', $e->getMessage());
+            $app['logger.system']->debug($e->getSystemMessage(), ['event' => 'extensions']);
         } catch (FormValidationException $e) {
-            $app['boltforms.feedback']->add('debug', $e->getMessage());
+            $app['boltforms.feedback']->add('error', $e->getMessage());
             $app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
+        } catch (FileException $e) {
+            $app['boltforms.feedback']->add('debug', $e->getMessage());
+            $app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
         }
 
         $compiler->setSent($sent);
