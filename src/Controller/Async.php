@@ -106,9 +106,6 @@ class Async implements ControllerProviderInterface
         } catch (FormValidationException $e) {
             $app['boltforms.feedback']->add('error', $e->getMessage());
             $app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
-        } catch (FileException $e) {
-            $app['boltforms.feedback']->add('debug', $e->getMessage());
-            $app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
         }
 
         $compiler->setSent($sent);

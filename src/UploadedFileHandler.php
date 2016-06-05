@@ -139,7 +139,11 @@ class UploadedFileHandler
         $targetDir = $this->getTargetFileDirectory();
         $targetFile = $this->getTargetFileName();
 
-        $this->file->move($targetDir, $targetFile);
+        try {
+            $this->file->move($targetDir, $targetFile);
+        } catch (FileException $e) {
+            throw new FileUploadException($e->getMessage(), $e->getMessage());
+        }
         $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
 
         return true;
@@ -189,15 +193,13 @@ class UploadedFileHandler
         if ($this->baseDirName !== null) {
             return $this->baseDirName;
         }
-
-        $realUploadPath = realpath($this->config->getUploads()->get('base_directory'));
-
+        $baseDir = $this->config->getUploads()->get('base_directory');
         $subDir = $this->formConfig->getUploads()->getSubdirectory();
         if ($subDir !== null) {
-            return $this->baseDirName = $realUploadPath . DIRECTORY_SEPARATOR . $subDir;
+            return $this->baseDirName = $baseDir . DIRECTORY_SEPARATOR . $subDir;
         }
 
-        return $this->baseDirName = $realUploadPath;
+        return $this->baseDirName = $baseDir;
     }
 
     /**

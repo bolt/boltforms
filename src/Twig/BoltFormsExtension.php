@@ -100,9 +100,6 @@ class BoltFormsExtension
             } catch (FormValidationException $e) {
                 $this->app['boltforms.feedback']->add('error', $e->getMessage());
                 $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
-            } catch (FileException $e) {
-                $this->app['boltforms.feedback']->add('debug', $e->getMessage());
-                $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
             }
         } elseif ($request->isMethod(Request::METHOD_GET)) {
             $sessionKey = sprintf('boltforms_submit_%s', $formName);
