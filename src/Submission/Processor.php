@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
+use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
@@ -11,7 +12,9 @@ use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Psr\Log\LoggerInterface;
 use Silex\Application;
+use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
@@ -46,15 +49,30 @@ class Processor implements EventSubscriberInterface
     private $app;
     /** @var Config */
     private $config;
+    /** @var BoltForms */
+    private $boltForms;
+    /** @var TraceableEventDispatcher */
+    private $dispatcher;
+    /** @var LoggerInterface */
+    private $loggerSystem;
 
     /**
-     * @param Config      $config
-     * @param Application $app
+     * Constructor.
+     *
+     * @param Config                   $config
+     * @param BoltForms                $boltForms
+     * @param TraceableEventDispatcher $dispatcher
+     * @param LoggerInterface          $loggerSystem
+     * @param Application              $app
      */
-    public function __construct(Config $config, Application $app)
+    public function __construct(Config $config, BoltForms $boltForms, TraceableEventDispatcher $dispatcher, LoggerInterface $loggerSystem, Application $app)
     {
         $this->app = $app;
+
         $this->config = $config;
+        $this->boltForms = $boltForms;
+        $this->dispatcher = $dispatcher;
+        $this->loggerSystem = $loggerSystem;
     }
 
     /**
@@ -102,29 +120,27 @@ class Processor implements EventSubscriberInterface
     {
         /** @var FormData $formData */
         $formData = $this->getRequestData($formName);
-        $formConfig = $this->app['boltforms']->getFormConfig($formName);
-        $form = $this->app['boltforms']->getForm($formName);
+        $formConfig = $this->boltForms->getFormConfig($formName);
+        $form = $this->boltForms->getForm($formName);
         $complete = $form->isSubmitted() && $form->isValid();
 
         if ($complete && $formData !== null && $recaptchaResponse['success']) {
-            /** @var EventDispatcherInterface $dispatcher */
-            $dispatcher = $this->app['dispatcher'];
             $lifeEvent = new LifecycleEvent($formConfig, $formData, $form->getClickedButton());
 
             // Process
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
 
             // Post processing event
             $processorEvent = new BoltFormsProcessorEvent($formName, $formData->all());
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
 
             // Feedback notices
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK, $lifeEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK, $lifeEvent);
 
             // Redirect if a redirect is set and the page exists.
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT, $lifeEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT, $lifeEvent);
 
             return $returnData ? $formData : true;
         }
@@ -178,7 +194,7 @@ class Processor implements EventSubscriberInterface
         }
 
         /** @var Form $form */
-        $form = $this->app['boltforms']->getForm($formName);
+        $form = $this->boltForms->getForm($formName);
         // Handle the Request object to check if the data sent is valid
         $form->handleRequest($request);
 
@@ -188,10 +204,10 @@ class Processor implements EventSubscriberInterface
             $data = $form->getData();
 
             $event = new BoltFormsProcessorEvent($formName, $data);
-            $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
 
             /** @deprecated will be removed in v4 */
-            $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_PROCESSOR, $event);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESSOR, $event);
 
             return new FormData($event->getData());
         }
@@ -245,13 +261,13 @@ class Processor implements EventSubscriberInterface
 
         // Get the upload object
         /** @var UploadedFileHandler $fileHandler */
-        $fileHandler = new UploadedFileHandler($this->app['boltforms.config'], $formConfig, $field);
+        $fileHandler = new UploadedFileHandler($this->config, $formConfig, $field);
         $formData->set($fieldName, $fileHandler);
 
         if (!$this->config->getUploads()->get('enabled')) {
             $message = '[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.';
             $this->app['boltforms.feedback']->add('debug', $message);
-            $this->app['logger.system']->debug($message, ['event' => 'extensions']);
+            $this->loggerSystem->debug($message, ['event' => 'extensions']);
 
             return;
         }
@@ -260,7 +276,7 @@ class Processor implements EventSubscriberInterface
 
         $message = '[BoltForms] Moving uploaded file to ' . $fileHandler->fullPath() . '.';
         $this->app['boltforms.feedback']->add('debug', $message);
-        $this->app['logger.system']->debug($message, ['event' => 'extensions']);
+        $this->loggerSystem->debug($message, ['event' => 'extensions']);
     }
 
     /**
@@ -351,17 +367,17 @@ class Processor implements EventSubscriberInterface
             $eventName = $eventConfig['name'];
         }
 
-        if (!$this->app['dispatcher']->hasListeners($eventName)) {
+        if (!$this->dispatcher->hasListeners($eventName)) {
             $eventParams = isset($eventConfig['params']) ? $eventConfig['params'] : null;
             $event = new BoltFormsCustomDataEvent($eventName, $eventParams);
             try {
-                $this->app['dispatcher']->dispatch($eventName, $event);
+                $this->dispatcher->dispatch($eventName, $event);
 
                 return $event->getData();
             } catch (\Exception $e) {
                 $message = sprintf('[BoltForms] %s subscriber had an error: %s', $eventName, $e->getMessage());
                 $this->app['boltforms.feedback']->add('debug', $message);
-                $this->app['logger.system']->error($message, ['event' => 'extensions']);
+                $this->loggerSystem->error($message, ['event' => 'extensions']);
             }
         }
 
