@@ -367,22 +367,4 @@ class Processor implements EventSubscriberInterface
 
         return null;
     }
-
-    /**
-     * Enable handling of form specific templates.
-     *
-     * @param array $formDefinition
-     *
-     * @return array
-     */
-    protected function getFormTemplates(array $formDefinition)
-    {
-        if (isset($formDefinition['templates']) && is_array($formDefinition['templates'])) {
-            array_merge($this->config->getTemplates()->all(), $formDefinition['templates']);
-        } else {
-            $formDefinition['templates'] = $this->config->getTemplates()->all();
-        }
-
-        return $formDefinition;
-    }
 }
