@@ -265,7 +265,7 @@ class Processor implements EventSubscriberInterface
 
         if (!$this->config->getUploads()->get('enabled')) {
             $message = '[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.';
-            $this->app['boltforms.feedback']->add('debug', $message);
+            $this->app['boltforms.feedback']->add('error', $message);
             $this->loggerSystem->debug($message, ['event' => 'extensions']);
 
             return;
