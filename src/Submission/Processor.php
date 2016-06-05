@@ -1,7 +1,8 @@
 <?php
+
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
-use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
+use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
@@ -21,7 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Request processing functions for BoltForms
  *
- * Copyright (C) 2014-2015 Gawain Lynch
+ * Copyright (C) 2014-2016 Gawain Lynch
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,25 +38,24 @@ use Symfony\Component\HttpFoundation\Request;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014, Gawain Lynch
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
 class Processor implements EventSubscriberInterface
 {
     /** @var Application */
     private $app;
-    /** @var array */
+    /** @var Config */
     private $config;
 
     /**
+     * @param Config      $config
      * @param Application $app
      */
-    public function __construct(Application $app)
+    public function __construct(Config $config, Application $app)
     {
         $this->app = $app;
-        /** @var BoltFormsExtension $extension */
-        $extension = $app['extensions']->get('Bolt/BoltForms');
-        $this->config = $extension->getConfig();
+        $this->config = $config;
     }
 
     /**
@@ -143,7 +143,7 @@ class Processor implements EventSubscriberInterface
     public function reCaptchaResponse(Request $request)
     {
         // Check reCaptcha, if enabled.  If not just return true
-        if ($this->config['recaptcha']['enabled'] === false) {
+        if ($this->config->getReCaptcha()->get('enabled') === false) {
             return [
                 'success'    => true,
                 'errorCodes' => null,
@@ -249,7 +249,7 @@ class Processor implements EventSubscriberInterface
         $fileHandler = new UploadedFileHandler($this->app['boltforms.config'], $formConfig, $field);
         $formData->set($fieldName, $fileHandler);
 
-        if (!$this->config['uploads']['enabled']) {
+        if (!$this->config->getUploads()->get('enabled')) {
             $message = '[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.';
             $this->app['boltforms.feedback']->add('debug', $message);
             $this->app['logger.system']->debug($message, ['event' => 'extensions']);
@@ -384,9 +384,9 @@ class Processor implements EventSubscriberInterface
     protected function getFormTemplates(array $formDefinition)
     {
         if (isset($formDefinition['templates']) && is_array($formDefinition['templates'])) {
-            array_merge($this->config['templates'], $formDefinition['templates']);
+            array_merge($this->config->getTemplates()->all(), $formDefinition['templates']);
         } else {
-            $formDefinition['templates'] = $this->config['templates'];
+            $formDefinition['templates'] = $this->config->getTemplates()->all();
         }
 
         return $formDefinition;

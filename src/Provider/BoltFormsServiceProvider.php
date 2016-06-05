@@ -65,7 +65,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
         $app['boltforms.processor'] = $app->share(
             function ($app) {
-                $processor = new Processor($app);
+                $processor = new Processor($app['boltforms.config'], $app);
 
                 return $processor;
             }
