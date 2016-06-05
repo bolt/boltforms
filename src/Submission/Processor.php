@@ -15,7 +15,6 @@ use Bolt\Extension\Bolt\BoltForms\FormData;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -109,14 +108,14 @@ class Processor implements EventSubscriberInterface
      *
      * @param string  $formName
      * @param null    $formDefinition    @deprecated — To be removed in 4.0
-     * @param array   $recaptchaResponse
+     * @param array   $reCaptchaResponse
      * @param boolean $returnData
      *
      * @throws FormValidationException
      *
      * @return boolean|array
      */
-    public function process($formName, $formDefinition = null, array $recaptchaResponse, $returnData = false)
+    public function process($formName, $formDefinition = null, array $reCaptchaResponse, $returnData = false)
     {
         /** @var FormData $formData */
         $formData = $this->getRequestData($formName);
@@ -124,7 +123,7 @@ class Processor implements EventSubscriberInterface
         $form = $this->boltForms->getForm($formName);
         $complete = $form->isSubmitted() && $form->isValid();
 
-        if ($complete && $formData !== null && $recaptchaResponse['success']) {
+        if ($complete && $formData !== null && $reCaptchaResponse['success']) {
             $lifeEvent = new LifecycleEvent($formConfig, $formData, $form->getClickedButton());
 
             // Process
