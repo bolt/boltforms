@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Email functions for BoltForms
@@ -151,10 +152,10 @@ class Email
     private function getBodyData(FormConfig $formConfig, EmailConfig $emailConfig, FormData $formData)
     {
         $bodyData = [];
-        foreach ($formData->keys() as $key => $value) {
+        foreach ($formData->all() as $key => $value) {
             /** @var FormConfigSection $config */
-            $config = $formConfig->getFields()->{$value}();
-            $formValue = $formData->get($value);
+            $config = $formConfig->getFields()->{$key}();
+            $formValue = $formData->get($key);
 
             if ($formData->get($key) instanceof UploadedFileHandler) {
                 if ($formData->get($key)->isValid() && $emailConfig->attachFiles()) {
@@ -162,11 +163,19 @@ class Email
                             ->setFilename($formData->get($key)->getFile()->getClientOriginalName());
                     $this->message->attach($attachment);
                 }
-            } elseif ($config->getType() === 'choice') {
+                $relativePath = $formData->get($key, true);
+
+                $bodyData[$key] = sprintf(
+                    '<a href"%s">%s</a>',
+                    $this->app['url_generator']->generate('BoltFormsDownload', ['file' => $relativePath], UrlGeneratorInterface::ABSOLUTE_URL),
+
+                    $formData->get($key)->getFile()->getClientOriginalName()
+                );
+            } elseif ($config->get('type') === 'choice') {
                 $choices = $config->getOptions()->getChoices();
-                $bodyData[$value] = isset($choices[$formValue]) ? $choices[$formValue] : $formValue;
+                $bodyData[$key] = isset($choices[$formValue]) ? $choices[$formValue] : $formValue;
             } else {
-                $bodyData[$value] = $formData->get($value, true);
+                $bodyData[$key] = $formData->get($key, true);
             }
         }
 
