@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Tests;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Database;
 // use Bolt\Tests\Mocks\DoctrineMockBuilder;
-use Bolt\Extension\Bolt\BoltForms\FileUpload;
+use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -149,7 +149,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $parameters['testing_form']['message'] = $parameters['testing_form']['date'];
         $parameters['testing_form']['date'] = new \DateTime();
-        $parameters['testing_form']['file'] = new FileUpload($app, 'testing_form', $parameters['testing_form']['file']);
+        $parameters['testing_form']['file'] = new UploadedFileHandler($app, 'testing_form', $parameters['testing_form']['file']);
         $formData = new FormData($parameters['testing_form']);
 
         $retval = $app['boltforms.database']->writeToTable('koalas', $formData);

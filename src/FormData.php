@@ -95,7 +95,7 @@ class FormData extends ParameterBag
         }
 
         // Handle file storage preparation here
-        if ($value instanceof FileUpload && $value->isValid()) {
+        if ($value instanceof UploadedFileHandler && $value->isValid()) {
             return $value->relativePath();
         }
 

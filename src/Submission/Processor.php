@@ -1,26 +1,31 @@
 <?php
+
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
-use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
+use Bolt\Extension\Bolt\BoltForms\BoltForms;
+use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
-use Bolt\Extension\Bolt\BoltForms\FileUpload;
+use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Psr\Log\LoggerInterface;
 use Silex\Application;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Request processing functions for BoltForms
  *
- * Copyright (C) 2014-2015 Gawain Lynch
+ * Copyright (C) 2014-2016 Gawain Lynch
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,25 +41,39 @@ use Symfony\Component\HttpFoundation\Request;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014, Gawain Lynch
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
 class Processor implements EventSubscriberInterface
 {
     /** @var Application */
     private $app;
-    /** @var array */
+    /** @var Config */
     private $config;
+    /** @var BoltForms */
+    private $boltForms;
+    /** @var TraceableEventDispatcher */
+    private $dispatcher;
+    /** @var LoggerInterface */
+    private $loggerSystem;
 
     /**
-     * @param Application $app
+     * Constructor.
+     *
+     * @param Config                   $config
+     * @param BoltForms                $boltForms
+     * @param TraceableEventDispatcher $dispatcher
+     * @param LoggerInterface          $loggerSystem
+     * @param Application              $app
      */
-    public function __construct(Application $app)
+    public function __construct(Config $config, BoltForms $boltForms, TraceableEventDispatcher $dispatcher, LoggerInterface $loggerSystem, Application $app)
     {
         $this->app = $app;
-        /** @var BoltFormsExtension $extension */
-        $extension = $app['extensions']->get('Bolt/BoltForms');
-        $this->config = $extension->getConfig();
+
+        $this->config = $config;
+        $this->boltForms = $boltForms;
+        $this->dispatcher = $dispatcher;
+        $this->loggerSystem = $loggerSystem;
     }
 
     /**
@@ -91,40 +110,38 @@ class Processor implements EventSubscriberInterface
      *
      * @param string  $formName
      * @param null    $formDefinition    @deprecated — To be removed in 4.0
-     * @param array   $recaptchaResponse
+     * @param array   $reCaptchaResponse
      * @param boolean $returnData
      *
      * @throws FormValidationException
      *
      * @return boolean|array
      */
-    public function process($formName, $formDefinition = null, array $recaptchaResponse, $returnData = false)
+    public function process($formName, $formDefinition = null, array $reCaptchaResponse, $returnData = false)
     {
         /** @var FormData $formData */
         $formData = $this->getRequestData($formName);
-        $formConfig = $this->app['boltforms']->getFormConfig($formName);
-        $form = $this->app['boltforms']->getForm($formName);
+        $formConfig = $this->boltForms->getFormConfig($formName);
+        $form = $this->boltForms->getForm($formName);
         $complete = $form->isSubmitted() && $form->isValid();
 
-        if ($complete && $formData !== null && $recaptchaResponse['success']) {
-            /** @var EventDispatcherInterface $dispatcher */
-            $dispatcher = $this->app['dispatcher'];
+        if ($complete && $formData !== null && $reCaptchaResponse['success']) {
             $lifeEvent = new LifecycleEvent($formConfig, $formData, $form->getClickedButton());
 
             // Process
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
 
             // Post processing event
             $processorEvent = new BoltFormsProcessorEvent($formName, $formData->all());
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
 
             // Feedback notices
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK, $lifeEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK, $lifeEvent);
 
             // Redirect if a redirect is set and the page exists.
-            $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT, $lifeEvent);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT, $lifeEvent);
 
             return $returnData ? $formData : true;
         }
@@ -142,7 +159,7 @@ class Processor implements EventSubscriberInterface
     public function reCaptchaResponse(Request $request)
     {
         // Check reCaptcha, if enabled.  If not just return true
-        if ($this->config['recaptcha']['enabled'] === false) {
+        if ($this->config->getReCaptcha()->get('enabled') === false) {
             return [
                 'success'    => true,
                 'errorCodes' => null,
@@ -178,7 +195,7 @@ class Processor implements EventSubscriberInterface
         }
 
         /** @var Form $form */
-        $form = $this->app['boltforms']->getForm($formName);
+        $form = $this->boltForms->getForm($formName);
         // Handle the Request object to check if the data sent is valid
         $form->handleRequest($request);
 
@@ -188,10 +205,10 @@ class Processor implements EventSubscriberInterface
             $data = $form->getData();
 
             $event = new BoltFormsProcessorEvent($formName, $data);
-            $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
 
             /** @deprecated will be removed in v4 */
-            $this->app['dispatcher']->dispatch(BoltFormsEvents::SUBMISSION_PROCESSOR, $event);
+            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESSOR, $event);
 
             return new FormData($event->getData());
         }
@@ -216,20 +233,7 @@ class Processor implements EventSubscriberInterface
 
             // Handle file uploads
             if ($field instanceof UploadedFile) {
-                if (!$field->isValid()) {
-                    throw new FileUploadException($field->getErrorMessage());
-                }
-
-                // Get the upload object
-                $formData->set($fieldName, new FileUpload($this->app, $formConfig->getName(), $field));
-
-                if (!$this->config['uploads']['enabled']) {
-                    $this->app['logger.system']->debug('[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.', ['event' => 'extensions']);
-                    continue;
-                }
-
-                // Take configured actions on the file
-                $formData->get($fieldName)->move();
+                $this->processFieldFile($fieldName, $lifeEvent, $field);
             }
 
             // Handle events for custom data
@@ -238,6 +242,42 @@ class Processor implements EventSubscriberInterface
                 $formData->set($fieldName, $this->dispatchCustomDataEvent($fieldConf['event']));
             }
         }
+    }
+
+    /**
+     * @param string         $fieldName
+     * @param LifecycleEvent $lifeEvent
+     * @param UploadedFile   $field
+     *
+     * @throws FileUploadException
+     */
+    protected function processFieldFile($fieldName, LifecycleEvent $lifeEvent, UploadedFile $field)
+    {
+        if (!$field->isValid()) {
+            throw new FileUploadException($field->getErrorMessage(), $field->getErrorMessage());
+        }
+
+        $formConfig = $lifeEvent->getFormConfig();
+        $formData = $lifeEvent->getFormData();
+
+        // Get the upload object
+        /** @var UploadedFileHandler $fileHandler */
+        $fileHandler = new UploadedFileHandler($this->config, $formConfig, $field);
+        $formData->set($fieldName, $fileHandler);
+
+        if (!$this->config->getUploads()->get('enabled')) {
+            $message = '[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.';
+            $this->app['boltforms.feedback']->add('error', $message);
+            $this->loggerSystem->debug($message, ['event' => 'extensions']);
+
+            return;
+        }
+
+        $fileHandler->move();
+
+        $message = '[BoltForms] Moving uploaded file to ' . $fileHandler->fullPath() . '.';
+        $this->app['boltforms.feedback']->add('debug', $message);
+        $this->loggerSystem->debug($message, ['event' => 'extensions']);
     }
 
     /**
@@ -293,6 +333,8 @@ class Processor implements EventSubscriberInterface
     /**
      * Redirect if a redirect is set and the page exists.
      *
+     * @throws HttpException
+     *
      * @param LifecycleEvent $lifeEvent
      */
     public function processRedirect(LifecycleEvent $lifeEvent)
@@ -309,8 +351,11 @@ class Processor implements EventSubscriberInterface
             $redirect->redirect($formConfig, $formData);
         }
 
+        // Do a get on the page as it was probably POSTed
         $request = $this->app['request_stack']->getCurrentRequest();
         $redirect->refresh($request);
+
+        throw new HttpException(Response::HTTP_OK, '', null, []);
     }
 
     /**
@@ -328,38 +373,20 @@ class Processor implements EventSubscriberInterface
             $eventName = $eventConfig['name'];
         }
 
-        if (!$this->app['dispatcher']->hasListeners($eventName)) {
+        if (!$this->dispatcher->hasListeners($eventName)) {
             $eventParams = isset($eventConfig['params']) ? $eventConfig['params'] : null;
             $event = new BoltFormsCustomDataEvent($eventName, $eventParams);
             try {
-                $this->app['dispatcher']->dispatch($eventName, $event);
+                $this->dispatcher->dispatch($eventName, $event);
 
                 return $event->getData();
             } catch (\Exception $e) {
                 $message = sprintf('[BoltForms] %s subscriber had an error: %s', $eventName, $e->getMessage());
                 $this->app['boltforms.feedback']->add('debug', $message);
-                $this->app['logger.system']->error($message, ['event' => 'extensions']);
+                $this->loggerSystem->error($message, ['event' => 'extensions']);
             }
         }
 
         return null;
-    }
-
-    /**
-     * Enable handling of form specific templates.
-     *
-     * @param array $formDefinition
-     *
-     * @return array
-     */
-    protected function getFormTemplates(array $formDefinition)
-    {
-        if (isset($formDefinition['templates']) && is_array($formDefinition['templates'])) {
-            array_merge($this->config['templates'], $formDefinition['templates']);
-        } else {
-            $formDefinition['templates'] = $this->config['templates'];
-        }
-
-        return $formDefinition;
     }
 }

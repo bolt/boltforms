@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Extension\Bolt\BoltForms\Config\Config;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Silex\Application;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -31,16 +33,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class FileUpload
+class UploadedFileHandler
 {
-    /** @var Application */
-    private $app;
-    /** @var string */
-    private $formName;
+    /** @var Config */
+    private $config;
+    /** @var FormConfig */
+    private $formConfig;
     /** @var \Symfony\Component\HttpFoundation\File\UploadedFile */
     private $file;
-    /** @var array */
-    private $config;
     /** @var string */
     private $fileName;
     /** @var string */
@@ -55,21 +55,19 @@ class FileUpload
     /**
      * Constructor.
      *
-     * @param Application  $app
-     * @param string       $formName
+     * @param Config       $config
+     * @param FormConfig   $formConfig
      * @param UploadedFile $file
      */
-    public function __construct(Application $app, $formName, UploadedFile $file)
+    public function __construct(Config $config, FormConfig $formConfig, UploadedFile $file)
     {
-        $this->app = $app;
-        $this->formName = $formName;
+        $this->config = $config;
+        $this->formConfig = $formConfig;
         $this->file = $file;
+
         $this->fullPath = (string) $file;
         $this->fileName = basename($this->fullPath);
         $this->valid = $file->isValid();
-        /** @var BoltFormsExtension $extension */
-        $extension = $app['extensions']->get('Bolt/BoltForms');
-        $this->config = $extension->getConfig();
     }
 
     public function __toString()
@@ -114,11 +112,11 @@ class FileUpload
      */
     public function relativePath()
     {
-        if (!$this->config['uploads']['enabled']) {
+        if (!$this->config->getUploads()->get('enabled')) {
             throw new \RuntimeException('The relative path is not valid when uploads are disabled!');
         }
 
-        $realUploadPath = realpath($this->config['uploads']['base_directory']);
+        $realUploadPath = realpath($this->config->getUploads()->get('base_directory'));
         if (strpos($this->fullPath, $realUploadPath) !== 0) {
             throw new \RuntimeException('The relative path is not valid before the file is moved!');
         }
@@ -143,13 +141,10 @@ class FileUpload
 
         try {
             $this->file->move($targetDir, $targetFile);
-            $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
-            $this->app['logger.system']->debug('[BoltForms] Moving uploaded file to ' . $this->fullPath . '.', ['event' => 'extensions']);
         } catch (FileException $e) {
-            $error = 'File upload aborted as the target directory could not be writen to.';
-            $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $targetDir, ['event' => 'extensions']);
-            throw new FileUploadException('File upload aborted as the target directory could not be writen to.');
+            throw new FileUploadException($e->getMessage(), $e->getMessage());
         }
+        $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
 
         return true;
     }
@@ -171,16 +166,18 @@ class FileUpload
             try {
                 $fs->mkdir($dir);
             } catch (IOException $e) {
-                $error = 'File upload aborted as the target directory could not be created.';
-                $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $dir, ['event' => 'extensions']);
-                throw new FileUploadException($error);
+                $error = 'File upload aborted as the target directory could not be created: ' . $e->getMessage();
+                $systemMessage = sprintf('[BoltForms] %s Check permissions on %s', $error, $dir);
+
+                throw new FileUploadException($error, $systemMessage);
             }
         }
 
         if (!is_writeable($dir)) {
             $error = 'File upload aborted as the target directory is not writable.';
-            $this->app['logger.system']->error('[BoltForms] ' . $error . ' Check permissions on ' . $dir, ['event' => 'extensions']);
-            throw new FileUploadException($error);
+            $systemMessage = sprintf('[BoltForms] %s Check permissions on %s', $error, $dir);
+
+            throw new FileUploadException($error, $systemMessage);
         }
 
         $this->baseDirName = realpath($dir);
@@ -196,14 +193,13 @@ class FileUpload
         if ($this->baseDirName !== null) {
             return $this->baseDirName;
         }
-
-        $realUploadPath = realpath($this->config['uploads']['base_directory']);
-
-        if (isset($this->config[$this->formName]['uploads']['subdirectory'])) {
-            return $this->baseDirName = $realUploadPath . DIRECTORY_SEPARATOR . $this->config[$this->formName]['uploads']['subdirectory'];
+        $baseDir = $this->config->getUploads()->get('base_directory');
+        $subDir = $this->formConfig->getUploads()->getSubdirectory();
+        if ($subDir !== null) {
+            return $this->baseDirName = $baseDir . DIRECTORY_SEPARATOR . $subDir;
         }
 
-        return $this->baseDirName = $realUploadPath;
+        return $this->baseDirName = $baseDir;
     }
 
     /**
@@ -239,7 +235,7 @@ class FileUpload
             $i++;
         }
 
-        $this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
+        //$this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
         $this->final = true;
 
         return $this->fileName = $fileName;
@@ -252,15 +248,15 @@ class FileUpload
      */
     protected function getTargetFileNamePattern()
     {
-        if ($this->config['uploads']['filename_handling'] === 'keep') {
+        if ($this->config->getUploads()->get('filename_handling') === 'keep') {
             return '%s.%s';
         }
 
-        $key = $this->app['randomgenerator']->generateString(12, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890');
-        if ($this->config['uploads']['filename_handling'] === 'prefix') {
+        $key = bin2hex(random_bytes(12));
+        if ($this->config->getUploads()->get('filename_handling') === 'prefix') {
             return "%s.$key.%s";
-        } else {
-            return "%s.%s.$key";
         }
+
+        return "%s.%s.$key";
     }
 }
