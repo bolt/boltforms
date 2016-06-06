@@ -132,7 +132,7 @@ class FieldOptions
             unset($options['sort']);
             unset($options['limit']);
             unset($options['filters']);
-        } elseif (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'event::') === 0) {
+        } elseif (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'event') === 0) {
             $choice = new EventType($this->dispatcher, $this->fieldName, $this->baseOptions);
         } else {
             $choice = new ArrayType($this->fieldName, $this->baseOptions['choices']);
