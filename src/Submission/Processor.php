@@ -19,6 +19,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Request processing functions for BoltForms
@@ -331,6 +333,8 @@ class Processor implements EventSubscriberInterface
     /**
      * Redirect if a redirect is set and the page exists.
      *
+     * @throws HttpException
+     *
      * @param LifecycleEvent $lifeEvent
      */
     public function processRedirect(LifecycleEvent $lifeEvent)
@@ -347,8 +351,11 @@ class Processor implements EventSubscriberInterface
             $redirect->redirect($formConfig, $formData);
         }
 
+        // Do a get on the page as it was probably POSTed
         $request = $this->app['request_stack']->getCurrentRequest();
         $redirect->refresh($request);
+
+        throw new HttpException(Response::HTTP_OK, '', null, []);
     }
 
     /**
