@@ -6,11 +6,14 @@ use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
+use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
+use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Twig functions for BoltForms
@@ -67,7 +70,14 @@ class BoltFormsExtension
 
         /** @var BoltForms $boltForms */
         $boltForms = $this->app['boltforms'];
+        /** @var Processor $processor */
+        $processor = $this->app['boltforms.processor'];
+        /** @var Session $session */
         $session = $this->app['session'];
+        /** @var FlashBag $feedback */
+        $feedback = $this->app['boltforms.feedback'];
+        /** @var LoggerInterface $loggerSystem */
+        $loggerSystem = $this->app['logger.system'];
 
         $sent = false;
         $reCaptchaResponse = null;
@@ -90,16 +100,16 @@ class BoltFormsExtension
         $request = $this->app['request_stack']->getCurrentRequest();
         if ($request && $request->isMethod(Request::METHOD_POST) && $request->request->get($formName) !== null) {
             // Check reCaptcha, if enabled.
-            $reCaptchaResponse = $this->app['boltforms.processor']->reCaptchaResponse($request);
+            $reCaptchaResponse = $processor->reCaptchaResponse($request);
 
             try {
-                $sent = $this->app['boltforms.processor']->process($formName, null, $reCaptchaResponse);
+                $sent = $processor->process($formName, null, $reCaptchaResponse);
             } catch (FileUploadException $e) {
-                $this->app['boltforms.feedback']->add('error', $e->getMessage());
-                $this->app['logger.system']->debug($e->getSystemMessage(), ['event' => 'extensions']);
+                $feedback->add('error', $e->getMessage());
+                $loggerSystem->debug($e->getSystemMessage(), ['event' => 'extensions']);
             } catch (FormValidationException $e) {
-                $this->app['boltforms.feedback']->add('error', $e->getMessage());
-                $this->app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
+                $feedback->add('error', $e->getMessage());
+                $loggerSystem->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
             }
         } elseif ($request->isMethod(Request::METHOD_GET)) {
             $sessionKey = sprintf('boltforms_submit_%s', $formName);
@@ -121,7 +131,7 @@ class BoltFormsExtension
 
         // If the form has it's own templates defined, use those, else the globals.
         $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
-        $context = $compiler->build($boltForms, $formName, $this->app['boltforms.feedback']);
+        $context = $compiler->build($boltForms, $formName, $feedback);
 
         // Render the Twig_Markup
         return $boltForms->renderForm($formName, $template, $context, $loadAjax);
