@@ -70,8 +70,7 @@ class EventType implements ChoiceInterface
     public function getChoices()
     {
         if ($this->choices === null) {
-            $choices = new ParameterBag();
-            $event = new BoltFormsChoiceEvent($choices);
+            $event = new BoltFormsChoiceEvent($this->name, $this->options);
 
             $this->dispatcher->dispatch(BoltFormsEvents::DATA_CHOICE_EVENT, $event);
 

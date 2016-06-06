@@ -29,17 +29,40 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class BoltFormsChoiceEvent extends Event
 {
+    /** @var string */
+    private $name;
+    /** @var array */
+    private $options;
     /** @var ParameterBag */
     private $choices;
 
     /**
      * Constructor.
      *
-     * @param ParameterBag $choices
+     * @param string $name
+     * @param array  $options
      */
-    public function __construct(ParameterBag $choices)
+    public function __construct($name, array $options)
     {
-        $this->choices = $choices;
+        $this->name = $name;
+        $this->options = $options;
+        $this->choices = new ParameterBag();
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 
     /**
