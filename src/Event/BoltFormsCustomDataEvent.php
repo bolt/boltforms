@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\Event;
 /**
  * Custom data event interface for BoltForms
  *
- * Copyright (C) 2014-2015 Gawain Lynch
+ * Copyright (c) 2014-2016 Gawain Lynch
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ use Symfony\Component\EventDispatcher\Event;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014, Gawain Lynch
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
 class BoltFormsCustomDataEvent extends Event

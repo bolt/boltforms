@@ -10,7 +10,7 @@ use Symfony\Component\Form\Button;
 /**
  * BoltForms submission lifecycle event.
  *
- * Copyright (C) 2014-2015 Gawain Lynch
+ * Copyright (c) 2014-2016 Gawain Lynch
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
