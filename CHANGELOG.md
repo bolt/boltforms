@@ -1,5 +1,16 @@
 # Changelog for Bolt Forms
 
+* 3.1.0 (xxx-xx-xx)
+ * Added: Enable multiple submit buttons
+ * Added: Life cycle events for form processing
+ * Added: AJAX form submission
+ * Added: More configuration objects
+ * Added: File name fields are hyperlinked in emails
+ * Fixed: Successfully submitted forms can no longer be resubmitted on page refresh
+ * Fixed: File upload handling breakage
+ * Changed: Cut over to Bolt v3 storage
+ * Break: Processor constructor signature changed
+
 * 3.0.2 (2016-06-04)
  * Fixed: Forms wiping values on failed submit
 
