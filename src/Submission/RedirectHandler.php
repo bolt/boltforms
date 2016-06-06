@@ -66,7 +66,7 @@ class RedirectHandler
 
     /**
      * Refresh the current page.
-     * 
+     *
      * @param Request $request
      */
     public function refresh(Request $request)
