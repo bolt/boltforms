@@ -57,6 +57,8 @@ final class BoltFormsEvents
     const DATA_SESSION_VALUE = 'boltforms.session_value';
     const DATA_TIMESTAMP = 'boltforms.timestamp';
 
+    const DATA_CHOICE_EVENT = 'boltforms.choice';
+
     /*
      * Email notification
      */

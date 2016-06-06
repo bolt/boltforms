@@ -4,8 +4,10 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
+use Bolt\Extension\Bolt\BoltForms\Choice\EventType;
 use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
 
 /**
  * Choices options for BoltForms
@@ -32,9 +34,9 @@ use Psr\Log\LoggerInterface;
 class FieldOptions
 {
     /** @var string */
-    private $formname;
+    private $formName;
     /** @var string */
-    private $fieldname;
+    private $fieldName;
     /** @var string */
     private $type;
     /** @var array */
@@ -47,25 +49,29 @@ class FieldOptions
     private $logger;
     /** @var boolean */
     private $initialised;
+    /** @var TraceableEventDispatcher */
+    private $dispatcher;
 
     /**
      * Constructor.
      *
-     * @param string          $formname
-     * @param string          $fieldname
-     * @param string          $type
-     * @param array           $baseOptions
-     * @param EntityManager   $storage
-     * @param LoggerInterface $logger
+     * @param string                   $formName
+     * @param string                   $fieldName
+     * @param string                   $type
+     * @param array                    $baseOptions
+     * @param EntityManager            $storage
+     * @param LoggerInterface          $logger
+     * @param TraceableEventDispatcher $dispatcher
      */
-    public function __construct($formname, $fieldname, $type, array $baseOptions, EntityManager $storage, LoggerInterface $logger)
+    public function __construct($formName, $fieldName, $type, array $baseOptions, EntityManager $storage, LoggerInterface $logger, TraceableEventDispatcher $dispatcher)
     {
-        $this->formname = $formname;
-        $this->fieldname = $fieldname;
+        $this->formName = $formName;
+        $this->fieldName = $fieldName;
         $this->type = $type;
         $this->baseOptions = $baseOptions;
         $this->em = $storage;
         $this->logger = $logger;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -120,14 +126,16 @@ class FieldOptions
     protected function getChoiceValues(array &$options)
     {
         if (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'contenttype::') === 0) {
-            $choice = new ContentType($this->em, $this->fieldname, $this->baseOptions);
+            $choice = new ContentType($this->em, $this->fieldName, $this->baseOptions);
 
             // Only unset for a this type as it's custom
             unset($options['sort']);
             unset($options['limit']);
             unset($options['filters']);
+        } elseif (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'event') === 0) {
+            $choice = new EventType($this->dispatcher, $this->fieldName, $this->baseOptions);
         } else {
-            $choice = new ArrayType($this->fieldname, $this->baseOptions['choices']);
+            $choice = new ArrayType($this->fieldName, $this->baseOptions['choices']);
         }
 
         return $choice->getChoices();
@@ -143,10 +151,10 @@ class FieldOptions
         }
 
         if (gettype($this->baseOptions['constraints']) === 'string') {
-            $this->options['constraints'] = $this->getConstraintObject($this->formname, $this->baseOptions['constraints']);
+            $this->options['constraints'] = $this->getConstraintObject($this->formName, $this->baseOptions['constraints']);
         } else {
             foreach ($this->baseOptions['constraints'] as $key => $constraint) {
-                $this->options['constraints'][$key] = $this->getConstraintObject($this->formname, [$key => $constraint]);
+                $this->options['constraints'][$key] = $this->getConstraintObject($this->formName, [$key => $constraint]);
             }
         }
     }

@@ -126,7 +126,7 @@ class BoltForms
     public function addField($formName, $fieldName, $type, array $options)
     {
         $em = $this->app['storage'];
-        $fieldOptions = new FieldOptions($formName, $fieldName, $type, $options, $em, $this->app['logger.system']);
+        $fieldOptions = new FieldOptions($formName, $fieldName, $type, $options, $em, $this->app['logger.system'], $this->app['dispatcher']);
 
         $this->getForm($formName)->add($fieldName, $type, $fieldOptions->toArray());
     }
