@@ -39,17 +39,21 @@ class EventType implements ChoiceInterface
     private $options;
     /** @var array */
     private $choices;
+    /** @var string */
+    private $formName;
 
     /**
      * @param TraceableEventDispatcher $dispatcher
-     * @param string                   $name    Name of the BoltForms field
+     * @param string                   $name Name of the BoltForms field
      * @param array                    $options
+     * @param string                   $formName
      */
-    public function __construct(TraceableEventDispatcher $dispatcher, $name, array $options)
+    public function __construct(TraceableEventDispatcher $dispatcher, $name, array $options, $formName)
     {
         $this->dispatcher = $dispatcher;
         $this->name = $name;
         $this->options = $options;
+        $this->formName = $formName;
     }
 
     /**
@@ -81,8 +85,18 @@ class EventType implements ChoiceInterface
     }
 
     /**
+     * Get the name.
+     *
+     * @return string
+     */
+    public function getFormName()
+    {
+        return $this->formName;
+    }
+
+    /**
      * Return the name of the event we want to dispatch.
-     * 
+     *
      * @return string
      */
     private function getEventName()

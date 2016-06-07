@@ -133,7 +133,7 @@ class FieldOptions
             unset($options['limit']);
             unset($options['filters']);
         } elseif (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'event') === 0) {
-            $choice = new EventType($this->dispatcher, $this->fieldName, $this->baseOptions);
+            $choice = new EventType($this->dispatcher, $this->fieldName, $this->baseOptions, $this->formName);
         } else {
             $choice = new ArrayType($this->fieldName, $this->baseOptions['choices']);
         }
