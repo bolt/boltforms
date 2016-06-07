@@ -1,8 +1,9 @@
 # Changelog for Bolt Forms
 
 * 3.1.0 (xxx-xx-xx)
- * Added: Enable multiple submit buttons
+ * Added: Event driven choice selection
  * Added: Life cycle events for form processing
+ * Added: Enable multiple submit buttons
  * Added: AJAX form submission
  * Added: More configuration objects
  * Added: File name fields are hyperlinked in emails

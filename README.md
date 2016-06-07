@@ -128,7 +128,7 @@ Choice Types
 ------------
 
 Choice types in BoltForms provide three different options for choice values. 
-The standard indexed and associative arrays, and Bolt specific Contenttype 
+The standard indexed and associative arrays, and Bolt specific ContentType 
 record lookups.
 
 ```yaml
@@ -145,22 +145,30 @@ record lookups.
       type: choice
       options:
         choices: 'contenttype::pages::title::slug'
+    event_based:
+      type: choice
+      options:
+        choices: event
+    event_based_custom:
+      type: choice
+      options:
+        choices: event::my.custom.event
 ```
 
-For the Bolt Contenttype options choices, you just need to make a string with 
+#### ContentType Choice Control
+
+For the Bolt ContentType options choices, you just need to make a string with 
 double-colon delimiters, where:
     'contenttype' - String constant that always equals 'contenttype'
-    'name'        - Name of the contenttype itself
+    'name'        - Name of the ContentType itself
     'labelfield'  - Field to use for the UI displayed to the user
     'valuefield'  - Field to use for the value stored
-
-#### ContentType Choice Control
 
 ContentType choice value lookups can optionally be sorted (`sort:`), limited 
 number of records retrieved (`limit:`), or filtered based upon one or more of
 the ContentType's field values (`filters:`).
 
-```
+```yaml
     best_pet_page:
       type: choice
       options:
@@ -190,6 +198,50 @@ be return, and in turn the maximum number of options in the select list.
 The `filters` option takes an array of one or more associative arrays with
 `field` and `value` keys. These filters behave the same as `where` parameters
 in Bolt's twig function `{% setcontent %}` 
+
+
+#### Event Choice Control
+
+Event based choice selectors are driven by Symfony Events. By default a
+`\Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents::DATA_CHOICE_EVENT`
+is dispatched, but that is customisable in the `choices:` key, e.g.:
+
+```yaml
+    event_based:
+      type: choice
+      options:
+        choices: event   # This will dispatch on BoltFormsEvents::DATA_CHOICE_EVENT
+    event_based_custom:
+      type: choice
+      options:
+        choices: event::my.custom.event
+```
+
+In the above example the choices for the `event_based` field will be an array 
+gathered from `BoltFormsEvents::DATA_CHOICE_EVENT`, and `event_based_custom`
+will be dispatched to listeners to the `my.custom.event` event.
+
+Each listener will be passed in a `BoltFormsChoiceEvent` event object to work
+with, that has getters for field name, options, and configured choices, as well
+as setters for an array of choices.
+
+```php
+    protected function subscribe(EventDispatcherInterface $dispatcher)
+    {
+        $dispatcher->addListener(BoltFormsEvents::DATA_CHOICE_EVENT, [$this, 'replyChoices']);
+        $dispatcher->addListener('my.custom.event', [$this, 'wantChoices']);
+    }
+
+    public function replyChoices(BoltFormsChoiceEvent $event)
+    {
+        $event->setChoices(['yes' => 'Yes of course', 'no' => 'No way!']);
+    }
+
+    public function wantChoices(BoltFormsChoiceEvent $event)
+    {
+        $event->setChoices(['yes' => 'Sure', 'no' => 'Not in this life']);
+    }
+```
 
 File Upload Types
 -----------------
