@@ -46,7 +46,7 @@
         "bolt-class": "Bolt\\Extension\\Bolt\\BoltForms\\BoltFormsExtension",
         "bolt-icon": "icon-boltforms.png",
         "branch-alias": {
-            "dev-master": "3.0.x-dev"
+            "dev-master": "3.1.x-dev"
         }
     }
 }
