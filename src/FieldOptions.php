@@ -138,7 +138,7 @@ class FieldOptions
             }
             $this->options['choices'] = $choiceObj->getChoices();
         } else {
-            $choiceObj = new ArrayType($this->fieldName, $options['choices']);
+            $choiceObj = new ArrayType($this->fieldName, $options);
 
             $optionsObj = new Choice\Options($options);
             $this->options = [

@@ -32,13 +32,13 @@ class ArrayType implements ChoiceInterface
     private $choices;
 
     /**
-     * @param string $name    Name of the BoltForms field
-     * @param array  $choices Choices for field
+     * @param string $name     Name of the BoltForms field
+     * @param array  $options  Options for field
      */
-    public function __construct($name, array $choices)
+    public function __construct($name, array $options)
     {
         $this->name    = $name;
-        $this->choices = $choices;
+        $this->choices = isset($options['choices']) ? $options['choices'] : null;;
     }
 
     /**
