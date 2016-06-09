@@ -2,9 +2,9 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Choice\EventType;
+use Bolt\Extension\Bolt\BoltForms\Choice\SymfonyChoiceType;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
@@ -138,7 +138,7 @@ class FieldOptions
             }
             $this->options['choices'] = $choiceObj->getChoices();
         } else {
-            $choiceObj = new ArrayType($this->fieldName, $options);
+            $choiceObj = new SymfonyChoiceType($this->fieldName, $options);
             $this->options = [
                 'choices'       => $choiceObj->getChoices(),
                 'choice_loader' => $choiceObj->getChoiceLoader(),

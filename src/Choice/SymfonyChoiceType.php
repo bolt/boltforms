@@ -28,12 +28,12 @@ use Symfony\Component\PropertyAccess\PropertyPath;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class ArrayType implements ChoiceInterface
+class SymfonyChoiceType implements ChoiceInterface
 {
-    /** @var string */
-    private $name;
     /** @var array */
     protected $baseOptions;
+    /** @var string */
+    private $name;
     /** @var array */
     private $choices;
 
