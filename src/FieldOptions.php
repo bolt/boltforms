@@ -107,10 +107,9 @@ class FieldOptions
      */
     protected function setValidOptions()
     {
+        $this->options = $this->baseOptions;
         if ($this->type === 'choice') {
             $this->resolveChoiceOptions();
-        } else {
-            $this->options = $this->baseOptions;
         }
 
         // Set up constraint objects
@@ -121,36 +120,102 @@ class FieldOptions
      * Get customised value parameters for choice field types.
      *
      * @throws FormOptionException
-     *
-     * @return array
      */
     protected function resolveChoiceOptions()
     {
         $options = $this->baseOptions;
+        $options['choices'] = isset($options['choices']) ? $options['choices'] : null;
 
-        if (isset($options['choices']) && is_string($options['choices'])) {
-            if (strpos($options['choices'], 'contenttype::') === 0) {
-                $choiceObj = new ContentType($this->em, $this->fieldName, $options);
-            } elseif (strpos($options['choices'], 'event') === 0) {
-                $choiceObj = new EventType($this->dispatcher, $this->fieldName, $options, $this->formName);
-            } else {
-                throw new FormOptionException(sprintf('Specified choices key is invalid: %s', $options['choices']));
-            }
-            $this->options['choices'] = $choiceObj->getChoices();
-        } else {
-            $choiceObj = new SymfonyChoiceType($this->fieldName, $options);
-            $this->options = [
-                'choices'           => $choiceObj->getChoices(),
-                'choices_as_values' => $choiceObj->isChoicesAsValues(),
-                'choice_loader'     => $choiceObj->getChoiceLoader(),
-                'choice_name'       => $choiceObj->getChoiceName(),
-                'choice_value'      => $choiceObj->getChoiceValue(),
-                'choice_label'      => $choiceObj->getChoiceLabel(),
-                'choice_attr'       => $choiceObj->getChoiceAttr(),
-                'group_by'          => $choiceObj->getGroupBy(),
-                'preferred_choices' => $choiceObj->getPreferredChoices(),
-            ];
+        if (is_array($options['choices'])) {
+            $this->setSymfonyChoiceType();
+
+            return;
         }
+
+        if (!is_string($options['choices'])) {
+            throw new FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
+        }
+
+        if (strpos($options['choices'], 'contenttype::') === 0) {
+            $this->setContentTypeChoiceType();
+
+            return;
+        }
+
+        if (strpos($options['choices'], 'event') === 0) {
+            $this->setEventChoiceType();
+
+            return;
+        }
+
+        if (strpos($options['choices'], '::') !== false) {
+            $this->setEntityChoiceType();
+
+            return;
+        }
+
+        throw new FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
+    }
+
+    /**
+     * Sets the field options for Symfony ChoiceType parameters.
+     *
+     * @throws FormOptionException
+     *
+     * @return array
+     */
+    protected function setSymfonyChoiceType()
+    {
+        $choiceObj = new SymfonyChoiceType($this->fieldName, $this->baseOptions);
+
+        $options = [
+            'choices'           => $choiceObj->getChoices(),
+            'choices_as_values' => $choiceObj->isChoicesAsValues(),
+            'choice_loader'     => $choiceObj->getChoiceLoader(),
+            'choice_name'       => $choiceObj->getChoiceName(),
+            'choice_value'      => $choiceObj->getChoiceValue(),
+            'choice_label'      => $choiceObj->getChoiceLabel(),
+            'choice_attr'       => $choiceObj->getChoiceAttr(),
+            'group_by'          => $choiceObj->getGroupBy(),
+            'preferred_choices' => $choiceObj->getPreferredChoices(),
+        ];
+
+        return array_merge($this->baseOptions, $options);
+    }
+
+    /**
+     * Set up choices from a ContentType lookup.
+     */
+    protected function setContentTypeChoiceType()
+    {
+        $choiceObj = new ContentType($this->em, $this->fieldName, $this->baseOptions);
+        $this->options['choices'] = $choiceObj->getChoices();
+    }
+
+    /**
+     * Set up choices for an event based type.
+     */
+    protected function setEventChoiceType()
+    {
+        $choiceObj = new EventType($this->dispatcher, $this->fieldName, $this->baseOptions, $this->formName);
+        $this->options['choices'] = $choiceObj->getChoices();
+    }
+
+    /**
+     * Set up choices for an entity type.
+     *
+     * @throws FormOptionException
+     */
+    protected function setEntityChoiceType()
+    {
+        $parts = explode('::', $this->baseOptions['choices']);
+        if (!class_exists($parts[0])) {
+            throw new FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
+        }
+
+
+        $this->setSymfonyChoiceType();
+        $this->options['choices'] = [new $parts[0](), $parts[1]];
     }
 
     /**
