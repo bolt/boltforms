@@ -107,11 +107,11 @@ class FieldOptions
      */
     protected function setValidOptions()
     {
-        $options = $this->baseOptions;
         if ($this->type === 'choice') {
-            $options['choices'] = $this->getChoiceValues($options);
+            $this->resolveChoiceOptions();
+        } else {
+            $this->options = $this->baseOptions;
         }
-        $this->options = $options;
 
         // Set up constraint objects
         $this->setConstraints();
@@ -120,32 +120,36 @@ class FieldOptions
     /**
      * Get customised value parameters for choice field types.
      *
-     * @param array $options
-     *
      * @throws FormOptionException
      *
      * @return array
      */
-    protected function getChoiceValues(array &$options)
+    protected function resolveChoiceOptions()
     {
-        if (is_string($this->baseOptions['choices'])) {
-            if (strpos($this->baseOptions['choices'], 'contenttype::') === 0) {
-                $choice = new ContentType($this->em, $this->fieldName, $this->baseOptions);
+        $options = $this->baseOptions;
 
-                // Only unset for a this type as it's custom
-                unset($options['sort']);
-                unset($options['limit']);
-                unset($options['filters']);
-            } elseif (strpos($this->baseOptions['choices'], 'event') === 0) {
-                $choice = new EventType($this->dispatcher, $this->fieldName, $this->baseOptions, $this->formName);
+        if (is_string($options['choices'])) {
+            if (strpos($options['choices'], 'contenttype::') === 0) {
+                $choiceObj = new ContentType($this->em, $this->fieldName, $options);
+            } elseif (strpos($options['choices'], 'event') === 0) {
+                $choiceObj = new EventType($this->dispatcher, $this->fieldName, $options, $this->formName);
             } else {
-                throw new FormOptionException(sprintf('Specified choices key is invalid: %s', $this->baseOptions['choices']));
+                throw new FormOptionException(sprintf('Specified choices key is invalid: %s', $options['choices']));
             }
+            $this->options['choices'] = $choiceObj->getChoices();
         } else {
-            $choice = new ArrayType($this->fieldName, $this->baseOptions['choices']);
-        }
+            $choiceObj = new ArrayType($this->fieldName, $options['choices']);
 
-        return $choice->getChoices();
+            $optionsObj = new Choice\Options($options);
+            $this->options = [
+                'choices'       => $choiceObj->getChoices(),
+                'choice_loader' => $optionsObj->getChoiceLoader(),
+                'choice_name'   => $optionsObj->getChoiceName(),
+                'choice_value'  => $optionsObj->getChoiceValue(),
+                'choice_label'  => $optionsObj->getChoiceLabel(),
+                'choice_attr'   => $optionsObj->getChoiceAttr(),
+            ];
+        }
     }
 
     /**
