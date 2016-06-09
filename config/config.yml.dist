@@ -225,6 +225,20 @@ contact:
 #        required: false
 #        label: What is our best pets page?
 #        choices: 'contenttype::pets::title::slug'
+#    event:
+#      type: choice
+#      options:
+#        required: false
+#        label: What event would you like to attend?
+#        choices: event # Will be dispatching on \Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents::DATA_CHOICE_EVENT
+#        multiple: false
+#    event_custom:
+#      type: choice
+#      options:
+#        required: false
+#        label: What type of animal would you like to bring?
+#        choices: event::your.custom.event.name # Will be dispatching on "your.custom.event.name"
+#        multiple: false
 #    upload:
 #      type: file
 #      options:
