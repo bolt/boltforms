@@ -170,4 +170,20 @@ class SymfonyChoiceType implements ChoiceInterface
 
         return new PropertyPath($this->baseOptions['choice_attr']);
     }
+
+    /**
+     * @return array|callable|PropertyPath|null
+     */
+    public function getGroupBy()
+    {
+        if (!isset($this->baseOptions['group_by'])) {
+            return null;
+        }
+
+        if (is_array($this->baseOptions['group_by']) || is_callable($this->baseOptions['group_by'])) {
+            return $this->baseOptions['group_by'];
+        }
+
+        return new PropertyPath($this->baseOptions['group_by']);
+    }
 }
