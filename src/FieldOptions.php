@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Choice\ArrayType;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Choice\EventType;
+use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
@@ -121,19 +122,25 @@ class FieldOptions
      *
      * @param array $options
      *
+     * @throws FormOptionException
+     *
      * @return array
      */
     protected function getChoiceValues(array &$options)
     {
-        if (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'contenttype::') === 0) {
-            $choice = new ContentType($this->em, $this->fieldName, $this->baseOptions);
+        if (is_string($this->baseOptions['choices'])) {
+            if (strpos($this->baseOptions['choices'], 'contenttype::') === 0) {
+                $choice = new ContentType($this->em, $this->fieldName, $this->baseOptions);
 
-            // Only unset for a this type as it's custom
-            unset($options['sort']);
-            unset($options['limit']);
-            unset($options['filters']);
-        } elseif (is_string($this->baseOptions['choices']) && strpos($this->baseOptions['choices'], 'event') === 0) {
-            $choice = new EventType($this->dispatcher, $this->fieldName, $this->baseOptions, $this->formName);
+                // Only unset for a this type as it's custom
+                unset($options['sort']);
+                unset($options['limit']);
+                unset($options['filters']);
+            } elseif (strpos($this->baseOptions['choices'], 'event') === 0) {
+                $choice = new EventType($this->dispatcher, $this->fieldName, $this->baseOptions, $this->formName);
+            } else {
+                throw new FormOptionException(sprintf('Specified choices key is invalid: %s', $this->baseOptions['choices']));
+            }
         } else {
             $choice = new ArrayType($this->fieldName, $this->baseOptions['choices']);
         }
