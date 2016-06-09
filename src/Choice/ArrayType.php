@@ -2,6 +2,10 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
+use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
+use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
+use Symfony\Component\PropertyAccess\PropertyPath;
+
 /**
  * Array choices for BoltForms
  *
@@ -29,16 +33,19 @@ class ArrayType implements ChoiceInterface
     /** @var string */
     private $name;
     /** @var array */
+    protected $baseOptions;
+    /** @var array */
     private $choices;
 
     /**
-     * @param string $name     Name of the BoltForms field
-     * @param array  $options  Options for field
+     * @param string $name        Name of the BoltForms field
+     * @param array  $baseOptions Options for field
      */
-    public function __construct($name, array $options)
+    public function __construct($name, array $baseOptions)
     {
         $this->name    = $name;
-        $this->choices = isset($options['choices']) ? $options['choices'] : null;;
+        $this->choices = isset($baseOptions['choices']) ? $baseOptions['choices'] : null;
+        $this->baseOptions = $baseOptions;
     }
 
     /**
@@ -59,5 +66,91 @@ class ArrayType implements ChoiceInterface
     public function getChoices()
     {
         return $this->choices;
+    }
+
+    /**
+     * @throws FormOptionException
+     *
+     * @return ChoiceLoaderInterface|null
+     */
+    public function getChoiceLoader()
+    {
+        if (!isset($this->baseOptions['choice_loader'])) {
+            return null;
+        }
+        if (!class_exists($this->baseOptions['choice_loader'])) {
+            throw new FormOptionException(sprintf('Specified choice_loader class does not exist!', $this->baseOptions['choice_loader']));
+        }
+
+        $loader = new $this->baseOptions['choice_loader']();
+        if (!$loader instanceof ChoiceLoaderInterface) {
+            throw new FormOptionException(sprintf('Specified choice_loader class does not implement Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface', $this->baseOptions['choice_loader']));
+        }
+
+        return $loader;
+    }
+
+    /**
+     * @return callable|PropertyPath|null
+     */
+    public function getChoiceName()
+    {
+        if (!isset($this->baseOptions['choice_name'])) {
+            return null;
+        }
+
+        if (is_callable($this->baseOptions['choice_name'])) {
+            return $this->baseOptions['choice_name'];
+        }
+
+        return new PropertyPath($this->baseOptions['choice_name']);
+    }
+
+    /**
+     * @return callable|PropertyPath|null
+     */
+    public function getChoiceValue()
+    {
+        if (!isset($this->baseOptions['choice_value'])) {
+            return null;
+        }
+
+        if (is_callable($this->baseOptions['choice_value'])) {
+            return $this->baseOptions['choice_value'];
+        }
+
+        return new PropertyPath($this->baseOptions['choice_value']);
+    }
+
+    /**
+     * @return bool|callable|PropertyPath|null
+     */
+    public function getChoiceLabel()
+    {
+        if (!isset($this->baseOptions['choice_label'])) {
+            return null;
+        }
+
+        if (is_bool($this->baseOptions['choice_label']) || is_callable($this->baseOptions['choice_label'])) {
+            return $this->baseOptions['choice_label'];
+        }
+
+        return new PropertyPath($this->baseOptions['choice_label']);
+    }
+
+    /**
+     * @return array|callable|PropertyPath|null
+     */
+    public function getChoiceAttr()
+    {
+        if (!isset($this->baseOptions['choice_attr'])) {
+            return null;
+        }
+
+        if (is_array($this->baseOptions['choice_attr']) || is_callable($this->baseOptions['choice_attr'])) {
+            return $this->baseOptions['choice_attr'];
+        }
+
+        return new PropertyPath($this->baseOptions['choice_attr']);
     }
 }
