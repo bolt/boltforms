@@ -140,12 +140,13 @@ class FieldOptions
         } else {
             $choiceObj = new SymfonyChoiceType($this->fieldName, $options);
             $this->options = [
-                'choices'       => $choiceObj->getChoices(),
-                'choice_loader' => $choiceObj->getChoiceLoader(),
-                'choice_name'   => $choiceObj->getChoiceName(),
-                'choice_value'  => $choiceObj->getChoiceValue(),
-                'choice_label'  => $choiceObj->getChoiceLabel(),
-                'choice_attr'   => $choiceObj->getChoiceAttr(),
+                'choices'           => $choiceObj->getChoices(),
+                'choices_as_values' => $choiceObj->isChoicesAsValues(),
+                'choice_loader'     => $choiceObj->getChoiceLoader(),
+                'choice_name'       => $choiceObj->getChoiceName(),
+                'choice_value'      => $choiceObj->getChoiceValue(),
+                'choice_label'      => $choiceObj->getChoiceLabel(),
+                'choice_attr'       => $choiceObj->getChoiceAttr(),
             ];
         }
     }

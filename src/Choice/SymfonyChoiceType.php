@@ -94,6 +94,20 @@ class SymfonyChoiceType implements ChoiceInterface
     }
 
     /**
+     * Legacy for Symfony 2.7+
+     *
+     * @return bool
+     */
+    public function isChoicesAsValues()
+    {
+        if (isset($this->baseOptions['choices_as_values'])) {
+            return (bool) $this->baseOptions['choices_as_values'];
+        }
+
+        return true;
+    }
+
+    /**
      * @return callable|PropertyPath|null
      */
     public function getChoiceName()
