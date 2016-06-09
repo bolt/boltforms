@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsChoiceEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
 
 /**
@@ -44,7 +43,7 @@ class EventType implements ChoiceInterface
 
     /**
      * @param TraceableEventDispatcher $dispatcher
-     * @param string                   $name Name of the BoltForms field
+     * @param string                   $name       Name of the BoltForms field
      * @param array                    $options
      * @param string                   $formName
      */

@@ -10,8 +10,8 @@ use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
-use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
@@ -333,9 +333,10 @@ class Processor implements EventSubscriberInterface
     /**
      * Redirect if a redirect is set and the page exists.
      *
-     * @throws HttpException
      *
      * @param LifecycleEvent $lifeEvent
+     *
+     * @throws HttpException
      */
     public function processRedirect(LifecycleEvent $lifeEvent)
     {
