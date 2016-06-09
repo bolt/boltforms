@@ -186,4 +186,20 @@ class SymfonyChoiceType implements ChoiceInterface
 
         return new PropertyPath($this->baseOptions['group_by']);
     }
+
+    /**
+     * @return array|callable|PropertyPath|null
+     */
+    public function getPreferredChoices()
+    {
+        if (!isset($this->baseOptions['preferred_choices'])) {
+            return null;
+        }
+
+        if (is_array($this->baseOptions['preferred_choices']) || is_callable($this->baseOptions['preferred_choices'])) {
+            return $this->baseOptions['preferred_choices'];
+        }
+
+        return new PropertyPath($this->baseOptions['preferred_choices']);
+    }
 }

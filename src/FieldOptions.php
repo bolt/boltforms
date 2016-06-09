@@ -148,6 +148,7 @@ class FieldOptions
                 'choice_label'      => $choiceObj->getChoiceLabel(),
                 'choice_attr'       => $choiceObj->getChoiceAttr(),
                 'group_by'          => $choiceObj->getGroupBy(),
+                'preferred_choices' => $choiceObj->getPreferredChoices(),
             ];
         }
     }
