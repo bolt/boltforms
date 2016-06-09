@@ -21,7 +21,7 @@ class BoltFormsSubscriberTest extends AbstractBoltFormsUnitTest
     public function testPreSetDataValid()
     {
         $app = $this->getApp(false);
-        $app['dispatcher']->addListener(BoltFormsEvents::PRE_SET_DATA,  array($this, 'validCallable'));
+        $app['dispatcher']->addListener(BoltFormsEvents::PRE_SET_DATA,  [$this, 'validCallable']);
         $app->boot();
 
         $boltforms = new BoltForms($app);
@@ -33,7 +33,7 @@ class BoltFormsSubscriberTest extends AbstractBoltFormsUnitTest
     public function testPreSetDataException()
     {
         $app = $this->getApp(false);
-        $app['dispatcher']->addListener(BoltFormsEvents::PRE_SET_DATA,  array($this, 'invalidCallable'));
+        $app['dispatcher']->addListener(BoltFormsEvents::PRE_SET_DATA,  [$this, 'invalidCallable']);
         $app->boot();
 
         $boltforms = new BoltForms($app);
@@ -45,7 +45,7 @@ class BoltFormsSubscriberTest extends AbstractBoltFormsUnitTest
     public function testPostSetDataValid()
     {
         $app = $this->getApp(false);
-        $app['dispatcher']->addListener(BoltFormsEvents::POST_SET_DATA,  array($this, 'validCallable'));
+        $app['dispatcher']->addListener(BoltFormsEvents::POST_SET_DATA,  [$this, 'validCallable']);
         $app->boot();
 
         $boltforms = new BoltForms($app);
@@ -57,7 +57,7 @@ class BoltFormsSubscriberTest extends AbstractBoltFormsUnitTest
     public function testPostSetDataException()
     {
         $app = $this->getApp(false);
-        $app['dispatcher']->addListener(BoltFormsEvents::POST_SET_DATA,  array($this, 'invalidCallable'));
+        $app['dispatcher']->addListener(BoltFormsEvents::POST_SET_DATA,  [$this, 'invalidCallable']);
         $app->boot();
 
         $boltforms = new BoltForms($app);
@@ -69,7 +69,7 @@ class BoltFormsSubscriberTest extends AbstractBoltFormsUnitTest
     public function testPreSubmitValid()
     {
         $app = $this->getApp(false);
-        $app['dispatcher']->addListener(BoltFormsEvents::PRE_SUBMIT,  array($this, 'validCallable'));
+        $app['dispatcher']->addListener(BoltFormsEvents::PRE_SUBMIT,  [$this, 'validCallable']);
         $app->boot();
 
         $this->formProcessRequest($app);
@@ -80,7 +80,7 @@ class BoltFormsSubscriberTest extends AbstractBoltFormsUnitTest
     public function testPreSubmitException()
     {
         $app = $this->getApp(false);
-        $app['dispatcher']->addListener(BoltFormsEvents::PRE_SUBMIT,  array($this, 'invalidCallable'));
+        $app['dispatcher']->addListener(BoltFormsEvents::PRE_SUBMIT,  [$this, 'invalidCallable']);
         $app->boot();
 
         $this->formProcessRequest($app);
@@ -91,7 +91,7 @@ class BoltFormsSubscriberTest extends AbstractBoltFormsUnitTest
     public function testSubmitValid()
     {
         $app = $this->getApp(false);
-        $app['dispatcher']->addListener(BoltFormsEvents::SUBMIT,  array($this, 'validCallable'));
+        $app['dispatcher']->addListener(BoltFormsEvents::SUBMIT,  [$this, 'validCallable']);
         $app->boot();
 
         $this->formProcessRequest($app);
@@ -102,7 +102,7 @@ class BoltFormsSubscriberTest extends AbstractBoltFormsUnitTest
     public function testSubmitException()
     {
         $app = $this->getApp(false);
-        $app['dispatcher']->addListener(BoltFormsEvents::SUBMIT,  array($this, 'invalidCallable'));
+        $app['dispatcher']->addListener(BoltFormsEvents::SUBMIT,  [$this, 'invalidCallable']);
         $app->boot();
 
         $boltforms = new BoltForms($app);
@@ -116,7 +116,7 @@ class BoltFormsSubscriberTest extends AbstractBoltFormsUnitTest
     public function testPostSubmitValid()
     {
         $app = $this->getApp(false);
-        $app['dispatcher']->addListener(BoltFormsEvents::POST_SUBMIT,  array($this, 'validCallable'));
+        $app['dispatcher']->addListener(BoltFormsEvents::POST_SUBMIT,  [$this, 'validCallable']);
         $app->boot();
 
         $this->formProcessRequest($app);
@@ -127,7 +127,7 @@ class BoltFormsSubscriberTest extends AbstractBoltFormsUnitTest
     public function testPostSubmitException()
     {
         $app = $this->getApp(false);
-        $app['dispatcher']->addListener(BoltFormsEvents::POST_SUBMIT,  array($this, 'invalidCallable'));
+        $app['dispatcher']->addListener(BoltFormsEvents::POST_SUBMIT,  [$this, 'invalidCallable']);
         $app->boot();
 
         $this->formProcessRequest($app);

@@ -12,14 +12,14 @@ class SymfonyChoiceTypeTest extends AbstractBoltFormsUnitTest
 {
     public function testGetName()
     {
-        $obj = new SymfonyChoiceType('koala', array('gum', 'leaves'));
+        $obj = new SymfonyChoiceType('koala', ['gum', 'leaves']);
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Choice\ArrayType', $obj);
         $this->assertSame($obj->getName(), 'koala');
     }
 
     public function testGetChoices()
     {
-        $obj = new SymfonyChoiceType('koala', array('gum', 'leaves'));
+        $obj = new SymfonyChoiceType('koala', ['gum', 'leaves']);
         $choices = $obj->getChoices();
 
         $this->assertContains('gum', $choices);

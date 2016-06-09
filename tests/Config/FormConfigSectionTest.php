@@ -13,7 +13,7 @@ class FormConfigSectionTest extends AbstractBoltFormsUnitTest
     public function testConstructor()
     {
         $app = $this->getApp();
-        $section = new FormConfigSection(array('koala' => 'gum-leaves'));
+        $section = new FormConfigSection(['koala' => 'gum-leaves']);
 
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection', $section);
 

@@ -14,8 +14,8 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app = $this->getApp();
 
         $event = $this->getMock('\Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent',
-            array('setData'),
-            array('testevent', array()));
+            ['setData'],
+            ['testevent', []]);
         $event->expects($this->never())
             ->method('setData');
 
@@ -29,12 +29,12 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app = $this->getApp();
 
         $event = $this->getMock('\Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent',
-            array('setData'),
-            array('testevent', array('table' => '')));
+            ['setData'],
+            ['testevent', ['table' => '']]);
         $event->expects($this->never())
             ->method('setData');
 
-        $logger = $this->getMock('\Monolog\Logger', array('error'), array('testlogger'));
+        $logger = $this->getMock('\Monolog\Logger', ['error'], ['testlogger']);
         $logger->expects($this->atLeastOnce())
             ->method('error');
         $app['logger.system'] = $logger;
@@ -49,12 +49,12 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app = $this->getApp();
 
         $event = $this->getMock('\Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent',
-            array('setData'),
-            array('testevent', array('table' => 'koala')));
+            ['setData'],
+            ['testevent', ['table' => 'koala']]);
         $event->expects($this->never())
             ->method('setData');
 
-        $logger = $this->getMock('\Monolog\Logger', array('error'), array('testlogger'));
+        $logger = $this->getMock('\Monolog\Logger', ['error'], ['testlogger']);
         $logger->expects($this->atLeastOnce())
             ->method('error');
         $app['logger.system'] = $logger;
@@ -66,17 +66,17 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
     public function testNextIncrementTable()
     {
-        $nextIncField = array(
+        $nextIncField = [
             'type'    => 'hidden',
-            'options' => array('label' => false),
-            'event'   => array(
+            'options' => ['label' => false],
+            'event'   => [
                 'name'   => 'next_increment',
-                'params' => array(
+                'params' => [
                     'table'  => 'koalas',
-                    'column' => 'gum_leaves'
-                )
-            ),
-        );
+                    'column' => 'gum_leaves',
+                ],
+            ],
+        ];
 
         $app = $this->getApp(false);
         $this->getExtension()->config['csrf'] = false;
@@ -96,7 +96,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         // Mock the database query
         $mocker = new DoctrineMockBuilder();
         $db = $mocker->getConnectionMock();
-        $queries = array();
+        $queries = [];
 
         $db->expects($this->any())
             ->method('executeQuery')
@@ -111,13 +111,13 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['db'] = $db;
 
         // Mock Bolt\Users
-        $users = $this->getMock('\Bolt\Users', array('getUsers'), array($app));
+        $users = $this->getMock('\Bolt\Users', ['getUsers'], [$app]);
         $users->expects($this->any())
             ->method('getUsers')
-            ->willReturn(array('id' => 1));
+            ->willReturn(['id' => 1]);
         $app['users'] = $users;
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true], true);
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
@@ -126,18 +126,18 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
     public function testNextIncrementTableMin()
     {
-        $nextIncField = array(
+        $nextIncField = [
             'type'    => 'hidden',
-            'options' => array('label' => false),
-            'event'   => array(
+            'options' => ['label' => false],
+            'event'   => [
                 'name'   => 'next_increment',
-                'params' => array(
+                'params' => [
                     'table'  => 'koalas',
                     'column' => 'gum_leaves',
-                    'min'    => 42
-                )
-            ),
-        );
+                    'min'    => 42,
+                ],
+            ],
+        ];
 
         $app = $this->getApp(false);
         $this->getExtension()->config['csrf'] = false;
@@ -157,7 +157,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         // Mock the database query
         $mocker = new DoctrineMockBuilder();
         $db = $mocker->getConnectionMock();
-        $queries = array();
+        $queries = [];
 
         $db->expects($this->any())
             ->method('executeQuery')
@@ -172,13 +172,13 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['db'] = $db;
 
         // Mock Bolt\Users
-        $users = $this->getMock('\Bolt\Users', array('getUsers'), array($app));
+        $users = $this->getMock('\Bolt\Users', ['getUsers'], [$app]);
         $users->expects($this->any())
             ->method('getUsers')
-            ->willReturn(array('id' => 1));
+            ->willReturn(['id' => 1]);
         $app['users'] = $users;
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true], true);
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
@@ -187,18 +187,18 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
     public function testNextIncrementContentType()
     {
-        $nextIncField = array(
+        $nextIncField = [
             'type'    => 'hidden',
-            'options' => array('label' => false),
-            'event'   => array(
+            'options' => ['label' => false],
+            'event'   => [
                 'name'   => 'next_increment',
-                'params' => array(
+                'params' => [
                     'contenttype' => 'koalas',
                     'column'      => 'gum_leaves',
-                    'min'         => 42
-                )
-            ),
-        );
+                    'min'         => 42,
+                ],
+            ],
+        ];
 
         $app = $this->getApp(false);
         $this->getExtension()->config['csrf'] = false;
@@ -218,7 +218,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         // Mock the database query
         $mocker = new DoctrineMockBuilder();
         $db = $mocker->getConnectionMock();
-        $queries = array();
+        $queries = [];
         $db->expects($this->any())
             ->method('executeQuery')
             ->will($this->returnCallback(
@@ -235,13 +235,13 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['db'] = $db;
 
         // Mock Bolt\Users
-        $users = $this->getMock('\Bolt\Users', array('getUsers'), array($app));
+        $users = $this->getMock('\Bolt\Users', ['getUsers'], [$app]);
         $users->expects($this->any())
             ->method('getUsers')
-            ->willReturn(array('id' => 1));
+            ->willReturn(['id' => 1]);
         $app['users'] = $users;
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true], true);
 
         $this->assertEquals('SELECT MAX(gum_leaves) as max FROM bolt_koalas', $queries[0]);
         $this->assertArrayHasKey('next_inc', $result);
@@ -250,16 +250,16 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
     public function testRandomString()
     {
-        $randomStringField = array(
+        $randomStringField = [
             'type'    => 'hidden',
-            'options' => array('label' => false),
-            'event'   => array(
+            'options' => ['label' => false],
+            'event'   => [
                 'name'   => 'random_string',
-                'params' => array(
-                    'length' => 22
-                )
-            ),
-        );
+                'params' => [
+                    'length' => 22,
+                ],
+            ],
+        ];
 
         $app = $this->getApp(false);
         $this->getExtension()->config['csrf'] = false;
@@ -276,7 +276,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/', 'POST', $parameters);
         $app->boot();
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true], true);
 
         $this->assertArrayHasKey('random_str', $result);
         $this->assertSame(22, strlen($result->get('random_str')));
@@ -284,16 +284,16 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
     public function testServerValue()
     {
-        $serverValueField = array(
+        $serverValueField = [
             'type'    => 'hidden',
-            'options' => array('label' => false),
-            'event'   => array(
+            'options' => ['label' => false],
+            'event'   => [
                 'name'   => 'server_value',
-                'params' => array(
-                    'key' => 'SCRIPT_NAME'
-                )
-            ),
-        );
+                'params' => [
+                    'key' => 'SCRIPT_NAME',
+                ],
+            ],
+        ];
 
         $app = $this->getApp(false);
         $this->getExtension()->config['csrf'] = false;
@@ -307,10 +307,10 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
-        $app['request'] = Request::create('/', 'POST', $parameters, array(), array(), array('SCRIPT_NAME' => $_SERVER['SCRIPT_NAME']));
+        $app['request'] = Request::create('/', 'POST', $parameters, [], [], ['SCRIPT_NAME' => $_SERVER['SCRIPT_NAME']]);
         $app->boot();
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true], true);
 
         $this->assertArrayHasKey('server_val', $result);
         $this->assertSame($_SERVER['SCRIPT_NAME'], $result->get('server_val'));
@@ -318,13 +318,13 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
     public function testServerValueInvalid()
     {
-        $serverValueField = array(
+        $serverValueField = [
             'type'    => 'hidden',
-            'options' => array('label' => false),
-            'event'   => array(
-                'name'   => 'server_value'
-            ),
-        );
+            'options' => ['label' => false],
+            'event'   => [
+                'name'   => 'server_value',
+            ],
+        ];
 
         $app = $this->getApp(false);
         $this->getExtension()->config['csrf'] = false;
@@ -338,10 +338,10 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app['boltforms']->addFieldArray('testing_form', $fields);
 
         $parameters = $this->formData();
-        $app['request'] = Request::create('/', 'POST', $parameters, array(), array(), array('SCRIPT_NAME' => $_SERVER['SCRIPT_NAME']));
+        $app['request'] = Request::create('/', 'POST', $parameters, [], [], ['SCRIPT_NAME' => $_SERVER['SCRIPT_NAME']]);
         $app->boot();
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true], true);
 
         $this->assertArrayHasKey('server_val', $result->getPostData());
         $this->assertNull($result->get('server_val'));
@@ -349,16 +349,16 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
     public function testSessionValue()
     {
-        $sessionValueField = array(
+        $sessionValueField = [
             'type'    => 'hidden',
-            'options' => array('label' => false),
-            'event'   => array(
+            'options' => ['label' => false],
+            'event'   => [
                 'name'   => 'session_value',
-                'params' => array(
-                    'key' => 'koala'
-                )
-            ),
-        );
+                'params' => [
+                    'key' => 'koala',
+                ],
+            ],
+        ];
 
         $app = $this->getApp(false);
         $this->getExtension()->config['csrf'] = false;
@@ -376,7 +376,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app->boot();
         $app['session']->set('koala', 'gum-leaves');
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true], true);
 
         $this->assertArrayHasKey('session_value', $result);
         $this->assertSame('gum-leaves', $result->get('session_value'));
@@ -384,13 +384,13 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
 
     public function testSessionValueInvalid()
     {
-        $sessionValueField = array(
+        $sessionValueField = [
             'type'    => 'hidden',
-            'options' => array('label' => false),
-            'event'   => array(
-                'name'   => 'session_value'
-            ),
-        );
+            'options' => ['label' => false],
+            'event'   => [
+                'name'   => 'session_value',
+            ],
+        ];
 
         $app = $this->getApp(false);
         $this->getExtension()->config['csrf'] = false;
@@ -408,7 +408,7 @@ class BoltFormsCustomDataSubscriberTest extends AbstractBoltFormsUnitTest
         $app->boot();
         $app['session']->set('koala', 'gum-leaves');
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true), true);
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true], true);
 
         $this->assertArrayHasKey('session_value', $result->getPostData());
         $this->assertNull($result->get('session_value'));

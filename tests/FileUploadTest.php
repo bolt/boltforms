@@ -222,8 +222,8 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $e = new FileException();
         $fileUpload = $this->getMock(
             'Symfony\Component\HttpFoundation\File\UploadedFile',
-            array('move'),
-            array($tmpFile, 'bolt-logo.png', null, null, UPLOAD_ERR_OK, true)
+            ['move'],
+            [$tmpFile, 'bolt-logo.png', null, null, UPLOAD_ERR_OK, true]
         );
         $fileUpload
             ->method('move')
@@ -231,7 +231,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $this->setExpectedException('\Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException');
 
         // Keep an eye on the logger
-        $logger = $this->getMock('\Monolog\Logger', array('error', 'debug'), array('testlogger'));
+        $logger = $this->getMock('\Monolog\Logger', ['error', 'debug'], ['testlogger']);
         $logger->expects($this->atLeastOnce())
             ->method('error');
         $app['logger.system'] = $logger;
@@ -249,8 +249,8 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $e = new FileException();
         $fileUpload = $this->getMock(
             'Symfony\Component\HttpFoundation\File\UploadedFile',
-            array('move'),
-            array($tmpFile, 'bolt-logo.png', null, null, UPLOAD_ERR_OK, true)
+            ['move'],
+            [$tmpFile, 'bolt-logo.png', null, null, UPLOAD_ERR_OK, true]
             );
         $fileUpload
         ->method('move')
@@ -258,7 +258,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $this->setExpectedException('\Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException');
 
         // Keep an eye on the logger
-        $logger = $this->getMock('\Monolog\Logger', array('error', 'debug'), array('testlogger'));
+        $logger = $this->getMock('\Monolog\Logger', ['error', 'debug'], ['testlogger']);
         $logger->expects($this->atLeastOnce())
         ->method('error');
         $app['logger.system'] = $logger;
@@ -276,8 +276,8 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $e = new FileException();
         $fileUpload = $this->getMock(
             'Symfony\Component\HttpFoundation\File\UploadedFile',
-            array('move'),
-            array($tmpFile, 'bolt-logo.png', null, null, UPLOAD_ERR_OK, true)
+            ['move'],
+            [$tmpFile, 'bolt-logo.png', null, null, UPLOAD_ERR_OK, true]
         );
         $fileUpload
             ->method('move')
@@ -285,7 +285,7 @@ class FileUploadTest extends AbstractBoltFormsUnitTest
         $this->setExpectedException('\Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException');
 
         // Keep an eye on the logger
-        $logger = $this->getMock('\Monolog\Logger', array('error', 'debug'), array('testlogger'));
+        $logger = $this->getMock('\Monolog\Logger', ['error', 'debug'], ['testlogger']);
         $logger->expects($this->atLeastOnce())
             ->method('error');
         $app['logger.system'] = $logger;

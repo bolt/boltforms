@@ -49,7 +49,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
     }
@@ -63,13 +63,13 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/');
 
-        $mailer = $this->getMock('\Swift_Mailer', array('send'), array($app['swiftmailer.transport']));
+        $mailer = $this->getMock('\Swift_Mailer', ['send'], [$app['swiftmailer.transport']]);
         $mailer->expects($this->any())
             ->method('send')
             ->will($this->returnValue(false));
         $app['mailer'] = $mailer;
 
-        $logger = $this->getMock('\Monolog\Logger', array('error'), array('testlogger'));
+        $logger = $this->getMock('\Monolog\Logger', ['error'], ['testlogger']);
         $logger->expects($this->atLeastOnce())
             ->method('error');
         $app['logger.system'] = $logger;
@@ -81,7 +81,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
     }
@@ -104,7 +104,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
     }
@@ -128,7 +128,7 @@ class EmailTest extends AbstractBoltFormsUnitTest
 
         $this->setExpectedException('\Bolt\Extension\Bolt\BoltForms\Exception\EmailException', '[BoltForms] Debug email address can not be empty if debugging enabled!');
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
     }

@@ -58,8 +58,8 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
 
         $html_pre = 'This is the HTML before';
         $html_post = 'The thing was sent';
-        $data = array();
-        $options = array();
+        $data = [];
+        $options = [];
 
         $twigExt = new BoltFormsExtension($app, $this->getExtension()->config);
 
@@ -92,8 +92,8 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
 
         $html_pre = 'This is the HTML before';
         $html_post = 'The thing was sent';
-        $data = array();
-        $options = array();
+        $data = [];
+        $options = [];
 
         $twigExt = new BoltFormsExtension($app, $this->getExtension()->config);
 
@@ -114,7 +114,7 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
         $this->getExtension()->config['testing_form']['feedback']['success'] = 'Well, that worked!';
 
         $reResponse = new \ReCaptcha\Response(true);
-        $recaptcha = $this->getMock('\ReCaptcha\ReCaptcha', array('verify'), array('abc123'));
+        $recaptcha = $this->getMock('\ReCaptcha\ReCaptcha', ['verify'], ['abc123']);
         $recaptcha
             ->expects($this->any())
             ->method('verify')
@@ -132,8 +132,8 @@ class BoltFormsExtensionTest extends AbstractBoltFormsUnitTest
 
         $html_pre = 'This is the HTML before';
         $html_post = 'The thing was sent';
-        $data = array();
-        $options = array();
+        $data = [];
+        $options = [];
 
         $twigExt = new BoltFormsExtension($app, $this->getExtension()->config);
 

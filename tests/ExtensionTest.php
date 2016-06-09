@@ -50,7 +50,7 @@ class ExtensionTest extends AbstractBoltFormsUnitTest
     public function testExtensionTwig()
     {
         $app = $this->getApp();
-        $config = $this->getMock('\Bolt\Config', array('getWhichEnd'), array($app));
+        $config = $this->getMock('\Bolt\Config', ['getWhichEnd'], [$app]);
         $config->expects($this->any())
             ->method('getWhichEnd')
             ->will($this->returnValue('frontend'));

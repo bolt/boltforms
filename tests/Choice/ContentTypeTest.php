@@ -14,7 +14,7 @@ class ContentTypeTest extends AbstractBoltFormsUnitTest
     public function testGetName()
     {
         $app = $this->getApp();
-        $obj = new ContentType($app, 'koala', array('choices' => 'contenttype::pets::title::slug'));
+        $obj = new ContentType($app, 'koala', ['choices' => 'contenttype::pets::title::slug']);
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Choice\ContentType', $obj);
         $this->assertSame($obj->getName(), 'koala');
     }
@@ -25,11 +25,11 @@ class ContentTypeTest extends AbstractBoltFormsUnitTest
     public function testGetChoicesException()
     {
         $app = $this->getApp();
-        $obj = new ContentType($app['storage'], 'koala', array('choices' => 'contenttype'));
+        $obj = new ContentType($app['storage'], 'koala', ['choices' => 'contenttype']);
         $obj->getChoices();
-        $obj = new ContentType($app['storage'], 'koala', array('choices' => 'contenttype::pages'));
+        $obj = new ContentType($app['storage'], 'koala', ['choices' => 'contenttype::pages']);
         $obj->getChoices();
-        $obj = new ContentType($app['storage'], 'koala', array('choices' => 'contenttype::pages::title'));
+        $obj = new ContentType($app['storage'], 'koala', ['choices' => 'contenttype::pages::title']);
         $obj->getChoices();
     }
 
@@ -39,15 +39,15 @@ class ContentTypeTest extends AbstractBoltFormsUnitTest
         $app['request'] = Request::create('/');
 
         $record = $app['storage']->getEmptyContent('pages');
-        $record->setValues(array('title' => 'Koala', 'slug' => 'gum-tree'));
-        $storage = $this->getMock('\Bolt\Storage', array('getContent'), array($app));
+        $record->setValues(['title' => 'Koala', 'slug' => 'gum-tree']);
+        $storage = $this->getMock('\Bolt\Storage', ['getContent'], [$app]);
         $storage
             ->expects($this->any())
             ->method('getContent')
-            ->will($this->returnValue(array($record)));
+            ->will($this->returnValue([$record]));
         $app['storage'] = $storage;
 
-        $obj = new ContentType($app['storage'], 'koala', array('choices' => 'contenttype::pets::title::slug'));
+        $obj = new ContentType($app['storage'], 'koala', ['choices' => 'contenttype::pets::title::slug']);
         $choice = $obj->getChoices();
 
         $this->assertNotEmpty($choice);

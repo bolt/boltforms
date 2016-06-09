@@ -10,7 +10,7 @@ class UploadManagementTest extends AbstractBoltFormsUnitTest
     public function testConnect()
     {
         $app = $this->getApp(false);
-        $controller = new UploadManagement(array());
+        $controller = new UploadManagement([]);
         $ctr = $controller->connect($app);
 
         $this->assertInstanceOf('\Silex\ControllerCollection', $ctr);
@@ -22,7 +22,7 @@ class UploadManagementTest extends AbstractBoltFormsUnitTest
         $this->getExtension()->config['uploads']['base_directory'] = __DIR__;
         $controller = new UploadManagement($this->getExtension()->config);
         $controller->connect($app);
-        $request = Request::create('/download', 'GET', array('file' => basename(__FILE__)));
+        $request = Request::create('/download', 'GET', ['file' => basename(__FILE__)]);
 
         $route = $controller->download($app, $request);
 

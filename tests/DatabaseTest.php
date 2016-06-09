@@ -4,8 +4,8 @@ namespace Bolt\Extension\Bolt\BoltForms\Tests;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Database;
 // use Bolt\Tests\Mocks\DoctrineMockBuilder;
-use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,27 +55,44 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $app['db'] = $db;
 
         // Mock Bolt\Users
-        $users = $this->getMock('\Bolt\Users', array('getUsers'), array($app));
+        $users = $this->getMock('\Bolt\Users', ['getUsers'], [$app]);
         $users->expects($this->any())
             ->method('getUsers')
-            ->willReturn(array('id' => 1));
+            ->willReturn(['id' => 1]);
         $app['users'] = $users;
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
+    }
+
+    protected function getParameters($app)
+    {
+        // Upload file set up
+        $this->getExtension()->config['uploads']['enabled'] = true;
+        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
+        $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
+        $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
+
+        $fs = new Filesystem();
+        $fs->copy($srcFile, $tmpFile, true);
+
+        $parameters = $this->formData();
+        $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
+
+        return $parameters;
     }
 
     public function testWriteToTableInvalid()
     {
         $app = $this->getApp();
-        $logger = $this->getMock('\Monolog\Logger', array('error'), array('testlogger'));
+        $logger = $this->getMock('\Monolog\Logger', ['error'], ['testlogger']);
         $logger->expects($this->atLeastOnce())
             ->method('error');
         $app['logger.system'] = $logger;
-        $formData = new FormData(array());
+        $formData = new FormData([]);
 
         $retval = $app['boltforms.database']->writeToTable('nothere', $formData);
         $this->assertFalse($retval);
@@ -110,21 +127,21 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $app['db'] = $db;
 
         // Keep an eye on the logger
-        $logger = $this->getMock('\Monolog\Logger', array('critical', 'debug'), array('testlogger'));
+        $logger = $this->getMock('\Monolog\Logger', ['critical', 'debug'], ['testlogger']);
         $logger->expects($this->atLeastOnce())
             ->method('critical');
         $app['logger.system'] = $logger;
 
         // Mock Bolt\Users
-        $users = $this->getMock('\Bolt\Users', array('getUsers'), array($app));
+        $users = $this->getMock('\Bolt\Users', ['getUsers'], [$app]);
         $users->expects($this->any())
             ->method('getUsers')
-            ->willReturn(array('id' => 1));
+            ->willReturn(['id' => 1]);
         $app['users'] = $users;
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
     }
@@ -173,7 +190,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
         $parameters = $this->getParameters($app);
 
         // Mock Bolt\Users
-        $storage = $this->getMock('\Bolt\Storage', array('saveContent'), array($app));
+        $storage = $this->getMock('\Bolt\Storage', ['saveContent'], [$app]);
         $storage->expects($this->any())
             ->method('saveContent')
             ->willReturn(42);
@@ -181,7 +198,7 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
     }
@@ -202,39 +219,22 @@ class DatabaseTest extends AbstractBoltFormsUnitTest
 
         // Mock Bolt\Storage
         $e = new \Exception();
-        $storage = $this->getMock('\Bolt\Storage', array('saveContent'), array($app));
+        $storage = $this->getMock('\Bolt\Storage', ['saveContent'], [$app]);
         $storage->expects($this->any())
             ->method('saveContent')
             ->will($this->throwException($e));
         $app['storage'] = $storage;
 
         // Keep an eye on the logger
-        $logger = $this->getMock('\Monolog\Logger', array('critical', 'debug'), array('testlogger'));
+        $logger = $this->getMock('\Monolog\Logger', ['critical', 'debug'], ['testlogger']);
         $logger->expects($this->atLeastOnce())
             ->method('critical');
         $app['logger.system'] = $logger;
 
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
-    }
-
-    protected function getParameters($app)
-    {
-        // Upload file set up
-        $this->getExtension()->config['uploads']['enabled'] = true;
-        $this->getExtension()->config['uploads']['base_directory'] = sys_get_temp_dir();
-        $srcFile = EXTENSION_TEST_ROOT . '/tests/data/bolt-logo.png';
-        $tmpFile = sys_get_temp_dir() . '/' . uniqid('php_');
-
-        $fs = new Filesystem();
-        $fs->copy($srcFile, $tmpFile, true);
-
-        $parameters = $this->formData();
-        $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
-
-        return $parameters;
     }
 }

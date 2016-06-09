@@ -68,7 +68,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formFieldConfig();
         $boltforms->addFieldArray('testing_form', $fields);
 
-        $html = $boltforms->renderForm('testing_form', null, array('recaptcha' => array('enabled' => true)));
+        $html = $boltforms->renderForm('testing_form', null, ['recaptcha' => ['enabled' => true]]);
         $this->assertInstanceOf('\Twig_Markup', $html);
         $html = (string) $html;
 
@@ -106,7 +106,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formFieldConfig();
         $app['boltforms']->addFieldArray('testing_form', $fields);
 
-        $html = $app['boltforms']->renderForm('testing_form', null, array('debug' => true));
+        $html = $app['boltforms']->renderForm('testing_form', null, ['debug' => true]);
         $this->assertInstanceOf('\Twig_Markup', $html);
         $html = (string) $html;
 
@@ -122,7 +122,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formFieldConfig();
         $app['boltforms']->addFieldArray('testing_form', $fields);
 
-        $html = $app['boltforms']->renderForm('testing_form', null, array('debug' => false));
+        $html = $app['boltforms']->renderForm('testing_form', null, ['debug' => false]);
         $this->assertInstanceOf('\Twig_Markup', $html);
         $html = (string) $html;
 
@@ -142,7 +142,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
     }
@@ -160,7 +160,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
     }
@@ -188,7 +188,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
 
         $this->setExpectedException('Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException');
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertFalse($result);
     }
@@ -215,7 +215,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
     }
@@ -242,7 +242,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters['testing_form']['file'] = new UploadedFile($tmpFile, 'bolt-logo.png', null, null, null, true);
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
     }
@@ -262,7 +262,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com" />#');
@@ -274,7 +274,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields = $this->formFieldConfig();
         $this->getExtension()->config['csrf'] = false;
         $this->getExtension()->config['testing_form']['feedback']['redirect']['target'] = 'http://example.com';
-        $this->getExtension()->config['testing_form']['feedback']['redirect']['query'] = array('name', 'email');
+        $this->getExtension()->config['testing_form']['feedback']['redirect']['query'] = ['name', 'email'];
         $this->getExtension()->config['testing_form']['fields'] = $fields;
 
         $app['request'] = Request::create('/');
@@ -285,7 +285,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com\?name=Gawain\+Lynch&amp;email=gawain.lynch%40gmail.com" />#');
@@ -296,7 +296,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $app = $this->getApp();
         $this->getExtension()->config['csrf'] = false;
         $this->getExtension()->config['testing_form']['feedback']['redirect']['target'] = 'http://example.com';
-        $this->getExtension()->config['testing_form']['feedback']['redirect']['query'] = array('person' => 'name', 'address' => 'email');
+        $this->getExtension()->config['testing_form']['feedback']['redirect']['query'] = ['person' => 'name', 'address' => 'email'];
 
         $app['request'] = Request::create('/');
 
@@ -307,7 +307,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=http://example.com\?person=Gawain\+Lynch&amp;address=gawain.lynch%40gmail.com" />#');
@@ -322,7 +322,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
 
         $matcher = $this->getMockBuilder('\Bolt\Routing\UrlMatcher')
             ->disableOriginalConstructor()
-            ->setMethods(array('match'))
+            ->setMethods(['match'])
             ->getMock();
         $matcher->expects($this->any())
             ->method('match')
@@ -342,7 +342,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $parameters = $this->formData();
         $app['request'] = Request::create('/', 'POST', $parameters);
 
-        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], array('success' => true));
+        $result = $this->processor()->process('testing_form', $this->getExtension()->config['testing_form'], ['success' => true]);
 
         $this->assertTrue($result);
         $this->expectOutputRegex('#<meta http-equiv="refresh" content="1;url=/page/koalas\?name=Gawain\+Lynch" />#');
@@ -358,7 +358,7 @@ class BoltFormsTest extends AbstractBoltFormsUnitTest
         $fields['email']['options']['constraints'] = 'koala';
 
         // Keep an eye on the logger
-        $logger = $this->getMock('\Monolog\Logger', array('error', 'debug'), array('testlogger'));
+        $logger = $this->getMock('\Monolog\Logger', ['error', 'debug'], ['testlogger']);
         $logger->expects($this->atLeastOnce())
             ->method('error');
         $app['logger.system'] = $logger;

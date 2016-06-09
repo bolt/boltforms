@@ -13,17 +13,6 @@ use Bolt\Extension\Bolt\BoltForms\FormData;
  */
 class EmailConfigTest extends AbstractBoltFormsUnitTest
 {
-    public function formConfig()
-    {
-        return new FormConfig(
-            'test_form',
-            array(
-                'debug'        => false,
-                'notification' => $this->formNotificationConfig(),
-                'fields'       => $this->formFieldConfig()
-        ));
-    }
-
     public function testConstructor()
     {
         $app = $this->getApp();
@@ -47,6 +36,17 @@ class EmailConfigTest extends AbstractBoltFormsUnitTest
         $this->assertSame('Lodewijk Evers', $emailconfig->getBccName());
         $this->assertSame('lodewijk@example.com', $emailconfig->getBccEmail());
         $this->assertTrue($emailconfig->attachFiles());
+    }
+
+    public function formConfig()
+    {
+        return new FormConfig(
+            'test_form',
+            [
+                'debug'        => false,
+                'notification' => $this->formNotificationConfig(),
+                'fields'       => $this->formFieldConfig(),
+        ]);
     }
 
     public function testDebug()

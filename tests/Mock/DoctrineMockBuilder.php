@@ -11,7 +11,7 @@ class DoctrineMockBuilder extends \Bolt\Tests\Mocks\DoctrineMockBuilder
         $mock = $this->getMockBuilder('Doctrine\DBAL\Connection')
             ->disableOriginalConstructor()
             ->setMethods(
-                array(
+                [
                     'beginTransaction',
                     'commit',
                     'rollback',
@@ -23,8 +23,8 @@ class DoctrineMockBuilder extends \Bolt\Tests\Mocks\DoctrineMockBuilder
                     'createQueryBuilder',
                     'connect',
                     'insert',
-                    'getSchemaManager'
-                )
+                    'getSchemaManager',
+                ]
             )
             ->getMock();
 
@@ -48,42 +48,21 @@ class DoctrineMockBuilder extends \Bolt\Tests\Mocks\DoctrineMockBuilder
     }
 
     /**
-     * @return \Doctrine\DBAL\Schema\Column
-     */
-    public function getColumnMock($name)
-    {
-        $mock = $this->getMockBuilder('Doctrine\DBAL\Schema\Column')
-            ->disableOriginalConstructor()
-            ->setMethods(
-                array(
-                    'getName'
-                )
-            )
-            ->getMock();
-
-        $mock->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue($name));
-
-        return $mock;
-    }
-
-    /**
      * @return \Doctrine\DBAL\Schema\AbstractSchemaManager
      */
-    public function getSchemaManagerMock($db, $tablesExist = true, $columns = array())
+    public function getSchemaManagerMock($db, $tablesExist = true, $columns = [])
     {
         $mock = $this->getMockForAbstractClass(
             'Doctrine\DBAL\Schema\AbstractSchemaManager',
-            array($db),
+            [$db],
             '',
             true,
             true,
             true,
-            array(
+            [
                 'listTableColumns',
                 'tablesExist',
-            ),
+            ],
             false
         );
 
@@ -98,6 +77,27 @@ class DoctrineMockBuilder extends \Bolt\Tests\Mocks\DoctrineMockBuilder
         $mock->expects($this->any())
             ->method('tablesExist')
             ->will($this->returnValue($tablesExist));
+
+        return $mock;
+    }
+
+    /**
+     * @return \Doctrine\DBAL\Schema\Column
+     */
+    public function getColumnMock($name)
+    {
+        $mock = $this->getMockBuilder('Doctrine\DBAL\Schema\Column')
+            ->disableOriginalConstructor()
+            ->setMethods(
+                [
+                    'getName',
+                ]
+            )
+            ->getMock();
+
+        $mock->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue($name));
 
         return $mock;
     }
