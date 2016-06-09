@@ -128,7 +128,7 @@ class FieldOptions
     {
         $options = $this->baseOptions;
 
-        if (is_string($options['choices'])) {
+        if (isset($options['choices']) && is_string($options['choices'])) {
             if (strpos($options['choices'], 'contenttype::') === 0) {
                 $choiceObj = new ContentType($this->em, $this->fieldName, $options);
             } elseif (strpos($options['choices'], 'event') === 0) {
