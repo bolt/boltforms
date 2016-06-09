@@ -34,8 +34,6 @@ class SymfonyChoiceType implements ChoiceInterface
     protected $baseOptions;
     /** @var string */
     private $name;
-    /** @var array */
-    private $choices;
 
     /**
      * @param string $name        Name of the BoltForms field
@@ -44,7 +42,6 @@ class SymfonyChoiceType implements ChoiceInterface
     public function __construct($name, array $baseOptions)
     {
         $this->name    = $name;
-        $this->choices = isset($baseOptions['choices']) ? $baseOptions['choices'] : null;
         $this->baseOptions = $baseOptions;
     }
 
@@ -61,11 +58,17 @@ class SymfonyChoiceType implements ChoiceInterface
     /**
      * Return choices array
      *
+     * @throws FormOptionException
+     *
      * @return array
      */
     public function getChoices()
     {
-        return $this->choices;
+        if (!isset($this->baseOptions['choices'])) {
+            throw new FormOptionException(sprintf('Choice array for field "%s" was not set in configuration.', $this->name));
+        }
+
+        return $this->baseOptions['choices'];
     }
 
     /**
@@ -79,12 +82,12 @@ class SymfonyChoiceType implements ChoiceInterface
             return null;
         }
         if (!class_exists($this->baseOptions['choice_loader'])) {
-            throw new FormOptionException(sprintf('Specified choice_loader class does not exist!', $this->baseOptions['choice_loader']));
+            throw new FormOptionException(sprintf('Specified choice_loader class % does not exist for field "%s"!', $this->baseOptions['choice_loader'], $this->name));
         }
 
         $loader = new $this->baseOptions['choice_loader']();
         if (!$loader instanceof ChoiceLoaderInterface) {
-            throw new FormOptionException(sprintf('Specified choice_loader class does not implement Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface', $this->baseOptions['choice_loader']));
+            throw new FormOptionException(sprintf('Specified choice_loader class does not implement Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface for field "%s"!', $this->baseOptions['choice_loader'], $this->name));
         }
 
         return $loader;
