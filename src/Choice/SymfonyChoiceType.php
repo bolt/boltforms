@@ -112,15 +112,7 @@ class SymfonyChoiceType implements ChoiceInterface
      */
     public function getChoiceName()
     {
-        if (!isset($this->baseOptions['choice_name'])) {
-            return null;
-        }
-
-        if (is_callable($this->baseOptions['choice_name'])) {
-            return $this->baseOptions['choice_name'];
-        }
-
-        return new PropertyPath($this->baseOptions['choice_name']);
+        return $this->getResolvedOptionValue('choice_name');
     }
 
     /**
@@ -128,15 +120,7 @@ class SymfonyChoiceType implements ChoiceInterface
      */
     public function getChoiceValue()
     {
-        if (!isset($this->baseOptions['choice_value'])) {
-            return null;
-        }
-
-        if (is_callable($this->baseOptions['choice_value'])) {
-            return $this->baseOptions['choice_value'];
-        }
-
-        return new PropertyPath($this->baseOptions['choice_value']);
+        return $this->getResolvedOptionValue('choice_value');
     }
 
     /**
@@ -160,15 +144,7 @@ class SymfonyChoiceType implements ChoiceInterface
      */
     public function getChoiceAttr()
     {
-        if (!isset($this->baseOptions['choice_attr'])) {
-            return null;
-        }
-
-        if (is_array($this->baseOptions['choice_attr']) || is_callable($this->baseOptions['choice_attr'])) {
-            return $this->baseOptions['choice_attr'];
-        }
-
-        return new PropertyPath($this->baseOptions['choice_attr']);
+        return $this->getResolvedOptionValue('choice_attr');
     }
 
     /**
@@ -176,15 +152,7 @@ class SymfonyChoiceType implements ChoiceInterface
      */
     public function getGroupBy()
     {
-        if (!isset($this->baseOptions['group_by'])) {
-            return null;
-        }
-
-        if (is_array($this->baseOptions['group_by']) || is_callable($this->baseOptions['group_by'])) {
-            return $this->baseOptions['group_by'];
-        }
-
-        return new PropertyPath($this->baseOptions['group_by']);
+        return $this->getResolvedOptionValue('group_by');
     }
 
     /**
@@ -192,14 +160,25 @@ class SymfonyChoiceType implements ChoiceInterface
      */
     public function getPreferredChoices()
     {
-        if (!isset($this->baseOptions['preferred_choices'])) {
-            return null;
+        return $this->getResolvedOptionValue('preferred_choices', []);
+    }
+
+    /**
+     * @param string $optionKey
+     * @param mixed  $default
+     *
+     * @return array|callable|null|PropertyPath
+     */
+    protected function getResolvedOptionValue($optionKey, $default = null)
+    {
+        if (!isset($this->baseOptions[$optionKey])) {
+            return $default;
         }
 
-        if (is_array($this->baseOptions['preferred_choices']) || is_callable($this->baseOptions['preferred_choices'])) {
-            return $this->baseOptions['preferred_choices'];
+        if (is_array($this->baseOptions[$optionKey]) || is_callable($this->baseOptions[$optionKey])) {
+            return $this->baseOptions[$optionKey];
         }
 
-        return new PropertyPath($this->baseOptions['preferred_choices']);
+        return new PropertyPath($this->baseOptions[$optionKey]);
     }
 }
