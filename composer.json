@@ -33,7 +33,10 @@
                 "src/"
             ],
             "ReCaptcha\\": "lib/ReCaptcha/"
-        }
+        },
+        "classmap": [
+            "doc/example/"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
