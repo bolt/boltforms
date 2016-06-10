@@ -223,47 +223,13 @@ class FieldOptions
         }
 
         if (gettype($this->baseOptions['constraints']) === 'string') {
-            $this->options['constraints'] = $this->getConstraintObject($this->formName, $this->baseOptions['constraints']);
-        } else {
-            foreach ($this->baseOptions['constraints'] as $key => $constraint) {
-                $this->options['constraints'][$key] = $this->getConstraintObject($this->formName, [$key => $constraint]);
-            }
-        }
-    }
+            $this->options['constraints'] = FieldConstraintFactory::get($this->formName, $this->baseOptions['constraints']);
 
-    /**
-     * Extract, expand and set & create validator instance array(s)
-     *
-     * @param string $formName
-     * @param mixed  $input
-     *
-     * @return \Symfony\Component\Validator\Constraint
-     */
-    protected function getConstraintObject($formName, $input)
-    {
-        $class = null;
-        $params = null;
-
-        $namespace = '\\Symfony\\Component\\Validator\\Constraints\\';
-        $inputType = gettype($input);
-
-        if ($inputType === 'string') {
-            $class = $namespace . $input;
-        } elseif ($inputType === 'array') {
-            $input = current($input);
-            $inputType = gettype($input);
-            if ($inputType === 'string') {
-                $class = $namespace . $input;
-            } elseif ($inputType === 'array') {
-                $class = $namespace . key($input);
-                $params = array_pop($input);
-            }
+            return;
         }
 
-        if (!class_exists($class)) {
-            throw new Exception\InvalidConstraintException(sprintf('[BoltForms] The form "%s" has an invalid field constraint: "%s".', $formName, $class));
+        foreach ($this->baseOptions['constraints'] as $key => $constraint) {
+            $this->options['constraints'][$key] = FieldConstraintFactory::get($this->formName, [$key => $constraint]);
         }
-
-        return new $class($params);
     }
 }
