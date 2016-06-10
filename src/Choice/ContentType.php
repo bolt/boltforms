@@ -29,33 +29,34 @@ use Doctrine\DBAL\Query\QueryBuilder;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class ContentType implements ChoiceInterface
+class ContentType extends AbstractChoiceType
 {
     /** @var EntityManager */
     private $em;
-    /** @var string */
-    private $name;
-    /** @var array */
-    private $options;
     /** @var array */
     private $choices;
 
+
     /**
+     * Constructor.
+     *
+     * Legacy:
+     * Format of 'contenttype::name::labelfield::valuefield'
+     *  'contenttype' - String constant that always equals 'contenttype'
+     *  'name'        - Name of the contenttype itself
+     *  'labelfield'  - Field to use for the UI displayed to the user
+     *  'valuefield'  - Field to use for the value stored
+     *
+     * @param string        $fieldName    Name of the field
+     * @param array         $fieldOptions Options for field
+     * @param string        $formName     Name of the form containing the field
      * @param EntityManager $em
-     * @param string        $name    Name of the BoltForms field
-     * @param array         $options The 'choices' key is a string that takes
-     *                               the format of: 'contenttype::name::labelfield::valuefield'
-     *                               Where:
-     *                               'contenttype' - String constant that always equals 'contenttype'
-     *                               'name'        - Name of the contenttype itself
-     *                               'labelfield'  - Field to use for the UI displayed to the user
-     *                               'valuefield'  - Field to use for the value stored
      */
-    public function __construct(EntityManager $em, $name, array $options)
+    public function __construct($formName, $fieldName, array $fieldOptions, EntityManager $em)
     {
+        parent::__construct($formName, $fieldName, $fieldOptions);
+
         $this->em = $em;
-        $this->name = $name;
-        $this->options = $options;
     }
 
     /**

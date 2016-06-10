@@ -28,30 +28,28 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class EventType implements ChoiceInterface
+class EventType extends AbstractChoiceType
 {
-    /** @var  EventDispatcherInterface */
-    private $dispatcher;
-    /** @var string */
-    private $name;
-    /** @var array */
-    private $options;
     /** @var array */
     private $choices;
     /** @var string */
     private $formName;
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
 
     /**
+     * Constructor.
+     *
+     * @param string                   $formName     Name of the form containing the field
+     * @param string                   $fieldName    Name of the field
+     * @param array                    $fieldOptions Options for field
      * @param EventDispatcherInterface $dispatcher
-     * @param string                   $name       Name of the BoltForms field
-     * @param array                    $options
-     * @param string                   $formName
      */
-    public function __construct(EventDispatcherInterface $dispatcher, $name, array $options, $formName)
+    public function __construct($formName, $fieldName, array $fieldOptions, EventDispatcherInterface $dispatcher)
     {
+        parent::__construct($formName, $fieldName, $fieldOptions);
+
         $this->dispatcher = $dispatcher;
-        $this->name = $name;
-        $this->options = $options;
         $this->formName = $formName;
     }
 

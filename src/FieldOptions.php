@@ -119,51 +119,13 @@ class FieldOptions
     protected function resolveChoiceOptions()
     {
         $options = $this->baseOptions;
-        $options['choices'] = isset($options['choices']) ? $options['choices'] : null;
+        $choices = isset($options['choices']) ? $options['choices'] : null;
 
-        if (is_array($options['choices'])) {
-            $this->setSymfonyChoiceType();
-
-            return;
+        if (is_string($choices)) {
+            $choiceObj = $this->handleCustomChoice($choices);
+        } else {
+            $choiceObj = new SymfonyChoiceType($this->formName, $this->fieldName, $this->baseOptions);
         }
-
-        if (!is_string($options['choices'])) {
-            throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
-        }
-
-        // Check if it is one of our custom types
-        if (strpos($options['choices'], 'contenttype::') === 0) {
-            $this->setContentTypeChoiceType();
-
-            return;
-        }
-
-        if (strpos($options['choices'], 'event') === 0) {
-            $this->setEventChoiceType();
-
-            return;
-        }
-
-        // Finally assuming we're translating Symfony style again
-        if (strpos($options['choices'], '::') !== false) {
-            $this->setSymfonyChoiceType();
-
-            return;
-        }
-
-        throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
-    }
-
-    /**
-     * Sets the field options for Symfony ChoiceType parameters.
-     *
-     * @throws Exception\FormOptionException
-     *
-     * @return array
-     */
-    protected function setSymfonyChoiceType()
-    {
-        $choiceObj = new SymfonyChoiceType($this->fieldName, $this->baseOptions);
 
         $options = [
             'choices'           => $choiceObj->getChoices(),
@@ -181,21 +143,20 @@ class FieldOptions
     }
 
     /**
-     * Set up choices from a ContentType lookup.
+     * @param $choices
+     *
+     * @return ContentType|EventType
      */
-    protected function setContentTypeChoiceType()
+    protected function handleCustomChoice($choices)
     {
-        $choiceObj = new ContentType($this->em, $this->fieldName, $this->baseOptions);
-        $this->options['choices'] = $choiceObj->getChoices();
-    }
+        // Check if it is one of our custom types
+        if (strpos($choices, 'contenttype') === 0) {
+            return new ContentType($this->formName, $this->fieldName, $this->baseOptions, $this->em);
+        }
 
-    /**
-     * Set up choices for an event based type.
-     */
-    protected function setEventChoiceType()
-    {
-        $choiceObj = new EventType($this->dispatcher, $this->fieldName, $this->baseOptions, $this->formName);
-        $this->options['choices'] = $choiceObj->getChoices();
+        if (strpos($choices, 'event') === 0) {
+            return new EventType($this->formName, $this->fieldName, $this->baseOptions, $this->dispatcher);
+        }
     }
 
     /**
