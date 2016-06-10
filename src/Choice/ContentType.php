@@ -93,7 +93,7 @@ class ContentType extends AbstractChoiceType
         $key = $this->options['choices'];
         $params = explode('::', $key);
         if ($params === false || count($params) !== 4) {
-            throw new \UnexpectedValueException("The configured Contenttype choice field '$this->name' has an invalid key string: '$key'");
+            throw new \UnexpectedValueException("The configured ContentType choice field '$this->name' has an invalid key string: '$key'");
         }
         list($contentType, $name, $labelField, $valueField) = $params;
 
@@ -105,7 +105,7 @@ class ContentType extends AbstractChoiceType
         $records = $repo->findWith($this->getQueryParameters($query));
 
         foreach ($records as $record) {
-            $choices[$record->get($valueField)] = $record->get($labelField);
+            $choices[$record->get($labelField)] = $record->get($valueField);
         }
 
         return $choices;

@@ -140,6 +140,8 @@ class FieldOptions
         ];
 
         $this->options = array_merge($this->baseOptions, $options);
+
+        unset ($this->options['filters']);
     }
 
     /**
@@ -157,6 +159,8 @@ class FieldOptions
         if (strpos($choices, 'event') === 0) {
             return new EventType($this->formName, $this->fieldName, $this->baseOptions, $this->dispatcher);
         }
+
+        return new SymfonyChoiceType($this->formName, $this->fieldName, $this->baseOptions);
     }
 
     /**
