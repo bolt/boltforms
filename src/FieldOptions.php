@@ -180,7 +180,7 @@ class FieldOptions
             'preferred_choices' => $choiceObj->getPreferredChoices(),
         ];
 
-        return array_merge($this->baseOptions, $options);
+        $this->options = array_merge($this->baseOptions, $options);
     }
 
     /**
