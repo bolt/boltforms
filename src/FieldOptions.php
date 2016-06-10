@@ -5,10 +5,9 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
 use Bolt\Extension\Bolt\BoltForms\Choice\EventType;
 use Bolt\Extension\Bolt\BoltForms\Choice\SymfonyChoiceType;
-use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
+use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Storage\EntityManager;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Choices options for BoltForms
@@ -46,11 +45,9 @@ class FieldOptions
     private $options;
     /** @var EntityManager */
     private $em;
-    /** @var LoggerInterface */
-    private $logger;
     /** @var boolean */
     private $initialised;
-    /** @var TraceableEventDispatcher */
+    /** @var EventDispatcherInterface */
     private $dispatcher;
 
     /**
@@ -61,17 +58,15 @@ class FieldOptions
      * @param string                   $type
      * @param array                    $baseOptions
      * @param EntityManager            $storage
-     * @param LoggerInterface          $logger
-     * @param TraceableEventDispatcher $dispatcher
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct($formName, $fieldName, $type, array $baseOptions, EntityManager $storage, LoggerInterface $logger, TraceableEventDispatcher $dispatcher)
+    public function __construct($formName, $fieldName, $type, array $baseOptions, EntityManager $storage, EventDispatcherInterface $dispatcher)
     {
         $this->formName = $formName;
         $this->fieldName = $fieldName;
         $this->type = $type;
         $this->baseOptions = $baseOptions;
         $this->em = $storage;
-        $this->logger = $logger;
         $this->dispatcher = $dispatcher;
     }
 
@@ -119,7 +114,7 @@ class FieldOptions
     /**
      * Get customised value parameters for choice field types.
      *
-     * @throws FormOptionException
+     * @throws Exception\FormOptionException
      */
     protected function resolveChoiceOptions()
     {
@@ -133,7 +128,7 @@ class FieldOptions
         }
 
         if (!is_string($options['choices'])) {
-            throw new FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
+            throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
         }
 
         if (strpos($options['choices'], 'contenttype::') === 0) {
@@ -154,13 +149,13 @@ class FieldOptions
             return;
         }
 
-        throw new FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
+        throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
     }
 
     /**
      * Sets the field options for Symfony ChoiceType parameters.
      *
-     * @throws FormOptionException
+     * @throws Exception\FormOptionException
      *
      * @return array
      */
@@ -204,13 +199,13 @@ class FieldOptions
     /**
      * Set up choices for an entity type.
      *
-     * @throws FormOptionException
+     * @throws Exception\FormOptionException
      */
     protected function setEntityChoiceType()
     {
         $parts = explode('::', $this->baseOptions['choices']);
         if (!class_exists($parts[0])) {
-            throw new FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
+            throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
         }
 
 
@@ -246,6 +241,7 @@ class FieldOptions
      */
     protected function getConstraintObject($formName, $input)
     {
+        $class = null;
         $params = null;
 
         $namespace = '\\Symfony\\Component\\Validator\\Constraints\\';
@@ -264,10 +260,10 @@ class FieldOptions
             }
         }
 
-        if (class_exists($class)) {
-            return new $class($params);
+        if (!class_exists($class)) {
+            throw new Exception\InvalidConstraintException(sprintf('[BoltForms] The form "%s" has an invalid field constraint: "%s".', $formName, $class));
         }
 
-        $this->logger->error(sprintf('[BoltForms] The form "%s" has an invalid field constraint: "%s".', $formName, $class), ['event' => 'extensions']);
+        return new $class($params);
     }
 }

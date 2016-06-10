@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsChoiceEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
-use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Event driven choices for BoltForms.
@@ -30,7 +30,7 @@ use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
  */
 class EventType implements ChoiceInterface
 {
-    /** @var  TraceableEventDispatcher */
+    /** @var  EventDispatcherInterface */
     private $dispatcher;
     /** @var string */
     private $name;
@@ -42,12 +42,12 @@ class EventType implements ChoiceInterface
     private $formName;
 
     /**
-     * @param TraceableEventDispatcher $dispatcher
+     * @param EventDispatcherInterface $dispatcher
      * @param string                   $name       Name of the BoltForms field
      * @param array                    $options
      * @param string                   $formName
      */
-    public function __construct(TraceableEventDispatcher $dispatcher, $name, array $options, $formName)
+    public function __construct(EventDispatcherInterface $dispatcher, $name, array $options, $formName)
     {
         $this->dispatcher = $dispatcher;
         $this->name = $name;
@@ -84,16 +84,6 @@ class EventType implements ChoiceInterface
     }
 
     /**
-     * Get the name.
-     *
-     * @return string
-     */
-    public function getFormName()
-    {
-        return $this->formName;
-    }
-
-    /**
      * Return the name of the event we want to dispatch.
      *
      * @return string
@@ -103,5 +93,15 @@ class EventType implements ChoiceInterface
         $parts = explode('::', $this->options['choices']);
 
         return isset($parts[1]) ? $parts[1] : BoltFormsEvents::DATA_CHOICE_EVENT;
+    }
+
+    /**
+     * Get the name.
+     *
+     * @return string
+     */
+    public function getFormName()
+    {
+        return $this->formName;
     }
 }

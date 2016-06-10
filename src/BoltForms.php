@@ -5,6 +5,7 @@ use Bolt\Asset\Snippet\Snippet;
 use Bolt\Asset\Target;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
+use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Silex\Application;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -60,22 +61,6 @@ class BoltForms
     }
 
     /**
-     * Get a particular form
-     *
-     * @param string $formName
-     *
-     * @return Form
-     */
-    public function getForm($formName)
-    {
-        if (isset($this->forms[$formName])) {
-            return $this->forms[$formName];
-        }
-
-        throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
-    }
-
-    /**
      * Get the configuration object for a form.
      *
      * @param $formName
@@ -116,22 +101,6 @@ class BoltForms
     }
 
     /**
-     * Add a field to the form
-     *
-     * @param string $formName  Name of the form
-     * @param string $fieldName
-     * @param string $type
-     * @param array  $options
-     */
-    public function addField($formName, $fieldName, $type, array $options)
-    {
-        $em = $this->app['storage'];
-        $fieldOptions = new FieldOptions($formName, $fieldName, $type, $options, $em, $this->app['logger.system'], $this->app['dispatcher']);
-
-        $this->getForm($formName)->add($fieldName, $type, $fieldOptions->toArray());
-    }
-
-    /**
      * Add an array of fields to the form
      *
      * @param string $formName Name of the form
@@ -145,6 +114,42 @@ class BoltForms
             $field['options'] = empty($field['options']) ? [] : $field['options'];
             $this->addField($formName, $fieldName, $field['type'], $field['options']);
         }
+    }
+
+    /**
+     * Add a field to the form
+     *
+     * @param string $formName  Name of the form
+     * @param string $fieldName
+     * @param string $type
+     * @param array  $options
+     */
+    public function addField($formName, $fieldName, $type, array $options)
+    {
+        $em = $this->app['storage'];
+        $fieldOptions = new FieldOptions($formName, $fieldName, $type, $options, $em, $this->app['dispatcher']);
+
+        try {
+            $this->getForm($formName)->add($fieldName, $type, $fieldOptions->toArray());
+        } catch (InvalidConstraintException $e) {
+            $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
+        }
+    }
+
+    /**
+     * Get a particular form
+     *
+     * @param string $formName
+     *
+     * @return Form
+     */
+    public function getForm($formName)
+    {
+        if (isset($this->forms[$formName])) {
+            return $this->forms[$formName];
+        }
+
+        throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
     }
 
     /**
