@@ -131,6 +131,7 @@ class FieldOptions
             throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
         }
 
+        // Check if it is one of our custom types
         if (strpos($options['choices'], 'contenttype::') === 0) {
             $this->setContentTypeChoiceType();
 
@@ -143,8 +144,9 @@ class FieldOptions
             return;
         }
 
+        // Finally assuming we're translating Symfony style again
         if (strpos($options['choices'], '::') !== false) {
-            $this->setEntityChoiceType();
+            $this->setSymfonyChoiceType();
 
             return;
         }
@@ -194,43 +196,6 @@ class FieldOptions
     {
         $choiceObj = new EventType($this->dispatcher, $this->fieldName, $this->baseOptions, $this->formName);
         $this->options['choices'] = $choiceObj->getChoices();
-    }
-
-    /**
-     * Set up choices for an entity type.
-     *
-     * @throws Exception\FormOptionException
-     */
-    protected function setEntityChoiceType()
-    {
-        $parts = explode('::', $this->baseOptions['choices']);
-        $class = $parts[0];
-        $context = $parts[1];
-
-        if (!class_exists($class)) {
-            throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
-        }
-
-        // Do initial choice set up
-        $this->setSymfonyChoiceType();
-
-        // It the passed-in class name implements \Traversable we instantiate
-        // that object passing in the parameter string to the constructor
-        if (is_subclass_of($class, 'Traversable')) {
-            $choiceObject = new $class($context);
-            $this->options['choices'] = $choiceObject;
-
-            return;
-        }
-
-        $method = new \ReflectionMethod($class, $context);
-        if ($method->isStatic()) {
-            $this->options['choices'] = (array) call_user_func([$class, $context]);
-
-            return;
-        }
-
-        throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
     }
 
     /**

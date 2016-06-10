@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
-use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
+use Bolt\Extension\Bolt\BoltForms\Exception;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
@@ -31,18 +31,20 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 class SymfonyChoiceType implements ChoiceInterface
 {
     /** @var array */
-    protected $baseOptions;
+    protected $fieldOptions;
     /** @var string */
     private $name;
+    /** @var bool */
+    private $initialised;
 
     /**
-     * @param string $name        Name of the BoltForms field
-     * @param array  $baseOptions Options for field
+     * @param string $fieldName    Name of the BoltForms field
+     * @param array  $fieldOptions Options for field
      */
-    public function __construct($name, array $baseOptions)
+    public function __construct($fieldName, array $fieldOptions)
     {
-        $this->name    = $name;
-        $this->baseOptions = $baseOptions;
+        $this->name = $fieldName;
+        $this->fieldOptions = $fieldOptions;
     }
 
     /**
@@ -58,36 +60,80 @@ class SymfonyChoiceType implements ChoiceInterface
     /**
      * Return choices array
      *
-     * @throws FormOptionException
+     * @throws Exception\FormOptionException
      *
      * @return array
      */
     public function getChoices()
     {
-        if (!isset($this->baseOptions['choices'])) {
-            throw new FormOptionException(sprintf('Choice array for field "%s" was not set in configuration.', $this->name));
+        if (!isset($this->fieldOptions['choices'])) {
+            throw new Exception\FormOptionException(sprintf('Choice array for field "%s" was not set in configuration.', $this->name));
         }
 
-        return $this->baseOptions['choices'];
+        if (!$this->initialised) {
+            $this->getResolvedChoiceValues();
+        }
+        
+        return $this->fieldOptions['choices'];
     }
 
     /**
-     * @throws FormOptionException
+     * Set-up resolved choices.
+     * 
+     * @throws Exception\FormOptionException
+     */
+    protected function getResolvedChoiceValues()
+    {
+        if ($this->initialised) {
+            return;
+        }
+        
+        $parts = explode('::', $this->fieldOptions['choices']);
+        $class = $parts[0];
+        $context = $parts[1];
+        
+        if (!class_exists($class)) {
+            throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid!', $this->name));
+        }
+
+        // It the passed-in class name implements \Traversable we instantiate
+        // that object passing in the parameter string to the constructor
+        if (is_subclass_of($class, 'Traversable')) {
+            $choiceObject = new $class($context);
+            $this->fieldOptions['choices'] = $choiceObject;
+            $this->initialised = true;
+
+            return;
+        }
+
+        $method = new \ReflectionMethod($class, $context);
+        if ($method->isStatic()) {
+            $this->fieldOptions['choices'] = (array) call_user_func([$class, $context]);
+            $this->initialised = true;
+
+            return;
+        }
+
+        throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid!', $this->name));
+    }
+
+    /**
+     * @throws Exception\FormOptionException
      *
      * @return ChoiceLoaderInterface|null
      */
     public function getChoiceLoader()
     {
-        if (!isset($this->baseOptions['choice_loader'])) {
+        if (!isset($this->fieldOptions['choice_loader'])) {
             return null;
         }
-        if (!class_exists($this->baseOptions['choice_loader'])) {
-            throw new FormOptionException(sprintf('Specified choice_loader class % does not exist for field "%s"!', $this->baseOptions['choice_loader'], $this->name));
+        if (!class_exists($this->fieldOptions['choice_loader'])) {
+            throw new Exception\FormOptionException(sprintf('Specified choice_loader class % does not exist for field "%s"!', $this->fieldOptions['choice_loader'], $this->name));
         }
 
-        $loader = new $this->baseOptions['choice_loader']();
+        $loader = new $this->fieldOptions['choice_loader']();
         if (!$loader instanceof ChoiceLoaderInterface) {
-            throw new FormOptionException(sprintf('Specified choice_loader class does not implement Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface for field "%s"!', $this->baseOptions['choice_loader'], $this->name));
+            throw new Exception\FormOptionException(sprintf('Specified choice_loader class does not implement Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface for field "%s"!', $this->fieldOptions['choice_loader'], $this->name));
         }
 
         return $loader;
@@ -100,8 +146,8 @@ class SymfonyChoiceType implements ChoiceInterface
      */
     public function isChoicesAsValues()
     {
-        if (isset($this->baseOptions['choices_as_values'])) {
-            return (bool) $this->baseOptions['choices_as_values'];
+        if (isset($this->fieldOptions['choices_as_values'])) {
+            return (bool) $this->fieldOptions['choices_as_values'];
         }
 
         return true;
@@ -113,6 +159,25 @@ class SymfonyChoiceType implements ChoiceInterface
     public function getChoiceName()
     {
         return $this->getResolvedOptionValue('choice_name');
+    }
+
+    /**
+     * @param string $optionKey
+     * @param mixed  $default
+     *
+     * @return array|callable|null|PropertyPath
+     */
+    protected function getResolvedOptionValue($optionKey, $default = null)
+    {
+        if (!isset($this->fieldOptions[$optionKey])) {
+            return $default;
+        }
+
+        if (is_array($this->fieldOptions[$optionKey]) || is_callable($this->fieldOptions[$optionKey])) {
+            return $this->fieldOptions[$optionKey];
+        }
+
+        return new PropertyPath($this->fieldOptions[$optionKey]);
     }
 
     /**
@@ -128,15 +193,15 @@ class SymfonyChoiceType implements ChoiceInterface
      */
     public function getChoiceLabel()
     {
-        if (!isset($this->baseOptions['choice_label'])) {
+        if (!isset($this->fieldOptions['choice_label'])) {
             return null;
         }
 
-        if (is_bool($this->baseOptions['choice_label']) || is_callable($this->baseOptions['choice_label'])) {
-            return $this->baseOptions['choice_label'];
+        if (is_bool($this->fieldOptions['choice_label']) || is_callable($this->fieldOptions['choice_label'])) {
+            return $this->fieldOptions['choice_label'];
         }
 
-        return new PropertyPath($this->baseOptions['choice_label']);
+        return new PropertyPath($this->fieldOptions['choice_label']);
     }
 
     /**
@@ -161,24 +226,5 @@ class SymfonyChoiceType implements ChoiceInterface
     public function getPreferredChoices()
     {
         return $this->getResolvedOptionValue('preferred_choices', []);
-    }
-
-    /**
-     * @param string $optionKey
-     * @param mixed  $default
-     *
-     * @return array|callable|null|PropertyPath
-     */
-    protected function getResolvedOptionValue($optionKey, $default = null)
-    {
-        if (!isset($this->baseOptions[$optionKey])) {
-            return $default;
-        }
-
-        if (is_array($this->baseOptions[$optionKey]) || is_callable($this->baseOptions[$optionKey])) {
-            return $this->baseOptions[$optionKey];
-        }
-
-        return new PropertyPath($this->baseOptions[$optionKey]);
     }
 }
