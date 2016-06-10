@@ -73,13 +73,13 @@ class SymfonyChoiceType implements ChoiceInterface
         if (!$this->initialised) {
             $this->getResolvedChoiceValues();
         }
-        
+
         return $this->fieldOptions['choices'];
     }
 
     /**
      * Set-up resolved choices.
-     * 
+     *
      * @throws Exception\FormOptionException
      */
     protected function getResolvedChoiceValues()
@@ -87,18 +87,22 @@ class SymfonyChoiceType implements ChoiceInterface
         if ($this->initialised) {
             return;
         }
-        
+
+        if (!is_string($this->fieldOptions['choices'])) {
+            return;
+        }
+
         $parts = explode('::', $this->fieldOptions['choices']);
         $class = $parts[0];
         $context = $parts[1];
-        
+
         if (!class_exists($class)) {
-            throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid!', $this->name));
+            throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" requires an unfound class %s', $this->name, $class));
         }
 
         // It the passed-in class name implements \Traversable we instantiate
         // that object passing in the parameter string to the constructor
-        if (is_subclass_of($class, 'Traversable')) {
+        if (is_subclass_of($class, '\Traversable')) {
             $choiceObject = new $class($context);
             $this->fieldOptions['choices'] = $choiceObject;
             $this->initialised = true;
