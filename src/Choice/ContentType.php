@@ -99,8 +99,9 @@ class ContentType implements ChoiceInterface
         $choices = [];
         /** @var Repository\ContentRepository $repo */
         $repo = $this->em->getRepository($name);
+        $query = $repo->createQueryBuilder();
         /** @var $records Entity\Content[] */
-        $records = $repo->findWith($this->getQueryParameters());
+        $records = $repo->findWith($this->getQueryParameters($query));
 
         foreach ($records as $record) {
             $choices[$record->get($valueField)] = $record->get($labelField);
@@ -112,13 +113,14 @@ class ContentType implements ChoiceInterface
     /**
      * Determine the parameters passed to getContent() for sorting and filtering.
      *
+     * @param QueryBuilder $query
+     *
      * @return QueryBuilder
      */
-    private function getQueryParameters()
+    private function getQueryParameters(QueryBuilder $query)
     {
-        $query = $this->em
-            ->createQueryBuilder()
-            ->select('*')
+        $query
+            ->select('content.*')
         ;
 
         // ORDER BY field
