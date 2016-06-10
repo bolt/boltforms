@@ -204,13 +204,33 @@ class FieldOptions
     protected function setEntityChoiceType()
     {
         $parts = explode('::', $this->baseOptions['choices']);
-        if (!class_exists($parts[0])) {
+        $class = $parts[0];
+        $context = $parts[1];
+
+        if (!class_exists($class)) {
             throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
         }
 
-
+        // Do initial choice set up
         $this->setSymfonyChoiceType();
-        $this->options['choices'] = [new $parts[0](), $parts[1]];
+
+        // It the passed-in class name implements \Traversable we instantiate
+        // that object passing in the parameter string to the constructor
+        if (is_subclass_of($class, 'Traversable')) {
+            $choiceObject = new $class($context);
+            $this->options['choices'] = $choiceObject;
+
+            return;
+        }
+
+        $method = new \ReflectionMethod($class, $context);
+        if ($method->isStatic()) {
+            $this->options['choices'] = (array) call_user_func([$class, $context]);
+
+            return;
+        }
+
+        throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" is invalid on "%s" form!', $this->fieldName, $this->formName));
     }
 
     /**
