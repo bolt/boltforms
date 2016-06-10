@@ -131,7 +131,7 @@ contact:
       options:
         required: false
         label: Do you want us to contact you back?
-        choices: [ Yes, No ]
+        choices: [ 'Yes': 'yes', 'No': 'no' ]
         multiple: false
     submit:
       type: submit
@@ -218,7 +218,7 @@ contact:
 #      options:
 #        required: false
 #        label: Which do you think are cutest?
-#        choices: { kittens: 'Fluffy Kittens', puppies: 'Cute Puppies' }
+#        choices: { 'Fluffy Kittens': 'kittens', 'Cute Puppies': 'puppies' }
 #    best_pet_page:
 #      type: choice
 #      options:
@@ -238,6 +238,57 @@ contact:
 #        required: false
 #        label: What type of animal would you like to bring?
 #        choices: event::your.custom.event.name # Will be dispatching on "your.custom.event.name"
+#        multiple: false
+#    choice_simple:
+#      type: choice
+#      options:
+#        label: A very simple choice
+#        choices: { 'Item One': 'item_1', 'Item Two': 'item_2' }
+#    choice_traversable_choices_class:
+#      type: choice
+#      options:
+#        required: false
+#        label: Traversable choices class with "group_b" passed to the constructor
+#        choices: Example\TraversableChoice::group_b
+#        choice_label: Example\StaticChoice::choiceLabel
+#    choice_static_choices_class:
+#      type: choice
+#      options:
+#        required: false
+#        label: Choices from the calls to a static class::function
+#        choices: Example\StaticChoice::choices
+#        choice_label: Example\StaticChoice::choiceLabel
+#    choice_with_attrib:
+#      type: choice
+#      options:
+#        label: HTML attibutes added to each choice
+#        choices: Example\StaticChoice::choices
+#        choice_value: Example\StaticChoice::choiceValue
+#        choice_label: Example\StaticChoice::choiceLabel
+#        choice_attr: Example\StaticChoice::choiceAttr
+#    group_simple:
+#      type: choice
+#      options:
+#        label: Grouping Simple
+#        choices:
+#          'Group Aye': { 'Item One': 'item_1', 'Item Two': 'item_2', }
+#          'Group Bee': { 'Item Eleven': 'item_11', 'Item Twelve': 'item_12' }
+#    choice_group_callouts:
+#      type: choice
+#      options:
+#        required: false
+#        label: Grouping callouts
+#        choices: Example\StaticChoice::choices
+#        choice_label: Example\StaticChoice::choiceLabel
+#        group_by: Example\StaticChoice::groupBy
+#    choice_group_callouts_preferred_choices:
+#      type: choice
+#      options:
+#        required: false
+#        label: Grouping callouts with preferred choices
+#        choices: Example\StaticChoice::choices
+#        choice_label: Example\StaticChoice::choiceLabel
+#        preferred_choices: Example\StaticChoice::preferredChoices
 #        multiple: false
 #    upload:
 #      type: file
