@@ -35,7 +35,8 @@ class ContentType extends AbstractChoiceType
     private $em;
     /** @var array */
     private $choices;
-
+    /** @var bool */
+    private $legacy;
 
     /**
      * Constructor.
@@ -52,11 +53,12 @@ class ContentType extends AbstractChoiceType
      * @param string        $formName     Name of the form containing the field
      * @param EntityManager $em
      */
-    public function __construct($formName, $fieldName, array $fieldOptions, EntityManager $em)
+    public function __construct($formName, $fieldName, array $fieldOptions, EntityManager $em, $legacy)
     {
         parent::__construct($formName, $fieldName, $fieldOptions);
 
         $this->em = $em;
+        $this->legacy = $legacy;
     }
 
     /**
@@ -84,11 +86,19 @@ class ContentType extends AbstractChoiceType
     }
 
     /**
-     * Get choice values from Contenttype records
+     * Get choice values from ContentType records
      *
      * @return array
      */
+
     private function getChoicesFromContentTypeRecords()
+    {
+        if ($this->legacy) {
+            return $this->getChoicesFromContentTypeRecordsLegacy();
+        }
+    }
+
+    private function getChoicesFromContentTypeRecordsLegacy()
     {
         $key = $this->options['choices'];
         $params = explode('::', $key);

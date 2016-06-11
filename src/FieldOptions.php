@@ -141,7 +141,7 @@ class FieldOptions
 
         $this->options = array_merge($this->baseOptions, $options);
 
-        unset ($this->options['filters']);
+        unset ($this->options['params']);
     }
 
     /**
@@ -153,7 +153,9 @@ class FieldOptions
     {
         // Check if it is one of our custom types
         if (strpos($choices, 'contenttype') === 0) {
-            return new ContentType($this->formName, $this->fieldName, $this->baseOptions, $this->em);
+            $legacy = (bool) strpos($choices, '::');
+
+            return new ContentType($this->formName, $this->fieldName, $this->baseOptions, $this->em, $legacy);
         }
 
         if (strpos($choices, 'event') === 0) {
