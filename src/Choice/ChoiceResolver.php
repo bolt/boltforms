@@ -26,6 +26,6 @@ use Bolt\Extension\Bolt\BoltForms\Exception;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class SymfonyChoiceType extends AbstractChoiceOptionResolver
+class ChoiceResolver extends AbstractChoiceOptionResolver
 {
 }

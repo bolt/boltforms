@@ -122,7 +122,7 @@ class FieldOptions
         if (is_string($choices)) {
             $choiceObj = $this->handleCustomChoice($choices);
         } else {
-            $choiceObj = new Choice\SymfonyChoiceType($this->formName, $this->fieldName, $this->baseOptions);
+            $choiceObj = new Choice\ChoiceResolver($this->formName, $this->fieldName, $this->baseOptions);
         }
 
         $options = [
@@ -160,7 +160,7 @@ class FieldOptions
             return new Choice\EventResolver($this->formName, $this->fieldName, $this->baseOptions, $this->dispatcher);
         }
 
-        return new Choice\SymfonyChoiceType($this->formName, $this->fieldName, $this->baseOptions);
+        return new Choice\ChoiceResolver($this->formName, $this->fieldName, $this->baseOptions);
     }
 
     /**
