@@ -7,6 +7,7 @@ use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
+use Bolt\Helpers\Arr;
 use Silex\Application;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
@@ -61,9 +62,38 @@ class BoltForms
     }
 
     /**
+     * Initial form object constructor.
+     *
+     * @param string                   $formName
+     * @param string|FormTypeInterface $type
+     * @param mixed                    $data
+     * @param array                    $options
+     * @param array                    $override
+     */
+    public function makeForm($formName, $type = FormType::class, $data = null, $options = [], $override = null)
+    {
+        if ($override) {
+            $this->config[$formName]['fields'] = Arr::mergeRecursiveDistinct($this->config[$formName]['fields'], $override);
+        }
+
+        $options['csrf_protection'] = $this->config['csrf'];
+        $this->forms[$formName] = $this->app['form.factory']
+            ->createNamedBuilder($formName, $type, $data, $options)
+            ->addEventSubscriber(new BoltFormsSubscriber($this->app))
+            ->getForm()
+        ;
+
+        /** @var FormConfig $formConfig */
+        $formConfig = $this->getFormConfig($formName);
+        foreach ($formConfig->getFields()->toArray() as $key => $field) {
+            $this->addField($formName, $key, $field['type'], $field);
+        }
+    }
+
+    /**
      * Get the configuration object for a form.
      *
-     * @param $formName
+     * @param string $formName
      *
      * @return FormConfig
      */
@@ -83,41 +113,7 @@ class BoltForms
     }
 
     /**
-     * Initial form object constructor
-     *
-     * @param string                   $formName
-     * @param string|FormTypeInterface $type
-     * @param mixed                    $data
-     * @param array                    $options
-     */
-    public function makeForm($formName, $type = FormType::class, $data = null, $options = [])
-    {
-        $options['csrf_protection'] = $this->config['csrf'];
-        $this->forms[$formName] = $this->app['form.factory']
-            ->createNamedBuilder($formName, $type, $data, $options)
-            ->addEventSubscriber(new BoltFormsSubscriber($this->app))
-            ->getForm()
-        ;
-    }
-
-    /**
-     * Add an array of fields to the form
-     *
-     * @param string $formName Name of the form
-     * @param array  $fields   Associative array keyed on field name => array('type' => '', 'options => array())
-     *
-     * @return void
-     */
-    public function addFieldArray($formName, array $fields)
-    {
-        foreach ($fields as $fieldName => $field) {
-            $field['options'] = empty($field['options']) ? [] : $field['options'];
-            $this->addField($formName, $fieldName, $field['type'], $field['options']);
-        }
-    }
-
-    /**
-     * Add a field to the form
+     * Add a field to the form.
      *
      * @param string $formName  Name of the form
      * @param string $fieldName
@@ -150,6 +146,22 @@ class BoltForms
         }
 
         throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
+    }
+
+    /**
+     * Add an array of fields to the form.
+     *
+     * @param string $formName Name of the form
+     * @param array  $fields   Associative array keyed on field name => array('type' => '', 'options => array())
+     *
+     * @return void
+     */
+    public function addFieldArray($formName, array $fields)
+    {
+        foreach ($fields as $fieldName => $field) {
+            $field['options'] = empty($field['options']) ? [] : $field['options'];
+            $this->addField($formName, $fieldName, $field['type'], $field['options']);
+        }
     }
 
     /**

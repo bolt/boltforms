@@ -62,7 +62,7 @@ class BoltFormsExtension
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [], $defaults = [])
+    public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [], $defaults = [], $override = null)
     {
         if (!$this->config->has($formName)) {
             return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>", 'UTF-8');
@@ -82,13 +82,9 @@ class BoltFormsExtension
         $sent = false;
         $reCaptchaResponse = null;
 
-        $boltForms->makeForm($formName, FormType::class, $data, $options);
+        $boltForms->makeForm($formName, FormType::class, $data, $options, $override);
         $formConfig = $boltForms->getFormConfig($formName);
         $loadAjax = $formConfig->getSubmission()->getAjax();
-        $fields = $formConfig->getFields();
-
-        // Add our fields all at once
-        $boltForms->addFieldArray($formName, $fields->toArray());
 
         /** @var FormContext $compiler */
         $compiler = $session->get('boltforms_compiler_' . $formName);

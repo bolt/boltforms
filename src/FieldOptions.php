@@ -75,7 +75,7 @@ class FieldOptions
     {
         $this->initialise();
 
-        return $this->options;
+        return (array) $this->options;
     }
 
     /**
@@ -98,7 +98,7 @@ class FieldOptions
      */
     protected function setValidOptions()
     {
-        $this->options = $this->baseOptions;
+        $this->options = isset($this->baseOptions['options']) ? $this->baseOptions['options'] : null;
         if ($this->type === 'choice') {
             $this->resolveChoiceOptions();
         }
@@ -114,7 +114,7 @@ class FieldOptions
      */
     protected function resolveChoiceOptions()
     {
-        $options = $this->baseOptions;
+        $options = $this->baseOptions['options'];
         $choices = isset($options['choices']) ? $options['choices'] : null;
 
         if (is_string($choices)) {
@@ -135,7 +135,7 @@ class FieldOptions
             'preferred_choices' => $choiceObj->getPreferredChoices(),
         ];
 
-        $this->options = array_merge($this->baseOptions, $options);
+        $this->options = array_merge($this->baseOptions['options'], $options);
 
         unset($this->options['params']);
     }
