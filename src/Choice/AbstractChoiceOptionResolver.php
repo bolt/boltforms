@@ -28,7 +28,7 @@ use Symfony\Component\PropertyAccess\PropertyPath;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-abstract class AbstractChoiceType implements ChoiceInterface
+abstract class AbstractChoiceOptionResolver implements ChoiceInterface
 {
     /** @var string */
     protected $name;
