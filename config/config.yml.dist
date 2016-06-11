@@ -219,12 +219,22 @@ contact:
 #        required: false
 #        label: Which do you think are cutest?
 #        choices: { 'Fluffy Kittens': 'kittens', 'Cute Puppies': 'puppies' }
-#    best_pet_page:
+#    contenttype_choice:
 #      type: choice
 #      options:
 #        required: false
-#        label: What is our best pets page?
-#        choices: 'contenttype::pets::title::slug'
+#        label: ContentType selection
+#        choices: content
+#        params:
+#          contenttype: pages
+#          label: title                    # Field name to get the lable value from
+#          value: slug                     # Field name to get the underlying choice value from
+#          limit: 3                        # Limit on the number of results returned
+#          sort: title                     # Field name to sort on
+#          order: ASC                      # Sorting direction, either "ASC" or "DESC"
+#          where:
+#            and: { 'koala': 'bear' }      # Field name "koala" with the value of "bear"
+#            or: { 'koala': 'dangerous' }  # Field name "koala" with the value of "dangerous"
 #    event:
 #      type: choice
 #      options:
