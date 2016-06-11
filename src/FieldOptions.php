@@ -157,7 +157,7 @@ class FieldOptions
         }
 
         if (strpos($choices, 'event') === 0) {
-            return new Choice\EventType($this->formName, $this->fieldName, $this->baseOptions, $this->dispatcher);
+            return new Choice\EventResolver($this->formName, $this->fieldName, $this->baseOptions, $this->dispatcher);
         }
 
         return new Choice\SymfonyChoiceType($this->formName, $this->fieldName, $this->baseOptions);

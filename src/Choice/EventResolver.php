@@ -28,7 +28,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class EventType extends AbstractChoiceOptionResolver
+class EventResolver extends AbstractChoiceOptionResolver
 {
     /** @var array */
     private $choices;
