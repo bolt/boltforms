@@ -2,9 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
-use Bolt\Extension\Bolt\BoltForms\Choice\EventType;
-use Bolt\Extension\Bolt\BoltForms\Choice\SymfonyChoiceType;
+use Bolt\Extension\Bolt\BoltForms\Choice;
 use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Storage\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -124,7 +122,7 @@ class FieldOptions
         if (is_string($choices)) {
             $choiceObj = $this->handleCustomChoice($choices);
         } else {
-            $choiceObj = new SymfonyChoiceType($this->formName, $this->fieldName, $this->baseOptions);
+            $choiceObj = new Choice\SymfonyChoiceType($this->formName, $this->fieldName, $this->baseOptions);
         }
 
         $options = [
@@ -147,7 +145,7 @@ class FieldOptions
     /**
      * @param $choices
      *
-     * @return ContentType|EventType
+     * @return Choice\AbstractChoiceOptionResolver
      */
     protected function handleCustomChoice($choices)
     {
@@ -155,14 +153,14 @@ class FieldOptions
         if (strpos($choices, 'contenttype') === 0) {
             $legacy = (bool) strpos($choices, '::');
 
-            return new ContentType($this->formName, $this->fieldName, $this->baseOptions, $this->em, $legacy);
+            return new Choice\ContentType($this->formName, $this->fieldName, $this->baseOptions, $this->em, $legacy);
         }
 
         if (strpos($choices, 'event') === 0) {
-            return new EventType($this->formName, $this->fieldName, $this->baseOptions, $this->dispatcher);
+            return new Choice\EventType($this->formName, $this->fieldName, $this->baseOptions, $this->dispatcher);
         }
 
-        return new SymfonyChoiceType($this->formName, $this->fieldName, $this->baseOptions);
+        return new Choice\SymfonyChoiceType($this->formName, $this->fieldName, $this->baseOptions);
     }
 
     /**
