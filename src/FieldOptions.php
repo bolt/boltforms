@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Bolt\Extension\Bolt\BoltForms\Choice;
-use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Storage\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -139,7 +137,7 @@ class FieldOptions
 
         $this->options = array_merge($this->baseOptions, $options);
 
-        unset ($this->options['params']);
+        unset($this->options['params']);
     }
 
     /**
@@ -150,10 +148,13 @@ class FieldOptions
     protected function handleCustomChoice($choices)
     {
         // Check if it is one of our custom types
-        if (strpos($choices, 'contenttype') === 0) {
-            $legacy = (bool) strpos($choices, '::');
+        if (strpos($choices, 'contenttype::') === 0) {
+            // @deprecated Will be remove in BoltForms v4
+            return new Choice\ContentTypeResolver($this->formName, $this->fieldName, $this->baseOptions, $this->em, true);
+        }
 
-            return new Choice\ContentTypeResolver($this->formName, $this->fieldName, $this->baseOptions, $this->em, $legacy);
+        if (strpos($choices, 'content') === 0) {
+            return new Choice\ContentTypeResolver($this->formName, $this->fieldName, $this->baseOptions, $this->em);
         }
 
         if (strpos($choices, 'event') === 0) {

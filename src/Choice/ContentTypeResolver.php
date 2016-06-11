@@ -48,12 +48,13 @@ class ContentTypeResolver extends AbstractChoiceOptionResolver
      *  'labelfield'  - Field to use for the UI displayed to the user
      *  'valuefield'  - Field to use for the value stored
      *
+     * @param string        $formName     Name of the form containing the field
      * @param string        $fieldName    Name of the field
      * @param array         $fieldOptions Options for field
-     * @param string        $formName     Name of the form containing the field
      * @param EntityManager $em
+     * @param bool          $legacy       True if using deprecated value format
      */
-    public function __construct($formName, $fieldName, array $fieldOptions, EntityManager $em, $legacy)
+    public function __construct($formName, $fieldName, array $fieldOptions, EntityManager $em, $legacy = false)
     {
         parent::__construct($formName, $fieldName, $fieldOptions);
 
@@ -78,44 +79,91 @@ class ContentTypeResolver extends AbstractChoiceOptionResolver
      */
     public function getChoices()
     {
-        if ($this->choices === null) {
-            $this->choices = $this->getChoicesFromContentTypeRecords();
+        if ($this->choices !== null) {
+            return $this->choices;
         }
 
-        return $this->choices;
+        if ($this->legacy) {
+            return $this->choices = $this->getParameterValuesLegacy();
+        }
+
+        $params = array_merge($this->getDefaultParameters(), $this->options['params']);
+
+        return $this->choices = $this->getParameterValues($params);
     }
 
     /**
-     * Get choice values from ContentType records
+     * Handle legacy parameters.
+     *
+     * @deprecated To be removed in BoltForms v4.
      *
      * @return array
      */
-
-    private function getChoicesFromContentTypeRecords()
-    {
-        if ($this->legacy) {
-            return $this->getChoicesFromContentTypeRecordsLegacy();
-        }
-    }
-
-    private function getChoicesFromContentTypeRecordsLegacy()
+    private function getParameterValuesLegacy()
     {
         $key = $this->options['choices'];
-        $params = explode('::', $key);
-        if ($params === false || count($params) !== 4) {
-            throw new \UnexpectedValueException("The configured ContentType choice field '$this->name' has an invalid key string: '$key'");
+        $parts = explode('::', $key);
+        if ($parts === false || count($parts) !== 4) {
+            throw new \UnexpectedValueException(sprintf('The configured ContentType choice field "%s" has an invalid key string: "%s"', $this->name, $key));
         }
-        list($contentType, $name, $labelField, $valueField) = $params;
+        $params = array_merge($this->getDefaultParameters(),
+            [
+                'contenttype' => $parts[1],
+                'label'       => $parts[2],
+                'value'       => $parts[3],
+            ]
+        );
 
+        return $this->getParameterValues($params);
+    }
+
+    /**
+     * Return a default set of parameter keys.
+     *
+     * @return array
+     */
+    protected function getDefaultParameters()
+    {
+        return [
+            'contenttype' => null,
+            'label'       => null,
+            'value'       => null,
+            'limit'       => null,
+            'sort'        => null,
+            'order'       => null,
+            'where'       => [
+                'and' => null,
+                'or'  => null,
+            ],
+        ];
+    }
+
+    /**
+     * Do a look up of values from records in the database.
+     *
+     * @param array $params
+     *
+     * @return array
+     */
+    protected function getParameterValues(array $params)
+    {
         $choices = [];
         /** @var Repository\ContentRepository $repo */
-        $repo = $this->em->getRepository($name);
+        $repo = $this->em->getRepository($params['contenttype']);
         $query = $repo->createQueryBuilder();
+
+        // Build the query
+        $this->getQueryParameters($query, $params);
+
         /** @var $records Entity\Content[] */
-        $records = $repo->findWith($this->getQueryParameters($query));
+        $records = $repo->findWith($query);
+
+        if ($records === false) {
+            return [];
+        }
 
         foreach ($records as $record) {
-            $choices[$record->get($labelField)] = $record->get($valueField);
+            $choices[$record->get($params['label'])] = $record->get($params['value']);
         }
 
         return $choices;
@@ -125,43 +173,63 @@ class ContentTypeResolver extends AbstractChoiceOptionResolver
      * Determine the parameters passed to getContent() for sorting and filtering.
      *
      * @param QueryBuilder $query
+     * @param array        $params
      *
      * @return QueryBuilder
      */
-    private function getQueryParameters(QueryBuilder $query)
+    protected function getQueryParameters(QueryBuilder $query, array $params)
     {
-        $query
-            ->select('content.*')
-        ;
+        $query->select('content.*');
 
-        // ORDER BY field
-        if (isset($this->options['sort'])) {
-            $query->orderBy($this->options['sort']);
+        if ($params['sort'] !== null) {
+            $query->orderBy($params['sort'], $params['order']);
         }
-        // LIMIT count
-        if (isset($this->options['limit'])) {
-            $query->setMaxResults((integer) $this->options['limit']);
+
+        if ($params['limit'] !== null) {
+            $query->setMaxResults((int) $params['limit']);
         }
+
         // WHERE filters
-        if (isset($this->options['filters'])) {
-            $this->getFilters($query);
+        if ($params['where']['and'] !== null) {
+            $this->getWhereAndFilters($query, $params);
+        }
+        if ($params['where']['or'] !== null) {
+            $this->getWhereOrFilters($query, $params);
         }
 
         return $query;
     }
 
     /**
-     * Get the filters.
+     * Set the WHERE (…) AND (…) filters.
      *
      * @param QueryBuilder $query
+     * @param array        $params
      */
-    private function getFilters(QueryBuilder $query)
+    protected function getWhereAndFilters(QueryBuilder $query, array $params)
     {
-        foreach ($this->options['filters'] as $filter) {
-            $parameters[$filter['field']] = $filter['value'];
+        foreach ($params['where']['and'] as $field => $value) {
+            $parameterName = 'and_' . $field;
             $query
-                ->andWhere($filter['field'] . ' = :' . $filter['field'])
-                ->setParameter($filter['field'], $filter['value'])
+                ->andWhere($field . ' = :' . $parameterName)
+                ->setParameter($parameterName, $value)
+            ;
+        }
+    }
+
+    /**
+     * Set the WHERE (…) OR (…) filters.
+     *
+     * @param QueryBuilder $query
+     * @param array        $params
+     */
+    protected function getWhereOrFilters(QueryBuilder $query, array $params)
+    {
+        foreach ($params['where']['or'] as $field => $value) {
+            $parameterName = 'or_' . $field;
+            $query
+                ->orWhere($field . ' = :' . $parameterName)
+                ->setParameter($parameterName, $value)
             ;
         }
     }
