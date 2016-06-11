@@ -153,7 +153,7 @@ class FieldOptions
         if (strpos($choices, 'contenttype') === 0) {
             $legacy = (bool) strpos($choices, '::');
 
-            return new Choice\ContentType($this->formName, $this->fieldName, $this->baseOptions, $this->em, $legacy);
+            return new Choice\ContentTypeResolver($this->formName, $this->fieldName, $this->baseOptions, $this->em, $legacy);
         }
 
         if (strpos($choices, 'event') === 0) {

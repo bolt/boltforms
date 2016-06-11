@@ -1,7 +1,7 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Tests;
 
-use Bolt\Extension\Bolt\BoltForms\Choice\ContentType;
+use Bolt\Extension\Bolt\BoltForms\Choice\ContentTypeResolver;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -14,7 +14,7 @@ class ContentTypeTest extends AbstractBoltFormsUnitTest
     public function testGetName()
     {
         $app = $this->getApp();
-        $obj = new ContentType($app, 'koala', ['choices' => 'contenttype::pets::title::slug']);
+        $obj = new ContentTypeResolver($app, 'koala', ['choices' => 'contenttype::pets::title::slug']);
         $this->assertInstanceOf('\Bolt\Extension\Bolt\BoltForms\Choice\ContentType', $obj);
         $this->assertSame($obj->getName(), 'koala');
     }
@@ -25,11 +25,11 @@ class ContentTypeTest extends AbstractBoltFormsUnitTest
     public function testGetChoicesException()
     {
         $app = $this->getApp();
-        $obj = new ContentType($app['storage'], 'koala', ['choices' => 'contenttype']);
+        $obj = new ContentTypeResolver($app['storage'], 'koala', ['choices' => 'contenttype']);
         $obj->getChoices();
-        $obj = new ContentType($app['storage'], 'koala', ['choices' => 'contenttype::pages']);
+        $obj = new ContentTypeResolver($app['storage'], 'koala', ['choices' => 'contenttype::pages']);
         $obj->getChoices();
-        $obj = new ContentType($app['storage'], 'koala', ['choices' => 'contenttype::pages::title']);
+        $obj = new ContentTypeResolver($app['storage'], 'koala', ['choices' => 'contenttype::pages::title']);
         $obj->getChoices();
     }
 
@@ -47,7 +47,7 @@ class ContentTypeTest extends AbstractBoltFormsUnitTest
             ->will($this->returnValue([$record]));
         $app['storage'] = $storage;
 
-        $obj = new ContentType($app['storage'], 'koala', ['choices' => 'contenttype::pets::title::slug']);
+        $obj = new ContentTypeResolver($app['storage'], 'koala', ['choices' => 'contenttype::pets::title::slug']);
         $choice = $obj->getChoices();
 
         $this->assertNotEmpty($choice);
