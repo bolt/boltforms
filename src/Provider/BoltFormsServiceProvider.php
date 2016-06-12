@@ -10,6 +10,7 @@ use Bolt\Extension\Bolt\BoltForms\Email;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsCustomDataSubscriber;
 use Bolt\Extension\Bolt\BoltForms\Twig;
+use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
@@ -90,6 +91,27 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 $email = new Email($app);
 
                 return $email;
+            }
+        );
+
+        $app['boltforms.twig.helper'] = $app->share(
+            function ($app) {
+                return new Container([
+                    'form' => $app->share(
+                        function () use ($app) {
+                            return new Twig\Helper\FormHelper(
+                                $app['boltforms'],
+                                $app['boltforms.config'],
+                                $app['boltforms.processor'],
+                                $app['boltforms.form.context.factory'],
+                                $app['boltforms.feedback'],
+                                $app['session'],
+                                $app['request_stack'],
+                                $app['logger.system']
+                            );
+                        }
+                    ),
+                ]);
             }
         );
 

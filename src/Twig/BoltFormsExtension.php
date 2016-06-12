@@ -4,15 +4,12 @@ namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
-use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
-use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
-use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
-use Psr\Log\LoggerInterface;
+use Bolt\Extension\Bolt\BoltForms\Exception;
+use Bolt\Extension\Bolt\BoltForms\Twig\Helper\FormHelper;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
@@ -65,72 +62,57 @@ class BoltFormsExtension
     public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [], $defaults = [], $override = null)
     {
         if (!$this->config->has($formName)) {
-            return new \Twig_Markup("<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>", 'UTF-8');
+            return new \Twig_Markup(
+                "<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>",
+                'UTF-8'
+            );
         }
 
+        /** @var FormHelper $formHelper */
+        $formHelper = $this->app['boltforms.twig.helper']['form'];
+        /** @var RequestStack $requestStack */
+        $requestStack = $this->app['request_stack'];
         /** @var BoltForms $boltForms */
         $boltForms = $this->app['boltforms'];
-        /** @var Processor $processor */
-        $processor = $this->app['boltforms.processor'];
         /** @var Session $session */
         $session = $this->app['session'];
-        /** @var FlashBag $feedback */
         $feedback = $this->app['boltforms.feedback'];
-        /** @var LoggerInterface $loggerSystem */
-        $loggerSystem = $this->app['logger.system'];
 
-        $sent = false;
         $reCaptchaResponse = null;
+        $formConfig = null;
 
-        $boltForms->makeForm($formName, FormType::class, $data, $options, $override);
-        $formConfig = $boltForms->getFormConfig($formName);
-        $loadAjax = $formConfig->getSubmission()->getAjax();
+        try {
+            $boltForms->makeForm($formName, FormType::class, $data, $options, $override);
+            $formConfig = $boltForms->getFormConfig($formName);
+        } catch (Exception\BoltFormsException $e) {
+            if ($formConfig === null) {
+                $feedback->add('error', $e->getMessage());
+                $requestStack->getCurrentRequest()->request->set($formName, true);
+                $compiler = $formHelper->getContextCompiler($formName);
+                $html = $formHelper->getExceptionRender($formName, $compiler, $this->app['twig']);
 
-        /** @var FormContext $compiler */
-        $compiler = $session->get('boltforms_compiler_' . $formName);
-        if ($compiler === null) {
-            $compiler = $this->app['boltforms.form.context.factory']();
+                return new \Twig_Markup($html, 'UTF-8');
+            }
         }
+
+        // Get the context compiler
+        $compiler = $formHelper->getContextCompiler($formName);
 
         // Handle the POST
-        $request = $this->app['request_stack']->getCurrentRequest();
-        if ($request && $request->isMethod(Request::METHOD_POST) && $request->request->get($formName) !== null) {
-            // Check reCaptcha, if enabled.
-            $reCaptchaResponse = $processor->reCaptchaResponse($request);
+        $formHelper->handleFormRequest($formName, $compiler);
 
-            try {
-                $sent = $processor->process($formName, null, $reCaptchaResponse);
-            } catch (FileUploadException $e) {
-                $feedback->add('error', $e->getMessage());
-                $loggerSystem->debug($e->getSystemMessage(), ['event' => 'extensions']);
-            } catch (FormValidationException $e) {
-                $feedback->add('error', $e->getMessage());
-                $loggerSystem->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
-            }
-        } elseif ($request->isMethod(Request::METHOD_GET)) {
-            $sessionKey = sprintf('boltforms_submit_%s', $formName);
-            $sent = $session->get($sessionKey);
-
-            // For BC on templates
-            $request->attributes->set($formName, $formName);
-        }
+        $loadAjax = $formConfig->getSubmission()->getAjax();
 
         $compiler
-            ->setAction($loadAjax ? $this->app['url_generator']->generate('boltFormsAsyncSubmit', ['form' => $formName]) : $request->getRequestUri())
+            ->setAction($loadAjax ? $this->app['url_generator']->generate('boltFormsAsyncSubmit', ['form' => $formName]) : $requestStack->getCurrentRequest()->getRequestUri())
             ->setHtmlPreSubmit($htmlPreSubmit)
             ->setHtmlPostSubmit($htmlPostSubmit)
-            ->setSent($sent)
             ->setReCaptchaResponse($reCaptchaResponse)
             ->setDefaults($defaults)
         ;
         $session->set('boltforms_compiler_' . $formName, $compiler);
 
-        // If the form has it's own templates defined, use those, else the globals.
-        $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
-        $context = $compiler->build($boltForms, $formName, $feedback);
-
-        // Render the Twig_Markup
-        return $boltForms->renderForm($formName, $template, $context, $loadAjax);
+        return $formHelper->getFormRender($formName, $formConfig, $compiler, $loadAjax);
     }
 
     /**
@@ -165,7 +147,7 @@ class BoltFormsExtension
 
         // Render the Twig
         $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/templates');
-        $html = $this->app['render']->render($this->config->getTemplates()->get('files'), $context);
+        $html = $this->app['twig']->render($this->config->getTemplates()->get('files'), $context);
 
         return new \Twig_Markup($html, 'UTF-8');
     }

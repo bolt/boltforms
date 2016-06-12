@@ -5,6 +5,7 @@ use Bolt\Asset\Snippet\Snippet;
 use Bolt\Asset\Target;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
+use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Bolt\Helpers\Arr;
@@ -69,6 +70,8 @@ class BoltForms
      * @param mixed                    $data
      * @param array                    $options
      * @param array                    $override
+     * 
+     * @throws FormOptionException
      */
     public function makeForm($formName, $type = FormType::class, $data = null, $options = [], $override = null)
     {
