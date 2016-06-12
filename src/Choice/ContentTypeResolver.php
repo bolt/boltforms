@@ -89,7 +89,7 @@ class ContentTypeResolver extends AbstractChoiceOptionResolver
 
         $params = isset($this->options['params'])
             ? array_merge($this->getDefaultParameters(), (array) $this->options['params'])
-            : []
+            : $this->getDefaultParameters()
         ;
 
         return $this->choices = $this->getParameterValues($params);
