@@ -31,7 +31,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class EventResolver extends AbstractChoiceOptionResolver
 {
     /** @var array */
-    private $choices;
+    private $choices = [];
     /** @var string */
     private $formName;
     /** @var EventDispatcherInterface */
