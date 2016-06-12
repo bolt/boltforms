@@ -56,6 +56,7 @@ class BoltFormsExtension
      * @param array  $data
      * @param array  $options
      * @param array  $defaults
+     * @param array  $override
      *
      * @return \Twig_Markup
      */

@@ -69,16 +69,16 @@ class BoltForms
      * @param string|FormTypeInterface $type
      * @param mixed                    $data
      * @param array                    $options
-     * @param array                    $override
-     * 
+     * @param array                    $formConfigOverride
+     *
      * @throws FormOptionException
      */
-    public function makeForm($formName, $type = FormType::class, $data = null, $options = [], $override = null)
+    public function makeForm($formName, $type = FormType::class, $data = null, $options = [], array $formConfigOverride = null)
     {
-        if ($override) {
-            $this->config[$formName]['fields'] = Arr::mergeRecursiveDistinct($this->config[$formName]['fields'], $override);
+        // Override config options as requested
+        foreach ($formConfigOverride as $key => $value) {
+            $this->config[$formName]['fields'][$key]['options'] = Arr::mergeRecursiveDistinct($this->config[$formName]['fields'][$key]['options'], $value);
         }
-
         $options['csrf_protection'] = $this->config['csrf'];
         $this->forms[$formName] = $this->app['form.factory']
             ->createNamedBuilder($formName, $type, $data, $options)
@@ -89,7 +89,13 @@ class BoltForms
         /** @var FormConfig $formConfig */
         $formConfig = $this->getFormConfig($formName);
         foreach ($formConfig->getFields()->toArray() as $key => $field) {
-            $this->addField($formName, $key, $field['type'], $field);
+            $field['options'] = !empty($field['options']) ? $field['options'] : [];
+
+            if (!isset($field['type'])) {
+                throw new FormOptionException(sprintf('Missing "type" value for "%s" field in "%s" form.', $key, $formName));
+            }
+
+            $this->addField($formName, $key, $field['type'], $field['options']);
         }
     }
 

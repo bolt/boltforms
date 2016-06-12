@@ -101,7 +101,6 @@ abstract class AbstractChoiceOptionResolver implements ChoiceInterface
         $context = $parts[1];
 
         if (!class_exists($class)) {
-
             throw new Exception\FormOptionException(sprintf('Configured "choices" field "%s" requires the %s class that was not found.', $this->name, $class));
         }
 
