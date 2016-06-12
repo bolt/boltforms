@@ -91,9 +91,6 @@ class Async implements ControllerProviderInterface
 
         $boltForms->makeForm($formName, FormType::class, [], []);
         $formConfig = $boltForms->getFormConfig($formName);
-        $fields = $formConfig->getFields();
-        $boltForms->addFieldArray($formName, $fields->toArray());
-        $formConfig = $boltForms->getFormConfig($formName);
 
         $reCaptchaResponse = $app['boltforms.processor']->reCaptchaResponse($request);
 
