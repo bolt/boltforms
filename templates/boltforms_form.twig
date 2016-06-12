@@ -9,27 +9,8 @@
 {% endblock boltforms_css %}
 
 <div class="boltform">
-{% if debug %}
-    <p class="boltform-debug">[Debug] Notification debug mode enabled!</p>
 
-    {% if messages.debug and app.request.get(formname) %}
-        {% for debug in messages.debug %}
-            <p class="boltform-debug">[Debug] {{ debug }}</p>
-        {% endfor %}
-    {% endif %}
-{% endif %}
-
-{% if messages.error and app.request.get(formname) %}
-    {% for error in messages.error %}
-        <p class="boltform-error">{{ error }}</p>
-    {% endfor %}
-{% endif %}
-
-{% if messages.info and app.request.get(formname) %}
-    {% for info in messages.info %}
-        <p class="boltform-info boltform-message">{{ info }}</p>
-    {% endfor %}
-{% endif %}
+{{ include('_boltforms_messages.twig') }}
 
 {% if sent %}
     {{ html_post }}
