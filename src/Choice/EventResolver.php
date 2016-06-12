@@ -71,7 +71,7 @@ class EventResolver extends AbstractChoiceOptionResolver
     public function getChoices()
     {
         if ($this->choices === null) {
-            $event = new BoltFormsChoiceEvent($this->name, $this->options);
+            $event = new BoltFormsChoiceEvent($this->formName, $this->name, $this->options);
 
             $this->dispatcher->dispatch($this->getEventName(), $event);
 
