@@ -20,18 +20,19 @@ sending emails until a `finish()` middleware event in the Silex service provider
 As such, Swiftmailer will return a true response to the caller, BoltForms in 
 this case, when the message is queued, and that's the last we know of it.
 
-Template Use
-------------
+Templates
+---------
+
 
 Define a form in `app/config/extensions/boltforms.bolt.yml` and add the 
 following to your template:
 
 ```twig
-{{ boltforms('formname') }}
+    {{ boltforms('formname') }}
 ```
 
-Template with data
-------------------
+### Default data
+
 
 You can also add parameters to the BoltForms invocation in Twig. In this case 
 the value for the field "field_1" will be pre-set "value_1"
@@ -43,20 +44,55 @@ the value for the field "field_1" will be pre-set "value_1"
 Or
 
 ```twig
-{{ boltforms('formname', defaults={
-        field_1: "value_1",
-        field_2: "value_2",
-        field_3: "value_3"
-    }) 
-}}
+    {{ boltforms('formname',
+        defaults = {
+            field_1: "value_1",
+            field_2: "value_2",
+            field_3: "value_3"
+        })
+    }}
 ```
 
-This can then be used in the template:
+### Configuration overrides
+
+Configuration parameters can be overridden at runtimeby passing them in using
+the `override` named parameter 
+
+e.g.
 
 ```twig
-{{ form_row(form.field_1, {'value': defaults['field_1']|default()}) }}
-{{ form_row(form.field_2, {'value': defaults['field_2']|default()}) }}
-{{ form_row(form.field_3, {'value': defaults['field_3']|default()}) }}
+    {{ boltforms('formname', 
+        override = {
+            'field_name': {
+                options: {
+                    data: 'A default value that you want'
+                }
+            }
+        }
+    }}  
+```
+
+or
+
+```twig
+    {{ boltforms('formname', 
+        override = {
+            'field_name': {
+                params: {
+                    contenttype: 'pages',
+                    label: 'title',
+                    value: 'slug',
+                    limit: 1,
+                    sort: 'title',
+                    order: 'DESC',
+                    where: {
+                        and: { 'koala': 'bear' },
+                        or: { 'koala': 'dangerous' }
+                    }
+                }
+            }
+        }
+    }}  
 ```
 
 
