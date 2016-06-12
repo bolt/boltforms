@@ -86,7 +86,9 @@ class BoltFormsExtension
             $formConfig = $boltForms->getFormConfig($formName);
         } catch (Exception\BoltFormsException $e) {
             if ($formConfig === null) {
+                $feedback->add('debug', $this->getSafeTrace($e));
                 $feedback->add('error', $e->getMessage());
+
                 $requestStack->getCurrentRequest()->request->set($formName, true);
                 $compiler = $formHelper->getContextCompiler($formName);
                 $html = $formHelper->getExceptionRender($formName, $compiler, $this->app['twig']);
@@ -150,5 +152,28 @@ class BoltFormsExtension
         $html = $this->app['twig']->render($this->config->getTemplates()->get('files'), $context);
 
         return new \Twig_Markup($html, 'UTF-8');
+    }
+
+    /**
+     * Remove the root path from the trace.
+     *
+     * @param \Exception $e
+     *
+     * @return string
+     */
+    protected function getSafeTrace(\Exception $e)
+    {
+        $rootDir = $this->app['resources']->getPath('root');
+        $trace = explode("\n", $e->getTraceAsString());
+        $trace = array_slice($trace, 0, 10);
+        $trace = implode("\n", $trace);
+        $trace = str_replace($rootDir, '{root}', $trace);
+        $message = sprintf(
+            "%s\n%s",
+            $e->getMessage(),
+            $trace
+        );
+
+        return $message;
     }
 }

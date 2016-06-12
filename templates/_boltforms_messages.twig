@@ -4,7 +4,7 @@
 
     {% if messages.debug and app.request.get(formname) %}
         {% for debug in messages.debug %}
-            <p class="boltform-debug">[Debug] {{ debug }}</p>
+            <p class="boltform-debug">[Debug] {{ debug|nl2br }}</p>
         {% endfor %}
     {% endif %}
 {% endif %}
