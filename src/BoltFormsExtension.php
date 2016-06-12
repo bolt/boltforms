@@ -53,6 +53,23 @@ class BoltFormsExtension extends SimpleExtension
     }
 
     /**
+     * All the non-forms config keys.
+     *
+     * @return string[]
+     */
+    public function getConfigKeys()
+    {
+        return [
+            'csrf',
+            'recaptcha',
+            'templates',
+            'debug',
+            'uploads',
+            'fieldmap',
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function registerFrontendControllers()
@@ -68,6 +85,14 @@ class BoltFormsExtension extends SimpleExtension
         }
 
         return $controllers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfig()
+    {
+        return parent::getConfig();
     }
 
     /**
@@ -100,31 +125,6 @@ class BoltFormsExtension extends SimpleExtension
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getConfig()
-    {
-        return parent::getConfig();
-    }
-
-    /**
-     * All the non-forms config keys.
-     *
-     * @return string[]
-     */
-    public function getConfigKeys()
-    {
-        return [
-            'csrf',
-            'recaptcha',
-            'templates',
-            'debug',
-            'uploads',
-            'fieldmap',
-        ];
-    }
-
-    /**
      * Set the defaults for configuration parameters.
      *
      * {@inheritdoc}
@@ -142,11 +142,12 @@ class BoltFormsExtension extends SimpleExtension
                 'theme'         => 'clean',
             ],
             'templates' => [
-                'fields'  => 'boltforms_fields.twig',
-                'form'    => 'boltforms_form.twig',
-                'email'   => 'boltforms_email.twig',
-                'subject' => 'boltforms_email_subject.twig',
-                'files'   => 'boltforms_file_browser.twig',
+                'form'      => 'boltforms_form.twig',
+                'fields'    => 'boltforms_fields.twig',
+                'email'     => 'boltforms_email.twig',
+                'subject'   => 'boltforms_email_subject.twig',
+                'files'     => 'boltforms_file_browser.twig',
+                'exception' => 'boltforms_exception.twig'
             ],
             'debug' => [
                 'enabled' => false,
