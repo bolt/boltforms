@@ -106,7 +106,7 @@ class BoltFormsExtension
         $loadAjax = $formConfig->getSubmission()->getAjax();
 
         $compiler
-            ->setAction($loadAjax ? $this->app['url_generator']->generate('boltFormsAsyncSubmit', ['form' => $formName]) : $requestStack->getCurrentRequest()->getRequestUri())
+            ->setAction($this->getRelevantAction($formName, $loadAjax))
             ->setHtmlPreSubmit($htmlPreSubmit)
             ->setHtmlPostSubmit($htmlPostSubmit)
             ->setReCaptchaResponse($reCaptchaResponse)
@@ -152,6 +152,26 @@ class BoltFormsExtension
         $html = $this->app['twig']->render($this->config->getTemplates()->get('files'), $context);
 
         return new \Twig_Markup($html, 'UTF-8');
+    }
+
+    /**
+     * Determine the form 'action' to be used.
+     *
+     * @param string $formName
+     * @param bool   $loadAjax
+     *
+     * @return string
+     */
+    protected function getRelevantAction($formName, $loadAjax)
+    {
+        if ($loadAjax) {
+            return $this->app['url_generator']->generate('boltFormsAsyncSubmit', ['form' => $formName]);
+        }
+
+        /** @var RequestStack $requestStack */
+        $requestStack = $this->app['request_stack'];
+
+        return $requestStack->getCurrentRequest()->getRequestUri();
     }
 
     /**
