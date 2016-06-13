@@ -10,6 +10,7 @@ use Silex\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
@@ -80,25 +81,12 @@ class BoltFormsExtension
         $boltForms = $this->app['boltforms'];
         /** @var Session $session */
         $session = $this->app['session'];
-        $feedback = $this->app['boltforms.feedback'];
-
-        $reCaptchaResponse = null;
-        $formConfig = null;
+        $processor = $this->app['boltforms.processor'];
 
         try {
             $boltForms->makeForm($formName, FormType::class, $data, $options);
-            $formConfig = $this->config->getForm($formName);
         } catch (Exception\BoltFormsException $e) {
-            if ($formConfig === null) {
-                $feedback->add('debug', $this->getSafeTrace($e));
-                $feedback->add('error', $e->getMessage());
-
-                $requestStack->getCurrentRequest()->request->set($formName, true);
-                $compiler = $formHelper->getContextCompiler($formName);
-                $html = $formHelper->getExceptionRender($formName, $compiler, $this->app['twig']);
-
-                return new \Twig_Markup($html, 'UTF-8');
-            }
+            return $this->handleException($formName, $e);
         }
 
         // Get the context compiler
@@ -107,13 +95,14 @@ class BoltFormsExtension
         // Handle the POST
         $formHelper->handleFormRequest($formName, $compiler);
 
+        $formConfig = $this->config->getForm($formName);
         $loadAjax = $formConfig->getSubmission()->getAjax();
 
         $compiler
             ->setAction($this->getRelevantAction($formName, $loadAjax))
             ->setHtmlPreSubmit($htmlPreSubmit)
             ->setHtmlPostSubmit($htmlPostSubmit)
-            ->setReCaptchaResponse($reCaptchaResponse)
+            ->setReCaptchaResponse($processor->reCaptchaResponse($requestStack->getCurrentRequest()))
             ->setDefaults($defaults)
         ;
         $session->set('boltforms_compiler_' . $formName, $compiler);
@@ -176,6 +165,34 @@ class BoltFormsExtension
         $requestStack = $this->app['request_stack'];
 
         return $requestStack->getCurrentRequest()->getRequestUri();
+    }
+
+    /**
+     * Handle an exception and render something user friendly.
+     * 
+     * @param string                       $formName
+     * @param Exception\BoltFormsException $e
+     *
+     * @return \Twig_Markup
+     */
+    protected function handleException($formName, Exception\BoltFormsException $e)
+    {
+        /** @var RequestStack $requestStack */
+        $requestStack = $this->app['request_stack'];
+        /** @var FormHelper $formHelper */
+        $formHelper = $this->app['boltforms.twig.helper']['form'];
+        /** @var FlashBag $feedback */
+        $feedback = $this->app['boltforms.feedback'];
+
+        /** @var \Exception $e */
+        $feedback->add('debug', $this->getSafeTrace($e));
+        $feedback->add('error', $e->getMessage());
+
+        $requestStack->getCurrentRequest()->request->set($formName, true);
+        $compiler = $formHelper->getContextCompiler($formName);
+        $html = $formHelper->getExceptionRender($formName, $compiler, $this->app['twig']);
+
+        return new \Twig_Markup($html, 'UTF-8');
     }
 
     /**

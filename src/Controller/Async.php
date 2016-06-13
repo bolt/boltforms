@@ -88,10 +88,7 @@ class Async implements ControllerProviderInterface
 
         /** @var BoltForms $boltForms */
         $boltForms = $app['boltforms'];
-
         $boltForms->makeForm($formName, FormType::class, [], []);
-        $formConfig = $boltForms->getFormConfig($formName);
-
         $reCaptchaResponse = $app['boltforms.processor']->reCaptchaResponse($request);
 
         try {
@@ -106,7 +103,7 @@ class Async implements ControllerProviderInterface
 
         $compiler->setSent($sent);
         $context = $compiler->build($boltForms, $formName, $app['boltforms.feedback']);
-        $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
+        $template = $this->config->getForm($formName)->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
 
         // Render the Twig_Markup
         return $boltForms->renderForm($formName, $template, $context, false);

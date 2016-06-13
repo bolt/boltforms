@@ -77,6 +77,10 @@ class BoltForms
             ->getForm()
         ;
 
+        $em = $this->app['storage'];
+        $dispatcher = $this->app['dispatcher'];
+        $this->config->resolveForm($formName, $em, $dispatcher);
+
         /** @var FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
         foreach ($formConfig->getFields()->toArray() as $key => $field) {
@@ -93,18 +97,21 @@ class BoltForms
     /**
      * Add a field to the form.
      *
-     * @param string $formName  Name of the form
-     * @param string $fieldName
-     * @param string $type
-     * @param array  $options
+     * @param string             $formName  Name of the form
+     * @param string             $fieldName
+     * @param string             $type
+     * @param FieldOptions|array $options
      */
-    public function addField($formName, $fieldName, $type, array $options)
+    public function addField($formName, $fieldName, $type, $options)
     {
-        $em = $this->app['storage'];
-        $fieldOptions = new FieldOptions($formName, $fieldName, $type, $options, $em, $this->app['dispatcher']);
+        if (is_array($options)) {
+            $em = $this->app['storage'];
+            $dispatcher = $this->app['dispatcher'];
+            $options = new FieldOptions($formName, $fieldName, $type, $options, $em, $dispatcher);
+        }
 
         try {
-            $this->getForm($formName)->add($fieldName, $type, $fieldOptions->toArray());
+            $this->getForm($formName)->add($fieldName, $type, $options->toArray());
         } catch (InvalidConstraintException $e) {
             $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
         }

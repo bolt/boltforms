@@ -3,7 +3,10 @@
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
 use Bolt\Extension\Bolt\BoltForms\Exception;
+use Bolt\Extension\Bolt\BoltForms\FieldOptions;
 use Bolt\Helpers\Arr;
+use Bolt\Storage\EntityManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -140,18 +143,14 @@ class Config extends ParameterBag
      */
     public function addFormOverride($formName, array $overrides)
     {
-        if ($this->resolvedForms->has($formName)) {
-            $orig = $this->resolvedForms->get($formName)->all();
-        } elseif ($this->baseForms->has($formName)) {
+        if ($this->baseForms->has($formName)) {
             $orig = $this->baseForms->get($formName)->all();
         } else {
             throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
         }
 
-
         $new = Arr::mergeRecursiveDistinct($orig, $overrides);
-        $resolvedForm = new FormConfig($formName, $new);
-        $this->resolvedForms->set($formName, $resolvedForm);
+        $this->baseForms->set($formName, new ParameterBag($new));
     }
 
     /**
@@ -167,14 +166,11 @@ class Config extends ParameterBag
             throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
         }
 
-        if ($this->resolvedForms->has($formName)) {
-            return $this->resolvedForms->get($formName);
+        if (!$this->resolvedForms->has($formName)) {
+            throw new Exception\UnknownFormException(sprintf('Unresolved form requested: %s', $formName));
         }
 
-        $resolvedForm = new FormConfig($formName, $this->baseForms->get($formName)->all());
-        $this->resolvedForms->set($formName, $resolvedForm);
-
-        return $resolvedForm;
+        return $this->resolvedForms->get($formName);
     }
 
     /**
@@ -185,5 +181,52 @@ class Config extends ParameterBag
     public function getForms()
     {
         return $this->baseForms;
+    }
+
+    /**
+     * Resolve a form's configuration.
+     *
+     * @param string                   $formName
+     * @param EntityManager            $em
+     * @param EventDispatcherInterface $dispatcher
+     *
+     * @throws Exception\FormOptionException
+     */
+    public function resolveForm($formName, EntityManager $em, EventDispatcherInterface $dispatcher)
+    {
+        if (!$this->baseForms->has($formName)) {
+            throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
+        }
+
+        $config = $this->baseForms->get($formName)->all();
+
+        if (!isset($config['fields'])) {
+            throw new Exception\FormOptionException(sprintf('[BoltForms] Form "%s" does not have any fields defined!', $formName));
+        }
+
+        foreach ($config['fields'] as $fieldName => $data) {
+            $this->assetValidField($formName, $fieldName, $data);
+
+            $options = !empty($data['options']) ? $data['options'] : [];
+            $fieldOptions = new FieldOptions($formName, $fieldName, $data['type'], $options, $em, $dispatcher);
+            $config['fields']['options'] = $fieldOptions->toArray();
+        }
+
+        $resolvedForm = new FormConfig($formName, $config);
+        $this->resolvedForms->set($formName, $resolvedForm);
+    }
+
+    /**
+     * @param string $formName
+     * @param string $fieldName
+     * @param string $data
+     *
+     * @throws Exception\FormOptionException
+     */
+    protected function assetValidField($formName, $fieldName, $data)
+    {
+        if (!isset($data['type'])) {
+            throw new Exception\FormOptionException(sprintf('[BoltForms] Form "%s" field "%s" does not have a type defined!', $formName, $fieldName));
+        }
     }
 }
