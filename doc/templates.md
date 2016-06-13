@@ -46,7 +46,7 @@ e.g.
                     data: 'A default value that you want'
                 }
             }
-        }
+        })
     }}  
 ```
 
@@ -69,7 +69,7 @@ or
                     }
                 }
             }
-        }
+        })
     }}  
 ```
 
