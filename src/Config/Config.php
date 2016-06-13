@@ -28,6 +28,9 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class Config extends ParameterBag
 {
+    /** @var ParameterBag */
+    protected $baseForms;
+
     /**
      * Constructor.
      *
@@ -36,11 +39,18 @@ class Config extends ParameterBag
     public function __construct(array $parameters = [])
     {
         parent::__construct();
+        $nonForms = ['csrf', 'debug', 'fieldmap', 'recaptcha', 'templates', 'uploads'];
+        $this->baseForms = new ParameterBag();
+
         foreach ($parameters as $key => $value) {
             if ($value instanceof FieldMap\Email) {
                 $this->set($key, $value);
             } elseif (is_array($value)) {
-                $this->set($key, new ParameterBag($value));
+                if (in_array($key, $nonForms)) {
+                    $this->set($key, new ParameterBag($value));
+                } else {
+                    $this->baseForms->set($key, new ParameterBag($value));
+                }
             } else {
                 $this->set($key, $value);
             }
