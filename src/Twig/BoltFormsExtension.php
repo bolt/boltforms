@@ -52,8 +52,8 @@ class BoltFormsExtension
      * Twig function for form generation
      *
      * @param string $formName
-     * @param string $htmlPreSubmit  Intro HTML to display BEFORE successful submit
-     * @param string $htmlPostSubmit Intro HTML to display AFTER successful submit
+     * @param string $htmlPreSubmit  HTML or template name to display BEFORE submit
+     * @param string $htmlPostSubmit HTML or template name to display AFTER successful submit
      * @param array  $data
      * @param array  $options
      * @param array  $defaults
@@ -61,7 +61,7 @@ class BoltFormsExtension
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [], $defaults = [], $override = null)
+    public function twigBoltForms($formName, $htmlPreSubmit = null, $htmlPostSubmit = null, $data = [], $options = [], $defaults = [], $override = null)
     {
         if (!$this->config->getBaseForms()->has($formName)) {
             return new \Twig_Markup(
@@ -97,11 +97,12 @@ class BoltFormsExtension
 
         $formConfig = $this->config->getForm($formName);
         $loadAjax = $formConfig->getSubmission()->getAjax();
+        $twig = $this->app['twig'];
 
         $compiler
             ->setAction($this->getRelevantAction($formName, $loadAjax))
-            ->setHtmlPreSubmit($htmlPreSubmit)
-            ->setHtmlPostSubmit($htmlPostSubmit)
+            ->setHtmlPreSubmit($formHelper->getOptionalHtml($twig, $htmlPreSubmit))
+            ->setHtmlPostSubmit($formHelper->getOptionalHtml($twig, $htmlPostSubmit))
             ->setReCaptchaResponse($processor->reCaptchaResponse($requestStack->getCurrentRequest()))
             ->setDefaults($defaults)
         ;
@@ -169,7 +170,7 @@ class BoltFormsExtension
 
     /**
      * Handle an exception and render something user friendly.
-     * 
+     *
      * @param string                       $formName
      * @param Exception\BoltFormsException $e
      *

@@ -100,7 +100,7 @@ class FormHelper
         /** @var FormContext $compiler */
         $compiler = $this->session->get('boltforms_compiler_' . $formName);
         if ($compiler === null) {
-            $compiler = $this->contextFactory->__invoke(); //$this->app['boltforms.form.context.factory']();
+            $compiler = $this->contextFactory->__invoke();
         }
 
         return $compiler;
@@ -162,11 +162,36 @@ class FormHelper
         return $this->boltForms->renderForm($formName, $template, $context, $loadAjax);
     }
 
+    /**
+     * Render a form exception.
+     *
+     * @param string      $formName
+     * @param FormContext       $compiler
+     * @param \Twig_Environment $twig
+     *
+     * @return string
+     */
     public function getExceptionRender($formName, FormContext $compiler, \Twig_Environment $twig)
     {
         $template = $this->config->getTemplates()->get('exception');
         $context = $compiler->build($this->boltForms, $formName, $this->feedback);
 
         return $twig->render($template, $context);
+    }
+
+    /**
+     * @param \Twig_Environment $twig
+     * @param string            $str
+     *
+     * @return string
+     */
+    public function getOptionalHtml(\Twig_Environment $twig, $str)
+    {
+        $fileInfo = new \SplFileInfo($str);
+        if ($fileInfo->getExtension() === 'twig' || $fileInfo->getExtension() === 'html') {
+            return $twig->render($str);
+        }
+
+        return $str;
     }
 }
