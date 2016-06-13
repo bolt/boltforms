@@ -110,6 +110,20 @@ class Config extends ParameterBag
     }
 
     /**
+     * Return the base configuration of a form.
+     *
+     * @param string $formName
+     *
+     * @return ParameterBag
+     */
+    public function getBaseForm($formName)
+    {
+        return $this->baseForms->get($formName);
+    }
+
+    /**
+     * Return the base configuration of all forms.
+     *
      * @return ParameterBag
      */
     public function getBaseForms()
@@ -135,9 +149,19 @@ class Config extends ParameterBag
             return $this->resolvedForms->get($formName);
         }
 
-        $resolvedForm = new FormConfig($formName, $this->baseForms->get($formName));
+        $resolvedForm = new FormConfig($formName, $this->baseForms->get($formName)->all());
         $this->resolvedForms->set($formName, $resolvedForm);
 
         return $resolvedForm;
+    }
+
+    /**
+     * Get the configuration objects for all forms.
+     *
+     * @return ParameterBag
+     */
+    public function getForms()
+    {
+        return $this->baseForms;
     }
 }
