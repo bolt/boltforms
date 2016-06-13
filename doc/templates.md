@@ -39,7 +39,7 @@ the `override` named parameter
 e.g.
 
 ```twig
-    {{ boltforms('form_name', 
+    {{ boltforms('form_name',
         override = {
             'field_name': {
                 options: {
@@ -47,31 +47,45 @@ e.g.
                 }
             }
         })
-    }}  
+    }}
 ```
 
 or
 
 ```twig
-    {{ boltforms('form_name', 
+    {{ boltforms('form_name',
         override = {
-            'field_name': {
-                params: {
-                    contenttype: 'pages',
-                    label: 'title',
-                    value: 'slug',
-                    limit: 5,
-                    sort: 'title',
-                    order: 'DESC',
-                    where: {
-                        and: { 'koala': 'bear' },
-                        or: { 'koala': 'dangerous' }
+            field_name_1: {
+                options: {
+                    required: false
+                }
+            },
+            field_name_2: {
+                options: {
+                    params: {
+                        contenttype: 'pages',
+                        label: 'title',
+                        value: 'slug',
+                        limit: 5,
+                        sort: 'title',
+                        order: 'DESC',
+                        where: {
+                            and: { 'koala': 'bear' },
+                            or: { 'koala': 'dangerous' }
+                        }
                     }
                 }
-            }
+            },
+            redirect: { 'target': 'http://bolt.cm' }
         })
-    }}  
+    }}
 ```
+
+**NOTE:** 
+Where the override array key matches a field name, the field name is
+overridden, if it then matches a field configuration parameter, that will be
+the affected value.
+
 
 ### Pre & Post Submission HTML
 
