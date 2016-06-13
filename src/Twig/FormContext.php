@@ -70,7 +70,6 @@ class FormContext
      */
     public function build(BoltForms $boltForms, $formName, FlashBag $feedBack)
     {
-        $formConfig = $boltForms->getFormConfig($formName);
         // reCaptcha configuration
         $reCaptchaConfig = $this->config->getReCaptcha();
 
@@ -111,7 +110,7 @@ class FormContext
                 'action' => $this->action,
             ],
             'webpath'   => $this->webPath,
-            'debug'     => $this->config->getDebug()->get('enabled') || $formConfig->getNotification()->getDebug(),
+            'debug'     => $this->config->getDebug()->get('enabled') || $this->config->getForm($formName)->getNotification()->getDebug(),
         ];
 
         return $context;

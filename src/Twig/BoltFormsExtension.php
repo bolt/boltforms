@@ -62,12 +62,15 @@ class BoltFormsExtension
      */
     public function twigBoltForms($formName, $htmlPreSubmit = '', $htmlPostSubmit = '', $data = [], $options = [], $defaults = [], $override = null)
     {
-        if (!$this->config->has($formName)) {
+        if (!$this->config->getBaseForms()->has($formName)) {
             return new \Twig_Markup(
                 "<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>",
                 'UTF-8'
             );
         }
+
+        // Set field overrides
+        $this->config->addFormOverride($formName, ['fields' => $override]);
 
         /** @var FormHelper $formHelper */
         $formHelper = $this->app['boltforms.twig.helper']['form'];
@@ -83,8 +86,8 @@ class BoltFormsExtension
         $formConfig = null;
 
         try {
-            $boltForms->makeForm($formName, FormType::class, $data, $options, $override);
-            $formConfig = $boltForms->getFormConfig($formName);
+            $boltForms->makeForm($formName, FormType::class, $data, $options);
+            $formConfig = $this->config->getForm($formName);
         } catch (Exception\BoltFormsException $e) {
             if ($formConfig === null) {
                 $feedback->add('debug', $this->getSafeTrace($e));

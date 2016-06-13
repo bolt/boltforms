@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
 use Bolt\Extension\Bolt\BoltForms\Exception;
+use Bolt\Helpers\Arr;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -131,6 +132,27 @@ class Config extends ParameterBag
         return $this->baseForms;
     }
 
+    /**
+     * Override a section of a form's configuration.
+     *
+     * @param string $formName
+     * @param array  $overrides
+     */
+    public function addFormOverride($formName, array $overrides)
+    {
+        if ($this->resolvedForms->has($formName)) {
+            $orig = $this->resolvedForms->get($formName)->all();
+        } elseif ($this->baseForms->has($formName)) {
+            $orig = $this->baseForms->get($formName)->all();
+        } else {
+            throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
+        }
+
+
+        $new = Arr::mergeRecursiveDistinct($orig, $overrides);
+        $resolvedForm = new FormConfig($formName, $new);
+        $this->resolvedForms->set($formName, $resolvedForm);
+    }
 
     /**
      * Get the configuration object for a form.

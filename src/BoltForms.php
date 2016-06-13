@@ -8,11 +8,11 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
-use Bolt\Helpers\Arr;
 use Silex\Application;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Core API functions for BoltForms
@@ -40,12 +40,10 @@ class BoltForms
 {
     /** @var Application */
     private $app;
-    /** @var array */
+    /** @var ParameterBag */
     private $config;
     /** @var array */
     private $forms;
-    /** @var FormConfig[] */
-    private $formsConfig;
     /** @var boolean */
     private $jsQueued;
 
@@ -57,9 +55,7 @@ class BoltForms
     public function __construct(Application $app)
     {
         $this->app = $app;
-        /** @var BoltFormsExtension $extension */
-        $extension = $app['extensions']->get('Bolt/BoltForms');
-        $this->config = $extension->getConfig();
+        $this->config = $app['boltforms.config'];
     }
 
     /**
@@ -69,17 +65,12 @@ class BoltForms
      * @param string|FormTypeInterface $type
      * @param mixed                    $data
      * @param array                    $options
-     * @param array                    $formConfigOverride
      *
      * @throws FormOptionException
      */
-    public function makeForm($formName, $type = FormType::class, $data = null, $options = [], array $formConfigOverride = null)
+    public function makeForm($formName, $type = FormType::class, $data = null, $options = [])
     {
-        // Override config options as requested
-        foreach ($formConfigOverride as $key => $value) {
-            $this->config[$formName]['fields'][$key]['options'] = Arr::mergeRecursiveDistinct($this->config[$formName]['fields'][$key]['options'], $value);
-        }
-        $options['csrf_protection'] = $this->config['csrf'];
+        $options['csrf_protection'] = $this->config->isCsrf();
         $this->forms[$formName] = $this->app['form.factory']
             ->createNamedBuilder($formName, $type, $data, $options)
             ->addEventSubscriber(new BoltFormsSubscriber($this->app))
@@ -87,7 +78,7 @@ class BoltForms
         ;
 
         /** @var FormConfig $formConfig */
-        $formConfig = $this->getFormConfig($formName);
+        $formConfig = $this->config->getForm($formName);
         foreach ($formConfig->getFields()->toArray() as $key => $field) {
             $field['options'] = !empty($field['options']) ? $field['options'] : [];
 
@@ -97,28 +88,6 @@ class BoltForms
 
             $this->addField($formName, $key, $field['type'], $field['options']);
         }
-    }
-
-    /**
-     * Get the configuration object for a form.
-     *
-     * @param string $formName
-     *
-     * @return FormConfig
-     */
-    public function getFormConfig($formName)
-    {
-        if (!isset($this->forms[$formName])) {
-            throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
-        }
-
-        if (isset($this->formsConfig[$formName])) {
-            return $this->formsConfig[$formName];
-        }
-
-        $this->formsConfig[$formName] = new FormConfig($formName, $this->config[$formName]);
-
-        return $this->formsConfig[$formName];
     }
 
     /**
@@ -186,7 +155,7 @@ class BoltForms
     public function renderForm($formName, $template = '', array $context = [], $loadAjax = false)
     {
         if (empty($template)) {
-            $template = $this->config['templates']['form'];
+            $template = $this->config->getTemplates()->get('form');
         }
 
         // Add the form object for use in the template
