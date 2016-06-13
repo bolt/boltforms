@@ -7,6 +7,7 @@
  * Added: AJAX form submission
  * Added: More configuration objects
  * Added: File name fields are hyperlinked in emails
+ * Added: Form configuration and field parameters can now be overridden in template 
  * Fixed: Successfully submitted forms can no longer be resubmitted on page refresh
  * Fixed: File upload handling breakage
  * Changed: Cut over to Bolt v3 storage
