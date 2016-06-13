@@ -149,7 +149,15 @@ class Config extends ParameterBag
             throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
         }
 
-        $new = Arr::mergeRecursiveDistinct($orig, $overrides);
+        foreach ($overrides as $key => $value) {
+            if (isset($orig['fields'][$key])) {
+                $normalisedOverrides['fields'][$key] = $value;
+            } else {
+                $normalisedOverrides[$key] = $value;
+            }
+        }
+
+        $new = Arr::mergeRecursiveDistinct($orig, $normalisedOverrides);
         $this->baseForms->set($formName, new ParameterBag($new));
     }
 

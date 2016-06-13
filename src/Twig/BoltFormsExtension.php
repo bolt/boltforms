@@ -76,8 +76,8 @@ class BoltFormsExtension
             $options['data'] = $defaults;
         }
 
-        // Set field overrides
-        $this->config->addFormOverride($formName, ['fields' => $override]);
+        // Set form runtime overrides
+        $this->config->addFormOverride($formName, $override);
 
         /** @var FormHelper $formHelper */
         $formHelper = $this->app['boltforms.twig.helper']['form'];
