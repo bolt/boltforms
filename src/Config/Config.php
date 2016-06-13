@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
+use Bolt\Extension\Bolt\BoltForms\Exception;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -30,6 +31,8 @@ class Config extends ParameterBag
 {
     /** @var ParameterBag */
     protected $baseForms;
+    /** @var ParameterBag */
+    protected $resolvedForms;
 
     /**
      * Constructor.
@@ -41,6 +44,7 @@ class Config extends ParameterBag
         parent::__construct();
         $nonForms = ['csrf', 'debug', 'fieldmap', 'recaptcha', 'templates', 'uploads'];
         $this->baseForms = new ParameterBag();
+        $this->resolvedForms = new ParameterBag();
 
         foreach ($parameters as $key => $value) {
             if ($value instanceof FieldMap\Email) {
@@ -111,5 +115,29 @@ class Config extends ParameterBag
     public function getBaseForms()
     {
         return $this->baseForms;
+    }
+
+
+    /**
+     * Get the configuration object for a form.
+     *
+     * @param string $formName
+     *
+     * @return FormConfig
+     */
+    public function getForm($formName)
+    {
+        if (!$this->baseForms->has($formName)) {
+            throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
+        }
+
+        if ($this->resolvedForms->has($formName)) {
+            return $this->resolvedForms->get($formName);
+        }
+
+        $resolvedForm = new FormConfig($formName, $this->baseForms->get($formName));
+        $this->resolvedForms->set($formName, $resolvedForm);
+
+        return $resolvedForm;
     }
 }
