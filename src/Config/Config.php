@@ -104,4 +104,12 @@ class Config extends ParameterBag
     {
         return $this->get('fieldMap');
     }
+
+    /**
+     * @return ParameterBag
+     */
+    public function getBaseForms()
+    {
+        return $this->baseForms;
+    }
 }
