@@ -61,13 +61,19 @@ class BoltFormsExtension
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formName, $htmlPreSubmit = null, $htmlPostSubmit = null, $data = [], $options = [], $defaults = [], $override = null)
+    public function twigBoltForms($formName, $htmlPreSubmit = null, $htmlPostSubmit = null, $data = null, $options = [], $defaults = null, $override = null)
     {
         if (!$this->config->getBaseForms()->has($formName)) {
             return new \Twig_Markup(
                 "<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>",
                 'UTF-8'
             );
+        }
+
+        // If defaults are passed in, set them in data but don't override the
+        // data array that might also be passed in
+        if ($defaults !== null) {
+            $options['data'] = $defaults;
         }
 
         // Set field overrides
