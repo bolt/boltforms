@@ -6,7 +6,7 @@ Define a form in `app/config/extensions/boltforms.bolt.yml` and add the
 following to your template:
 
 ```twig
-    {{ boltforms('formname') }}
+    {{ boltforms('form_name') }}
 ```
 
 ### Default data
@@ -16,13 +16,13 @@ You can also add parameters to the BoltForms invocation in Twig. In this case
 the value for the field "field_1" will be pre-set "value_1"
 
 ```twig
-{{ boltforms('formname', 'Some text before the form', 'After the form', { field_1: "value_1"}) }}
+{{ boltforms('form_name', 'Some text before the form', 'After the form', { field_1: "value_1"}) }}
 ```
 
 Or
 
 ```twig
-    {{ boltforms('formname',
+    {{ boltforms('form_name',
         defaults = {
             field_1: "value_1",
             field_2: "value_2",
@@ -39,7 +39,7 @@ the `override` named parameter
 e.g.
 
 ```twig
-    {{ boltforms('formname', 
+    {{ boltforms('form_name', 
         override = {
             'field_name': {
                 options: {
@@ -53,7 +53,7 @@ e.g.
 or
 
 ```twig
-    {{ boltforms('formname', 
+    {{ boltforms('form_name', 
         override = {
             'field_name': {
                 params: {
@@ -73,6 +73,23 @@ or
     }}  
 ```
 
+### Pre & Post Submission HTML
+
+Twig will be passed a context variables that include `htmlPreSubmit` and 
+`htmlPostSubmit`. These can be either HTML strings, or Twig template names.
+
+An example using HTML strings:
+
+```twig
+    {{ boltforms('form_name', htmlPreSubmit = '<p>This will be shown before send</p>', htmlPostSubmit = '<p>Form sent to the ocean…</p>') }}  
+```
+
+Or using template names:
+
+```twig
+    {{ boltforms('form_name', htmlPreSubmit = 'my_pre_template.twig', htmlPostSubmit = 'my_post_template.twig') }}  
+```
+
 
 Templates for Custom Displays
 -----------------------------
@@ -85,10 +102,10 @@ To get started, you must first configure the template by adding the following
 attribute: 
 
 ```yaml
-formname:
-  templates: 
-    form: partials/_contact.twig
-    ...
+    form_name:
+        templates: 
+            form: partials/_contact.twig
+    …
 ```
 
 BoltForms will now use the partials/_contact.twig in your theme folder as the 
