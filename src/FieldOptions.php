@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Extension\Bolt\BoltForms\Factory;
 use Bolt\Storage\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -56,8 +57,14 @@ class FieldOptions
      * @param EntityManager            $storage
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct($formName, $fieldName, $type, array $baseOptions, EntityManager $storage, EventDispatcherInterface $dispatcher)
-    {
+    public function __construct(
+        $formName,
+        $fieldName,
+        $type,
+        array $baseOptions, 
+        EntityManager $storage,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->formName = $formName;
         $this->fieldName = $fieldName;
         $this->type = $type;
@@ -174,13 +181,13 @@ class FieldOptions
         }
 
         if (gettype($this->baseOptions['constraints']) === 'string') {
-            $this->options['constraints'] = FieldConstraintFactory::get($this->formName, $this->baseOptions['constraints']);
+            $this->options['constraints'] = Factory\FieldConstraint::get($this->formName, $this->baseOptions['constraints']);
 
             return;
         }
 
         foreach ($this->baseOptions['constraints'] as $key => $constraint) {
-            $this->options['constraints'][$key] = FieldConstraintFactory::get($this->formName, [$key => $constraint]);
+            $this->options['constraints'][$key] = Factory\FieldConstraint::get($this->formName, [$key => $constraint]);
         }
     }
 }

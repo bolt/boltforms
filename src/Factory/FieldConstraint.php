@@ -1,6 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms;
+namespace Bolt\Extension\Bolt\BoltForms\Factory;
+
+use Bolt\Extension\Bolt\BoltForms\Exception;
 
 /**
  * Field constraint factory class.
@@ -24,7 +26,7 @@ namespace Bolt\Extension\Bolt\BoltForms;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class FieldConstraintFactory
+class FieldConstraint
 {
     const SF_NAMESPACE = '\\Symfony\\Component\\Validator\\Constraints\\';
 
