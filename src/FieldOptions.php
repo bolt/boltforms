@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Bolt\Extension\Bolt\BoltForms\Factory;
 use Bolt\Storage\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -61,7 +60,7 @@ class FieldOptions
         $formName,
         $fieldName,
         $type,
-        array $baseOptions, 
+        array $baseOptions,
         EntityManager $storage,
         EventDispatcherInterface $dispatcher
     ) {

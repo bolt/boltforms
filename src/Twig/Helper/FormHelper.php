@@ -6,10 +6,9 @@ use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception;
-use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Extension\Bolt\BoltForms\Factory\FormContext;
+use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Psr\Log\LoggerInterface;
-use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
@@ -165,7 +164,7 @@ class FormHelper
     /**
      * Render a form exception.
      *
-     * @param string      $formName
+     * @param string            $formName
      * @param FormContext       $compiler
      * @param \Twig_Environment $twig
      *

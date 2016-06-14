@@ -31,7 +31,6 @@ class FieldConstraint
     const SF_NAMESPACE = '\\Symfony\\Component\\Validator\\Constraints\\';
 
     /**
-     *
      * Extract, expand and set & create validator instance array(s)
      *
      * @param string $formName

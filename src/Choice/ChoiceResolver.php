@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
-use Bolt\Extension\Bolt\BoltForms\Exception;
-
 /**
  * Array choices for BoltForms
  *
