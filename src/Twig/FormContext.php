@@ -31,8 +31,6 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
  */
 class FormContext
 {
-    /** @var Config */
-    protected $config;
     /** @var string */
     protected $webPath;
 
@@ -52,26 +50,25 @@ class FormContext
     /**
      * Constructor.
      *
-     * @param Config $config
      * @param string $webPath
      */
-    public function __construct(Config $config, $webPath)
+    public function __construct($webPath)
     {
-        $this->config = $config;
         $this->webPath = $webPath;
     }
 
     /**
      * @param BoltForms $boltForms
+     * @param Config    $config
      * @param string    $formName
      * @param FlashBag  $feedBack
      *
      * @return array
      */
-    public function build(BoltForms $boltForms, $formName, FlashBag $feedBack)
+    public function build(BoltForms $boltForms, Config $config, $formName, FlashBag $feedBack)
     {
         // reCaptcha configuration
-        $reCaptchaConfig = $this->config->getReCaptcha();
+        $reCaptchaConfig = $config->getReCaptcha();
 
         $info = $feedBack->get('info', []);
         $errors = $feedBack->get('error', []);
@@ -110,7 +107,7 @@ class FormContext
                 'action' => $this->action,
             ],
             'webpath'   => $this->webPath,
-            'debug'     => $this->config->getDebug()->get('enabled') || $this->config->getForm($formName)->getNotification()->getDebug(),
+            'debug'     => $config->getDebug()->get('enabled') || $config->getForm($formName)->getNotification()->getDebug(),
         ];
 
         return $context;

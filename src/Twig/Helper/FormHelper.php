@@ -156,7 +156,7 @@ class FormHelper
     {
         // If the form has it's own templates defined, use those, else the globals.
         $template = $formConfig->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
-        $context = $compiler->build($this->boltForms, $formName, $this->feedback);
+        $context = $compiler->build($this->boltForms, $this->config, $formName, $this->feedback);
 
         // Render the Twig_Markup
         return $this->boltForms->renderForm($formName, $template, $context, $loadAjax);
@@ -174,7 +174,7 @@ class FormHelper
     public function getExceptionRender($formName, FormContext $compiler, \Twig_Environment $twig)
     {
         $template = $this->config->getTemplates()->get('exception');
-        $context = $compiler->build($this->boltForms, $formName, $this->feedback);
+        $context = $compiler->build($this->boltForms, $this->config, $formName, $this->feedback);
 
         return $twig->render($template, $context);
     }
