@@ -11,6 +11,7 @@
 <div class="boltform">
 
 {{ include('_boltforms_messages.twig') }}
+{% import "boltforms_macros.twig" as macros %}
 
 {% if sent %}
     {{ html_post }}
@@ -40,24 +41,9 @@
             {% endif %}
         {% endfor %}
 
-        {% if recaptcha.enabled %}
-
-            {% if not recaptcha.valid %}
-            <ul class="boltform-error">
-                <li class="boltform-errors">{{ recaptcha.error_message }}</li>
-            </ul>
-            {% endif %}
-
-            <div class="boltform-row">
-                <label for="form_message" class="required">{{ recaptcha.label|trans({}, translation_domain) }}</label>
-                <script src="https://www.google.com/recaptcha/api.js?hl={{ htmllang() }}" async defer></script>
-                <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
-            </div>
-
-        {% endif %}
+        {{ macros.recaptcha(recaptcha) }}
 
         <br>
-
         {% for key, value in fields  %}
             {% if value.config.type.name == 'submit' %}
                 <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
