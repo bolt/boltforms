@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
 use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Database;
 use Bolt\Extension\Bolt\BoltForms\Email;
+use Bolt\Extension\Bolt\BoltForms\Factory;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsCustomDataSubscriber;
 use Bolt\Extension\Bolt\BoltForms\Twig;
@@ -58,7 +59,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         $app['boltforms.form.context.factory'] = $app->protect(
             function () use ($app) {
                 $webPath = $app['extensions']->get('Bolt/BoltForms')->getWebDirectory()->getPath();
-                $compiler = new Twig\FormContext($webPath);
+                $compiler = new Factory\FormContext($webPath);
 
                 return $compiler;
             }

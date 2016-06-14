@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Twig;
+namespace Bolt\Extension\Bolt\BoltForms\Factory;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;

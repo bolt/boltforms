@@ -7,7 +7,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
-use Bolt\Extension\Bolt\BoltForms\Twig\FormContext;
+use Bolt\Extension\Bolt\BoltForms\Factory\FormContext;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;

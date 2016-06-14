@@ -6,7 +6,7 @@ use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
-use Bolt\Extension\Bolt\BoltForms\Twig\FormContext;
+use Bolt\Extension\Bolt\BoltForms\Factory\FormContext;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
