@@ -65,10 +65,6 @@ class Async implements ControllerProviderInterface
             return new JsonResponse(['Invalid form'], Response::HTTP_BAD_REQUEST);
         }
 
-        /** @var Config\Config $config */
-        $config = $app['boltforms.config'];
-        /** @var Config\FormConfig $formConfig */
-        $formConfig = $config->getForm($formName);
         /** @var FormContext $compiler */
         $compiler = $app['session']->get('boltforms_compiler_' . $formName);
         if ($compiler === null) {
@@ -78,6 +74,10 @@ class Async implements ControllerProviderInterface
         /** @var BoltForms $boltForms */
         $boltForms = $app['boltforms'];
         $boltForms->makeForm($formName, FormType::class, [], []);
+        /** @var Config\Config $config */
+        $config = $app['boltforms.config'];
+        /** @var Config\FormConfig $formConfig */
+        $formConfig = $config->getForm($formName);
         $reCaptchaResponse = $app['boltforms.processor']->reCaptchaResponse($request);
 
         try {
