@@ -76,12 +76,12 @@ class BoltFormsExtension extends SimpleExtension
     {
         $app = $this->getContainer();
         $controllers = [
-            '/async/boltforms' => new Controller\Async($app['boltforms.config']),
+            '/async/boltforms' => new Controller\Async(),
         ];
 
         if ($this->getConfig()['uploads']['management_controller']) {
             $url = $app['boltforms.config']->getUploads()->get('base_uri');
-            $controllers[$url] = new Controller\UploadManagement($app['boltforms.config']);
+            $controllers[$url] = new Controller\UploadManagement();
         }
 
         return $controllers;

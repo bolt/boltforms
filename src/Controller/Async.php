@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Controller;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
-use Bolt\Extension\Bolt\BoltForms\Config\Config;
+use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Factory\FormContext;
@@ -37,19 +37,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Async implements ControllerProviderInterface
 {
-    /** @var Config */
-    private $config;
-
-    /**
-     * Constructor.
-     *
-     * @param $config
-     */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -78,13 +65,15 @@ class Async implements ControllerProviderInterface
             return new JsonResponse(['Invalid form'], Response::HTTP_BAD_REQUEST);
         }
 
+        /** @var Config\Config $config */
+        $config = $app['boltforms.config'];
+        /** @var Config\FormConfig $formConfig */
+        $formConfig = $config->getForm($formName);
         /** @var FormContext $compiler */
         $compiler = $app['session']->get('boltforms_compiler_' . $formName);
         if ($compiler === null) {
             return new JsonResponse(['Invalid compiler'], Response::HTTP_BAD_REQUEST);
         }
-
-        $sent = false;
 
         /** @var BoltForms $boltForms */
         $boltForms = $app['boltforms'];
@@ -92,18 +81,20 @@ class Async implements ControllerProviderInterface
         $reCaptchaResponse = $app['boltforms.processor']->reCaptchaResponse($request);
 
         try {
-            $sent = $app['boltforms.processor']->process($formName, null, $reCaptchaResponse);
+            $sent = $app['boltforms.processor']->process($formConfig, $reCaptchaResponse);
         } catch (FileUploadException $e) {
+            $sent = false;
             $app['boltforms.feedback']->add('error', $e->getMessage());
             $app['logger.system']->debug($e->getSystemMessage(), ['event' => 'extensions']);
         } catch (FormValidationException $e) {
+            $sent = false;
             $app['boltforms.feedback']->add('error', $e->getMessage());
             $app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
         }
 
         $compiler->setSent($sent);
-        $context = $compiler->build($boltForms, $this->config, $formName, $app['boltforms.feedback']);
-        $template = $this->config->getForm($formName)->getTemplates()->getForm() ?: $this->config->getTemplates()->get('form');
+        $context = $compiler->build($boltForms, $config, $formName, $app['boltforms.feedback']);
+        $template = $config->getForm($formName)->getTemplates()->getForm() ?: $config->getTemplates()->get('form');
 
         // Render the Twig_Markup
         return $boltForms->renderForm($formName, $template, $context, false);

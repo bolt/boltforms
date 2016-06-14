@@ -1,7 +1,7 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Controller;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Config;
+use Bolt\Extension\Bolt\BoltForms\Config;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -34,19 +34,6 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
  */
 class UploadManagement implements ControllerProviderInterface
 {
-    /** @var Config */
-    private $config;
-
-    /**
-     * Constructor.
-     *
-     * @param Config $config
-     */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-    }
-
     /**
      * @param \Silex\Application $app
      *
@@ -71,8 +58,9 @@ class UploadManagement implements ControllerProviderInterface
         if ($file === null) {
             return new Response('File not given', Response::HTTP_BAD_REQUEST);
         }
-
-        $fullPath = $this->config->getUploads()->get('base_directory') . '/' . $file;
+        /** @var Config\Config $config */
+        $config = $app['boltforms.config'];
+        $fullPath = $config->getUploads()->get('base_directory') . '/' . $file;
         if (!$fs->exists($fullPath)) {
             return new Response('File not found', Response::HTTP_NOT_FOUND);
         }
