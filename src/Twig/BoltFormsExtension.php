@@ -84,7 +84,9 @@ class BoltFormsExtension
         }
 
         // Set form runtime overrides
-        $this->config->addFormOverride($formName, $override);
+        if ($override !== null) {
+            $this->config->addFormOverride($formName, $override);
+        }
 
         /** @var Helper\FormHelper $formHelper */
         $formHelper = $this->app['boltforms.twig.helper']['form'];
@@ -118,7 +120,7 @@ class BoltFormsExtension
             ->setHtmlPreSubmit($formHelper->getOptionalHtml($twig, $htmlPreSubmit))
             ->setHtmlPostSubmit($formHelper->getOptionalHtml($twig, $htmlPostSubmit))
             ->setReCaptchaResponse($processor->reCaptchaResponse($requestStack->getCurrentRequest()))
-            ->setDefaults($defaults)
+            ->setDefaults((array) $defaults)
         ;
         $session->set('boltforms_compiler_' . $formName, $compiler);
 
