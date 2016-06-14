@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Twig;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Exception;
-use Bolt\Extension\Bolt\BoltForms\Twig\Helper\FormHelper;
+use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -49,20 +49,27 @@ class BoltFormsExtension
     }
 
     /**
-     * Twig function for form generation
+     * Twig function for form generation.
      *
-     * @param string $formName
+     * @param string $formName       Name of the BoltForm to render
      * @param string $htmlPreSubmit  HTML or template name to display BEFORE submit
      * @param string $htmlPostSubmit HTML or template name to display AFTER successful submit
-     * @param array  $data
-     * @param array  $options
-     * @param array  $defaults
-     * @param array  $override
+     * @param array  $data           Data array passed to Symfony Forms
+     * @param array  $options        Options array passed to Symfony Forms
+     * @param array  $defaults       Default field values
+     * @param array  $override       Array of form parameters / fields to override settings for
      *
      * @return \Twig_Markup
      */
-    public function twigBoltForms($formName, $htmlPreSubmit = null, $htmlPostSubmit = null, $data = null, $options = [], $defaults = null, $override = null)
-    {
+    public function twigBoltForms(
+        $formName,
+        $htmlPreSubmit = null,
+        $htmlPostSubmit = null,
+        $data = null,
+        $options = [],
+        $defaults = null,
+        $override = null
+    ) {
         if (!$this->config->getBaseForms()->has($formName)) {
             return new \Twig_Markup(
                 "<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>",
@@ -79,7 +86,7 @@ class BoltFormsExtension
         // Set form runtime overrides
         $this->config->addFormOverride($formName, $override);
 
-        /** @var FormHelper $formHelper */
+        /** @var Helper\FormHelper $formHelper */
         $formHelper = $this->app['boltforms.twig.helper']['form'];
         /** @var RequestStack $requestStack */
         $requestStack = $this->app['request_stack'];
@@ -87,6 +94,7 @@ class BoltFormsExtension
         $boltForms = $this->app['boltforms'];
         /** @var Session $session */
         $session = $this->app['session'];
+        /** @var Processor $processor */
         $processor = $this->app['boltforms.processor'];
 
         try {
@@ -186,7 +194,7 @@ class BoltFormsExtension
     {
         /** @var RequestStack $requestStack */
         $requestStack = $this->app['request_stack'];
-        /** @var FormHelper $formHelper */
+        /** @var Helper\FormHelper $formHelper */
         $formHelper = $this->app['boltforms.twig.helper']['form'];
         /** @var FlashBag $feedback */
         $feedback = $this->app['boltforms.feedback'];
