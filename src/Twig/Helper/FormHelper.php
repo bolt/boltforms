@@ -108,11 +108,12 @@ class FormHelper
     /**
      * Handle request and perform relative actions.
      *
-     * @param string      $formName
+     * @param FormConfig  $formConfig
      * @param FormContext $compiler
      */
-    public function handleFormRequest($formName, FormContext $compiler)
+    public function handleFormRequest(FormConfig $formConfig, FormContext $compiler)
     {
+        $formName = $formConfig->getName();
         $sessionKey = sprintf('boltforms_submit_%s', $formName);
 
         $request = $this->requestStack->getCurrentRequest();
@@ -121,7 +122,7 @@ class FormHelper
             $reCaptchaResponse = $this->processor->reCaptchaResponse($request);
 
             try {
-                $sent = $this->processor->process($formName, null, $reCaptchaResponse);
+                $sent = $this->processor->process($formConfig, $reCaptchaResponse);
                 $compiler->setSent($sent);
             } catch (Exception\FileUploadException $e) {
                 $this->feedback->add('error', $e->getMessage());

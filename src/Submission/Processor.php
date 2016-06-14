@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
@@ -108,20 +109,20 @@ class Processor implements EventSubscriberInterface
     /**
      * Process a form's POST request.
      *
-     * @param string  $formName
-     * @param null    $formDefinition    @deprecated — To be removed in 4.0
-     * @param array   $reCaptchaResponse
-     * @param boolean $returnData
+     * @param FormConfig $formConfig
+     * @param array      $reCaptchaResponse
+     * @param boolean    $returnData
      *
      * @throws FormValidationException
      *
      * @return boolean|array
      */
-    public function process($formName, $formDefinition = null, array $reCaptchaResponse, $returnData = false)
+    public function process(FormConfig $formConfig, array $reCaptchaResponse, $returnData = false)
     {
+        $formName = $formConfig->getName();
         /** @var FormData $formData */
         $formData = $this->getRequestData($formName);
-        $formConfig = $this->boltForms->getFormConfig($formName);
+        /** @var Form $form */
         $form = $this->boltForms->getForm($formName);
         $complete = $form->isSubmitted() && $form->isValid();
 

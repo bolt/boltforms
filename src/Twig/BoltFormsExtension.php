@@ -105,13 +105,15 @@ class BoltFormsExtension
             return $this->handleException($formName, $e);
         }
 
+        // Get the form's configuration object
+        $formConfig = $this->config->getForm($formName);
+
         // Get the context compiler
         $compiler = $formHelper->getContextCompiler($formName);
 
         // Handle the POST
-        $formHelper->handleFormRequest($formName, $compiler);
+        $formHelper->handleFormRequest($formConfig, $compiler);
 
-        $formConfig = $this->config->getForm($formName);
         $loadAjax = $formConfig->getSubmission()->getAjax();
         $twig = $this->app['twig'];
 
