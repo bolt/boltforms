@@ -1,54 +1,100 @@
 Events
 ======
 
-#### Extending Available Events
+  * Submission Processing Events
+    * Pre & Post Processing Events
+    * Processing Lifecycle Events
+  * Processing Lifecycle Events
+  * Email Event Listeners 
+  * Extending Available Events
+  * Symfony Form Event Listener Proxies
+  * Field Configured Data Events
 
-Should you want to provide your own extension with a data event, you can specify
-a custom event name and parameters in the field definition, e.g.:
+### Submisssion Processing Events
 
-```yaml
-    my_custom_field:
-      type: hidden
-      options:
-        label: false
-      event: 
-        name: favourite_colour
-        params:
-          foo: bar 
-```
+#### Pre & Post Processing Events 
 
-The in your extension you can add a listener on the event name, prefixed with
-`boltforms.` (notice the dot) and provide a callback function that provides
-the data you want set in the field.
+Listener's will be passed an event parameter that is an
+`Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent`
+
+
+##### BoltFormsEvents::SUBMISSION_PRE_PROCESSOR 
+
+Dispatched when the POSTed form data data is valid and freshly obtained from
+the Request object.
+
+
+##### BoltFormsEvents::SUBMISSION_POST_PROCESSOR
+
+Post processing event dispatched after field, database & email processing, and
+prior to feedback session and redirect handling.
+
+The listener's event parameter will be a with data from after the end of the 
+field, database & email processing events. 
+
+
+#### Processing Lifecycle Events
+
+Listener's will be passed an event parameter that is an
+`Bolt\Extension\Bolt\BoltForms\Event\BoltFormsLifecycleEvent` commonly aliased
+as `LifecycleEvent`.
+
+
+##### BoltFormsEvents::SUBMISSION_PROCESS_FIELDS
+
+The internal listener for this event does the processing of fields, currently
+uploads and custom data events and handled here.
+
+
+##### BoltFormsEvents::SUBMISSION_PROCESS_DATABASE
+
+The internal listener for this event attempts to save submitted forms as database
+records, either to a ContentType or standard database table. 
+
+
+##### BoltFormsEvents::SUBMISSION_PROCESS_EMAIL
+
+The internal listener for this event handles the disspacthing of emails from 
+form submission.  
+
+
+##### BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK
+
+The internal listener for this event handles the saving of BoltForms feddback
+notices to the user's session
+
+
+##### BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT
+
+The internal listener for this event handles determination of response
+redirection. Redirection only occurs if a redirect is set and the page exists.
+
+
+### Email Event Listeners
+
+BoltForms provides a `BoltFormsEmailEvent` that is dispatched immediately 
+prior to emails being sent, and during the internal 
+`BoltFormsEvents::SUBMISSION_PROCESS_EMAIL` listener's execution.
+
+This event object will contain the EmailConfig, FormConfig and FormData objects.
 
 ```php
-public function initialize()
-{
-    $eventName = 'boltforms.favourite_colour';
-    $this->app['dispatcher']->addListener($eventName,  array($this, 'myCustomDataProvider'));
-}
-```
+//use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 
-In the callback function, you can access any passed in parameters with `$event->eventParams()`
-and persist the new data with `$event->setData()`.
-
-```php
-public function myCustomDataProvider($event)
-{
-    $params = $event->eventParams();
-    if (isset($params['foo']) && $params['foo'] === 'bar') {
-        $colour = 'green';
-    } else {
-        $colour = 'blue';
+    public function initialize()
+    {
+        $this->app['dispatcher']->addListener(BoltFormsEvents::PRE_EMAIL_SEND,  array($this, 'myPreEmailSend'));
     }
-    
-    $event->setData($colour);
-}
+
+    public function myPreEmailSend(BoltFormsEmailEvent $event)
+    {
+        $emailConfig = $event->getEmailConfig();
+        $formConfig = $event->getFormConfig();
+        $formData = $event->getFormData();
+    }
 ```
 
-
-Event Listeners
----------------
+### Symfony Form Event Listener Proxies
 
 BoltForms exposes a number of listeners, that proxy Symfony Forms listeners:
   * BoltFormsEvents::PRE_SUBMIT
@@ -95,26 +141,47 @@ class Extension extends \Bolt\BaseExtension
 }
 ```
 
-Custom Event Listeners
-======================
+### Field Configured Data Events
 
-BoltForms provides a `BoltFormsEmailEvent` that is dispatched immediately 
-prior to emails being sent.
+Should you want to provide your own extension with a data event, you can specify
+a custom event name and parameters in the field definition, e.g.:
 
-This event object will contain the EmailConfig, FormConfig and FormData objects.
+```yaml
+    my_custom_field:
+        type: hidden
+        options:
+            label: false
+        event: 
+            name: favourite_colour
+            params:
+                foo: bar 
+```
+
+The in your extension you can add a listener on the event name, prefixed with
+`boltforms.` (notice the dot) and provide a callback function that provides
+the data you want set in the field.
 
 ```php
-//use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
+public function initialize()
+{
+    $eventName = 'boltforms.favourite_colour';
+    $this->app['dispatcher']->addListener($eventName,  array($this, 'myCustomDataProvider'));
+}
+```
 
-    public function initialize()
-    {
-        $this->app['dispatcher']->addListener(BoltFormsEvents::PRE_EMAIL_SEND,  array($this, 'myPreEmailSend'));
-    }
+In the callback function, you can access any passed in parameters with `$event->eventParams()`
+and persist the new data with `$event->setData()`.
 
-    public function myPreEmailSend(BoltFormsEmailEvent $event)
-    {
-        $emailConfig = $event->getEmailConfig();
-        $formConfig = $event->getFormConfig();
-        $formData = $event->getFormData();
+```php
+public function myCustomDataProvider($event)
+{
+    $params = $event->eventParams();
+    if (isset($params['foo']) && $params['foo'] === 'bar') {
+        $colour = 'green';
+    } else {
+        $colour = 'blue';
     }
+    
+    $event->setData($colour);
+}
 ```
