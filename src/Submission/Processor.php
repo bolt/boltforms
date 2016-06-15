@@ -15,7 +15,7 @@ use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
-use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -53,7 +53,7 @@ class Processor implements EventSubscriberInterface
     private $config;
     /** @var BoltForms */
     private $boltForms;
-    /** @var TraceableEventDispatcher */
+    /** @var EventDispatcherInterface */
     private $dispatcher;
     /** @var LoggerInterface */
     private $loggerSystem;
@@ -63,12 +63,17 @@ class Processor implements EventSubscriberInterface
      *
      * @param Config                   $config
      * @param BoltForms                $boltForms
-     * @param TraceableEventDispatcher $dispatcher
+     * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface          $loggerSystem
      * @param Application              $app
      */
-    public function __construct(Config $config, BoltForms $boltForms, TraceableEventDispatcher $dispatcher, LoggerInterface $loggerSystem, Application $app)
-    {
+    public function __construct(
+        Config $config,
+        BoltForms $boltForms,
+        EventDispatcherInterface $dispatcher,
+        LoggerInterface $loggerSystem,
+        Application $app
+    ) {
         $this->app = $app;
 
         $this->config = $config;
