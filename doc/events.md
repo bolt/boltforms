@@ -7,8 +7,8 @@ Events
   * Processing Lifecycle Events
   * Email Event Listeners 
   * Extending Available Events
-  * Symfony Form Event Listener Proxies
   * Field Configured Data Events
+  * Symfony Form Event Listener Proxies
 
 ### Submisssion Processing Events
 
@@ -94,6 +94,52 @@ This event object will contain the EmailConfig, FormConfig and FormData objects.
     }
 ```
 
+### Field Configured Data Events
+
+Should you want to provide your own extension with a data event, you can specify
+a custom event name and parameters in the field definition, e.g.:
+
+```yaml
+    my_custom_field:
+        type: hidden
+        options:
+            label: false
+        event: 
+            name: favourite_colour
+            params:
+                foo: bar 
+```
+
+The in your extension you can add a listener on the event name, prefixed with
+`boltforms.` (notice the dot) and provide a callback function that provides
+the data you want set in the field.
+
+```php
+public function initialize()
+{
+    $eventName = 'boltforms.favourite_colour';
+    $this->app['dispatcher']->addListener($eventName,  array($this, 'myCustomDataProvider'));
+}
+```
+
+In the callback function, you can access any passed in parameters with `$event->eventParams()`
+and persist the new data with `$event->setData()`.
+
+```php
+public function myCustomDataProvider($event)
+{
+    $params = $event->eventParams();
+    if (isset($params['foo']) && $params['foo'] === 'bar') {
+        $colour = 'green';
+    } else {
+        $colour = 'blue';
+    }
+    
+    $event->setData($colour);
+}
+```
+
+
 ### Symfony Form Event Listener Proxies
 
 BoltForms exposes a number of listeners, that proxy Symfony Forms listeners:
@@ -138,50 +184,5 @@ class Extension extends \Bolt\BaseExtension
             $event->setData($data);
         }
     }
-}
-```
-
-### Field Configured Data Events
-
-Should you want to provide your own extension with a data event, you can specify
-a custom event name and parameters in the field definition, e.g.:
-
-```yaml
-    my_custom_field:
-        type: hidden
-        options:
-            label: false
-        event: 
-            name: favourite_colour
-            params:
-                foo: bar 
-```
-
-The in your extension you can add a listener on the event name, prefixed with
-`boltforms.` (notice the dot) and provide a callback function that provides
-the data you want set in the field.
-
-```php
-public function initialize()
-{
-    $eventName = 'boltforms.favourite_colour';
-    $this->app['dispatcher']->addListener($eventName,  array($this, 'myCustomDataProvider'));
-}
-```
-
-In the callback function, you can access any passed in parameters with `$event->eventParams()`
-and persist the new data with `$event->setData()`.
-
-```php
-public function myCustomDataProvider($event)
-{
-    $params = $event->eventParams();
-    if (isset($params['foo']) && $params['foo'] === 'bar') {
-        $colour = 'green';
-    } else {
-        $colour = 'blue';
-    }
-    
-    $event->setData($colour);
 }
 ```
