@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Doctrine\DBAL\DBALException;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -142,10 +143,13 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
             return null;
         }
 
-        $query = sprintf('SELECT MAX(%s) as max FROM %s', $column, $table);
+        $query = $this->app['db']->createQueryBuilder()
+            ->select("MAX($column) as max")
+            ->from($table)
+        ;
         try {
-            $sequence = $this->app['db']->executeQuery($query)->fetchColumn();
-        } catch (\Doctrine\DBAL\DBALException $e) {
+            $sequence = $query->execute()->fetchColumn();
+        } catch (DBALException $e) {
             $this->app['logger.system']->error("[BoltForms] Could not fetch next sequence number from table '$table'. Check if the table exists.", ['event' => 'extensions']);
 
             return null;
