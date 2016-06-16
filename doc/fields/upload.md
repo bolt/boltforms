@@ -10,11 +10,11 @@ file uploads.
 The following are the "global" options that apply to all form uploads:
 
 ```yaml
-uploads:
-  enabled: true                             # The global on/off switch for upload handling
-  base_directory: /data/customer-uploads/   # Outside web root and writable by the web server's user
-  filename_handling: prefix                 # Can be either "prefix", "suffix", or "keep"
-  management_controller: true               # Enable a controller to handle browsing and downloading of uploaded files
+    uploads:
+        enabled: true                             # The global on/off switch for upload handling
+        base_directory: /data/customer-uploads/   # Outside web root and writable by the web server's user
+        filename_handling: prefix                 # Can be either "prefix", "suffix", or "keep"
+        management_controller: true               # Enable a controller to handle browsing and downloading of uploaded files
 ```
 
 The directory that you specify for `base_directory` should **NOT** be a route 
@@ -31,12 +31,12 @@ lot easier. BoltForms provides three uploaded file naming options, `prefix`,
 For example, when uploading the file `kitten.jpg` the settings would provide
 something similar to the following table:
 
--------------------------------------
+
 | Setting   | Resulting file name     |
 |-----------|-------------------------|
-| `prefix` | kitten.Ze1d352rrI3p.jpg |
-| `suffix` | kitten.jpg.Ze1d352rrI3p |
-| `keep`   | kitten.jpg              |
+| `prefix`  | kitten.Ze1d352rrI3p.jpg |
+| `suffix`  | kitten.jpg.Ze1d352rrI3p |
+| `keep`    | kitten.jpg              |
 
  
 We recommend `suffix`, as this is the most secure. Alternatively `prefix` will
@@ -51,22 +51,21 @@ here:
 
 ```yaml
 file_upload_form:
-  notification:
-    enabled: true
-    attach_files: true             # Optionally send the file as an email attachment
-  uploads:
-    subdirectory: file_upload_dir  # Optional subdirectory
-  fields:
-    upload:
-      type: file
-      options:
-        required: false
-        label: Picture of your pet that you want us to add to our site
+    notification:
+        enabled: true
+        attach_files: true             # Optionally send the file as an email attachment
+    uploads:
+        subdirectory: file_upload_dir  # Optional subdirectory
+    fields:
+        upload:
+            type: file
+            options:
+                required: false
+                label: Picture of your pet that you want us to add to our site
 
 ```
 
-File Upload Browsing
---------------------
+### Post-Upload Browsing
 
 When `management_controller` is enabled, a file in the `base_directory` 
 location is accessible via `http://your-site.com/boltforms/download?file=filename.ext`.
@@ -74,12 +73,12 @@ location is accessible via `http://your-site.com/boltforms/download?file=filenam
 These files can be listed via the Twig function `boltforms_uploads()`, e.g.  
 
 ```twig
-{{ boltforms_uploads() }}
+    {{ boltforms_uploads() }}
 ```
 
 This can be limited to a form's (optionally defined) subdirectory by passing the
 form name into `boltforms_uploads()`, e.g.
 
 ```twig
-{{ boltforms_uploads('file_upload_form') }}
+    {{ boltforms_uploads('file_upload_form') }}
 ```

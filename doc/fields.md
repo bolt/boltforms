@@ -44,7 +44,50 @@ Alternatively, you can pass in a parameter to the Twig function:
 
 ```twig
     {{ boltforms('myform', defaults={fieldname: 'My value'}) }}
+
+Choice Types
+------------
+
+Choice types in BoltForms provide several different options for choice values.
+The standard indexed and associative arrays, and Bolt specific ContentType
+record lookups & event based lookups.
+
+```yaml
+  fields:
+      array_index:
+        type: choice
+        options:
+            choices: [ Yes, No ]
+      array_assoc:
+          type: choice
+          options:
+              choices: { kittens: 'Fluffy Kittens', puppies: 'Cute Puppies' }
+      lookup:
+          type: choice
+          options:
+              choices: content
+      event_based:
+          type: choice
+          options:
+              choices: event
+      event_based_custom:
+          type: choice
+          options:
+              choices: event::my.custom.event
 ```
+
+
+For more information on this field type, see the [choice fields documentation](fields/choice.md)
+
+
+Upload Types
+------------
+
+For more information on this field type, see the [upload fields documentation](fields/upload.md)
+
+
+```
+
 
 Hidden field
 ------------
@@ -62,129 +105,10 @@ Use the option `label: false` to hide the field from the html output.
                 value: "My hidden value"
 ```
 
-Choice Types
-------------
 
-Choice types in BoltForms provide three different options for choice values. 
-The standard indexed and associative arrays, and Bolt specific ContentType 
-record lookups.
+### Hidden Field Data Providers
 
-```yaml
-  fields:
-      array_index:
-        type: choice
-        options:
-            choices: [ Yes, No ]
-      array_assoc:
-          type: choice
-          options:
-              choices: { kittens: 'Fluffy Kittens', puppies: 'Cute Puppies' }
-      lookup:
-          type: choice
-          options:
-              choices: 'contenttype::pages::title::slug'
-      event_based:
-          type: choice
-          options:
-              choices: event
-      event_based_custom:
-          type: choice
-          options:
-              choices: event::my.custom.event
-```
-
-#### ContentType Choice Control
-
-For the Bolt ContentType options choices, you just need to make a string with 
-double-colon delimiters, where:
-    'contenttype' - String constant that always equals 'contenttype'
-    'name'        - Name of the ContentType itself
-    'labelfield'  - Field to use for the UI displayed to the user
-    'valuefield'  - Field to use for the value stored
-
-ContentType choice value lookups can optionally be sorted (`sort:`), limited 
-number of records retrieved (`limit:`), or filtered based upon one or more of
-the ContentType's field values (`filters:`).
-
-```yaml
-    best_pet_page:
-        type: choice
-        options:
-            required: false
-            label: What is our best pets page?
-            choices: 'contenttype::pets::title::slug'
-            sort: title
-            limit: 5
-            filters: 
-                by_kenny:
-                    field: ownerid
-                    value: 42
-                light_fur:
-                    field: colour
-                    value: white || grey 
-                cute_factor:
-                    field: checkbox
-                    value: >11
-```
-
-The `sort` option takes a field name. Sorting by default happens in assending
-order. To sort in a descending order, negate the field name, e.g. `-title` 
-
-The `limit` option takes an integer that sets the maximum number of records to
-be return, and in turn the maximum number of options in the select list.
-
-The `filters` option takes an array of one or more associative arrays with
-`field` and `value` keys. These filters behave the same as `where` parameters
-in Bolt's twig function `{% setcontent %}` 
-
-
-#### Event Choice Control
-
-Event based choice selectors are driven by Symfony Events. By default a
-`\Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents::DATA_CHOICE_EVENT`
-is dispatched, but that is customisable in the `choices:` key, e.g.:
-
-```yaml
-    event_based:
-        type: choice
-        options:
-            choices: event   # This will dispatch on BoltFormsEvents::DATA_CHOICE_EVENT
-    event_based_custom:
-        type: choice
-        options:
-            choices: event::my.custom.event
-```
-
-In the above example the choices for the `event_based` field will be an array 
-gathered from `BoltFormsEvents::DATA_CHOICE_EVENT`, and `event_based_custom`
-will be dispatched to listeners to the `my.custom.event` event.
-
-Each listener will be passed in a `BoltFormsChoiceEvent` event object to work
-with, that has getters for field name, options, and configured choices, as well
-as setters for an array of choices.
-
-```php
-    protected function subscribe(EventDispatcherInterface $dispatcher)
-    {
-        $dispatcher->addListener(BoltFormsEvents::DATA_CHOICE_EVENT, [$this, 'replyChoices']);
-        $dispatcher->addListener('my.custom.event', [$this, 'wantChoices']);
-    }
-
-    public function replyChoices(BoltFormsChoiceEvent $event)
-    {
-        $event->setChoices(['yes' => 'Yes of course', 'no' => 'No way!']);
-    }
-
-    public function wantChoices(BoltFormsChoiceEvent $event)
-    {
-        $event->setChoices(['yes' => 'Sure', 'no' => 'Not in this life']);
-    }
-```
-
-
-
-Hidden Field Data Providers (on submission)
--------------------------------------------
+**NOTE:** These filed values are set upon successful submission of the form, not during render!
 
 BoltForms allows you to specify, and customise, certain input data upon form
 submission. 
@@ -213,12 +137,12 @@ increment.
         name: next_increment
         params:
           table: bolt_tablename       # Optional
-#         contenttype: pages          # Optional/alternative to table:
+#         contenttype: pages          # Optional and alternative to table:
           column: remote_member_id    # Required
           min: 31000                  # Optional
 ```
 
-Set the `randomfield` field value to a randomized string.
+Set the `randomfield` field value to a randomised string.
 
 ```yaml
     randomfield:
