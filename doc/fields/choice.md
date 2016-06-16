@@ -89,6 +89,9 @@ Other parameters are optional.
 PHP Class Choices
 -----------------
 
+Choice data can be supplied via PHP objects. Examples of these object classes
+can be seen [in the examples directory](../example/Choice)
+
 ```
     choice_traversable_choices_class:
         type: choice
