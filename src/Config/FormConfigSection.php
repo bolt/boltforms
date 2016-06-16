@@ -71,6 +71,30 @@ class FormConfigSection implements \ArrayAccess
         }
     }
 
+    /**
+     * @param string $name
+     *
+     * @return mixed
+     */
+    public function get($name)
+    {
+        if (isset($this->config[$name])) {
+            return $this->config[$name];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function has($name)
+    {
+        return isset($this->config[$name]);
+    }
+
     public function toArray()
     {
         $config = [];
