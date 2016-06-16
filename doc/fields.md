@@ -9,13 +9,13 @@ for more information.
 
 ```yaml
     fieldname:
-      type: text
-      required: true
-      options:
-        label: My Field
-        attr:
-          placeholder: Enter your details…
-        constraints: [ NotBlank, {Length: {'min': 3}} ]
+        type: field_type
+        required: true|false
+        options:
+            label: My Field
+            attr:
+                placeholder: Enter your details…
+            constraints: [ NotBlank, {Length: {'min': 3}} ]
 ```
 
 Field(s) default values
@@ -31,13 +31,13 @@ To lock the value, you may use the attribute `readonly: true`.
 
 ```yaml
     fieldname:
-      type: text
-      required: true
-      options:
-        label: My Field
-        attr:
-          readonly: true      # optional attribute if you want a readonly field
-          value: My value
+        type: text
+        required: true
+        options:
+            label: My Field
+            attr:
+                readonly: true      # optional attribute if you want a readonly field
+                value: My value
 ```
 
 Alternatively, you can pass in a parameter to the Twig function:
@@ -55,11 +55,11 @@ Use the option `label: false` to hide the field from the html output.
 
 ```yaml
     fieldname:
-      type: hidden
-      options:
-        label: false
-        attr:
-          value: "My hidden value"
+        type: hidden
+        options:
+            label: false
+            attr:
+                value: "My hidden value"
 ```
 
 Choice Types
@@ -71,26 +71,26 @@ record lookups.
 
 ```yaml
   fields:
-    array_index:
-      type: choice
-      options:
-        choices: [ Yes, No ]
-    array_assoc:
-      type: choice
-      options:
-        choices: { kittens: 'Fluffy Kittens', puppies: 'Cute Puppies' }
-    lookup:
-      type: choice
-      options:
-        choices: 'contenttype::pages::title::slug'
-    event_based:
-      type: choice
-      options:
-        choices: event
-    event_based_custom:
-      type: choice
-      options:
-        choices: event::my.custom.event
+      array_index:
+        type: choice
+        options:
+            choices: [ Yes, No ]
+      array_assoc:
+          type: choice
+          options:
+              choices: { kittens: 'Fluffy Kittens', puppies: 'Cute Puppies' }
+      lookup:
+          type: choice
+          options:
+              choices: 'contenttype::pages::title::slug'
+      event_based:
+          type: choice
+          options:
+              choices: event
+      event_based_custom:
+          type: choice
+          options:
+              choices: event::my.custom.event
 ```
 
 #### ContentType Choice Control
@@ -108,23 +108,23 @@ the ContentType's field values (`filters:`).
 
 ```yaml
     best_pet_page:
-      type: choice
-      options:
-        required: false
-        label: What is our best pets page?
-        choices: 'contenttype::pets::title::slug'
-        sort: title
-        limit: 5
-        filters: 
-          by_kenny:
-            field: ownerid
-            value: 42
-          light_fur:
-            field: colour
-            value: white || grey 
-          cute_factor:
-            field: checkbox
-            value: >11
+        type: choice
+        options:
+            required: false
+            label: What is our best pets page?
+            choices: 'contenttype::pets::title::slug'
+            sort: title
+            limit: 5
+            filters: 
+                by_kenny:
+                    field: ownerid
+                    value: 42
+                light_fur:
+                    field: colour
+                    value: white || grey 
+                cute_factor:
+                    field: checkbox
+                    value: >11
 ```
 
 The `sort` option takes a field name. Sorting by default happens in assending
@@ -146,13 +146,13 @@ is dispatched, but that is customisable in the `choices:` key, e.g.:
 
 ```yaml
     event_based:
-      type: choice
-      options:
-        choices: event   # This will dispatch on BoltFormsEvents::DATA_CHOICE_EVENT
+        type: choice
+        options:
+            choices: event   # This will dispatch on BoltFormsEvents::DATA_CHOICE_EVENT
     event_based_custom:
-      type: choice
-      options:
-        choices: event::my.custom.event
+        type: choice
+        options:
+            choices: event::my.custom.event
 ```
 
 In the above example the choices for the `event_based` field will be an array 
@@ -183,11 +183,13 @@ as setters for an array of choices.
 
 
 
-Custom Field Data Providers
----------------------------
+Hidden Field Data Providers (on submission)
+-------------------------------------------
 
-BoltForms allows you to specify, and customise, certain input data. This is done
-via event dispatchers.
+BoltForms allows you to specify, and customise, certain input data upon form
+submission. 
+
+This is done via event dispatchers.
 
 The default events that can be used to get field data are:
   - next_increment
