@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
@@ -368,30 +369,32 @@ class Processor implements EventSubscriberInterface
     /**
      * Dispatch custom data events.
      *
-     * @param array $eventConfig
+     * @param FormConfigSection $eventConfig
      *
      * @return mixed
      */
-    protected function dispatchCustomDataEvent($eventConfig)
+    protected function dispatchCustomDataEvent(FormConfigSection $eventConfig)
     {
-        if (strpos('boltforms.', $eventConfig['name']) === false) {
-            $eventName = 'boltforms.' . $eventConfig['name'];
+        if (strpos('boltforms.', $eventConfig->get('name')) === false) {
+            $eventName = 'boltforms.' . $eventConfig->get('name');
         } else {
-            $eventName = $eventConfig['name'];
+            $eventName = $eventConfig->get('name');
         }
 
         if (!$this->dispatcher->hasListeners($eventName)) {
-            $eventParams = isset($eventConfig['params']) ? $eventConfig['params'] : null;
-            $event = new BoltFormsCustomDataEvent($eventName, $eventParams);
-            try {
-                $this->dispatcher->dispatch($eventName, $event);
+            return null;
+        }
 
-                return $event->getData();
-            } catch (\Exception $e) {
-                $message = sprintf('[BoltForms] %s subscriber had an error: %s', $eventName, $e->getMessage());
-                $this->app['boltforms.feedback']->add('debug', $message);
-                $this->loggerSystem->error($message, ['event' => 'extensions']);
-            }
+        $eventParams = $eventConfig->get('params');
+        $event = new BoltFormsCustomDataEvent($eventName, $eventParams);
+        try {
+            $this->dispatcher->dispatch($eventName, $event);
+
+            return $event->getData();
+        } catch (\Exception $e) {
+            $message = sprintf('[BoltForms] %s subscriber had an error: %s', $eventName, $e->getMessage());
+            $this->app['boltforms.feedback']->add('debug', $message);
+            $this->loggerSystem->error($message, ['event' => 'extensions']);
         }
 
         return null;
