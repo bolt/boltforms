@@ -9,6 +9,21 @@ following to your template:
     {{ boltforms('form_name') }}
 ```
 
+Templates can be optionally customised by copying any needed template from
+`extensions/vendor/bolt/boltforms/templates/` to a location in your theme.
+
+For exmample if you were to add them to  `themes/my_theme/my_sub_directory/`
+you would update your `app/config/boltforms.bolt.yml` file parameters to
+match, e.g.:
+
+```yaml
+    templates:
+        form:    my_sub_directory/boltforms_form.twig
+        email:   my_sub_directory/boltforms_email.twig
+        subject: my_sub_directory/boltforms_email_subject.twig
+        files:   my_sub_directory/boltforms_file_browser.twig
+```
+
 ### Default data
 
 
