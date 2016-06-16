@@ -44,6 +44,7 @@ Alternatively, you can pass in a parameter to the Twig function:
 
 ```twig
     {{ boltforms('myform', defaults={fieldname: 'My value'}) }}
+```
 
 Choice Types
 ------------
