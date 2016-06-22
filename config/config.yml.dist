@@ -120,7 +120,7 @@ contact:
       options:
         required: false
         label: Do you want us to contact you back?
-        choices: [ 'Yes': 'yes', 'No': 'no' ]
+        choices: { 'Yes': 'yes', 'No': 'no' }
         multiple: false
     submit:
       type: submit
@@ -296,3 +296,4 @@ contact:
 #        label: Picture of your pet that you want us to add to our site
 #    submit:
 #      type: submit
+
