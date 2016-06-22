@@ -43,8 +43,6 @@ class Database
      *
      * @param string   $tableName
      * @param FormData $formData
-     *
-     * @return boolean
      */
     public function writeToTable($tableName, FormData $formData)
     {
@@ -55,8 +53,6 @@ class Database
         if (!$sm->tablesExist([$tableName])) {
             // log failed attempt
             $this->app['logger.system']->error("[Bolt Forms] Failed attempt to save submission: missing database table `$tableName`", ['event' => 'extensions']);
-
-            return false;
         }
 
         // Build a new array with only keys that match the database table
