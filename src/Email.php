@@ -65,7 +65,7 @@ class Email
 
         $this->emailCompose($formConfig, $emailConfig, $formData);
         $this->emailAddress($emailConfig);
-        $this->emailSend($emailConfig);
+        $this->emailSend($emailConfig, $formData);
 
         // @TODO
         //$this-> doDebugLogging();
@@ -281,13 +281,21 @@ class Email
      * Send a notification
      *
      * @param EmailConfig $emailConfig
+     * @param FormData    $formData
      */
-    private function emailSend(EmailConfig $emailConfig)
+    private function emailSend(EmailConfig $emailConfig, FormData $formData)
     {
-        if ($this->app['mailer']->send($this->message)) {
+        try {
+            $result = $this->app['mailer']->send($this->message);
+        } catch (\Swift_TransportException $e) {
+            $result = false;
+        }
+
+        if ($result) {
             $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", ['event' => 'extensions']);
         } else {
-            $this->app['logger.system']->error("Failed Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", ['event' => 'extensions']);
+            $data = json_encode($formData->all());
+            $this->app['logger.system']->error("Failed Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", ['event' => 'exception', 'exception' => $data]);
         }
     }
 }
