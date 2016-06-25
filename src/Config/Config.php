@@ -217,7 +217,7 @@ class Config extends ParameterBag
 
             $options = !empty($data['options']) ? $data['options'] : [];
             $fieldOptions = new FieldOptions($formName, $fieldName, $data['type'], $options, $em, $dispatcher);
-            $config['fields']['options'] = $fieldOptions->toArray();
+            $config['fields'][$fieldName]['options'] = $fieldOptions->toArray();
         }
 
         $resolvedForm = new FormConfig($formName, $config);
