@@ -159,7 +159,7 @@ class BoltForms
     {
         $formName = $form->getName();
         $this->forms[$formName] = [
-            'form' => $meta,
+            'form' => $form,
             'meta' => $meta,
         ];
     }
