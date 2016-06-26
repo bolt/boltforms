@@ -71,11 +71,13 @@ class BoltForms
     public function makeForm($formName, $type = FormType::class, $data = null, $options = [])
     {
         $options['csrf_protection'] = $this->config->isCsrf();
-        $this->forms[$formName] = $this->app['form.factory']
+        /** @var Form $form */
+        $form = $this->app['form.factory']
             ->createNamedBuilder($formName, $type, $data, $options)
             ->addEventSubscriber(new BoltFormsSubscriber($this->app))
             ->getForm()
         ;
+        $this->forms[$formName]['form'] = $form;
 
         $em = $this->app['storage'];
         $dispatcher = $this->app['dispatcher'];
@@ -126,8 +128,8 @@ class BoltForms
      */
     public function getForm($formName)
     {
-        if (isset($this->forms[$formName])) {
-            return $this->forms[$formName];
+        if (isset($this->forms[$formName]['form'])) {
+            return $this->forms[$formName]['form'];
         }
 
         throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
