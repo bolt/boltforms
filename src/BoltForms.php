@@ -120,7 +120,7 @@ class BoltForms
     }
 
     /**
-     * Get a particular form
+     * Get a particular form.
      *
      * @param string $formName
      *
@@ -128,7 +128,7 @@ class BoltForms
      */
     public function get($formName)
     {
-        if (isset($this->forms[$formName]['form'])) {
+        if ($this->has($formName)) {
             return $this->forms[$formName]['form'];
         }
 
@@ -141,6 +141,27 @@ class BoltForms
     public function getForm($formName)
     {
         return $this->get($formName);
+    }
+
+    /**
+     * Check is a form object exists.
+     *
+     * @param string $formName
+     *
+     * @return bool
+     */
+    public function has($formName)
+    {
+        return isset($this->forms[$formName]['form']);
+    }
+
+    public function set(Form $form, $meta)
+    {
+        $formName = $form->getName();
+        $this->forms[$formName] = [
+            'form' => $meta,
+            'meta' => $meta,
+        ];
     }
 
     /**
