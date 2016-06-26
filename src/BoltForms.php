@@ -171,6 +171,41 @@ class BoltForms
     }
 
     /**
+     * Get a particular form's meta.
+     *
+     * @param string $formName
+     *
+     * @throws Exception\UnknownFormException
+     *
+     * @return mixed
+     */
+    public function getMeta($formName)
+    {
+        if (!$this->has($formName)) {
+            throw new Exception\UnknownFormException(sprintf('Unknown form requested, or has not been created: %s', $formName));
+        }
+
+        return $this->forms[$formName]['meta'];
+    }
+
+    /**
+     * Set a form's meta.
+     *
+     * @param string $formName
+     * @param mixed  $meta
+     *
+     * @throws Exception\UnknownFormException
+     */
+    public function setMeta($formName, $meta = null)
+    {
+        if (!$this->has($formName)) {
+            throw new Exception\UnknownFormException(sprintf('Unknown form requested, or has not been created: %s', $formName));
+        }
+
+        $this->forms[$formName]['meta'] = $meta;
+    }
+
+    /**
      * Add an array of fields to the form.
      *
      * @param string $formName Name of the form
