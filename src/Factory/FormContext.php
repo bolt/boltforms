@@ -75,7 +75,7 @@ class FormContext
         $debugs = $feedBack->get('debug', []);
 
         /** @var Form[] $fields Values to be passed to Twig */
-        $fields = $boltForms->getForm($formName)->all();
+        $fields = $boltForms->get($formName)->all();
         $context = [
             'fields'    => $fields,
             'defaults'  => $this->defaults,
