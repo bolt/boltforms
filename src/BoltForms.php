@@ -155,7 +155,13 @@ class BoltForms
         return isset($this->forms[$formName]['form']);
     }
 
-    public function set(Form $form, $meta)
+    /**
+     * Set a form on the forms array.
+     *
+     * @param Form  $form
+     * @param mixed $meta
+     */
+    public function set(Form $form, $meta = null)
     {
         $formName = $form->getName();
         $this->forms[$formName] = [
