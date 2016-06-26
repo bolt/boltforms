@@ -73,7 +73,7 @@ class Async implements ControllerProviderInterface
 
         /** @var BoltForms $boltForms */
         $boltForms = $app['boltforms'];
-        $boltForms->makeForm($formName, FormType::class, [], []);
+        $boltForms->create($formName, FormType::class, [], []);
         /** @var Config\Config $config */
         $config = $app['boltforms.config'];
         /** @var Config\FormConfig $formConfig */

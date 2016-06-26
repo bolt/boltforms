@@ -100,7 +100,7 @@ class BoltFormsExtension
         $processor = $this->app['boltforms.processor'];
 
         try {
-            $boltForms->makeForm($formName, FormType::class, $data, $options);
+            $boltForms->create($formName, FormType::class, $data, $options);
         } catch (Exception\BoltFormsException $e) {
             return $this->handleException($formName, $e);
         }

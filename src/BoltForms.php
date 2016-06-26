@@ -67,8 +67,10 @@ class BoltForms
      * @param array                    $options
      *
      * @throws FormOptionException
+     *
+     * @return Form
      */
-    public function makeForm($formName, $type = FormType::class, $data = null, $options = [])
+    public function create($formName, $type = FormType::class, $data = null, $options = [])
     {
         $options['csrf_protection'] = $this->config->isCsrf();
         /** @var Form $form */
@@ -94,6 +96,17 @@ class BoltForms
 
             $this->addField($formName, $key, $field['type'], $field['options']);
         }
+
+        return $form;
+    }
+
+    /**
+     * @deprecated Since 3.1 and to be removed in 4.0. Use create() instead.
+     * @see self::create()
+     */
+    public function makeForm($formName, $type = FormType::class, $data = null, $options = [])
+    {
+        $this->create($formName, $type, $data, $options);
     }
 
     /**
