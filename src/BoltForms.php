@@ -113,7 +113,7 @@ class BoltForms
         }
 
         try {
-            $this->getForm($formName)->add($fieldName, $type, $options->toArray());
+            $this->get($formName)->add($fieldName, $type, $options->toArray());
         } catch (InvalidConstraintException $e) {
             $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
         }
@@ -126,13 +126,21 @@ class BoltForms
      *
      * @return Form
      */
-    public function getForm($formName)
+    public function get($formName)
     {
         if (isset($this->forms[$formName]['form'])) {
             return $this->forms[$formName]['form'];
         }
 
         throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
+    }
+
+    /**
+     * @deprecated Deprecated since 3.1, to be removed in 4.0.
+     */
+    public function getForm($formName)
+    {
+        return $this->get($formName);
     }
 
     /**
@@ -168,7 +176,7 @@ class BoltForms
         }
 
         // Add the form object for use in the template
-        $context['form'] = $this->getForm($formName)->createView();
+        $context['form'] = $this->get($formName)->createView();
 
         // Add JavaScript if doing the AJAX dance.
         if ($loadAjax) {
