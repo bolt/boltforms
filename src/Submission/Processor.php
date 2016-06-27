@@ -127,7 +127,7 @@ class Processor implements EventSubscriberInterface
     {
         $formName = $formConfig->getName();
         /** @var FormData $formData */
-        $formData = $this->getRequestData($formName);
+        $formData = $this->handleRequest($formName);
         /** @var Form $form */
         $form = $this->boltForms->get($formName);
 
@@ -190,7 +190,7 @@ class Processor implements EventSubscriberInterface
      *
      * @return FormData|null
      */
-    protected function getRequestData($formName, $request = null)
+    protected function handleRequest($formName, $request = null)
     {
         if (!$request) {
             $request = $this->app['request_stack']->getCurrentRequest();
