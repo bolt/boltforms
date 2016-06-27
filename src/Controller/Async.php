@@ -65,9 +65,9 @@ class Async implements ControllerProviderInterface
             return new JsonResponse(['Invalid form'], Response::HTTP_BAD_REQUEST);
         }
 
-        /** @var FormContext $compiler */
-        $compiler = $app['session']->get('boltforms_compiler_' . $formName);
-        if ($compiler === null) {
+        /** @var FormContext $formContext */
+        $formContext = $app['session']->get('boltforms_compiler_' . $formName);
+        if ($formContext === null) {
             return new JsonResponse(['Invalid compiler'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -92,8 +92,8 @@ class Async implements ControllerProviderInterface
             $app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
         }
 
-        $compiler->setSent($sent);
-        $context = $compiler->build($boltForms, $config, $formName, $app['boltforms.feedback']);
+        $formContext->setSent($sent);
+        $context = $formContext->build($boltForms, $config, $formName, $app['boltforms.feedback']);
         $template = $config->getForm($formName)->getTemplates()->getForm() ?: $config->getTemplates()->get('form');
 
         // Render the Twig_Markup

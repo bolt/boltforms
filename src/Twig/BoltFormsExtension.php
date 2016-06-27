@@ -108,25 +108,25 @@ class BoltFormsExtension
         // Get the form's configuration object
         $formConfig = $this->config->getForm($formName);
 
-        // Get the context compiler
-        $compiler = $formHelper->getContextCompiler($formName);
+        // Get the form context compiler
+        $formContext = $formHelper->getContextCompiler($formName);
 
         // Handle the POST
-        $formHelper->handleFormRequest($formConfig, $compiler);
+        $formHelper->handleFormRequest($formConfig, $formContext);
 
         $loadAjax = $formConfig->getSubmission()->getAjax();
         $twig = $this->app['twig'];
 
-        $compiler
+        $formContext
             ->setAction($this->getRelevantAction($formName, $loadAjax))
             ->setHtmlPreSubmit($formHelper->getOptionalHtml($twig, $htmlPreSubmit))
             ->setHtmlPostSubmit($formHelper->getOptionalHtml($twig, $htmlPostSubmit))
             ->setReCaptchaResponse($processor->reCaptchaResponse($requestStack->getCurrentRequest()))
             ->setDefaults((array) $defaults)
         ;
-        $session->set('boltforms_compiler_' . $formName, $compiler);
+        $session->set('boltforms_compiler_' . $formName, $formContext);
 
-        return $formHelper->getFormRender($formName, $formConfig, $compiler, $loadAjax);
+        return $formHelper->getFormRender($formName, $formConfig, $formContext, $loadAjax);
     }
 
     /**
