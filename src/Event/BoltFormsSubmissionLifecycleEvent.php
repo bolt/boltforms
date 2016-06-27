@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Event;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
+use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\Button;
@@ -35,20 +36,28 @@ class BoltFormsSubmissionLifecycleEvent extends Event
     protected $formConfig;
     /** @var FormData $formData */
     protected $formData;
+    /** @var FormMetaData */
+    private $formMetaData;
     /** @var Button */
     protected $clickedButton;
 
     /**
      * Constructor.
      *
-     * @param FormConfig $formConfig
-     * @param FormData   $formData
-     * @param Button     $clickedButton
+     * @param FormConfig   $formConfig
+     * @param FormData     $formData
+     * @param FormMetaData $formMetaData
+     * @param Button       $clickedButton
      */
-    public function __construct(FormConfig $formConfig, FormData $formData, Button $clickedButton)
-    {
+    public function __construct(
+        FormConfig $formConfig, 
+        FormData $formData, 
+        FormMetaData $formMetaData, 
+        Button $clickedButton
+    ) {
         $this->formConfig = $formConfig;
         $this->formData = $formData;
+        $this->formMetaData = $formMetaData;
         $this->clickedButton = $clickedButton;
     }
 
@@ -66,6 +75,14 @@ class BoltFormsSubmissionLifecycleEvent extends Event
     public function getFormData()
     {
         return $this->formData;
+    }
+
+    /**
+     * @return FormMetaData
+     */
+    public function getFormMetaData()
+    {
+        return $this->formMetaData;
     }
 
     /**

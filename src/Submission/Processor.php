@@ -130,9 +130,10 @@ class Processor implements EventSubscriberInterface
         $formData = $this->handleRequest($formName);
         /** @var Form $form */
         $form = $this->boltForms->get($formName)->getForm();
+        $formMetaData = $this->boltForms->get($formName)->getMeta();
 
         if ($formData !== null && $reCaptchaResponse['success']) {
-            $lifeEvent = new LifecycleEvent($formConfig, $formData, $form->getClickedButton());
+            $lifeEvent = new LifecycleEvent($formConfig, $formData, $formMetaData, $form->getClickedButton());
 
             // Process
             $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
