@@ -36,12 +36,35 @@ class FormMetaData extends ParameterBag
     /**
      * Constructor.
      *
-     * @param array  $parameters
+     * @param array $parameters
      */
     public function __construct(array $parameters = [])
     {
-        parent::__construct($parameters);
-        $this->_metaId = bin2hex(random_bytes(32));;
+        parent::__construct();
+        $this->_metaId = bin2hex(random_bytes(32));
+
+        foreach ($parameters as $key => $value) {
+            $this->set($key, $value);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function set($key, $value)
+    {
+        $this->parameters[$key] = new FormMetaDataSection($key, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function replace(array $parameters = [])
+    {
+        $this->parameters = null;
+        foreach ($parameters as $key => $value) {
+            $this->set($key, $value);
+        }
     }
 
     /**
