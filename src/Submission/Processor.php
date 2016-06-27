@@ -127,13 +127,13 @@ class Processor implements EventSubscriberInterface
     {
         $formName = $formConfig->getName();
         /** @var FormData $formData */
-        $formData = $this->getRequestData($formName);
+        $formData = $this->handleRequest($formName);
         /** @var Form $form */
-        $form = $this->boltForms->getForm($formName);
-        $complete = $form->isSubmitted() && $form->isValid();
+        $form = $this->boltForms->get($formName)->getForm();
+        $formMetaData = $this->boltForms->get($formName)->getMeta();
 
-        if ($complete && $formData !== null && $reCaptchaResponse['success']) {
-            $lifeEvent = new LifecycleEvent($formConfig, $formData, $form->getClickedButton());
+        if ($formData !== null && $reCaptchaResponse['success']) {
+            $lifeEvent = new LifecycleEvent($formConfig, $formData, $formMetaData, $form->getClickedButton());
 
             // Process
             $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
@@ -191,7 +191,7 @@ class Processor implements EventSubscriberInterface
      *
      * @return FormData|null
      */
-    protected function getRequestData($formName, $request = null)
+    protected function handleRequest($formName, $request = null)
     {
         if (!$request) {
             $request = $this->app['request_stack']->getCurrentRequest();
@@ -202,7 +202,7 @@ class Processor implements EventSubscriberInterface
         }
 
         /** @var Form $form */
-        $form = $this->boltForms->getForm($formName);
+        $form = $this->boltForms->get($formName)->getForm();
         // Handle the Request object to check if the data sent is valid
         $form->handleRequest($request);
 
@@ -296,15 +296,16 @@ class Processor implements EventSubscriberInterface
     {
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
+        $formMeta = $lifeEvent->getFormMetaData();
 
         // Write to a Contenttype
         if ($formConfig->getDatabase()->getContentType() !== null) {
-            $this->app['boltforms.database']->writeToContenType($formConfig->getDatabase()->getContentType(), $formData);
+            $this->app['boltforms.database']->writeToContenType($formConfig->getDatabase()->getContentType(), $formData, $formMeta);
         }
 
         // Write to a normal database table
         if ($formConfig->getDatabase()->getTable() !== null) {
-            $this->app['boltforms.database']->writeToTable($formConfig->getDatabase()->getTable(), $formData);
+            $this->app['boltforms.database']->writeToTable($formConfig->getDatabase()->getTable(), $formData, $formMeta);
         }
     }
 
@@ -317,9 +318,10 @@ class Processor implements EventSubscriberInterface
     {
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
+        $formMeta = $lifeEvent->getFormMetaData();
 
         if ($formConfig->getNotification()->getEnabled()) {
-            $this->app['boltforms.email']->doNotification($formConfig, $formData);
+            $this->app['boltforms.email']->doNotification($formConfig, $formData, $formMeta);
         }
     }
 
