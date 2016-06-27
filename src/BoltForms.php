@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Core API functions for BoltForms
@@ -59,6 +60,33 @@ class BoltForms
     {
         $this->app = $app;
         $this->config = $app['boltforms.config'];
+
+        $app->after([$this, 'onResponse']);
+    }
+
+    /**
+     * On response middleware to handle meta persistence.
+     *
+     * @param Request  $request
+     */
+    public function onResponse(Request $request)
+    {
+        $metaKey = $request->attributes->get(static::META_FIELD_NAME);
+        if ($metaKey === null) {
+            return;
+        }
+
+        $formName = key($metaKey);
+        if (!$this->has($formName)) {
+            return;
+        }
+        $metaId = current($metaKey);
+        if ($this->get($formName)->getMeta()->getMetaId() !== $metaId) {
+            return;
+        }
+
+        $meta = $this->get($formName)->getMeta();
+        $this->app['session']->set(static::META_FIELD_NAME, $meta);
     }
 
     /**
@@ -89,7 +117,13 @@ class BoltForms
 
         /** @var FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
-        $this->forms[$formName] = new BoltForm($form, $formConfig, new FormMetaData());
+        $formMeta = new FormMetaData();
+        $this->forms[$formName] = new BoltForm($form, $formConfig, $formMeta);
+
+        if ($formConfig->getSubmission()->getAjax()) {
+            $request = $this->app['request_stack']->getCurrentRequest();
+            $request->attributes->set(static::META_FIELD_NAME, [$formName => $formMeta->getMetaId()]);
+        }
 
         foreach ($formConfig->getFields()->toArray() as $key => $field) {
             $field['options'] = !empty($field['options']) ? $field['options'] : [];

@@ -71,9 +71,15 @@ class Async implements ControllerProviderInterface
             return new JsonResponse(['Invalid compiler'], Response::HTTP_BAD_REQUEST);
         }
 
+        $meta = $app['session']->get(BoltForms::META_FIELD_NAME);
+        $app['session']->remove(BoltForms::META_FIELD_NAME);
+
         /** @var BoltForms $boltForms */
         $boltForms = $app['boltforms'];
-        $boltForms->create($formName, FormType::class, [], []);
+        $boltForms
+            ->create($formName, FormType::class, [], [])
+            ->setMeta($meta)
+        ;
         /** @var Config\Config $config */
         $config = $app['boltforms.config'];
         /** @var Config\FormConfig $formConfig */
