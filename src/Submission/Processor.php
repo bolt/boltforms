@@ -131,7 +131,7 @@ class Processor implements EventSubscriberInterface
         /** @var Form $form */
         $form = $this->boltForms->get($formName);
 
-        if ($form->isValid() && $formData !== null && $reCaptchaResponse['success']) {
+        if ($formData !== null && $reCaptchaResponse['success']) {
             $lifeEvent = new LifecycleEvent($formConfig, $formData, $form->getClickedButton());
 
             // Process
