@@ -5,6 +5,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
+use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Silex\Application;
@@ -53,10 +54,11 @@ class Email
     /**
      * Create a notification message.
      *
-     * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param FormConfig   $formConfig
+     * @param FormData     $formData
+     * @param FormMetaData $formMetaData
      */
-    public function doNotification(FormConfig $formConfig, FormData $formData)
+    public function doNotification(FormConfig $formConfig, FormData $formData, FormMetaData $formMetaData)
     {
         $emailConfig = new EmailConfig($this->config['debug'], $formConfig, $formData);
 

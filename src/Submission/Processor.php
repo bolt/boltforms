@@ -296,15 +296,16 @@ class Processor implements EventSubscriberInterface
     {
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
+        $formMeta = $lifeEvent->getFormMetaData();
 
         // Write to a Contenttype
         if ($formConfig->getDatabase()->getContentType() !== null) {
-            $this->app['boltforms.database']->writeToContenType($formConfig->getDatabase()->getContentType(), $formData);
+            $this->app['boltforms.database']->writeToContenType($formConfig->getDatabase()->getContentType(), $formData, $formMeta);
         }
 
         // Write to a normal database table
         if ($formConfig->getDatabase()->getTable() !== null) {
-            $this->app['boltforms.database']->writeToTable($formConfig->getDatabase()->getTable(), $formData);
+            $this->app['boltforms.database']->writeToTable($formConfig->getDatabase()->getTable(), $formData, $formMeta);
         }
     }
 
@@ -317,9 +318,10 @@ class Processor implements EventSubscriberInterface
     {
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
+        $formMeta = $lifeEvent->getFormMetaData();
 
         if ($formConfig->getNotification()->getEnabled()) {
-            $this->app['boltforms.email']->doNotification($formConfig, $formData);
+            $this->app['boltforms.email']->doNotification($formConfig, $formData, $formMeta);
         }
     }
 

@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt\Exception\StorageException;
+use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Storage\Entity\Content;
 use Silex\Application;
 
@@ -41,10 +42,11 @@ class Database
     /**
      * Write out form data to a specified database table
      *
-     * @param string   $tableName
-     * @param FormData $formData
+     * @param string       $tableName
+     * @param FormData     $formData
+     * @param FormMetaData $formMetaData
      */
-    public function writeToTable($tableName, FormData $formData)
+    public function writeToTable($tableName, FormData $formData, FormMetaData $formMetaData)
     {
         $saveData = [];
 
@@ -67,6 +69,13 @@ class Database
             if ($formData->has($colName)) {
                 $saveData[$colName] = $formData->get($colName, true);
             }
+
+            // Add any meta values that are requested for 'database' use
+            foreach ($formMetaData->keys() as $key) {
+                if ($key === $colName && in_array('database', (array) $formMetaData->get($key)->getUse())) {
+                    $saveData[$colName] = $formMetaData->get($key)->getValue();
+                }
+            }
         }
 
         try {
@@ -79,10 +88,11 @@ class Database
     /**
      * Write out form data to a specified contenttype table
      *
-     * @param string   $contentType
-     * @param FormData $formData
+     * @param string       $contentType
+     * @param FormData     $formData
+     * @param FormMetaData $formMetaData
      */
-    public function writeToContenType($contentType, FormData $formData)
+    public function writeToContenType($contentType, FormData $formData, FormMetaData $formMetaData)
     {
         try {
             $repo = $this->app['storage']->getRepository($contentType);
@@ -104,6 +114,13 @@ class Database
         foreach ($formData->keys() as $name) {
             // Store the data array into the record
             $record->set($name, $formData->get($name, true));
+        }
+
+        // Add any meta values that are requested for 'database' use
+        foreach ($formMetaData->keys() as $key) {
+            if (in_array('database', (array) $formMetaData->get($key)->getUse())) {
+                $record->set($key, $formMetaData->get($key)->getValue());
+            }
         }
 
         try {
