@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Twig;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
+use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Silex\Application;
@@ -58,6 +59,7 @@ class BoltFormsExtension
      * @param array  $options        Options array passed to Symfony Forms
      * @param array  $defaults       Default field values
      * @param array  $override       Array of form parameters / fields to override settings for
+     * @param mixed  $meta           Meta data that is not transmitted with the form
      *
      * @return \Twig_Markup
      */
@@ -68,7 +70,8 @@ class BoltFormsExtension
         $data = null,
         $options = [],
         $defaults = null,
-        $override = null
+        $override = null,
+        $meta = null
     ) {
         if (!$this->config->getBaseForms()->has($formName)) {
             return new \Twig_Markup(
@@ -100,7 +103,10 @@ class BoltFormsExtension
         $processor = $this->app['boltforms.processor'];
 
         try {
-            $boltForms->create($formName, FormType::class, $data, $options);
+            $boltForms
+                ->create($formName, FormType::class, $data, $options)
+                ->setMeta((array) $meta)
+            ;
         } catch (Exception\BoltFormsException $e) {
             return $this->handleException($formName, $e);
         }

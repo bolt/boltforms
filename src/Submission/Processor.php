@@ -129,7 +129,7 @@ class Processor implements EventSubscriberInterface
         /** @var FormData $formData */
         $formData = $this->handleRequest($formName);
         /** @var Form $form */
-        $form = $this->boltForms->get($formName);
+        $form = $this->boltForms->get($formName)->getForm();
 
         if ($formData !== null && $reCaptchaResponse['success']) {
             $lifeEvent = new LifecycleEvent($formConfig, $formData, $form->getClickedButton());
@@ -201,7 +201,7 @@ class Processor implements EventSubscriberInterface
         }
 
         /** @var Form $form */
-        $form = $this->boltForms->get($formName);
+        $form = $this->boltForms->get($formName)->getForm();
         // Handle the Request object to check if the data sent is valid
         $form->handleRequest($request);
 

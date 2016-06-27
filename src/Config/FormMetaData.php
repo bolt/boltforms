@@ -30,4 +30,33 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class FormMetaData extends ParameterBag
 {
+    /** @var string */
+    protected $_metaId;
+
+    /**
+     * Constructor.
+     *
+     * @param array  $parameters
+     */
+    public function __construct(array $parameters = [])
+    {
+        parent::__construct($parameters);
+        $this->_metaId = bin2hex(random_bytes(32));;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMetaId()
+    {
+        return $this->_metaId;
+    }
+
+    /**
+     * @param string $metaId
+     */
+    public function setMetaId($metaId)
+    {
+        $this->_metaId = $metaId;
+    }
 }

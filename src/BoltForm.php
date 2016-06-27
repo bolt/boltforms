@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Symfony\Component\Form\Form;
 
@@ -31,18 +32,22 @@ class BoltForm
 {
     /** @var Form */
     protected $form;
+    /** @var FormConfig */
+    private $formConfig;
     /** @var FormMetaData */
     protected $meta;
 
     /**
      * Constructor.
      *
+     * @param FormConfig   $formConfig
      * @param Form         $form
      * @param FormMetaData $meta
      */
-    public function __construct(Form $form = null, FormMetaData $meta = null)
+    public function __construct(Form $form = null, FormConfig $formConfig = null, FormMetaData $meta = null)
     {
         $this->form = $form;
+        $this->formConfig = $formConfig;
         $this->meta = $meta;
     }
 
@@ -75,13 +80,39 @@ class BoltForm
     }
 
     /**
-     * @param FormMetaData $meta
+     * @param FormMetaData|array $meta
      *
      * @return BoltForm
      */
     public function setMeta($meta)
     {
-        $this->meta = $meta;
+        if ($this->form === null) {
+            throw new Exception\UnknownFormException('Form not created');
+        }
+        if ($meta instanceof FormMetaData) {
+            $meta = $meta->all();
+        }
+        $this->meta->replace($meta);
+
+        return $this;
+    }
+
+    /**
+     * @return FormConfig
+     */
+    public function getFormConfig()
+    {
+        return $this->formConfig;
+    }
+
+    /**
+     * @param FormConfig $formConfig
+     *
+     * @return BoltForm
+     */
+    public function setFormConfig($formConfig)
+    {
+        $this->formConfig = $formConfig;
 
         return $this;
     }

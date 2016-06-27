@@ -5,6 +5,7 @@ use Bolt\Asset\Snippet\Snippet;
 use Bolt\Asset\Target;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
+use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
@@ -38,11 +39,13 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class BoltForms
 {
+    const META_FIELD_NAME = '_boltforms_meta';
+
     /** @var Application */
     private $app;
     /** @var ParameterBag */
     private $config;
-    /** @var array */
+    /** @var BoltForm[] */
     private $forms;
     /** @var boolean */
     private $jsQueued;
@@ -68,7 +71,7 @@ class BoltForms
      *
      * @throws FormOptionException
      *
-     * @return Form
+     * @return BoltForm
      */
     public function create($formName, $type = FormType::class, $data = null, $options = [])
     {
@@ -79,7 +82,6 @@ class BoltForms
             ->addEventSubscriber(new BoltFormsSubscriber($this->app))
             ->getForm()
         ;
-        $this->forms[$formName]['form'] = $form;
 
         $em = $this->app['storage'];
         $dispatcher = $this->app['dispatcher'];
@@ -87,6 +89,8 @@ class BoltForms
 
         /** @var FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
+        $this->forms[$formName] = new BoltForm($form, $formConfig, new FormMetaData());
+
         foreach ($formConfig->getFields()->toArray() as $key => $field) {
             $field['options'] = !empty($field['options']) ? $field['options'] : [];
 
@@ -97,7 +101,7 @@ class BoltForms
             $this->addField($formName, $key, $field['type'], $field['options']);
         }
 
-        return $form;
+        return $this->forms[$formName];
     }
 
     /**
@@ -126,7 +130,10 @@ class BoltForms
         }
 
         try {
-            $this->get($formName)->add($fieldName, $type, $options->toArray());
+            $this->get($formName)
+                ->getForm()
+                ->add($fieldName, $type, $options->toArray())
+            ;
         } catch (InvalidConstraintException $e) {
             $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
         }
@@ -137,12 +144,12 @@ class BoltForms
      *
      * @param string $formName
      *
-     * @return Form
+     * @return BoltForm
      */
     public function get($formName)
     {
         if ($this->has($formName)) {
-            return $this->forms[$formName]['form'];
+            return $this->forms[$formName];
         }
 
         throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
@@ -153,7 +160,7 @@ class BoltForms
      */
     public function getForm($formName)
     {
-        return $this->get($formName);
+        return $this->get($formName)->getForm();
     }
 
     /**
@@ -165,57 +172,23 @@ class BoltForms
      */
     public function has($formName)
     {
-        return isset($this->forms[$formName]['form']);
+        return isset($this->forms[$formName]) && $this->forms[$formName]->getForm() !== null;
     }
 
     /**
      * Set a form on the forms array.
      *
      * @param Form  $form
-     * @param mixed $meta
+     * @param array $meta
      */
     public function set(Form $form, $meta = null)
     {
         $formName = $form->getName();
-        $this->forms[$formName] = [
-            'form' => $form,
-            'meta' => $meta,
-        ];
-    }
-
-    /**
-     * Get a particular form's meta.
-     *
-     * @param string $formName
-     *
-     * @throws Exception\UnknownFormException
-     *
-     * @return mixed
-     */
-    public function getMeta($formName)
-    {
-        if (!$this->has($formName)) {
-            throw new Exception\UnknownFormException(sprintf('Unknown form requested, or has not been created: %s', $formName));
+        $this->forms[$formName]->setForm($form);
+        if ($meta === null) {
+            return;
         }
-
-        return $this->forms[$formName]['meta'];
-    }
-
-    /**
-     * Set a form's meta.
-     *
-     * @param string $formName
-     * @param mixed  $meta
-     *
-     * @throws Exception\UnknownFormException
-     */
-    public function setMeta($formName, $meta = null)
-    {
-        if (!$this->has($formName)) {
-            throw new Exception\UnknownFormException(sprintf('Unknown form requested, or has not been created: %s', $formName));
-        }
-
-        $this->forms[$formName]['meta'] = $meta;
+        $this->forms[$formName]->setMeta($meta);
     }
 
     /**
@@ -251,7 +224,10 @@ class BoltForms
         }
 
         // Add the form object for use in the template
-        $context['form'] = $this->get($formName)->createView();
+        $context['form'] = $this->get($formName)
+            ->getForm()
+            ->createView()
+        ;
 
         // Add JavaScript if doing the AJAX dance.
         if ($loadAjax) {
