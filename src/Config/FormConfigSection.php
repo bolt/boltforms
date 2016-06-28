@@ -59,10 +59,13 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @property boolean attach_files
  * @property string  debug_address
  */
-class FormConfigSection extends ParameterBag
+class FormConfigSection extends ParameterBag implements \ArrayAccess
 {
     /** @var array */
     protected $parameters;
+
+    /** @deprecated */
+    use LegacyArrayAccessTrait;
 
     public function __construct(array $parameters)
     {
