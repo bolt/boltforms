@@ -66,7 +66,7 @@ class EmailConfig implements \ArrayAccess
         $this->globalDebug = $globalDebug;
         $this->formConfig = $formConfig;
         $this->formData = $formData;
-        $this->attachFiles = $formConfig->getNotification()->attach_files ?: false;
+        $this->attachFiles = $formConfig->getNotification()->get('attach_files', false);
 
         $this->setDebugState();
         $this->setEmailConfig();
@@ -355,7 +355,7 @@ class EmailConfig implements \ArrayAccess
         ];
 
         foreach ($hashMap as $property => $key) {
-            $this->{$property} = $this->getConfigValue($notify->{$key});
+            $this->{$property} = $this->getConfigValue($notify->get($key));
         }
     }
 
