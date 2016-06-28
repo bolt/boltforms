@@ -244,9 +244,9 @@ class Processor implements EventSubscriberInterface
             }
 
             // Handle events for custom data
-            $fieldConf = $formConfig->getFields()->{$fieldName}();
-            if (isset($fieldConf['event']['name'])) {
-                $formData->set($fieldName, $this->dispatchCustomDataEvent($fieldConf['event']));
+            $fieldConf = $formConfig->getFields()->get($fieldName);
+            if ($fieldConf->has('event') && $fieldConf->get('event')->has('name')) {
+                $formData->set($fieldName, $this->dispatchCustomDataEvent($fieldConf->get('event')));
             }
         }
     }

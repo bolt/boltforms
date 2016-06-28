@@ -1,5 +1,8 @@
 <?php
+
 namespace Bolt\Extension\Bolt\BoltForms\Config;
+
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Form section configuration for BoltForms
@@ -56,51 +59,20 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  * @property boolean attach_files
  * @property string  debug_address
  */
-class FormConfigSection implements \ArrayAccess
+class FormConfigSection extends ParameterBag
 {
     /** @var array */
-    private $parameters;
+    protected $parameters;
 
     public function __construct(array $parameters)
     {
+        parent::__construct();
         foreach ($parameters as $key => $value) {
             if (is_array($value)) {
                 $value = new self($value);
             }
             $this->parameters[$key] = $value;
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function all()
-    {
-        return $this->parameters;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function get($name)
-    {
-        if (isset($this->parameters[$name])) {
-            return $this->parameters[$name];
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function has($name)
-    {
-        return isset($this->parameters[$name]);
     }
 
     public function toArray()
@@ -125,49 +97,5 @@ class FormConfigSection implements \ArrayAccess
         }
 
         return null;
-    }
-
-    public function __get($name)
-    {
-        if (isset($this->parameters[$name])) {
-            return $this->parameters[$name];
-        }
-
-        return null;
-    }
-
-    public function __set($name, $value)
-    {
-        $this->parameters[$name] = $value;
-    }
-
-    public function __isset($name)
-    {
-        return isset($this->parameters[$name]);
-    }
-
-    public function __unset($name)
-    {
-        unset($this->parameters[$name]);
-    }
-
-    public function offsetSet($name, $value)
-    {
-        $this->parameters[$name] = $value;
-    }
-
-    public function offsetExists($name)
-    {
-        return isset($this->parameters[$name]);
-    }
-
-    public function offsetUnset($name)
-    {
-        unset($this->parameters[$name]);
-    }
-
-    public function offsetGet($name)
-    {
-        return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
     }
 }
