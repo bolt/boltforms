@@ -59,15 +59,15 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
 class FormConfigSection implements \ArrayAccess
 {
     /** @var array */
-    private $config;
+    private $parameters;
 
-    public function __construct(array $config)
+    public function __construct(array $parameters)
     {
-        foreach ($config as $key => $value) {
+        foreach ($parameters as $key => $value) {
             if (is_array($value)) {
                 $value = new self($value);
             }
-            $this->config[$key] = $value;
+            $this->parameters[$key] = $value;
         }
     }
 
@@ -78,8 +78,8 @@ class FormConfigSection implements \ArrayAccess
      */
     public function get($name)
     {
-        if (isset($this->config[$name])) {
-            return $this->config[$name];
+        if (isset($this->parameters[$name])) {
+            return $this->parameters[$name];
         }
 
         return null;
@@ -92,13 +92,13 @@ class FormConfigSection implements \ArrayAccess
      */
     public function has($name)
     {
-        return isset($this->config[$name]);
+        return isset($this->parameters[$name]);
     }
 
     public function toArray()
     {
         $config = [];
-        foreach ($this->config as $key => $value) {
+        foreach ($this->parameters as $key => $value) {
             if ($value instanceof self) {
                 $config[$key] = $value->toArray();
             } else {
@@ -112,8 +112,8 @@ class FormConfigSection implements \ArrayAccess
     public function __call($name, $args = [])
     {
         $name = strtolower(preg_replace('/^get/', '', $name));
-        if (isset($this->config[$name])) {
-            return $this->config[$name];
+        if (isset($this->parameters[$name])) {
+            return $this->parameters[$name];
         }
 
         return null;
@@ -121,8 +121,8 @@ class FormConfigSection implements \ArrayAccess
 
     public function __get($name)
     {
-        if (isset($this->config[$name])) {
-            return $this->config[$name];
+        if (isset($this->parameters[$name])) {
+            return $this->parameters[$name];
         }
 
         return null;
@@ -130,36 +130,36 @@ class FormConfigSection implements \ArrayAccess
 
     public function __set($name, $value)
     {
-        $this->config[$name] = $value;
+        $this->parameters[$name] = $value;
     }
 
     public function __isset($name)
     {
-        return isset($this->config[$name]);
+        return isset($this->parameters[$name]);
     }
 
     public function __unset($name)
     {
-        unset($this->config[$name]);
+        unset($this->parameters[$name]);
     }
 
     public function offsetSet($name, $value)
     {
-        $this->config[$name] = $value;
+        $this->parameters[$name] = $value;
     }
 
     public function offsetExists($name)
     {
-        return isset($this->config[$name]);
+        return isset($this->parameters[$name]);
     }
 
     public function offsetUnset($name)
     {
-        unset($this->config[$name]);
+        unset($this->parameters[$name]);
     }
 
     public function offsetGet($name)
     {
-        return isset($this->config[$name]) ? $this->config[$name] : null;
+        return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
     }
 }
