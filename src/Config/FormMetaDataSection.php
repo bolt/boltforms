@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 /**
  * Form meta data section bag.
  *

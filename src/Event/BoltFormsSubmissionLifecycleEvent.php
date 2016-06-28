@@ -50,9 +50,9 @@ class BoltFormsSubmissionLifecycleEvent extends Event
      * @param Button       $clickedButton
      */
     public function __construct(
-        FormConfig $formConfig, 
-        FormData $formData, 
-        FormMetaData $formMetaData, 
+        FormConfig $formConfig,
+        FormData $formData,
+        FormMetaData $formMetaData,
         Button $clickedButton
     ) {
         $this->formConfig = $formConfig;

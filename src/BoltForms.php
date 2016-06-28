@@ -67,7 +67,7 @@ class BoltForms
     /**
      * On response middleware to handle meta persistence.
      *
-     * @param Request  $request
+     * @param Request $request
      */
     public function onResponse(Request $request)
     {
