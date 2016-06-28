@@ -4,8 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt\Asset\Snippet\Snippet;
 use Bolt\Asset\Target;
 use Bolt\Controller\Zone;
-use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
+use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
@@ -115,9 +114,9 @@ class BoltForms
         $dispatcher = $this->app['dispatcher'];
         $this->config->resolveForm($formName, $em, $dispatcher);
 
-        /** @var FormConfig $formConfig */
+        /** @var Config\FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
-        $formMeta = new FormMetaData();
+        $formMeta = new Config\FormMetaData();
         $this->forms[$formName] = new BoltForm($form, $formConfig, $formMeta);
 
         if ($formConfig->getSubmission()->getAjax()) {
@@ -150,17 +149,17 @@ class BoltForms
     /**
      * Add a field to the form.
      *
-     * @param string             $formName  Name of the form
-     * @param string             $fieldName
-     * @param string             $type
-     * @param FieldOptions|array $options
+     * @param string                    $formName  Name of the form
+     * @param string                    $fieldName
+     * @param string                    $type
+     * @param Config\FieldOptions|array $options
      */
     public function addField($formName, $fieldName, $type, $options)
     {
         if (is_array($options)) {
             $em = $this->app['storage'];
             $dispatcher = $this->app['dispatcher'];
-            $options = new FieldOptions($formName, $fieldName, $type, $options, $em, $dispatcher);
+            $options = new Config\FieldOptions($formName, $fieldName, $type, $options, $em, $dispatcher);
         }
 
         try {

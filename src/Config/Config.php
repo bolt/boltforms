@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
 use Bolt\Extension\Bolt\BoltForms\Exception;
-use Bolt\Extension\Bolt\BoltForms\FieldOptions;
 use Bolt\Helpers\Arr;
 use Bolt\Storage\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

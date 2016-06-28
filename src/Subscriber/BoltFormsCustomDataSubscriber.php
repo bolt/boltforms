@@ -54,15 +54,15 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     {
         $params = $event->getParameters();
 
-        if (isset($params['table'])) {
-            $table = $params['table'];
-        } elseif (isset($params['contenttype'])) {
-            $table = $this->app['db.options']['prefix'] . $params['contenttype'];
+        if ($params->has('table')) {
+            $table = $params->get('table');
+        } elseif ($params->has('contenttype')) {
+            $table = $this->app['schema']->getTableName($params->get('contenttype'));
         } else {
             return;
         }
-        $min = isset($params['min']) ? $params['min'] : null;
-        $data = $this->getNextNumber($table, $params['column'], $min);
+        $min = $params->get('min');
+        $data = $this->getNextNumber($table, $params->get('column'), $min);
 
         if ($data !== null) {
             $event->setData($data);
@@ -77,8 +77,8 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     public function randomString(BoltFormsCustomDataEvent $event)
     {
         $params = $event->getParameters();
-        $length = isset($params['length']) ? $params['length'] : 12;
-        $event->setData($this->app['randomgenerator']->generateString($length));
+        $length = $params->getInt('length', 12);
+        $event->setData(bin2hex(random_bytes($length)));
     }
 
     /**
@@ -89,11 +89,12 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     public function serverValue(BoltFormsCustomDataEvent $event)
     {
         $params = $event->getParameters();
-        if (!isset($params['key'])) {
+        $key = $params->get('key');
+        if ($key === null) {
             return;
         }
 
-        $event->setData($this->app['request']->server->get($params['key']));
+        $event->setData($this->app['request']->server->get($key));
     }
 
     /**
@@ -104,11 +105,12 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     public function sessionValue(BoltFormsCustomDataEvent $event)
     {
         $params = $event->getParameters();
-        if (!isset($params['key'])) {
+        $key = $params->get('key');
+        if ($key === null) {
             return;
         }
 
-        $event->setData($this->app['session']->get($params['key']));
+        $event->setData($this->app['session']->get($key));
     }
 
     /**
@@ -119,11 +121,12 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     public function timestamp(BoltFormsCustomDataEvent $event)
     {
         $params = $event->getParameters();
-        if (!isset($params['format'])) {
+        $format = $params->get('format');
+        if ($format === null) {
             return;
         }
 
-        $event->setData(strftime($params['format']));
+        $event->setData(strftime($format));
     }
 
     /**

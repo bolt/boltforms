@@ -1,7 +1,10 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms;
+namespace Bolt\Extension\Bolt\BoltForms\Config;
 
+use Bolt\Extension\Bolt\BoltForms\Choice;
+use Bolt\Extension\Bolt\BoltForms\Exception;
+use Bolt\Extension\Bolt\BoltForms\Factory;
 use Bolt\Storage\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
