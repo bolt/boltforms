@@ -371,6 +371,14 @@ class EmailConfig implements \ArrayAccess
      */
     private function getConfigValue($value)
     {
+        if ($value instanceof FormConfigSection) {
+            $parts = [];
+            foreach ($value->all() as $val) {
+                $parts[$val] = $this->getConfigValue($val);
+            }
+
+            return implode(' ', $parts);
+        }
         if ($this->formData->has($value)) {
             return $this->formData->get($value);
         }

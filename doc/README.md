@@ -6,6 +6,7 @@ BoltForms Documentation
     * [Upload](fields/upload.md)
   * [Meta data](meta-data.md)
   * [Templates](templates.md)
+  * [Email Notifications](email.md)
   * [Submission & Redirection](submission.md)
   * [Events](events.md)
   * [API](api.md)

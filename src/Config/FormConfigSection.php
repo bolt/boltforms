@@ -72,6 +72,14 @@ class FormConfigSection implements \ArrayAccess
     }
 
     /**
+     * @return array
+     */
+    public function all()
+    {
+        return $this->parameters;
+    }
+
+    /**
      * @param string $name
      *
      * @return mixed
