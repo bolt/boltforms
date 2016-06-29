@@ -87,9 +87,6 @@ Upload Types
 For more information on this field type, see the [upload fields documentation](fields/upload.md)
 
 
-```
-
-
 Hidden field
 ------------
 
@@ -194,3 +191,24 @@ Set the `sent_on` field value to the current date and/or time as formatted.
         params:
           format: '%F %T'
 ```
+
+Dynamic Fields
+--------------
+
+You can dynamically add fields in a template when calling `{{ boltforms() }}`,
+e.g.:
+
+```twig
+    {{ boltforms('form_name',
+        override = {
+            'fields':
+                'non_config_field': {
+                    type: text
+                    options: {
+                        label: 'Once upon a time…'
+                    }
+                }
+        })
+    }}
+```
+
