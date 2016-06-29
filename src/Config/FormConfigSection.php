@@ -101,4 +101,14 @@ class FormConfigSection extends ParameterBag implements \ArrayAccess
 
         return null;
     }
+
+    /**
+     * @deprecated For legacy use. To be removed in 4.0
+     *
+     * @internal
+     */
+    protected function getParameters()
+    {
+        return $this->parameters;
+    }
 }

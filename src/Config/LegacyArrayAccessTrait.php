@@ -11,22 +11,22 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  */
 trait LegacyArrayAccessTrait
 {
-    protected $parameters;
-
     public function offsetSet($name, $value)
     {
-        $this->parameters[$name] = $value;
+        $this->getParameters()[$name] = $value;
     }
     public function offsetExists($name)
     {
-        return isset($this->parameters[$name]);
+        return isset($this->getParameters()[$name]);
     }
     public function offsetUnset($name)
     {
-        unset($this->parameters[$name]);
+        unset($this->getParameters()[$name]);
     }
     public function offsetGet($name)
     {
-        return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
+        return isset($this->getParameters()[$name]) ? $this->getParameters()[$name] : null;
     }
+
+    abstract protected function getParameters();
 }
