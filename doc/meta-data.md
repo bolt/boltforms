@@ -13,17 +13,19 @@ and a set of value keys:
 An example would be:
 
 ```
-{{ boltforms('my_form', meta = {
-    'name': {
-        use: [ 'database', 'email' ],
-        value: variable_value
-    },
-    'id': {
-        use: 'database',
-        value: record.id
-    },
-    'koala': {
-        value: { food: 'Gum Leaves', shelter: 'Gum Tree }
-    }
-}) }}
+{{ boltforms('my_form', 
+    meta = {
+        'name': {
+            use: [ 'database', 'email' ],
+            value: variable_value
+        },
+        'id': {
+            use: 'database',
+            value: record.id
+        },
+        'koala': {
+            value: { food: 'Gum Leaves', shelter: 'Gum Tree }
+        }
+    }) 
+}}
 ```
