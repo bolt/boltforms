@@ -92,7 +92,7 @@ class BoltForm
         if ($meta instanceof FormMetaData) {
             $meta = $meta->all();
         }
-        $this->meta->replace($meta);
+        $this->meta->replace((array) $meta);
 
         return $this;
     }
