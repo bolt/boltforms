@@ -1,9 +1,10 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms;
+namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
 use Bolt\Exception\StorageException;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
+use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Storage\Entity\Content;
 use Silex\Application;
 

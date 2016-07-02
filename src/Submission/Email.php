@@ -1,6 +1,7 @@
 <?php
-namespace Bolt\Extension\Bolt\BoltForms;
+namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
+use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
@@ -8,6 +9,8 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Silex\Application;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -15,6 +18,7 @@ use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 /**
  * Email functions for BoltForms
  *

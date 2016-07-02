@@ -5,10 +5,8 @@ namespace Bolt\Extension\Bolt\BoltForms\Provider;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
 use Bolt\Extension\Bolt\BoltForms\Config;
-use Bolt\Extension\Bolt\BoltForms\Database;
-use Bolt\Extension\Bolt\BoltForms\Email;
 use Bolt\Extension\Bolt\BoltForms\Factory;
-use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
+use Bolt\Extension\Bolt\BoltForms\Submission;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsCustomDataSubscriber;
 use Bolt\Extension\Bolt\BoltForms\Twig;
 use Pimple as Container;
@@ -67,7 +65,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
         $app['boltforms.processor'] = $app->share(
             function ($app) {
-                $processor = new Processor(
+                $processor = new Submission\Processor(
                     $app['boltforms.config'],
                     $app['boltforms'],
                     $app['dispatcher'],
@@ -81,7 +79,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
         $app['boltforms.database'] = $app->share(
             function ($app) {
-                $database = new Database($app);
+                $database = new Submission\Database($app);
 
                 return $database;
             }
@@ -89,7 +87,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
         $app['boltforms.email'] = $app->share(
             function ($app) {
-                $email = new Email($app);
+                $email = new Submission\Email($app);
 
                 return $email;
             }
