@@ -124,6 +124,10 @@ contact:
         multiple: false
     submit:
       type: submit
+      options:
+        label: Submit my message &raquo;
+        attr:
+          class: button primary
 
 ## Example 2
 #
@@ -296,4 +300,7 @@ contact:
 #        label: Picture of your pet that you want us to add to our site
 #    submit:
 #      type: submit
-
+#      options:
+#        label: Submit my message &raquo;
+#        attr:
+#          class: button primary
