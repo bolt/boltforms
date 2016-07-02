@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission;
 use Bolt\Exception\StorageException;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\FormData;
-use Bolt\Storage\Entity\Content;
+use Bolt\Storage\EntityManager;
 use Silex\Application;
 
 /**
@@ -95,8 +95,11 @@ class Database
      */
     public function writeToContenType($contentType, FormData $formData, FormMetaData $formMetaData)
     {
+        /** @var EntityManager $em */
+        $em = $this->app['storage'];
+
         try {
-            $repo = $this->app['storage']->getRepository($contentType);
+            $repo = $em->getRepository($contentType);
         } catch (StorageException $e) {
             $this->app['logger.system']->critical("[Bolt Forms] Invalid ContentType name `$contentType` specified.", ['event' => 'extensions', 'exception' => $e]);
 
@@ -104,7 +107,7 @@ class Database
         }
 
         // Get an empty record for out contenttype
-        $record = new Content();
+        $record = $repo->getEntityBuilder()->getEntity();
 
         // Set a published date
         $record->setStatus('published');
