@@ -5,24 +5,19 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
-use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
-use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
+use Bolt\Extension\Bolt\BoltForms\Submission\Processor\ProcessorInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 use Silex\Application;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -87,32 +82,47 @@ class Processor implements EventSubscriberInterface
     }
 
     /**
-     * Returns an array of event names this subscriber wants to listen to.
-     *
-     * The array keys are event names and the value can be:
-     *
-     *  * The method name to call (priority defaults to 0)
-     *  * An array composed of the method name to call and the priority
-     *  * An array of arrays composed of the method names to call and respective
-     *    priorities, or 0 if unset
-     *
-     * For instance:
-     *
-     *  * array('eventName' => 'methodName')
-     *  * array('eventName' => array('methodName', $priority))
-     *  * array('eventName' => array(array('methodName1', $priority), array('methodName2')))
-     *
-     * @return array The event names to listen to
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
         return [
-            BoltFormsEvents::SUBMISSION_PROCESS_FIELDS   => ['processFields', 0],
-            BoltFormsEvents::SUBMISSION_PROCESS_DATABASE => ['processDatabase', 0],
-            BoltFormsEvents::SUBMISSION_PROCESS_EMAIL    => ['processEmailNotification', 0],
-            BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK => ['processFeedback', 0],
-            BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT => ['processRedirect', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_FIELDS      => ['onProcessLifecycleEvent', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE => ['onProcessLifecycleEvent', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_DATABASE    => ['onProcessLifecycleEvent', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_EMAIL       => ['onProcessLifecycleEvent', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK    => ['onProcessLifecycleEvent', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT    => ['onProcessLifecycleEvent', 0],
         ];
+    }
+
+    /**
+     * Handle local processing of ProcessLifecycleEvents.
+     *
+     * @param LifecycleEvent           $lifeEvent
+     * @param string                   $eventName
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function onProcessLifecycleEvent(LifecycleEvent $lifeEvent, $eventName, EventDispatcherInterface $dispatcher)
+    {
+        $map = [
+            BoltFormsEvents::SUBMISSION_PROCESS_FIELDS      => 'fields',
+            BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE => 'content',
+            BoltFormsEvents::SUBMISSION_PROCESS_DATABASE    => 'database',
+            BoltFormsEvents::SUBMISSION_PROCESS_EMAIL       => 'email',
+            BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK    => 'feedback',
+            BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT    => 'redirect',
+        ];
+        $key = $map[$eventName];
+
+        /** @var ProcessorInterface $processor */
+        $processor = $this->app['boltforms.processors'][$key];
+        $processor->process($lifeEvent, $eventName, $dispatcher);
+
+        // Move any messages generated
+        foreach ($processor->getMessages() as $message) {
+            $this->message($message[0], $message[1], $message[2]);
+        }
     }
 
     /**
@@ -139,24 +149,51 @@ class Processor implements EventSubscriberInterface
             $lifeEvent = new LifecycleEvent($formConfig, $formData, $formMetaData, $form->getClickedButton());
 
             // Process
-            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
-            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
-            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE, $lifeEvent);
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
 
             // Post processing event
             $processorEvent = new BoltFormsProcessorEvent($formName, $formData->all());
-            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
+            $this->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
 
             // Feedback notices
-            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK, $lifeEvent);
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK, $lifeEvent);
 
             // Redirect if a redirect is set and the page exists.
-            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT, $lifeEvent);
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT, $lifeEvent);
 
             return $returnData ? $formData : true;
         }
 
         throw new FormValidationException($formConfig->getFeedback()->getError() ?: 'There are errors in the form, please fix before trying to resubmit');
+    }
+
+    /**
+     * Dispatch an event.
+     *
+     * @param string $eventName
+     * @param Event  $event
+     *
+     * @throws \Exception
+     */
+    protected function dispatch($eventName, Event $event)
+    {
+        if ($listeners = $this->dispatcher->getListeners($eventName)) {
+            foreach ($listeners as $listener) {
+                if ($event->isPropagationStopped()) {
+                    break;
+                }
+                try {
+                    call_user_func($listener, $event, $eventName, $this->dispatcher);
+                } catch (HttpException $e) {
+                    throw $e;
+                } catch (\Exception $e) {
+                    $this->exception($e, false, 'An event dispatcher encountered an exception.');
+                }
+            }
+        }
     }
 
     /**
@@ -215,184 +252,12 @@ class Processor implements EventSubscriberInterface
             $data = $form->getData();
 
             $event = new BoltFormsProcessorEvent($formName, $data);
-            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
 
             /** @deprecated will be removed in v4 */
-            $this->dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESSOR, $event);
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESSOR, $event);
 
             return new FormData($event->getData());
-        }
-
-        return null;
-    }
-
-    /**
-     * Process the fields to get usable data.
-     *
-     * @param LifecycleEvent $lifeEvent
-     *
-     * @throws FileUploadException
-     */
-    public function processFields(LifecycleEvent $lifeEvent)
-    {
-        $formConfig = $lifeEvent->getFormConfig();
-        $formData = $lifeEvent->getFormData();
-
-        foreach ($formData->keys() as $fieldName) {
-            $field = $formData->get($fieldName);
-
-            // Handle file uploads
-            if ($field instanceof UploadedFile) {
-                $this->processFieldFile($fieldName, $lifeEvent, $field);
-            }
-
-            // Handle events for custom data
-            $fieldConf = $formConfig->getFields()->get($fieldName);
-            if ($fieldConf->has('event') && $fieldConf->get('event')->has('name')) {
-                $formData->set($fieldName, $this->dispatchCustomDataEvent($fieldConf->get('event')));
-            }
-        }
-    }
-
-    /**
-     * @param string         $fieldName
-     * @param LifecycleEvent $lifeEvent
-     * @param UploadedFile   $field
-     *
-     * @throws FileUploadException
-     */
-    protected function processFieldFile($fieldName, LifecycleEvent $lifeEvent, UploadedFile $field)
-    {
-        if (!$field->isValid()) {
-            throw new FileUploadException($field->getErrorMessage(), $field->getErrorMessage());
-        }
-
-        $formConfig = $lifeEvent->getFormConfig();
-        $formData = $lifeEvent->getFormData();
-
-        // Get the upload object
-        /** @var UploadedFileHandler $fileHandler */
-        $fileHandler = new UploadedFileHandler($this->config, $formConfig, $field);
-        $formData->set($fieldName, $fileHandler);
-
-        if (!$this->config->getUploads()->get('enabled')) {
-            $this->message('File upload skipped as the administrator has disabled uploads for all forms.', 'debug', LogLevel::ERROR);
-
-            return;
-        }
-
-        $fileHandler->move();
-        $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()), 'debug', LogLevel::DEBUG);
-    }
-
-    /**
-     * Commit submitted data to the database if configured.
-     *
-     * @param LifecycleEvent $lifeEvent
-     */
-    public function processDatabase(LifecycleEvent $lifeEvent)
-    {
-        $formConfig = $lifeEvent->getFormConfig();
-        $formData = $lifeEvent->getFormData();
-        $formMeta = $lifeEvent->getFormMetaData();
-
-        // Write to a Contenttype
-        if ($formConfig->getDatabase()->getContentType() !== null) {
-            $this->app['boltforms.handlers']['content']->save($formConfig->getDatabase()->getContentType(), $formData, $formMeta);
-        }
-
-        // Write to a normal database table
-        if ($formConfig->getDatabase()->getTable() !== null) {
-            $this->app['boltforms.handlers']['database']->save($formConfig->getDatabase()->getTable(), $formData, $formMeta);
-        }
-    }
-
-    /**
-     * Send email notifications if configured.
-     *
-     * @param LifecycleEvent $lifeEvent
-     */
-    public function processEmailNotification(LifecycleEvent $lifeEvent)
-    {
-        $formConfig = $lifeEvent->getFormConfig();
-        $formData = $lifeEvent->getFormData();
-        $formMeta = $lifeEvent->getFormMetaData();
-
-        if ($formConfig->getNotification()->getEnabled()) {
-            $this->app['boltforms.handlers']['email']->doNotification($formConfig, $formData, $formMeta);
-        }
-    }
-
-    /**
-     * Set feedback notices.
-     *
-     * @param LifecycleEvent $lifeEvent
-     */
-    public function processFeedback(LifecycleEvent $lifeEvent)
-    {
-        $formConfig = $lifeEvent->getFormConfig();
-
-        $this->message($formConfig->getFeedback()->getSuccess(), 'info', LogLevel::DEBUG);
-        $this->app['session']->set(sprintf('boltforms_submit_%s', $formConfig->getName()), true);
-        $this->app['session']->save();
-    }
-
-    /**
-     * Redirect if a redirect is set and the page exists.
-     *
-     *
-     * @param LifecycleEvent $lifeEvent
-     *
-     * @throws HttpException
-     */
-    public function processRedirect(LifecycleEvent $lifeEvent)
-    {
-        $formConfig = $lifeEvent->getFormConfig();
-        $formData = $lifeEvent->getFormData();
-
-        if ($formConfig->getSubmission()->getAjax()) {
-            return;
-        }
-
-        $redirect = new RedirectHandler($this->app['url_matcher']);
-        if ($formConfig->getFeedback()->getRedirect()->getTarget() !== null) {
-            $redirect->redirect($formConfig, $formData);
-        }
-
-        // Do a get on the page as it was probably POSTed
-        $request = $this->app['request_stack']->getCurrentRequest();
-        $redirect->refresh($request);
-
-        throw new HttpException(Response::HTTP_OK, '', null, []);
-    }
-
-    /**
-     * Dispatch custom data events.
-     *
-     * @param FormConfigSection $eventConfig
-     *
-     * @return mixed
-     */
-    protected function dispatchCustomDataEvent(FormConfigSection $eventConfig)
-    {
-        if (strpos('boltforms.', $eventConfig->get('name')) === false) {
-            $eventName = 'boltforms.' . $eventConfig->get('name');
-        } else {
-            $eventName = $eventConfig->get('name');
-        }
-
-        if (!$this->dispatcher->hasListeners($eventName)) {
-            return null;
-        }
-
-        $eventParams = $eventConfig->get('params');
-        $event = new BoltFormsCustomDataEvent($eventName, $eventParams);
-        try {
-            $this->dispatcher->dispatch($eventName, $event);
-
-            return $event->getData();
-        } catch (\Exception $e) {
-            $this->exception($e, false, sprintf('%s subscriber encontered an exception:', $eventName));
         }
 
         return null;
