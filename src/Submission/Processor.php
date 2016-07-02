@@ -44,7 +44,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class Processor implements EventSubscriberInterface
 {
-    use FeedbackHandlerTrait;
+    use FeedbackTrait;
 
     /** @var Application */
     private $app;

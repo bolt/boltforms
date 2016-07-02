@@ -33,7 +33,7 @@ use Silex\Application;
  */
 class ContentTypeHandler
 {
-    use FeedbackHandlerTrait;
+    use FeedbackTrait;
 
     /** @var Application */
     private $app;

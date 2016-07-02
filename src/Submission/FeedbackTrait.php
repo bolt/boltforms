@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-trait FeedbackHandlerTrait
+trait FeedbackTrait
 {
     /**
      * Log a feedback message, at the required level per-target.

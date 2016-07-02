@@ -31,7 +31,7 @@ use Silex\Application;
  */
 class DatabaseHandler
 {
-    use FeedbackHandlerTrait;
+    use FeedbackTrait;
 
     /** @var Application */
     private $app;

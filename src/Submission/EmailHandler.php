@@ -42,7 +42,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class EmailHandler
 {
-    use FeedbackHandlerTrait;
+    use FeedbackTrait;
 
     /** @var Application */
     private $app;
