@@ -101,7 +101,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
         $app['boltforms.database'] = $app->share(
             function ($app) {
-                $database = new Submission\Database($app);
+                $database = new Submission\DatabaseHandler($app);
 
                 return $database;
             }

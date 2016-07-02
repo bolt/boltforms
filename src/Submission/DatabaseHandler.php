@@ -31,7 +31,7 @@ use Silex\Application;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Database
+class DatabaseHandler
 {
     use FeedbackHandlerTrait;
 
