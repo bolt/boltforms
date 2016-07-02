@@ -11,7 +11,6 @@ use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 /**
  * Email functions for BoltForms
  *
@@ -40,8 +39,23 @@ class Email
     private $app;
     /** @var array */
     private $config;
-    /** \Swift_Message */
+    /** \Swift_Mime_SimpleMessage */
     private $message;
+    /** @var array */
+    private $map = [
+        'to'  => ['setTo'  => [
+            'email' => 'getToEmail',
+            'name'  => 'getToName',
+        ]],
+        'cc'  => ['setCc'  => [
+            'email' => 'getToEmail',
+            'name'  => 'getToName',
+        ]],
+        'bcc' => ['setBcc' => [
+            'email' => 'getToEmail',
+            'name'  => 'getToName',
+        ]],
+    ];
 
     public function __construct(Application $app)
     {
@@ -137,9 +151,10 @@ class Email
          * Build email
          */
         $this->message
-                ->setSubject($subject)
-                ->setBody($text)
-                ->addPart($body, 'text/html');
+            ->setSubject($subject)
+            ->setBody($text)
+            ->addPart($body, 'text/html')
+        ;
     }
 
     /**
@@ -194,19 +209,9 @@ class Email
         $this->setFrom($emailConfig);
         $this->setReplyTo($emailConfig);
 
-        // If we're in debug mode, don't set anything more
-        if ($emailConfig->isDebug()) {
-            $this->message->setTo([
-                $emailConfig->getDebugEmail() => $emailConfig->getToName() ?: 'BoltForms Debug',
-            ]);
-
-            // Don't set any further recipients
-            return;
-        }
-
-        $this->setTo($emailConfig);
-        $this->setCc($emailConfig);
-        $this->setBcc($emailConfig);
+        $this->setEmailDeliveryField($emailConfig, 'to');
+        $this->setEmailDeliveryField($emailConfig, 'cc');
+        $this->setEmailDeliveryField($emailConfig, 'bcc');
     }
 
     /**
@@ -224,48 +229,6 @@ class Email
     }
 
     /**
-     * Set To.
-     *
-     * @param EmailConfig $emailConfig
-     */
-    private function setTo(EmailConfig $emailConfig)
-    {
-        if ($emailConfig->getToEmail()) {
-            $this->message->setTo([
-                $emailConfig->getToEmail() => $emailConfig->getToName(),
-            ]);
-        }
-    }
-
-    /**
-     * Set CC.
-     *
-     * @param EmailConfig $emailConfig
-     */
-    private function setCc(EmailConfig $emailConfig)
-    {
-        if ($emailConfig->getCcEmail()) {
-            $this->message->setCc([
-                $emailConfig->getCcEmail() => $emailConfig->getCcName(),
-            ]);
-        }
-    }
-
-    /**
-     * Set bCC.
-     *
-     * @param EmailConfig $emailConfig
-     */
-    private function setBcc(EmailConfig $emailConfig)
-    {
-        if ($emailConfig->getBccEmail()) {
-            $this->message->setBcc([
-                $emailConfig->getBccEmail() => $emailConfig->getBccName(),
-            ]);
-        }
-    }
-
-    /**
      * Set the ReplyTo.
      *
      * @param EmailConfig $emailConfig
@@ -277,6 +240,30 @@ class Email
                 $emailConfig->getReplyToEmail() => $emailConfig->getReplyToName(),
             ]);
         }
+    }
+
+    /**
+     * Ensure email addresses are sanitised during debug.
+     *
+     * @param EmailConfig $emailConfig
+     * @param string      $type
+     */
+    private function setEmailDeliveryField(EmailConfig $emailConfig, $type)
+    {
+        $swiftFunc = key($this->map[$type]);
+        $configFunc = $this->map[$type][$swiftFunc];
+        $email = call_user_func([$emailConfig, $configFunc['email']]);
+        $name = call_user_func([$emailConfig, $configFunc['name']]);
+
+        if ($email === null) {
+            return;
+        }
+
+        if ($emailConfig->isDebug()) {
+            $this->message->getHeaders()->addTextHeader("X-BoltForms-debug-$type", $email);
+            call_user_func([$this->message, $swiftFunc], [$emailConfig->getDebugEmail() => $name ?: 'BoltForms Debug']);
+        }
+        call_user_func([$this->message, $swiftFunc], [$email => $name ?: $email]);
     }
 
     /**
