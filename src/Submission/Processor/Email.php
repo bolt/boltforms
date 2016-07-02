@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
-use Bolt\Extension\Bolt\BoltForms\Submission\EmailHandler;
+use Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Pimple as Container;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -43,7 +43,7 @@ class Email extends AbstractProcessor
         $formMeta = $lifeEvent->getFormMetaData();
 
         if ($formConfig->getNotification()->getEnabled()) {
-            /** @var EmailHandler $handler */
+            /** @var Handler\Email $handler */
             $handler = $this->handlers['email'];
             $handler->doNotification($formConfig, $formData, $formMeta);
         }

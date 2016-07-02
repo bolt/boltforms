@@ -1,5 +1,5 @@
 <?php
-namespace Bolt\Extension\Bolt\BoltForms\Submission;
+namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
@@ -10,6 +10,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
 use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Silex\Application;
 use Symfony\Component\Console\Helper\Table;
@@ -40,7 +41,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class EmailHandler
+class Email
 {
     use FeedbackTrait;
 
