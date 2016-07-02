@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
-use Bolt\Extension\Bolt\BoltForms\Submission\DatabaseHandler;
+use Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -28,7 +28,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Database extends AbstractProcessor
+class DatabaseTable extends AbstractProcessor
 {
     /**
      * Commit submitted data to the database if configured.
@@ -43,7 +43,7 @@ class Database extends AbstractProcessor
 
         // Write to a normal database table
         if ($formConfig->getDatabase()->getTable() !== null) {
-            /** @var DatabaseHandler $handler */
+            /** @var Handler\DatabaseTable $handler */
             $handler = $this->handlers['database'];
             $handler->save($formConfig->getDatabase()->getTable(), $formData, $formMeta);
         }

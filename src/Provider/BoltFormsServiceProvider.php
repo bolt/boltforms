@@ -89,7 +89,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             function ($app) {
                 return new Container([
                     'content'  => $app->share(function () use ($app) { return new Submission\Processor\ContentType($app['boltforms.handlers']); }),
-                    'database' => $app->share(function () use ($app) { return new Submission\Processor\Database($app['boltforms.handlers']); }),
+                    'database' => $app->share(function () use ($app) { return new Submission\Processor\DatabaseTable($app['boltforms.handlers']); }),
                     'email'    => $app->share(function () use ($app) { return new Submission\Processor\Email($app['boltforms.handlers']); }),
                     'feedback' => $app->share(function () use ($app) { return new Submission\Processor\Feedback($app['boltforms.handlers'], $app['session']); }),
                     'fields'   => $app->share(function () use ($app) { return new Submission\Processor\Fields($app['boltforms.handlers'], $app['boltforms.config']); }),
@@ -115,7 +115,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         /** @deprecated Since 3.1 and to be removed in 4.0. Use $app['boltforms.handlers']['database'] instead. */
         $app['boltforms.database'] = $app->share(
             function ($app) {
-                $database = new Submission\DatabaseHandler($app);
+                $database = new Submission\Handler\Database($app);
 
                 return $database;
             }
@@ -134,7 +134,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             function ($app) {
                 return new Container([
                     'content'  => $app->share(function () use ($app) { return new Submission\Handler\ContentType($app); }),
-                    'database' => $app->share(function () use ($app) { return new Submission\DatabaseHandler($app); }),
+                    'database' => $app->share(function () use ($app) { return new Submission\Handler\DatabaseTable($app); }),
                     'email'    => $app->share(function () use ($app) { return new Submission\EmailHandler($app); }),
                     'redirect' => $app->share(function () use ($app) { return new Submission\RedirectHandler($app['url_matcher']); }),
                 ]);
