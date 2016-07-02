@@ -277,7 +277,7 @@ class Processor implements EventSubscriberInterface
 
         if (!$this->config->getUploads()->get('enabled')) {
             $this->message('File upload skipped as the administrator has disabled uploads for all forms.', 'debug', LogLevel::ERROR);
-            
+
             return;
         }
 
@@ -298,12 +298,12 @@ class Processor implements EventSubscriberInterface
 
         // Write to a Contenttype
         if ($formConfig->getDatabase()->getContentType() !== null) {
-            $this->app['boltforms.database']->writeToContenType($formConfig->getDatabase()->getContentType(), $formData, $formMeta);
+            $this->app['boltforms.handlers']['content']->save($formConfig->getDatabase()->getContentType(), $formData, $formMeta);
         }
 
         // Write to a normal database table
         if ($formConfig->getDatabase()->getTable() !== null) {
-            $this->app['boltforms.database']->writeToTable($formConfig->getDatabase()->getTable(), $formData, $formMeta);
+            $this->app['boltforms.handlers']['database']->save($formConfig->getDatabase()->getTable(), $formData, $formMeta);
         }
     }
 
@@ -319,7 +319,7 @@ class Processor implements EventSubscriberInterface
         $formMeta = $lifeEvent->getFormMetaData();
 
         if ($formConfig->getNotification()->getEnabled()) {
-            $this->app['boltforms.email']->doNotification($formConfig, $formData, $formMeta);
+            $this->app['boltforms.handlers']['email']->doNotification($formConfig, $formData, $formMeta);
         }
     }
 

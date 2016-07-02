@@ -99,6 +99,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             }
         );
 
+        /** @deprecated Since 3.1 and to be removed in 4.0. Use $app['boltforms.handlers']['database'] instead. */
         $app['boltforms.database'] = $app->share(
             function ($app) {
                 $database = new Submission\DatabaseHandler($app);
@@ -107,11 +108,22 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             }
         );
 
+        /** @deprecated Since 3.1 and to be removed in 4.0. Use $app['boltforms.handlers']['email'] instead. */
         $app['boltforms.email'] = $app->share(
             function ($app) {
                 $email = new Submission\EmailHandler($app);
 
                 return $email;
+            }
+        );
+
+        $app['boltforms.handlers'] = $app->share(
+            function ($app) {
+                return new Container([
+                    'content'  => new Submission\ContentTypeHandler($app),
+                    'database' => $app['boltforms.database'],
+                    'email'    => $app['boltforms.email'],
+                ]);
             }
         );
 

@@ -2,10 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
-use Bolt\Exception\StorageException;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\FormData;
-use Bolt\Storage\EntityManager;
 use Psr\Log\LogLevel;
 use Silex\Application;
 
@@ -44,13 +42,13 @@ class DatabaseHandler
     }
 
     /**
-     * Write out form data to a specified database table
+     * Write out form data to a specified database table row.
      *
      * @param string       $tableName
      * @param FormData     $formData
      * @param FormMetaData $formMetaData
      */
-    public function writeToTable($tableName, FormData $formData, FormMetaData $formMetaData)
+    public function save($tableName, FormData $formData, FormMetaData $formMetaData)
     {
         $saveData = [];
 
@@ -90,51 +88,11 @@ class DatabaseHandler
     }
 
     /**
-     * Write out form data to a specified contenttype table
-     *
-     * @param string       $contentType
-     * @param FormData     $formData
-     * @param FormMetaData $formMetaData
+     * @deprecated
      */
-    public function writeToContenType($contentType, FormData $formData, FormMetaData $formMetaData)
+    public function writeToTable($tableName, FormData $formData, FormMetaData $formMetaData)
     {
-        /** @var EntityManager $em */
-        $em = $this->app['storage'];
-
-        try {
-            $repo = $em->getRepository($contentType);
-        } catch (StorageException $e) {
-            $this->exception($e, false, sprintf('Invalid ContentType name `%s` specified.', $contentType));
-
-            return;
-        }
-
-        // Get an empty record for out contenttype
-        $record = $repo->getEntityBuilder()->getEntity();
-
-        // Set a published date
-        $record->setStatus('published');
-        if (!$formData->has('datepublish')) {
-            $record->setDatepublish(date('Y-m-d H:i:s'));
-        }
-
-        foreach ($formData->keys() as $name) {
-            // Store the data array into the record
-            $record->set($name, $formData->get($name, true));
-        }
-
-        // Add any meta values that are requested for 'database' use
-        foreach ($formMetaData->keys() as $key) {
-            if (in_array('database', (array) $formMetaData->get($key)->getUse())) {
-                $record->set($key, $formMetaData->get($key)->getValue());
-            }
-        }
-
-        try {
-            $repo->save($record);
-        } catch (\Exception $e) {
-            $this->exception($e, false, sprintf('An exception occurred saving submission to ContentType table `%s`', $contentType));
-        }
+        $this->save($tableName, $formData, $formMetaData);
     }
 
     /**
