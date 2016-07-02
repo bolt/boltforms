@@ -9,6 +9,10 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Silex\Application;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableSeparator;
+use Symfony\Component\Console\Helper\TableStyle;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
@@ -48,12 +52,12 @@ class Email
             'name'  => 'getToName',
         ]],
         'cc'  => ['setCc'  => [
-            'email' => 'getToEmail',
-            'name'  => 'getToName',
+            'email' => 'getCcEmail',
+            'name'  => 'getCcName',
         ]],
         'bcc' => ['setBcc' => [
-            'email' => 'getToEmail',
-            'name'  => 'getToName',
+            'email' => 'getBccEmail',
+            'name'  => 'getBccName',
         ]],
     ];
 
@@ -83,25 +87,7 @@ class Email
         $this->emailAddress($emailConfig);
         $this->emailSend($emailConfig, $formData);
 
-        // @TODO
-        //$this-> doDebugLogging();
-    }
-
-    /**
-     * @TODO
-     */
-    private function doDebugLogging()
-    {
-        /** @var FlashBag $feedBack */
-        $feedBack = $this->app['boltforms.feedback'];
-
-        $from = trim($this->message->getHeaders()->get('from'));
-        $to = trim($this->message->getHeaders()->get('to'));
-        $cc = trim($this->message->getHeaders()->get('cc'));
-        $bcc = trim($this->message->getHeaders()->get('bcc'));
-        $replyTo = trim($this->message->getHeaders()->get('reply-to'));
-        $subject = trim($this->message->getHeaders()->get('subject'));
-        $body = $this->message->getBody();
+        $this-> doDebugLogging($emailConfig);
     }
 
     /**
@@ -262,8 +248,9 @@ class Email
         if ($emailConfig->isDebug()) {
             $this->message->getHeaders()->addTextHeader("X-BoltForms-debug-$type", $email);
             call_user_func([$this->message, $swiftFunc], [$emailConfig->getDebugEmail() => $name ?: 'BoltForms Debug']);
+        } else {
+            call_user_func([$this->message, $swiftFunc], [$email => $name ?: $email]);
         }
-        call_user_func([$this->message, $swiftFunc], [$email => $name ?: $email]);
     }
 
     /**
@@ -286,5 +273,57 @@ class Email
             $data = json_encode($formData->all());
             $this->app['logger.system']->error("Failed Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", ['event' => 'exception', 'exception' => $data]);
         }
+    }
+
+    /**
+     * @param EmailConfig $emailConfig
+     */
+    private function doDebugLogging(EmailConfig $emailConfig)
+    {
+        if (!$emailConfig->isDebug()) {
+            return;
+        }
+
+        /** @var FlashBag $feedBack */
+        $feedBack = $this->app['boltforms.feedback'];
+
+        $output = new BufferedOutput();
+        $table = new Table($output);
+        $style = new TableStyle();
+
+        $style
+            ->setHorizontalBorderChar(null)
+            ->setVerticalBorderChar(null)
+        ;
+        $table->setStyle($style);
+        $table->addRows([
+            [$this->getHeader('X-BoltForms-debug-to')],
+            [$this->getHeader('X-BoltForms-debug-cc')],
+            [$this->getHeader('X-BoltForms-debug-bcc')],
+            new TableSeparator(),
+            [$this->getHeader('to')],
+            [$this->getHeader('cc')],
+            [$this->getHeader('bcc')],
+            [$this->getHeader('from')],
+            [$this->getHeader('reply-to')],
+            [$this->getHeader('subject')],
+            new TableSeparator(),
+            [$this->message->getBody()],
+        ]);
+        $table->render();
+
+        $feedBack->add('debug', "Compiled message:\n" . $output->fetch());
+    }
+
+    /**
+     * Return a trimmed header.
+     *
+     * @param string $headerName
+     *
+     * @return string
+     */
+    private function getHeader($headerName)
+    {
+        return trim($this->message->getHeaders()->get($headerName));
     }
 }
