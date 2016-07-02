@@ -109,7 +109,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
         $app['boltforms.email'] = $app->share(
             function ($app) {
-                $email = new Submission\Email($app);
+                $email = new Submission\EmailHandler($app);
 
                 return $email;
             }
