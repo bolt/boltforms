@@ -136,7 +136,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                     'content'  => $app->share(function () use ($app) { return new Submission\Handler\ContentType($app); }),
                     'database' => $app->share(function () use ($app) { return new Submission\Handler\DatabaseTable($app); }),
                     'email'    => $app->share(function () use ($app) { return new Submission\Handler\Email($app); }),
-                    'redirect' => $app->share(function () use ($app) { return new Submission\RedirectHandler($app['url_matcher']); }),
+                    'redirect' => $app->share(function () use ($app) { return new Submission\Handler\Redirect($app['url_matcher']); }),
                 ]);
             }
         );

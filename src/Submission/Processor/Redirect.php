@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
-use Bolt\Extension\Bolt\BoltForms\Submission\RedirectHandler;
+use Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Pimple as Container;
 use Silex\RedirectableUrlMatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -70,14 +70,15 @@ class Redirect extends AbstractProcessor
             return;
         }
 
-        $redirect = new RedirectHandler($this->redirectableUrlMatcher);
+        /** @var Handler\Redirect $handler */
+        $handler = $this->handlers['redirect'];
         if ($formConfig->getFeedback()->getRedirect()->getTarget() !== null) {
-            $redirect->redirect($formConfig, $formData);
+            $handler->redirect($formConfig, $formData);
         }
 
         // Do a get on the page as it was probably POSTed
         $request = $this->requestStack->getCurrentRequest();
-        $redirect->refresh($request);
+        $handler->refresh($request);
 
         throw new HttpException(Response::HTTP_OK, '', null, []);
     }
