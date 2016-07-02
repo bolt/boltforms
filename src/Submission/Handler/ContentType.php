@@ -1,10 +1,11 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Submission;
+namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Exception\StorageException;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
 use Bolt\Storage\EntityManager;
 use Carbon\Carbon;
 use Silex\Application;
@@ -31,7 +32,7 @@ use Silex\Application;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class ContentTypeHandler
+class ContentType
 {
     use FeedbackTrait;
 

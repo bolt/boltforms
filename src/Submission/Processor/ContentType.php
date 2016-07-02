@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
-use Bolt\Extension\Bolt\BoltForms\Submission\ContentTypeHandler;
+use Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -43,7 +43,7 @@ class ContentType extends AbstractProcessor
 
         // Write to a Contenttype
         if ($formConfig->getDatabase()->getContentType() !== null) {
-            /** @var ContentTypeHandler $handler */
+            /** @var Handler\ContentType $handler */
             $handler = $this->handlers['content'];
             $handler->save($formConfig->getDatabase()->getContentType(), $formData, $formMeta);
         }
