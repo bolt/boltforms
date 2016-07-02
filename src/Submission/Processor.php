@@ -15,6 +15,7 @@ use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -48,6 +49,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class Processor implements EventSubscriberInterface
 {
+    use FeedbackHandlerTrait;
+
     /** @var Application */
     private $app;
     /** @var Config */
@@ -273,18 +276,13 @@ class Processor implements EventSubscriberInterface
         $formData->set($fieldName, $fileHandler);
 
         if (!$this->config->getUploads()->get('enabled')) {
-            $message = '[BoltForms] File upload skipped as the administrator has disabled uploads for all forms.';
-            $this->app['boltforms.feedback']->add('error', $message);
-            $this->loggerSystem->debug($message, ['event' => 'extensions']);
-
+            $this->message('File upload skipped as the administrator has disabled uploads for all forms.', 'debug', LogLevel::ERROR);
+            
             return;
         }
 
         $fileHandler->move();
-
-        $message = '[BoltForms] Moving uploaded file to ' . $fileHandler->fullPath() . '.';
-        $this->app['boltforms.feedback']->add('debug', $message);
-        $this->loggerSystem->debug($message, ['event' => 'extensions']);
+        $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()), 'debug', LogLevel::DEBUG);
     }
 
     /**
@@ -334,7 +332,7 @@ class Processor implements EventSubscriberInterface
     {
         $formConfig = $lifeEvent->getFormConfig();
 
-        $this->app['boltforms.feedback']->add('info', $formConfig->getFeedback()->getSuccess());
+        $this->message($formConfig->getFeedback()->getSuccess(), 'info', LogLevel::DEBUG);
         $this->app['session']->set(sprintf('boltforms_submit_%s', $formConfig->getName()), true);
         $this->app['session']->save();
     }
@@ -394,11 +392,33 @@ class Processor implements EventSubscriberInterface
 
             return $event->getData();
         } catch (\Exception $e) {
-            $message = sprintf('[BoltForms] %s subscriber had an error: %s', $eventName, $e->getMessage());
-            $this->app['boltforms.feedback']->add('debug', $message);
-            $this->loggerSystem->error($message, ['event' => 'extensions']);
+            $this->exception($e, false, sprintf('%s subscriber encontered an exception:', $eventName));
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFeedback()
+    {
+        return $this->app['boltforms.feedback'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getLogger()
+    {
+        return $this->app['logger.system'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMailer()
+    {
+        return $this->app['mailer'];
     }
 }

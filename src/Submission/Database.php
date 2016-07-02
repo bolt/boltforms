@@ -6,6 +6,7 @@ use Bolt\Exception\StorageException;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Storage\EntityManager;
+use Psr\Log\LogLevel;
 use Silex\Application;
 
 /**
@@ -32,6 +33,8 @@ use Silex\Application;
  */
 class Database
 {
+    use FeedbackHandlerTrait;
+
     /** @var Application */
     private $app;
 
@@ -55,7 +58,7 @@ class Database
         $sm = $this->app['db']->getSchemaManager();
         if (!$sm->tablesExist([$tableName])) {
             // log failed attempt
-            $this->app['logger.system']->error("[Bolt Forms] Failed attempt to save submission: missing database table `$tableName`", ['event' => 'extensions']);
+            $this->message(sprintf('Failed attempt to save submission: missing database table `%s`', $tableName), 'debug', LogLevel::ERROR);
         }
 
         // Build a new array with only keys that match the database table
@@ -82,7 +85,7 @@ class Database
         try {
             $this->app['db']->insert($tableName, $saveData);
         } catch (\Exception $e) {
-            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to database table `$tableName`", ['event' => 'extensions', 'exception' => $e]);
+            $this->exception($e, false, sprintf('An exception occurred saving submission to database table `%s`', $tableName));
         }
     }
 
@@ -101,7 +104,7 @@ class Database
         try {
             $repo = $em->getRepository($contentType);
         } catch (StorageException $e) {
-            $this->app['logger.system']->critical("[Bolt Forms] Invalid ContentType name `$contentType` specified.", ['event' => 'extensions', 'exception' => $e]);
+            $this->exception($e, false, sprintf('Invalid ContentType name `%s` specified.', $contentType));
 
             return;
         }
@@ -130,7 +133,31 @@ class Database
         try {
             $repo->save($record);
         } catch (\Exception $e) {
-            $this->app['logger.system']->critical("[Bolt Forms] An exception occurred saving submission to ContentType table `$contentType`", ['event' => 'extensions', 'exception' => $e]);
+            $this->exception($e, false, sprintf('An exception occurred saving submission to ContentType table `%s`', $contentType));
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFeedback()
+    {
+        return $this->app['boltforms.feedback'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getLogger()
+    {
+        return $this->app['logger.system'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMailer()
+    {
+        return $this->app['mailer'];
     }
 }

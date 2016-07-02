@@ -16,7 +16,6 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -43,6 +42,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class Email
 {
+    use FeedbackHandlerTrait;
+
     /** @var Application */
     private $app;
     /** @var array */
@@ -266,16 +267,12 @@ class Email
     private function emailSend(EmailConfig $emailConfig, FormData $formData)
     {
         try {
-            $result = $this->app['mailer']->send($this->message);
+            $this->getMailer()->send($this->message);
+            $this->message(sprintf('Sent Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
         } catch (\Swift_TransportException $e) {
-            $result = false;
-        }
-
-        if ($result) {
-            $this->app['logger.system']->info("Sent Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", ['event' => 'extensions']);
-        } else {
-            $data = json_encode($formData->all());
-            $this->app['logger.system']->error("Failed Bolt Forms notification to {$emailConfig->getToName()} <{$emailConfig->getToEmail()}>", ['event' => 'exception', 'exception' => $data]);
+            $this->exception($e, false, sprintf('Failed sending Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
+        } catch (\Exception $e) {
+            $this->exception($e, false, sprintf('An exception was thrown during email dispatch:'));
         }
     }
 
@@ -287,9 +284,6 @@ class Email
         if (!$emailConfig->isDebug()) {
             return;
         }
-
-        /** @var FlashBag $feedBack */
-        $feedBack = $this->app['boltforms.feedback'];
 
         $output = new BufferedOutput();
         $table = new Table($output);
@@ -316,7 +310,7 @@ class Email
         ]);
         $table->render();
 
-        $feedBack->add('debug', "Compiled message:\n" . $output->fetch());
+        $this->message(sprintf('Compiled message:%s%s', "\n", $output->fetch()));
     }
 
     /**
@@ -329,5 +323,29 @@ class Email
     private function getHeader($headerName)
     {
         return trim($this->message->getHeaders()->get($headerName));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFeedback()
+    {
+        return $this->app['boltforms.feedback'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getLogger()
+    {
+        return $this->app['logger.system'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMailer()
+    {
+        return $this->app['mailer'];
     }
 }
