@@ -45,7 +45,7 @@ class Email extends AbstractProcessor
         if ($formConfig->getNotification()->getEnabled()) {
             /** @var Handler\Email $handler */
             $handler = $this->handlers['email'];
-            $handler->doNotification($formConfig, $formData, $formMeta);
+            $handler->handle($formConfig, $formData, $formMeta);
         }
     }
 }

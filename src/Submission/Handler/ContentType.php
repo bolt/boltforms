@@ -5,8 +5,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Bolt\Exception\StorageException;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\FormData;
-use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
-use Bolt\Storage\EntityManager;
 use Carbon\Carbon;
 use Silex\Application;
 
@@ -32,18 +30,8 @@ use Silex\Application;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class ContentType
+class ContentType extends AbstractHandler
 {
-    use FeedbackTrait;
-
-    /** @var Application */
-    private $app;
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * Write out form data to a specified ContentType record.
      *
@@ -51,13 +39,10 @@ class ContentType
      * @param FormData     $formData
      * @param FormMetaData $formMetaData
      */
-    public function save($contentType, FormData $formData, FormMetaData $formMetaData)
+    public function handle($contentType, FormData $formData, FormMetaData $formMetaData)
     {
-        /** @var EntityManager $em */
-        $em = $this->app['storage'];
-
         try {
-            $repo = $em->getRepository($contentType);
+            $repo = $this->getEntityManager()->getRepository($contentType);
         } catch (StorageException $e) {
             $this->exception($e, false, sprintf('Invalid ContentType name `%s` specified.', $contentType));
 
@@ -97,30 +82,6 @@ class ContentType
      */
     public function writeToContenType($contentType, FormData $formData, FormMetaData $formMetaData)
     {
-        $this->save($contentType, $formData, $formMetaData);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getFeedback()
-    {
-        return $this->app['boltforms.feedback'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getLogger()
-    {
-        return $this->app['logger.system'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getMailer()
-    {
-        return $this->app['mailer'];
+        $this->handle($contentType, $formData, $formMetaData);
     }
 }

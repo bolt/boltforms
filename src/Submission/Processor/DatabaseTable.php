@@ -45,7 +45,7 @@ class DatabaseTable extends AbstractProcessor
         if ($formConfig->getDatabase()->getTable() !== null) {
             /** @var Handler\DatabaseTable $handler */
             $handler = $this->handlers['database'];
-            $handler->save($formConfig->getDatabase()->getTable(), $formData, $formMeta);
+            $handler->handle($formConfig->getDatabase()->getTable(), $formData, $formMeta);
         }
     }
 }

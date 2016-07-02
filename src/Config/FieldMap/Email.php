@@ -2,12 +2,14 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 /**
  * Field map for email fields.
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Email
+class Email extends ParameterBag
 {
     /** @var string */
     protected $config = 'config';

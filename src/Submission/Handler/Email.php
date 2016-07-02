@@ -1,7 +1,7 @@
 <?php
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
-use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
+use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
@@ -10,14 +10,19 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\FormData;
-use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
 use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
-use Silex\Application;
+use Bolt\Storage\EntityManager;
+use Psr\Log\LoggerInterface;
+use Swift_Message as SwiftMessage;
+use Swift_Mailer as SwiftMailer;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Twig_Environment as TwigEnvironment;
 
 /**
  * Email functions for BoltForms
@@ -41,16 +46,16 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Email
+class Email extends AbstractHandler
 {
-    use FeedbackTrait;
-
-    /** @var Application */
-    private $app;
-    /** @var array */
-    private $config;
-    /** \Swift_Mime_SimpleMessage */
-    private $message;
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
+    /** @var TwigEnvironment */
+    private $twig;
+    /** @var UrlGeneratorInterface */
+    private $urlGenerator;
+    /** SwiftMessage */
+    private $emailMessage;
     /** @var array */
     private $map = [
         'to'  => ['setTo'  => [
@@ -67,12 +72,52 @@ class Email
         ]],
     ];
 
-    public function __construct(Application $app)
+    /**
+     * Constructor.
+     *
+     * @param Config                   $config
+     * @param EntityManager            $entityManager
+     * @param FlashBag                 $feedback
+     * @param LoggerInterface          $logger
+     * @param SwiftMailer              $mailer
+     * @param EventDispatcherInterface $dispatcher
+     * @param TwigEnvironment          $twig
+     * @param UrlGeneratorInterface    $urlGenerator
+     */
+    public function __construct(
+        Config $config,
+        EntityManager $entityManager,
+        FlashBag $feedback,
+        LoggerInterface $logger,
+        SwiftMailer $mailer,
+        EventDispatcherInterface $dispatcher,
+        TwigEnvironment $twig,
+        UrlGeneratorInterface $urlGenerator
+    ) {
+        parent::__construct($config, $entityManager, $feedback, $logger, $mailer);
+        $this->dispatcher = $dispatcher;
+        $this->twig = $twig;
+        $this->urlGenerator = $urlGenerator;
+    }
+
+    /**
+     * @return SwiftMessage
+     */
+    public function getEmailMessage()
     {
-        $this->app = $app;
-        /** @var BoltFormsExtension $extension */
-        $extension = $app['extensions']->get('Bolt/BoltForms');
-        $this->config = $extension->getConfig();
+        return $this->emailMessage;
+    }
+
+    /**
+     * @param SwiftMessage $emailMessage
+     *
+     * @return Email
+     */
+    public function setEmailMessage(SwiftMessage $emailMessage)
+    {
+        $this->emailMessage = $emailMessage;
+
+        return $this;
     }
 
     /**
@@ -82,12 +127,12 @@ class Email
      * @param FormData     $formData
      * @param FormMetaData $formMetaData
      */
-    public function doNotification(FormConfig $formConfig, FormData $formData, FormMetaData $formMetaData)
+    public function handle(FormConfig $formConfig, FormData $formData, FormMetaData $formMetaData)
     {
-        $emailConfig = new EmailConfig($this->config['debug'], $formConfig, $formData);
+        $emailConfig = new EmailConfig($this->getConfig()->getDebug()->all(), $formConfig, $formData);
 
         $event = new BoltFormsEmailEvent($emailConfig, $formConfig, $formData);
-        $this->app['dispatcher']->dispatch(BoltFormsEvents::PRE_EMAIL_SEND, $event);
+        $this->dispatcher->dispatch(BoltFormsEvents::PRE_EMAIL_SEND, $event);
 
         $this->emailCompose($formConfig, $emailConfig, $formData);
         $this->emailAddress($emailConfig);
@@ -105,22 +150,17 @@ class Email
      */
     private function emailCompose(FormConfig $formConfig, EmailConfig $emailConfig, FormData $formData)
     {
-        /*
-         * Create message object
-         */
-        $this->message = \Swift_Message::newInstance();
-        $this->message->setEncoder(\Swift_Encoding::get8BitEncoding());
 
         // If the form has it's own templates defined, use those, else the globals.
-        $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->config['templates']['subject'];
-        $templateEmail = $formConfig->getTemplates()->getEmail() ?: $this->config['templates']['email'];
+        $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->getConfig()->getTemplates()->get('subject');
+        $templateEmail = $formConfig->getTemplates()->getEmail() ?: $this->getConfig()->getTemplates()->get('email');
         /** @var FieldMap\Email $fieldMap */
-        $fieldMap = $this->config['fieldmap']['email'];
+        $fieldMap = $this->getConfig()->getFieldMap()->get('email');
 
         /*
          * Subject
          */
-        $html = $this->app['render']->render($templateSubject, [
+        $html = $this->twig->render($templateSubject, [
             $fieldMap->getSubject() => $formConfig->getNotification()->getSubject(),
             $fieldMap->getConfig()  => $emailConfig,
             $fieldMap->getData()    => $formData,
@@ -130,7 +170,7 @@ class Email
         /*
          * Body
          */
-        $html = $this->app['render']->render($templateEmail, [
+        $html = $this->twig->render($templateEmail, [
             $fieldMap->getFields() => $formConfig->getFields(),
             $fieldMap->getConfig() => $emailConfig,
             $fieldMap->getData()   => $this->getBodyData($formConfig, $emailConfig, $formData),
@@ -142,10 +182,11 @@ class Email
         /*
          * Build email
          */
-        $this->message
+        $this->emailMessage = SwiftMessage::newInstance()
+            ->addPart($body, 'text/html')
             ->setSubject($subject)
             ->setBody($text)
-            ->addPart($body, 'text/html')
+            ->setEncoder(\Swift_Encoding::get8BitEncoding())
         ;
     }
 
@@ -170,13 +211,13 @@ class Email
                 if ($formData->get($key)->isValid() && $emailConfig->attachFiles()) {
                     $attachment = \Swift_Attachment::fromPath($formData->get($key)->fullPath())
                             ->setFilename($formData->get($key)->getFile()->getClientOriginalName());
-                    $this->message->attach($attachment);
+                    $this->getEmailMessage()->attach($attachment);
                 }
                 $relativePath = $formData->get($key, true);
 
                 $bodyData[$key] = sprintf(
                     '<a href"%s">%s</a>',
-                    $this->app['url_generator']->generate('BoltFormsDownload', ['file' => $relativePath], UrlGeneratorInterface::ABSOLUTE_URL),
+                    $this->urlGenerator->generate('BoltFormsDownload', ['file' => $relativePath], UrlGeneratorInterface::ABSOLUTE_URL),
 
                     $formData->get($key)->getFile()->getClientOriginalName()
                 );
@@ -214,7 +255,7 @@ class Email
     private function setFrom(EmailConfig $emailConfig)
     {
         if ($emailConfig->getFromEmail()) {
-            $this->message->setFrom([
+            $this->getEmailMessage()->setFrom([
                 $emailConfig->getFromEmail() => $emailConfig->getFromName(),
             ]);
         }
@@ -228,7 +269,7 @@ class Email
     private function setReplyTo(EmailConfig $emailConfig)
     {
         if ($emailConfig->getReplyToEmail()) {
-            $this->message->setReplyTo([
+            $this->getEmailMessage()->setReplyTo([
                 $emailConfig->getReplyToEmail() => $emailConfig->getReplyToName(),
             ]);
         }
@@ -242,6 +283,7 @@ class Email
      */
     private function setEmailDeliveryField(EmailConfig $emailConfig, $type)
     {
+        $emailMessage = $this->getEmailMessage();
         $swiftFunc = key($this->map[$type]);
         $configFunc = $this->map[$type][$swiftFunc];
         $email = call_user_func([$emailConfig, $configFunc['email']]);
@@ -252,10 +294,10 @@ class Email
         }
 
         if ($emailConfig->isDebug()) {
-            $this->message->getHeaders()->addTextHeader("X-BoltForms-debug-$type", $email);
-            call_user_func([$this->message, $swiftFunc], [$emailConfig->getDebugEmail() => $name ?: 'BoltForms Debug']);
+            $emailMessage->getHeaders()->addTextHeader("X-BoltForms-debug-$type", $email);
+            call_user_func([$emailMessage, $swiftFunc], [$emailConfig->getDebugEmail() => $name ?: 'BoltForms Debug']);
         } else {
-            call_user_func([$this->message, $swiftFunc], [$email => $name ?: $email]);
+            call_user_func([$emailMessage, $swiftFunc], [$email => $name ?: $email]);
         }
     }
 
@@ -268,7 +310,7 @@ class Email
     private function emailSend(EmailConfig $emailConfig, FormData $formData)
     {
         try {
-            $this->getMailer()->send($this->message);
+            $this->getMailer()->send($this->emailMessage);
             $this->message(sprintf('Sent Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
         } catch (\Swift_TransportException $e) {
             $this->exception($e, false, sprintf('Failed sending Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
@@ -307,7 +349,7 @@ class Email
             [$this->getHeader('reply-to')],
             [$this->getHeader('subject')],
             new TableSeparator(),
-            [$this->message->getBody()],
+            [$this->getEmailMessage()->getBody()],
         ]);
         $table->render();
 
@@ -323,30 +365,6 @@ class Email
      */
     private function getHeader($headerName)
     {
-        return trim($this->message->getHeaders()->get($headerName));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getFeedback()
-    {
-        return $this->app['boltforms.feedback'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getLogger()
-    {
-        return $this->app['logger.system'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getMailer()
-    {
-        return $this->app['mailer'];
+        return trim($this->getEmailMessage()->getHeaders()->get($headerName));
     }
 }

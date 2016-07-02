@@ -45,7 +45,7 @@ class ContentType extends AbstractProcessor
         if ($formConfig->getDatabase()->getContentType() !== null) {
             /** @var Handler\ContentType $handler */
             $handler = $this->handlers['content'];
-            $handler->save($formConfig->getDatabase()->getContentType(), $formData, $formMeta);
+            $handler->handle($formConfig->getDatabase()->getContentType(), $formData, $formMeta);
         }
     }
 }

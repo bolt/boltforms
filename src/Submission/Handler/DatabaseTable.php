@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\FormData;
-use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
 use Psr\Log\LogLevel;
 use Silex\Application;
 
@@ -30,18 +29,8 @@ use Silex\Application;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class DatabaseTable
+class DatabaseTable extends AbstractHandler
 {
-    use FeedbackTrait;
-
-    /** @var Application */
-    private $app;
-
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * Write out form data to a specified database table row.
      *
@@ -49,12 +38,13 @@ class DatabaseTable
      * @param FormData     $formData
      * @param FormMetaData $formMetaData
      */
-    public function save($tableName, FormData $formData, FormMetaData $formMetaData)
+    public function handle($tableName, FormData $formData, FormMetaData $formMetaData)
     {
         $saveData = [];
+        $connection = $this->getEntityManager()->getConnection();
 
         // Don't try to write to a non-existant table
-        $sm = $this->app['db']->getSchemaManager();
+        $sm = $connection->getSchemaManager();
         if (!$sm->tablesExist([$tableName])) {
             // log failed attempt
             $this->message(sprintf('Failed attempt to save submission: missing database table `%s`', $tableName), 'debug', LogLevel::ERROR);
@@ -82,41 +72,9 @@ class DatabaseTable
         }
 
         try {
-            $this->app['db']->insert($tableName, $saveData);
+            $connection->insert($tableName, $saveData);
         } catch (\Exception $e) {
             $this->exception($e, false, sprintf('An exception occurred saving submission to database table `%s`', $tableName));
         }
-    }
-
-    /**
-     * @deprecated
-     */
-    public function writeToTable($tableName, FormData $formData, FormMetaData $formMetaData)
-    {
-        $this->save($tableName, $formData, $formMetaData);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getFeedback()
-    {
-        return $this->app['boltforms.feedback'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getLogger()
-    {
-        return $this->app['logger.system'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getMailer()
-    {
-        return $this->app['mailer'];
     }
 }

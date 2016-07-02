@@ -54,7 +54,7 @@ class Redirect
      * @param FormConfig $formConfig
      * @param FormData   $formData
      */
-    public function redirect(FormConfig $formConfig, FormData $formData)
+    public function handle(FormConfig $formConfig, FormData $formData)
     {
         $redirect = $formConfig->getFeedback()->getRedirect();
         $query = $this->getRedirectQuery($redirect, $formData);

@@ -73,7 +73,7 @@ class Redirect extends AbstractProcessor
         /** @var Handler\Redirect $handler */
         $handler = $this->handlers['redirect'];
         if ($formConfig->getFeedback()->getRedirect()->getTarget() !== null) {
-            $handler->redirect($formConfig, $formData);
+            $handler->handle($formConfig, $formData);
         }
 
         // Do a get on the page as it was probably POSTed

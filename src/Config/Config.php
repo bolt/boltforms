@@ -105,11 +105,11 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return FieldMap\Email[]
+     * @return FieldMap\Email
      */
     public function getFieldMap()
     {
-        return $this->get('fieldMap');
+        return $this->get('fieldmap');
     }
 
     /**

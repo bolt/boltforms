@@ -115,7 +115,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         /** @deprecated Since 3.1 and to be removed in 4.0. Use $app['boltforms.handlers']['database'] instead. */
         $app['boltforms.database'] = $app->share(
             function ($app) {
-                $database = new Submission\Handler\DatabaseTable($app);
+                $database = new Submission\Handler\DatabaseTable($app['boltforms.config'], $app['storage'], $app['boltforms.feedback'], $app['logger.system'], $app['mailer']);
 
                 return $database;
             }
@@ -124,7 +124,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         /** @deprecated Since 3.1 and to be removed in 4.0. Use $app['boltforms.handlers']['email'] instead. */
         $app['boltforms.email'] = $app->share(
             function ($app) {
-                $email = new Submission\Handler\Email($app);
+                $email = new Submission\Handler\Email($app['boltforms.config'], $app['storage'], $app['boltforms.feedback'], $app['logger.system'], $app['mailer']);
 
                 return $email;
             }
@@ -133,9 +133,9 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         $app['boltforms.handlers'] = $app->share(
             function ($app) {
                 return new Container([
-                    'content'  => $app->share(function () use ($app) { return new Submission\Handler\ContentType($app); }),
-                    'database' => $app->share(function () use ($app) { return new Submission\Handler\DatabaseTable($app); }),
-                    'email'    => $app->share(function () use ($app) { return new Submission\Handler\Email($app); }),
+                    'content'  => $app->share(function () use ($app) { return new Submission\Handler\ContentType($app['boltforms.config'], $app['storage'], $app['boltforms.feedback'], $app['logger.system'], $app['mailer']); }),
+                    'database' => $app->share(function () use ($app) { return new Submission\Handler\DatabaseTable($app['boltforms.config'], $app['storage'], $app['boltforms.feedback'], $app['logger.system'], $app['mailer']); }),
+                    'email'    => $app->share(function () use ($app) { return new Submission\Handler\Email($app['boltforms.config'], $app['storage'], $app['boltforms.feedback'], $app['logger.system'], $app['mailer']); }),
                     'redirect' => $app->share(function () use ($app) { return new Submission\Handler\Redirect($app['url_matcher']); }),
                 ]);
             }
