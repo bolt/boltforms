@@ -1,6 +1,7 @@
 BoltForms Documentation
 =======================
 
+  * [Getting Started](getting-started.md)
   * [Fields](fields.md)
     * [Choice](fields/choice.md)
     * [Upload](fields/upload.md)
