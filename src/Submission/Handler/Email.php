@@ -134,11 +134,11 @@ class Email extends AbstractHandler
         $event = new BoltFormsEmailEvent($emailConfig, $formConfig, $formData);
         $this->dispatcher->dispatch(BoltFormsEvents::PRE_EMAIL_SEND, $event);
 
-        $this->emailCompose($formConfig, $emailConfig, $formData, $formMetaData);
-        $this->emailAddress($emailConfig);
-        $this->emailSend($emailConfig, $formData);
+        $this->compose($formConfig, $emailConfig, $formData, $formMetaData);
+        $this->address($emailConfig);
+        $this->send($emailConfig);
 
-        $this-> doDebugLogging($emailConfig);
+        $this->log($emailConfig);
     }
 
     /**
@@ -149,9 +149,8 @@ class Email extends AbstractHandler
      * @param FormData     $formData
      * @param FormMetaData $formMetaData
      */
-    private function emailCompose(FormConfig $formConfig, EmailConfig $emailConfig, FormData $formData, FormMetaData $formMetaData)
+    private function compose(FormConfig $formConfig, EmailConfig $emailConfig, FormData $formData, FormMetaData $formMetaData)
     {
-
         // If the form has it's own templates defined, use those, else the globals.
         $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->getConfig()->getTemplates()->get('subject');
         $templateEmail = $formConfig->getTemplates()->getEmail() ?: $this->getConfig()->getTemplates()->get('email');
@@ -240,7 +239,7 @@ class Email extends AbstractHandler
      *
      * @param EmailConfig $emailConfig
      */
-    private function emailAddress(EmailConfig $emailConfig)
+    private function address(EmailConfig $emailConfig)
     {
         $this->setFrom($emailConfig);
         $this->setReplyTo($emailConfig);
@@ -308,9 +307,8 @@ class Email extends AbstractHandler
      * Send a notification
      *
      * @param EmailConfig $emailConfig
-     * @param FormData    $formData
      */
-    private function emailSend(EmailConfig $emailConfig, FormData $formData)
+    private function send(EmailConfig $emailConfig)
     {
         try {
             $this->getMailer()->send($this->emailMessage);
@@ -325,7 +323,7 @@ class Email extends AbstractHandler
     /**
      * @param EmailConfig $emailConfig
      */
-    private function doDebugLogging(EmailConfig $emailConfig)
+    private function log(EmailConfig $emailConfig)
     {
         if (!$emailConfig->isDebug()) {
             return;
