@@ -12,6 +12,7 @@ use Bolt\Extension\Bolt\BoltForms\Twig;
 use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 /**
@@ -184,6 +185,15 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                     'request' => $app->share(
                         function () use ($app) {
                             return new Submission\Handler\Request($app['request_stack']);
+                        }
+                    ),
+                    'upload'  => $app->protect(
+                        function (Config\FormConfig $formConfig, UploadedFile $file) use ($app) {
+                            return new Submission\Handler\Upload(
+                                $app['boltforms.config'],
+                                $formConfig,
+                                $file
+                            );
                         }
                     ),
                 ]);

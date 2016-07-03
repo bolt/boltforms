@@ -98,7 +98,7 @@ class Fields extends AbstractProcessor
 
         // Get the upload object
         /** @var Upload $fileHandler */
-        $fileHandler = new Upload($this->config, $formConfig, $field);
+        $fileHandler = $this->handlers['upload']($formConfig, $field);
         $formData->set($fieldName, $fileHandler);
 
         if (!$this->config->getUploads()->get('enabled')) {

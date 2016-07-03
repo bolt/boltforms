@@ -38,7 +38,7 @@ class Upload
     private $config;
     /** @var FormConfig */
     private $formConfig;
-    /** @var \Symfony\Component\HttpFoundation\File\UploadedFile */
+    /** @var UploadedFile */
     private $file;
     /** @var string */
     private $fileName;
