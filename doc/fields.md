@@ -8,7 +8,7 @@ See [the Symfony documentation](http://symfony.com/doc/current/reference/forms/t
 for more information. 
 
 ```yaml
-    fieldname:
+    field_name:
         type: field_type
         required: true|false
         options:
@@ -30,7 +30,7 @@ To lock the value, you may use the attribute `readonly: true`.
 **Note:** If you use a `value` the `placeholder` will not be used.
 
 ```yaml
-    fieldname:
+    field_name:
         type: text
         required: true
         options:
@@ -43,7 +43,7 @@ To lock the value, you may use the attribute `readonly: true`.
 Alternatively, you can pass in a parameter to the Twig function:
 
 ```twig
-    {{ boltforms('myform', defaults={fieldname: 'My value'}) }}
+    {{ boltforms('my_form', defaults={field_name: 'My value'}) }}
 ```
 
 Choice Types
@@ -62,7 +62,7 @@ record lookups & event based lookups.
       array_assoc:
           type: choice
           options:
-              choices: { kittens: 'Fluffy Kittens', puppies: 'Cute Puppies' }
+              choices: { 'Fluffy Kittens': kittens, 'Cute Puppies': puppies }
       lookup:
           type: choice
           options:
@@ -95,7 +95,7 @@ the 'hidden' `type`, and setting a `value`.
 Use the option `label: false` to hide the field from the html output.
 
 ```yaml
-    fieldname:
+    field_name:
         type: hidden
         options:
             label: false
@@ -134,16 +134,16 @@ increment.
       event: 
         name: next_increment
         params:
-          table: bolt_tablename       # Optional
-#         contenttype: pages          # Optional and alternative to table:
+          contenttype: pages          # Optional
+#          table: bolt_table_name     # Optional and alternative to contenttype:
           column: remote_member_id    # Required
           min: 31000                  # Optional
 ```
 
-Set the `randomfield` field value to a randomised string.
+Set the `random_field` field value to a randomised string.
 
 ```yaml
-    randomfield:
+    random_field:
       type: hidden
       options:
         label: false
@@ -166,17 +166,17 @@ Set the `remote_ip` field value to the remote address (IP) from the $_SERVER var
           key: REMOTE_ADDR
 ```
 
-Set the `testkey` field value to the value for the session variable named "testkey"
+Set the `test_key` field value to the value for the session variable named "test_key"
 
 ```yaml
-    testkey:
+    test_key:
       type: hidden
       options:
         label: false
       event: 
         name: session_value
         params:
-          key: testkey
+          key: test_key
 ```
 
 Set the `sent_on` field value to the current date and/or time as formatted.
