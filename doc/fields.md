@@ -128,68 +128,68 @@ increment.
 
 ```yaml
     remote_member_id:
-      type: hidden
-      options:
-        label: false
-      event: 
-        name: next_increment
-        params:
-          contenttype: pages          # Optional
-#          table: bolt_table_name     # Optional and alternative to contenttype:
-          column: remote_member_id    # Required
-          min: 31000                  # Optional
+        type: hidden
+        options:
+            label: false
+        event: 
+            name: next_increment
+            params:
+                contenttype: pages          # Optional
+#                table: bolt_table_name     # Optional and alternative to contenttype:
+                column: remote_member_id    # Required
+                min: 31000                  # Optional
 ```
 
 Set the `random_field` field value to a randomised string.
 
 ```yaml
     random_field:
-      type: hidden
-      options:
-        label: false
-      event: 
-        name: random_string
-        params:
-          length: 12                  # Optional, defaults to 12
+        type: hidden
+        options:
+            label: false
+        event: 
+            name: random_string
+            params:
+                length: 12                  # Optional, defaults to 12
 ```
 
 Set the `remote_ip` field value to the remote address (IP) from the $_SERVER variables
 
 ```yaml
     remote_ip:
-      type: hidden
-      options:
-        label: false
-      event: 
-        name: server_value
-        params:
-          key: REMOTE_ADDR
+        type: hidden
+        options:
+            label: false
+        event: 
+            name: server_value
+            params:
+                key: REMOTE_ADDR
 ```
 
 Set the `test_key` field value to the value for the session variable named "test_key"
 
 ```yaml
     test_key:
-      type: hidden
-      options:
-        label: false
-      event: 
-        name: session_value
-        params:
-          key: test_key
+        type: hidden
+        options:
+            label: false
+        event: 
+            name: session_value
+            params:
+                key: test_key
 ```
 
 Set the `sent_on` field value to the current date and/or time as formatted.
 
 ```yaml
     sent_on:
-      type: hidden
-      options:
-        label: false
-      event: 
-        name: timestamp
-        params:
-          format: '%F %T'
+        type: hidden
+        options:
+            label: false
+        event: 
+            name: timestamp
+            params:
+                format: '%F %T'
 ```
 
 Dynamic Fields

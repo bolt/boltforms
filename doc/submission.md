@@ -11,12 +11,12 @@ The page for the redirect target must exist.
 The redirect is added to the `feedback` key of the form, for example: 
 
 ```yaml
-  feedback:
-    success: Form submission successful
-    error: There are errors in the form, please fix before trying to resubmit
-    redirect:
-      target: page/another-page  # A page path, or URL
-      query: [ name, email ]     # Optional keys for the GET parameters
+    feedback:
+        success: Form submission successful
+        error: There are errors in the form, please fix before trying to resubmit
+        redirect:
+            target: page/another-page  # A page path, or URL
+            query: [ name, email ]     # Optional keys for the GET parameters
 ```
 
 **Note:**

@@ -14,25 +14,25 @@ concatenated (space delimited) can also be specified.
 
 ```yaml
 my_form:
-  notification:
-    from_name: Kenny Koala
-    from_email: kenny@koala.com
+    notification:
+        from_name: Kenny Koala
+        from_email: kenny@koala.com
 ```
 
 ### Field Names
 
 ```yaml
 my_form:
-  notification:
-    from_name: full_name
-    from_email: email_address
+    notification:
+        from_name: full_name
+        from_email: email_address
 ```
 
 ### Array of Field Names
 
 ```yaml
 my_form:
-  notification:
-    from_name: [ first_name, last_name ]
-    from_email: email_address
+    notification:
+        from_name: [ first_name, last_name ]
+        from_email: email_address
 ```
