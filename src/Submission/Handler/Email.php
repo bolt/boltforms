@@ -134,7 +134,7 @@ class Email extends AbstractHandler
         $event = new BoltFormsEmailEvent($emailConfig, $formConfig, $formData);
         $this->dispatcher->dispatch(BoltFormsEvents::PRE_EMAIL_SEND, $event);
 
-        $this->emailCompose($formConfig, $emailConfig, $formData);
+        $this->emailCompose($formConfig, $emailConfig, $formData, $formMetaData);
         $this->emailAddress($emailConfig);
         $this->emailSend($emailConfig, $formData);
 
@@ -144,11 +144,12 @@ class Email extends AbstractHandler
     /**
      * Compose the email data to be sent.
      *
-     * @param FormConfig  $formConfig
-     * @param EmailConfig $emailConfig
-     * @param FormData    $formData
+     * @param FormConfig   $formConfig
+     * @param EmailConfig  $emailConfig
+     * @param FormData     $formData
+     * @param FormMetaData $formMetaData
      */
-    private function emailCompose(FormConfig $formConfig, EmailConfig $emailConfig, FormData $formData)
+    private function emailCompose(FormConfig $formConfig, EmailConfig $emailConfig, FormData $formData, FormMetaData $formMetaData)
     {
 
         // If the form has it's own templates defined, use those, else the globals.
@@ -161,9 +162,10 @@ class Email extends AbstractHandler
          * Subject
          */
         $html = $this->twig->render($templateSubject, [
-            $fieldMap->getSubject() => $formConfig->getNotification()->getSubject(),
-            $fieldMap->getConfig()  => $emailConfig,
-            $fieldMap->getData()    => $formData,
+            $fieldMap->getSubject()  => $formConfig->getNotification()->getSubject(),
+            $fieldMap->getConfig()   => $emailConfig,
+            $fieldMap->getData()     => $formData,
+            $fieldMap->getMetaData() => $formMetaData->getUsedMeta('email'),
         ]);
         $subject = new \Twig_Markup($html, 'UTF-8');
 
@@ -171,9 +173,10 @@ class Email extends AbstractHandler
          * Body
          */
         $html = $this->twig->render($templateEmail, [
-            $fieldMap->getFields() => $formConfig->getFields(),
-            $fieldMap->getConfig() => $emailConfig,
-            $fieldMap->getData()   => $this->getBodyData($formConfig, $emailConfig, $formData),
+            $fieldMap->getFields()   => $formConfig->getFields(),
+            $fieldMap->getConfig()   => $emailConfig,
+            $fieldMap->getData()     => $this->getBodyData($formConfig, $emailConfig, $formData),
+            $fieldMap->getMetaData() => $formMetaData->getUsedMeta('email'),
         ]);
         $body = new \Twig_Markup($html, 'UTF-8');
 

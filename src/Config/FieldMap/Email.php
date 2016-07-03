@@ -16,6 +16,8 @@ class Email extends ParameterBag
     /** @var string */
     protected $data = 'data';
     /** @var string */
+    protected $metaData = 'metadata';
+    /** @var string */
     protected $fields = 'fields';
     /** @var string */
     protected $subject = 'subject';
@@ -56,6 +58,26 @@ class Email extends ParameterBag
     public function setData($data)
     {
         $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMetaData()
+    {
+        return $this->metaData;
+    }
+
+    /**
+     * @param string $metaData
+     *
+     * @return Email
+     */
+    public function setMetaData($metaData)
+    {
+        $this->metaData = $metaData;
 
         return $this;
     }
