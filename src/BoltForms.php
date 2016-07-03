@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms;
 use Bolt\Asset\Snippet\Snippet;
 use Bolt\Asset\Target;
 use Bolt\Controller\Zone;
+use Bolt\Extension\Bolt\BoltForms\Asset\ReCaptcha;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
@@ -48,6 +49,8 @@ class BoltForms
     private $forms;
     /** @var boolean */
     private $queuedAjax;
+    /** @var boolean */
+    private $queuedReCaptcha;
 
     /**
      * Constructor.
@@ -266,6 +269,10 @@ class BoltForms
             $this->queueAjax($context);
         }
 
+        if ($context['recaptcha']['enabled']) {
+            $this->queueReCaptcha();
+        }
+
         // Pray and do the render
         $html = $this->app['twig']->render($template, $context);
 
@@ -307,5 +314,25 @@ class BoltForms
 
         $this->app['asset.queue.snippet']->add($snippet);
         $this->queuedAjax = true;
+    }
+
+    /**
+     * Conditionally add reCaptcha JavaScript to the end of the HTML body.
+     */
+    private function queueReCaptcha()
+    {
+        if ($this->queuedReCaptcha) {
+            return;
+        }
+
+        $reCaptcha = new ReCaptcha();
+        $reCaptcha
+            ->setHtmlLang($this->app['locale'])
+            ->setLocation(Target::END_OF_BODY)
+            ->setZone(Zone::FRONTEND)
+        ;
+
+        $this->app['asset.queue.file']->add($reCaptcha);
+        $this->queuedReCaptcha = true;
     }
 }

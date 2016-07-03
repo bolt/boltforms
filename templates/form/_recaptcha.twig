@@ -1,12 +1,6 @@
 
 {% macro recaptcha(recaptcha) %}
     {% if recaptcha.enabled %}
-        <script>
-            var RecaptchaOptions = {
-                theme : '{{ recaptcha.theme|default('clean') }}'
-            };
-        </script>
-
         {% if not recaptcha.valid %}
             <ul class="boltform-error">
                 <li class="boltform-errors">{{ recaptcha.error_message }}</li>
@@ -15,9 +9,7 @@
 
         <div class="boltform-row">
             <label for="form_message" class="required">{{ recaptcha.label }}</label>
-            <script src="https://www.google.com/recaptcha/api.js?hl={{ htmllang() }}" async defer></script>
             <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
         </div>
-
     {% endif %}
 {% endmacro %}
