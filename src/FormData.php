@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
+use Bolt\Extension\Bolt\BoltForms\Submission\Handler\Upload;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -95,7 +96,7 @@ class FormData extends ParameterBag
         }
 
         // Handle file storage preparation here
-        if ($value instanceof UploadedFileHandler && $value->isValid()) {
+        if ($value instanceof Upload && $value->isValid()) {
             return $value->relativePath();
         }
 

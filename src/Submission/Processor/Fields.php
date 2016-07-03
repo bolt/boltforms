@@ -7,7 +7,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
-use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
+use Bolt\Extension\Bolt\BoltForms\Submission\Handler\Upload;
 use Pimple as Container;
 use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -97,8 +97,8 @@ class Fields extends AbstractProcessor
         $formData = $lifeEvent->getFormData();
 
         // Get the upload object
-        /** @var UploadedFileHandler $fileHandler */
-        $fileHandler = new UploadedFileHandler($this->config, $formConfig, $field);
+        /** @var Upload $fileHandler */
+        $fileHandler = new Upload($this->config, $formConfig, $field);
         $formData->set($fieldName, $fileHandler);
 
         if (!$this->config->getUploads()->get('enabled')) {

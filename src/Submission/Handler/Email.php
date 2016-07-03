@@ -10,7 +10,6 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\FormData;
-use Bolt\Extension\Bolt\BoltForms\UploadedFileHandler;
 use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer as SwiftMailer;
@@ -209,7 +208,7 @@ class Email extends AbstractHandler
             $config = $formConfig->getFields()->{$key}();
             $formValue = $formData->get($key);
 
-            if ($formData->get($key) instanceof UploadedFileHandler) {
+            if ($formData->get($key) instanceof Upload) {
                 if ($formData->get($key)->isValid() && $emailConfig->attachFiles()) {
                     $attachment = \Swift_Attachment::fromPath($formData->get($key)->fullPath())
                             ->setFilename($formData->get($key)->getFile()->getClientOriginalName());
