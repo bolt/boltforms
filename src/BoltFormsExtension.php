@@ -148,6 +148,7 @@ class BoltFormsExtension extends SimpleExtension
                 'subject'   => 'boltforms_email_subject.twig',
                 'files'     => 'boltforms_file_browser.twig',
                 'exception' => 'boltforms_exception.twig',
+                'ajax'      => '_boltforms_ajax.twig',
             ],
             'debug' => [
                 'enabled' => false,

@@ -290,7 +290,7 @@ class BoltForms
         $snippet = new Snippet();
         $snippet->setCallback(
                 function () use ($context) {
-                    return $this->app['twig']->render('_boltforms_js.twig', $context);
+                    return $this->app['twig']->render($this->config->getTemplates()->get('ajax'), $context);
                 }
             )
             ->setLocation(Target::END_OF_BODY)

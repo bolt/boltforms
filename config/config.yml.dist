@@ -3,11 +3,12 @@
 ###
 
 # Global templates used for rendering forms and emails.
-templates:
-    form: boltforms_form.twig
-    email: boltforms_email.twig
-    subject: boltforms_email_subject.twig
-    files: boltforms_file_browser.twig
+#templates:
+#    form: boltforms_form.twig
+#    email: boltforms_email.twig
+#    subject: boltforms_email_subject.twig
+#    files: boltforms_file_browser.twig
+#    ajax: _boltforms_ajax.twig
 
 # reCAPTCHa set up
 recaptcha:
