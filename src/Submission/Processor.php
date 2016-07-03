@@ -148,11 +148,19 @@ class Processor implements EventSubscriberInterface
         if ($formData !== null && $reCaptchaResponse['success']) {
             $lifeEvent = new LifecycleEvent($formConfig, $formData, $formMetaData, $form->getClickedButton());
 
-            // Process
+            // Prepare fields
             $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
-            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE, $lifeEvent);
-            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
-            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
+
+            // Process
+            if ($formConfig->getDatabase()->get('contenttype', false)) {
+                $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE, $lifeEvent);
+            }
+            if ($formConfig->getDatabase()->get('table', false)) {
+                $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
+            }
+            if ($formConfig->getNotification()->getBoolean('enabled')) {
+                $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
+            }
 
             // Post processing event
             $processorEvent = new BoltFormsProcessorEvent($formName, $formData->all());
