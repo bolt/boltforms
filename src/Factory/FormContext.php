@@ -89,6 +89,7 @@ class FormContext
                 'debug' => $debugs,
             ],
             'sent'      => $this->sent,
+            'templates' => $config->getTemplates(),
             'recaptcha' => [
                 'enabled'       => $reCaptchaConfig->get('enabled'),
                 'label'         => $reCaptchaConfig->get('label'),
