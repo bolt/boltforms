@@ -84,10 +84,9 @@ class Async implements ControllerProviderInterface
         $config = $app['boltforms.config'];
         /** @var Config\FormConfig $formConfig */
         $formConfig = $config->getForm($formName);
-        $reCaptchaResponse = $app['boltforms.processor']->reCaptchaResponse($request);
 
         try {
-            $sent = $app['boltforms.processor']->process($formConfig, $reCaptchaResponse);
+            $sent = $app['boltforms.processor']->process($formConfig, $app['recapture.response.factory']());
         } catch (FileUploadException $e) {
             $sent = false;
             $app['boltforms.feedback']->add('error', $e->getMessage());

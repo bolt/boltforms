@@ -117,7 +117,8 @@ class BoltFormsExtension
         $formContext = $formHelper->getContextCompiler($formName);
 
         // Handle the POST
-        $formHelper->handleFormRequest($formConfig, $formContext);
+        $reCaptchaResponse = $this->app['recapture.response.factory']();
+        $formHelper->handleFormRequest($formConfig, $formContext, $reCaptchaResponse);
 
         $loadAjax = $formConfig->getSubmission()->getAjax();
         $twig = $this->app['twig'];
@@ -126,7 +127,7 @@ class BoltFormsExtension
             ->setAction($this->getRelevantAction($formName, $loadAjax))
             ->setHtmlPreSubmit($formHelper->getOptionalHtml($twig, $htmlPreSubmit))
             ->setHtmlPostSubmit($formHelper->getOptionalHtml($twig, $htmlPostSubmit))
-            ->setReCaptchaResponse($processor->reCaptchaResponse($requestStack->getCurrentRequest()))
+            ->setReCaptchaResponse($reCaptchaResponse)
             ->setDefaults((array) $defaults)
         ;
         $session->set('boltforms_compiler_' . $formName, $formContext);

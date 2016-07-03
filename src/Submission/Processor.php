@@ -207,33 +207,6 @@ class Processor implements EventSubscriberInterface
     }
 
     /**
-     * Check reCaptcha, if enabled.
-     *
-     * @param Request $request
-     *
-     * @return array
-     */
-    public function reCaptchaResponse(Request $request)
-    {
-        // Check reCaptcha, if enabled.  If not just return true
-        if ($this->config->getReCaptcha()->get('enabled') === false) {
-            return [
-                'success'    => true,
-                'errorCodes' => null,
-            ];
-        }
-
-        /** @var \ReCaptcha\ReCaptcha $reCaptcha */
-        $reCaptcha = $this->app['recaptcha'];
-        $reCaptchaResponse = $reCaptcha->verify($request->get('g-recaptcha-response'), $request->getClientIp());
-
-        return [
-            'success'    => $reCaptchaResponse->isSuccess(),
-            'errorCodes' => $reCaptchaResponse->getErrorCodes(),
-        ];
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function getFeedback()

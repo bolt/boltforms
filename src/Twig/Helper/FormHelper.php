@@ -110,17 +110,15 @@ class FormHelper
      *
      * @param FormConfig  $formConfig
      * @param FormContext $compiler
+     * @param array       $reCaptchaResponse
      */
-    public function handleFormRequest(FormConfig $formConfig, FormContext $compiler)
+    public function handleFormRequest(FormConfig $formConfig, FormContext $compiler, $reCaptchaResponse)
     {
         $formName = $formConfig->getName();
         $sessionKey = sprintf('boltforms_submit_%s', $formName);
 
         $request = $this->requestStack->getCurrentRequest();
         if ($request && $request->isMethod(Request::METHOD_POST) && $request->request->get($formName) !== null) {
-            // Check reCaptcha, if enabled.
-            $reCaptchaResponse = $this->processor->reCaptchaResponse($request);
-
             try {
                 $sent = $this->processor->process($formConfig, $reCaptchaResponse);
                 $compiler->setSent($sent);
