@@ -47,7 +47,7 @@ class BoltForms
     /** @var BoltForm[] */
     private $forms;
     /** @var boolean */
-    private $jsQueued;
+    private $queuedAjax;
 
     /**
      * Constructor.
@@ -263,7 +263,7 @@ class BoltForms
 
         // Add JavaScript if doing the AJAX dance.
         if ($loadAjax) {
-            $this->queueJavaScript($context);
+            $this->queueAjax($context);
         }
 
         // Pray and do the render
@@ -289,23 +289,23 @@ class BoltForms
      *
      * @param array $context
      */
-    private function queueJavaScript(array $context)
+    private function queueAjax(array $context)
     {
-        if ($this->jsQueued) {
+        if ($this->queuedAjax) {
             return;
         }
 
         $snippet = new Snippet();
         $snippet->setCallback(
-                function () use ($context) {
-                    return $this->app['twig']->render($this->config->getTemplates()->get('ajax'), $context);
-                }
-            )
+            function () use ($context) {
+                return $this->app['twig']->render($this->config->getTemplates()->get('ajax'), $context);
+            }
+        )
             ->setLocation(Target::END_OF_BODY)
             ->setZone(Zone::FRONTEND)
         ;
 
         $this->app['asset.queue.snippet']->add($snippet);
-        $this->jsQueued = true;
+        $this->queuedAjax = true;
     }
 }
