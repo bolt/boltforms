@@ -86,33 +86,55 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             }
         );
 
-        $app['boltforms.processors'] = $app->share(
+        $app['boltforms.subscriber.custom_data'] = $app->share(function ($app) {
+            return new BoltFormsCustomDataSubscriber($app);
+        });
+
+        $this->registerHandlers($app);
+        $this->registerProcessors($app);
+        $this->registerTwig($app);
+    }
+
+    public function boot(Application $app)
+    {
+        $dispatcher = $app['dispatcher'];
+        $dispatcher->addSubscriber($app['boltforms.subscriber.custom_data']);
+    }
+
+    private function registerTwig(Application $app)
+    {
+        $app['boltforms.twig.helper'] = $app->share(
             function ($app) {
                 return new Container([
-                    'content'  => $app->share(function () use ($app) { return new Submission\Processor\ContentType($app['boltforms.handlers']); }),
-                    'database' => $app->share(function () use ($app) { return new Submission\Processor\DatabaseTable($app['boltforms.handlers']); }),
-                    'email'    => $app->share(function () use ($app) { return new Submission\Processor\Email($app['boltforms.handlers']); }),
-                    'feedback' => $app->share(function () use ($app) { return new Submission\Processor\Feedback($app['boltforms.handlers'], $app['session']); }),
-                    'fields'   => $app->share(function () use ($app) { return new Submission\Processor\Fields($app['boltforms.handlers'], $app['boltforms.config']); }),
-                    'redirect' => $app->share(function () use ($app) { return new Submission\Processor\Redirect($app['boltforms.handlers'], $app['url_matcher'], $app['request_stack']); }),
+                    'form' => $app->share(
+                        function () use ($app) {
+                            return new Twig\Helper\FormHelper(
+                                $app['boltforms'],
+                                $app['boltforms.config'],
+                                $app['boltforms.processor'],
+                                $app['boltforms.form.context.factory'],
+                                $app['boltforms.feedback'],
+                                $app['session'],
+                                $app['request_stack'],
+                                $app['logger.system']
+                            );
+                        }
+                    ),
                 ]);
             }
         );
 
-        $app['boltforms.processor'] = $app->share(
+        $app['boltforms.twig'] = $app->share(
             function ($app) {
-                $processor = new Submission\Processor(
-                    $app['boltforms.config'],
-                    $app['boltforms'],
-                    $app['dispatcher'],
-                    $app['logger.system'],
-                    $app
-                );
+                $twig = new Twig\BoltFormsExtension($app, $app['boltforms.config']);
 
-                return $processor;
+                return $twig;
             }
         );
+    }
 
+    private function registerHandlers(Application $app)
+    {
         /** @deprecated Since 3.1 and to be removed in 4.0. Use $app['boltforms.handlers']['database'] instead. */
         $app['boltforms.database'] = $app->share(
             function ($app) {
@@ -199,44 +221,35 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 ]);
             }
         );
+    }
 
-        $app['boltforms.twig.helper'] = $app->share(
+    private function registerProcessors(Application $app)
+    {
+        $app['boltforms.processors'] = $app->share(
             function ($app) {
                 return new Container([
-                    'form' => $app->share(
-                        function () use ($app) {
-                            return new Twig\Helper\FormHelper(
-                                $app['boltforms'],
-                                $app['boltforms.config'],
-                                $app['boltforms.processor'],
-                                $app['boltforms.form.context.factory'],
-                                $app['boltforms.feedback'],
-                                $app['session'],
-                                $app['request_stack'],
-                                $app['logger.system']
-                            );
-                        }
-                    ),
+                    'content'  => $app->share(function () use ($app) { return new Submission\Processor\ContentType($app['boltforms.handlers']); }),
+                    'database' => $app->share(function () use ($app) { return new Submission\Processor\DatabaseTable($app['boltforms.handlers']); }),
+                    'email'    => $app->share(function () use ($app) { return new Submission\Processor\Email($app['boltforms.handlers']); }),
+                    'feedback' => $app->share(function () use ($app) { return new Submission\Processor\Feedback($app['boltforms.handlers'], $app['session']); }),
+                    'fields'   => $app->share(function () use ($app) { return new Submission\Processor\Fields($app['boltforms.handlers'], $app['boltforms.config']); }),
+                    'redirect' => $app->share(function () use ($app) { return new Submission\Processor\Redirect($app['boltforms.handlers'], $app['url_matcher'], $app['request_stack']); }),
                 ]);
             }
         );
 
-        $app['boltforms.twig'] = $app->share(
+        $app['boltforms.processor'] = $app->share(
             function ($app) {
-                $twig = new Twig\BoltFormsExtension($app, $app['boltforms.config']);
+                $processor = new Submission\Processor(
+                    $app['boltforms.config'],
+                    $app['boltforms'],
+                    $app['dispatcher'],
+                    $app['logger.system'],
+                    $app
+                );
 
-                return $twig;
+                return $processor;
             }
         );
-
-        $app['boltforms.subscriber.custom_data'] = $app->share(function ($app) {
-            return new BoltFormsCustomDataSubscriber($app);
-        });
-    }
-
-    public function boot(Application $app)
-    {
-        $dispatcher = $app['dispatcher'];
-        $dispatcher->addSubscriber($app['boltforms.subscriber.custom_data']);
     }
 }
