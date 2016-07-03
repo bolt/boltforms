@@ -6,7 +6,6 @@ use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
 use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
-use Silex\Application;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 abstract class AbstractHandler
@@ -35,7 +34,7 @@ abstract class AbstractHandler
      */
     public function __construct(
         Config $config,
-        EntityManager $entityManager, 
+        EntityManager $entityManager,
         FlashBag $feedback,
         LoggerInterface $logger,
         \Swift_Mailer $mailer

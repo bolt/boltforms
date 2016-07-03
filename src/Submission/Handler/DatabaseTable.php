@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Psr\Log\LogLevel;
-use Silex\Application;
 
 /**
  * Database functions for BoltForms

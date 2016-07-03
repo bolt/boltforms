@@ -6,7 +6,6 @@ use Bolt\Exception\StorageException;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Carbon\Carbon;
-use Silex\Application;
 
 /**
  * ContentType storage.
