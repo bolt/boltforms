@@ -82,4 +82,23 @@ class FormMetaData extends ParameterBag
     {
         $this->_metaId = $metaId;
     }
+
+    /**
+     * Return the meta data for a particular use.
+     * 
+     * @param string $target
+     *
+     * @return array
+     */
+    public function getUsedMeta($target)
+    {
+        $meta = [];
+        foreach ($this->keys() as $key) {
+            if (in_array($target, (array) $this->get($key)->getUse())) {
+                $meta[$key] = $this->get($key)->getValue();
+            }
+        }
+        
+        return $meta;
+    }
 }

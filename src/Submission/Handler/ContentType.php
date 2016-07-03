@@ -64,10 +64,8 @@ class ContentType extends AbstractHandler
         }
 
         // Add any meta values that are requested for 'database' use
-        foreach ($formMetaData->keys() as $key) {
-            if (in_array('database', (array) $formMetaData->get($key)->getUse())) {
-                $record->set($key, $formMetaData->get($key)->getValue());
-            }
+        foreach ($formMetaData->getUsedMeta('database') as $key => $value) {
+            $record->set($key, $value);
         }
 
         try {

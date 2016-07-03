@@ -64,8 +64,8 @@ class DatabaseTable extends AbstractHandler
             }
 
             // Add any meta values that are requested for 'database' use
-            foreach ($formMetaData->keys() as $key) {
-                if ($key === $colName && in_array('database', (array) $formMetaData->get($key)->getUse())) {
+            foreach ($formMetaData->getUsedMeta('database') as $key => $value) {
+                if ($key === $colName) {
                     $saveData[$colName] = $formMetaData->get($key)->getValue();
                 }
             }
