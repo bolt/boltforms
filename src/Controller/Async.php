@@ -102,6 +102,6 @@ class Async implements ControllerProviderInterface
         $template = $config->getForm($formName)->getTemplates()->getForm() ?: $config->getTemplates()->get('form');
 
         // Render the Twig_Markup
-        return $boltForms->renderForm($formName, $template, $context, false);
+        return $boltForms->render($formName, $template, $context, false);
     }
 }

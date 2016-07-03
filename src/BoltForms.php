@@ -240,7 +240,7 @@ class BoltForms
     }
 
     /**
-     * Render our form into HTML
+     * Render our form into HTML.
      *
      * @param string $formName Name of the form
      * @param string $template A Twig template file name in Twig's path
@@ -249,7 +249,7 @@ class BoltForms
      *
      * @return \Twig_Markup
      */
-    public function renderForm($formName, $template = '', array $context = [], $loadAjax = false)
+    public function render($formName, $template = '', array $context = [], $loadAjax = false)
     {
         if (empty($template)) {
             $template = $this->config->getTemplates()->get('form');
@@ -274,6 +274,14 @@ class BoltForms
 
         // Return the result
         return new \Twig_Markup($html, 'UTF-8');
+    }
+
+    /**
+     * @deprecated use render()
+     */
+    public function renderForm($formName, $template = '', array $context = [], $loadAjax = false)
+    {
+        return $this->render($formName, $template, $context, $loadAjax);
     }
 
     /**

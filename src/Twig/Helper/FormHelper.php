@@ -157,7 +157,7 @@ class FormHelper
         $context = $compiler->build($this->boltForms, $this->config, $formName, $this->feedback);
 
         // Render the Twig_Markup
-        return $this->boltForms->renderForm($formName, $template, $context, $loadAjax);
+        return $this->boltForms->render($formName, $template, $context, $loadAjax);
     }
 
     /**
