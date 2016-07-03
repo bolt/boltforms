@@ -9,4 +9,3 @@ BoltForms Documentation
   * [Email Notifications](email.md)
   * [Submission & Redirection](submission.md)
   * [Events](events.md)
-  * [API](api.md)
