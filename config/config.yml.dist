@@ -74,11 +74,11 @@ csrf: true
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SECURITY WARNING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-uploads:
-    enabled: false                                 # The global on/off switch for upload handling
-    base_directory: /full/path/for/uploaded/files/ # Outside web root and writable by the web server's user
-    filename_handling: suffix                      # Can be either "prefix", "suffix", or "keep"
-    management_controller: false                   # Enable a controller to handle browsing and downloading of uploaded files
+#uploads:
+#    enabled: false                                 # The global on/off switch for upload handling
+#    base_directory: /full/path/for/uploaded/files/ # Outside web root and writable by the web server's user
+#    filename_handling: suffix                      # Can be either "prefix", "suffix", or "keep"
+#    management_controller: false                   # Enable a controller to handle browsing and downloading of uploaded files
 
 ## Debugging
 #
