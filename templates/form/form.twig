@@ -1,6 +1,23 @@
 {#
  # Passed in variables:
- #   webpath     - URI for the default web assets
+ #   formname        — The form name
+ #   form            — The form object
+ #   fields          — Field data
+ #   sent            — True when the form has been submitted successfully
+ #   html_pre        — HTML to display before successful submission
+ #   html_post       — HTML to display after successful submission
+ #   messages        — Arrays of messages by type
+ #     info          — "Informational" messages
+ #     error         — "Error" messages
+ #     debug         — "Debug" messages
+ #   webpath         — URI for the default web assets
+ #   recaptcha       — reCaptcha values
+ #     enabled
+ #     label
+ #     error_message
+ #     error_codes
+ #     valid
+ #   debug           — True if debug mode is enabled
  #}
 {% form_theme form '@BoltForms/form/_form_theme.twig' %}
 
@@ -8,53 +25,46 @@
     {{ include('@BoltForms/asset/_css.twig') }}
 {% endblock boltforms_css %}
 
-<div class="boltform">
+{% block boltforms_form %}
+    <div class="boltform">
 
-{{ include('@BoltForms/feedback/_messages.twig') }}
-{% import '@BoltForms/form/_macros.twig' as macros %}
+        {{ include('@BoltForms/feedback/_messages.twig') }}
+        {% import '@BoltForms/form/_recaptcha.twig' as spambot %}
 
-{% if sent %}
-    {{ html_post }}
-{% else %}
-    {{ html_pre }}
+        {% if sent %}
+            {# If the form is successfully submitted, this block will be displayed #}
+            {{ html_post }}
+        {% else %}
+            {{ html_pre }}
 
-    {% if recaptcha.enabled and recaptcha.theme|default('clean') %}
-    <script>
-        var RecaptchaOptions = {
-            theme : '{{ recaptcha.theme }}'
-        };
-    </script>
-    {% endif %}
+            {{ form_start(form, form_start_param) }}
 
-    {{ form_start(form, form_start_param) }}
+            {{ form_errors(form) }}
 
-        {{ form_errors(form) }}
+            {% for key, value in fields  %}
+                {% if value.config.type.name != 'submit' %}
+                    <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
+                        <span class="boltforms-label">{{ form_label(form[key]) }}</span>
+                        <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
+                        <span class="boltforms-value">{{ form_widget(form[key]) }}</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
 
-        {% for key, value in fields  %}
-            {% if value.config.type.name != 'submit' %}
+            {{ spambot.recaptcha(recaptcha) }}
 
-            <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
-                <span class="boltforms-label">{{ form_label(form[key]) }}</span>
-                <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
-                <span class="boltforms-value">{{ form_widget(form[key]) }}</span>
-            </div>
-            {% endif %}
-        {% endfor %}
+            <br>
+            {% for key, value in fields  %}
+                {% if value.config.type.name == 'submit' %}
+                    <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
+                        {{ form_widget(form[key]) }}
+                    </div>
+                {% endif %}
+            {% endfor %}
 
-        {{ macros.recaptcha(recaptcha) }}
+            {{ form_end(form) }}
 
-        <br>
-        {% for key, value in fields  %}
-            {% if value.config.type.name == 'submit' %}
-                <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
-                    {{ form_widget(form[key]) }}
-                </div>
-            {% endif %}
-        {% endfor %}
-
-
-    {{ form_end(form) }}
-
-{% endif %}
-</div>
+        {% endif %}
+    </div>
+{% endblock boltforms_form %}
 
