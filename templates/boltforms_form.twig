@@ -5,12 +5,12 @@
 {% form_theme form 'boltforms_custom.twig' %}
 
 {% block boltforms_css %}
-    {{ include('_boltforms_css.twig') }}
+    {{ include('@BoltForms/_css.twig') }}
 {% endblock boltforms_css %}
 
 <div class="boltform">
 
-{{ include('_boltforms_messages.twig') }}
+{{ include('@BoltForms/_messages.twig') }}
 {% import "boltforms_macros.twig" as macros %}
 
 {% if sent %}

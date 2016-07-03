@@ -100,7 +100,10 @@ class BoltFormsExtension extends SimpleExtension
      */
     protected function registerTwigPaths()
     {
-        return ['templates'];
+        return [
+            'templates',
+            'templates/partials' => ['namespace' => 'BoltForms']
+        ];
     }
 
     /**
@@ -147,8 +150,10 @@ class BoltFormsExtension extends SimpleExtension
                 'email'     => 'boltforms_email.twig',
                 'subject'   => 'boltforms_email_subject.twig',
                 'files'     => 'boltforms_file_browser.twig',
-                'exception' => 'boltforms_exception.twig',
-                'ajax'      => '_boltforms_ajax.twig',
+                'messages'  => '@BoltForms/__messages.twig',
+                'exception' => '@BoltForms/__exception.twig',
+                'ajax'      => '@BoltForms/_ajax.twig',
+                'css'       => '@BoltForms/_css.twig',
             ],
             'debug' => [
                 'enabled' => false,
