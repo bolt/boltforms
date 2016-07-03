@@ -2,16 +2,16 @@
  # Passed in variables:
  #   webpath     - URI for the default web assets
  #}
-{% form_theme form 'boltforms_custom.twig' %}
+{% form_theme form '@BoltForms/form/_form_theme.twig' %}
 
 {% block boltforms_css %}
-    {{ include('@BoltForms/_css.twig') }}
+    {{ include('@BoltForms/asset/_css.twig') }}
 {% endblock boltforms_css %}
 
 <div class="boltform">
 
-{{ include('@BoltForms/_messages.twig') }}
-{% import "boltforms_macros.twig" as macros %}
+{{ include('@BoltForms/feedback/_messages.twig') }}
+{% import '@BoltForms/form/_macros.twig' as macros %}
 
 {% if sent %}
     {{ html_post }}
