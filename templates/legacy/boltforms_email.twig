@@ -1,0 +1,33 @@
+{#
+ # Passed in variables:
+ #   fields     - Field data from the form configuration
+ #   config     - Email configuration date
+ #   data       - The posted data
+ #}
+{% import "boltforms_macros.twig" as macros %}
+<p>Hi,</p>
+
+<p>Somebody used the form on {{ paths.currenturl }} to send you a message. The posted data is as follows:</p>
+<hr>
+{% for label, value in data -%}
+    {%- if value is json -%}
+        {%- set value = value|json_decode -%}
+    {%- endif -%}
+    {%- set field = fields[label] -%}
+    {%- if field.options.label|default('') is empty -%}
+{{ macros.label_value(label, value) }}
+    {%- else -%}
+        {%- if value is iterable -%}
+<p>{{ macros.label(label) -}}
+        {%- for val in value -%}
+{{ macros.value(val) }}
+            {%- endfor -%}
+</ul></p>
+        {%- else %}
+{{ macros.label_value(label, value) }}
+        {%- endif -%}
+    {%- endif -%}
+{%- endfor -%}
+
+<hr>
+<em>Sent by the <a href="https://github.com/GawainLynch/bolt-extension-boltforms">BoltForms</a> extension for <a href="https://bolt.cm">Bolt</a>.</em>

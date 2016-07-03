@@ -1,0 +1,15 @@
+{# Render a single line label #}
+{% macro label(label) %}
+{{ label }}:<ul>
+{% endmacro %}
+
+{# Render a list item value #}
+{% macro value(value) %}
+    <li>{{ value }}</li>
+{% endmacro %}
+
+{# Render a label/value pair #}
+{% macro label_value(label, value) %}
+<p>{{ label }}: {{ value }}</p>
+{% endmacro %}
+
