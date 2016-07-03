@@ -84,6 +84,45 @@ For more information on this field type, see the [choice fields documentation](f
 Upload Types
 ------------
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SECURITY WARNING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Handling file uploads is a very common attack vector used to compromise (hack)
+a server.
+
+BoltForms does a few things to help increase slightly the security of handling
+file uploads.
+
+Firstly, the directory that you specify for "base_directory" below should NOT
+be an route accessible to the outside world. We provide a special route should
+you wish to make the files browsable after upload.
+
+Secondly, is the "filename_handling" parameter. If an attacker knows the
+uploaded file name, this can make their job a bit easier. So we provide three
+options, e.g. uploading the file kitten.jpg:
+
+-------------------------------------
+| Setting | Resulting file name     |
+|-----------------------------------|
+| prefix  | kitten.Ze1d352rrI3p.jpg |
+| suffix  | kitten.jpg.Ze1d352rrI3p |
+| keep    | kitten.jpg              |
+-------------------------------------
+
+We recommend "suffix" as this is the most secure, alternatively "prefix" will
+aid in file browsing. However "keep" should always be used with caution!
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SECURITY WARNING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Configuration parameters:
+
+```
+uploads:
+    enabled: false                                 # The global on/off switch for upload handling
+    base_directory: /full/path/for/uploaded/files/ # Outside web root and writable by the web server's user
+    filename_handling: suffix                      # Can be either "prefix", "suffix", or "keep"
+    management_controller: false                   # Enable a controller to handle browsing and downloading of uploaded files
+```
+
+
 For more information on this field type, see the [upload fields documentation](fields/upload.md)
 
 
