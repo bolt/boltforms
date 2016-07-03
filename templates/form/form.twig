@@ -17,19 +17,20 @@
  #     error_message
  #     error_codes
  #     valid
+ #   templates       — Array of templates configured for this form
  #   debug           — True if debug mode is enabled
  #}
-{% form_theme form '@BoltForms/form/_form_theme.twig' %}
+{% form_theme form templates.formtheme %}
 
 {% block boltforms_css %}
-    {{ include('@BoltForms/asset/_css.twig') }}
+    {{ include(templates.css) }}
 {% endblock boltforms_css %}
 
 {% block boltforms_form %}
     <div class="boltform">
 
-        {{ include('@BoltForms/feedback/_messages.twig') }}
-        {% import '@BoltForms/form/_recaptcha.twig' as spambot %}
+        {{ include(templates.messages) }}
+        {% import templates.recaptcha as spambot %}
 
         {% if sent %}
             {# If the form is successfully submitted, this block will be displayed #}

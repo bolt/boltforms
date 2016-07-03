@@ -1,9 +1,9 @@
 {#
  #}
 {% block boltforms_css %}
-    {{ include('@BoltForms/asset/_css.twig') }}
+    {{ include(templates.css) }}
 {% endblock boltforms_css %}
 
 <div class="boltform">
-    {{ include('@BoltForms/feedback/_messages.twig') }}
+    {{ include(templates.messages) }}
 </div>
