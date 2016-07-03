@@ -181,6 +181,11 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                             return new Submission\Handler\Redirect($app['url_matcher']);
                         }
                     ),
+                    'request' => $app->share(
+                        function () use ($app) {
+                            return new Submission\Handler\Request($app['request_stack']);
+                        }
+                    ),
                 ]);
             }
         );

@@ -139,8 +139,10 @@ class Processor implements EventSubscriberInterface
     public function process(FormConfig $formConfig, array $reCaptchaResponse, $returnData = false)
     {
         $formName = $formConfig->getName();
+        /** @var Handler\Request $requestHandler*/
+        $requestHandler = $this->app['boltforms.handlers']['request'];
         /** @var FormData $formData */
-        $formData = $this->handleRequest($formName);
+        $formData = $requestHandler->handle($formName, $this->boltForms, $this->dispatcher);
         /** @var Form $form */
         $form = $this->boltForms->get($formName)->getForm();
         $formMetaData = $this->boltForms->get($formName)->getMeta();
@@ -229,46 +231,6 @@ class Processor implements EventSubscriberInterface
             'success'    => $reCaptchaResponse->isSuccess(),
             'errorCodes' => $reCaptchaResponse->getErrorCodes(),
         ];
-    }
-
-    /**
-     * Handle the request. Caller must test for POST.
-     *
-     * @param string  $formName The name of the form
-     * @param Request $request
-     *
-     * @return FormData|null
-     */
-    protected function handleRequest($formName, $request = null)
-    {
-        if (!$request) {
-            $request = $this->app['request_stack']->getCurrentRequest();
-        }
-
-        if (!$request->request->has($formName)) {
-            return null;
-        }
-
-        /** @var Form $form */
-        $form = $this->boltForms->get($formName)->getForm();
-        // Handle the Request object to check if the data sent is valid
-        $form->handleRequest($request);
-
-        // Test if form, as submitted, passes validation
-        if ($form->isValid()) {
-            // Submitted data
-            $data = $form->getData();
-
-            $event = new BoltFormsProcessorEvent($formName, $data);
-            $this->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
-
-            /** @deprecated will be removed in v4 */
-            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESSOR, $event);
-
-            return new FormData($event->getData());
-        }
-
-        return null;
     }
 
     /**
