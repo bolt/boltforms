@@ -22,14 +22,20 @@
 #    subject: extensions/boltforms/_subject.twig
 #    files: extensions/boltforms/file_browser.twig
 
-# reCAPTCHa set up
-recaptcha:
-    enabled: false
-    label: "Please enter the reCaptcha text to prove you're a human"
-    public_key: ''
-    private_key: ''
-    error_message: "The CAPTCHA wasn't entered correctly. Please try again."
-    theme: clean
+## reCAPTCHa set up
+#
+# Note:
+# You can get your keys from https://www.google.com/recaptcha/admin
+# * `public_key` key will be labeled "Site key"
+# * `private_key` key will be labeled "Secret key"
+#
+#recaptcha:
+#    enabled: false
+#    label: "Please enter the reCaptcha text to prove you're a human"
+#    public_key: ''
+#    private_key: ''
+#    error_message: "The CAPTCHA wasn't entered correctly. Please try again."
+#    theme: clean
 
 ## CSRF protection
 #
