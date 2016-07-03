@@ -1,17 +1,21 @@
 # Changelog for Bolt Forms
 
 * 3.1.0 (xxx-xx-xx)
+ * Added: More details debug logging
+ * Added: More complete exception handling
  * Added: Event driven choice selection
  * Added: Life cycle events for form processing
  * Added: Enable multiple submit buttons
  * Added: AJAX form submission
  * Added: More configuration objects
  * Added: File name fields are hyperlinked in emails
- * Added: Form configuration and field parameters can now be overridden in template 
+ * Added: Form configuration and field parameters can now be overridden in template
+ * Added: Form meta data can be specificed at run-time
  * Fixed: Successfully submitted forms can no longer be resubmitted on page refresh
  * Fixed: File upload handling breakage
  * Changed: Cut over to Bolt v3 storage
- * Break: Processor constructor signature changed
+ * Break: Processor constructor signature changed, and logic moved into handlers & processors
+ * Break: Choice field key/value pairs revierse to match Symfony
 
 * 3.0.2 (2016-06-04)
  * Fixed: Forms wiping values on failed submit
