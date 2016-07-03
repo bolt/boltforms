@@ -42,26 +42,28 @@
 
             {{ form_errors(form) }}
 
-            {% for key, value in fields  %}
-                {% if value.config.type.name != 'submit' %}
-                    <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
-                        <span class="boltforms-label">{{ form_label(form[key]) }}</span>
-                        <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
-                        <span class="boltforms-value">{{ form_widget(form[key]) }}</span>
-                    </div>
-                {% endif %}
-            {% endfor %}
+            {% block boltforms_form_fields %}
+                {% for key, value in fields  %}
+                    {% if value.config.type.name != 'submit' %}
+                        <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
+                            <span class="boltforms-label">{{ form_label(form[key]) }}</span>
+                            <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
+                            <span class="boltforms-value">{{ form_widget(form[key]) }}</span>
+                        </div>
+                    {% endif %}
+                {% endfor %}
 
-            {{ spambot.recaptcha(recaptcha) }}
+                {{ spambot.recaptcha(recaptcha) }}
 
-            <br>
-            {% for key, value in fields  %}
-                {% if value.config.type.name == 'submit' %}
-                    <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
-                        {{ form_widget(form[key]) }}
-                    </div>
-                {% endif %}
-            {% endfor %}
+                <br>
+                {% for key, value in fields  %}
+                    {% if value.config.type.name == 'submit' %}
+                        <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
+                            {{ form_widget(form[key]) }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endblock boltforms_form_fields %}
 
             {{ form_end(form) }}
 
