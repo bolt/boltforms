@@ -18,10 +18,10 @@ match, e.g.:
 
 ```yaml
     templates:
-        form:    my_sub_directory/boltforms_form.twig
-        email:   my_sub_directory/boltforms_email.twig
-        subject: my_sub_directory/boltforms_email_subject.twig
-        files:   my_sub_directory/boltforms_file_browser.twig
+        form:    my_sub_directory/form.twig
+        email:   my_sub_directory/email.twig
+        subject: my_sub_directory/_subject.twig
+        files:   my_sub_directory/file_browser.twig
 ```
 
 ### Default data

@@ -101,8 +101,8 @@ class BoltFormsExtension extends SimpleExtension
     protected function registerTwigPaths()
     {
         return [
-            'templates',
-            'templates/partials' => ['namespace' => 'BoltForms']
+            'templates/logacy',
+            'templates' => ['namespace' => 'BoltForms']
         ];
     }
 
@@ -145,15 +145,16 @@ class BoltFormsExtension extends SimpleExtension
                 'theme'         => 'clean',
             ],
             'templates' => [
-                'form'      => 'boltforms_form.twig',
-                'fields'    => 'boltforms_fields.twig',
-                'email'     => 'boltforms_email.twig',
-                'subject'   => 'boltforms_email_subject.twig',
-                'files'     => 'boltforms_file_browser.twig',
-                'messages'  => '@BoltForms/__messages.twig',
-                'exception' => '@BoltForms/__exception.twig',
-                'ajax'      => '@BoltForms/_ajax.twig',
-                'css'       => '@BoltForms/_css.twig',
+                'ajax'       => '@BoltForms/asset/_ajax.twig',
+                'css'        => '@BoltForms/asset/_css.twig',
+                'email'      => '@BoltForms/email/email.twig',
+                'subject'    => '@BoltForms/email/_subject.twig',
+                'messages'   => '@BoltForms/feedback/_messages.twig',
+                'exception'  => '@BoltForms/feedback/_exception.twig',
+                'files'      => '@BoltForms/file/browser.twig',
+                'form'       => '@BoltForms/form/form.twig',
+                'form_theme' => '@BoltForms/form/_form_theme.twig',
+                'fields'     => '@BoltForms/form/_fields.twig',
             ],
             'debug' => [
                 'enabled' => false,

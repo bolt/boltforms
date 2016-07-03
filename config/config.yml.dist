@@ -3,12 +3,24 @@
 ###
 
 # Global templates used for rendering forms and emails.
+#
+# You can find assorted templates to copy and modify in the templates/
+# directory. Simply copy them to a directory of your choosing in your theme
+# and set the template you want to override.
+#
+# More information on available template overrides can be found in the
+# Templates section of docs.
+#
+# NOTE: All paths are relative of your running theme.
+#
+# e.g. You created your templates in the `extensions/boltforms/` directory
+# inside your theme, you would use similar to:
+#
 #templates:
-#    form: boltforms_form.twig
-#    email: boltforms_email.twig
-#    subject: boltforms_email_subject.twig
-#    files: boltforms_file_browser.twig
-#    ajax: _boltforms_ajax.twig
+#    form: extensions/boltforms/form.twig
+#    email: extensions/boltforms/email.twig
+#    subject: extensions/boltforms/_subject.twig
+#    files: extensions/boltforms/file_browser.twig
 
 # reCAPTCHa set up
 recaptcha:
@@ -152,9 +164,10 @@ contact:
 #        bcc_email: manager@example.com
 #        attach_files: false
 #    templates:                      # Over ride the global Twig templates for this form
-#        form: boltforms_form.twig
-#        email: boltforms_email.twig
-#        subject: boltforms_email_subject.twig
+#        form: extensions/boltforms/form.twig
+#        email: extensions/boltforms/email.twig
+#        subject: extensions/boltforms/_subject.twig
+#        files: extensions/boltforms/file_browser.twig
 #    feedback:
 #        success: Form submission sucessful
 #        error: There are errors in the form, please fix before trying to resubmit
