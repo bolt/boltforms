@@ -14,8 +14,9 @@ for more information.
         options:
             label: My Field
             attr:
-                placeholder: Enter your details…
-            constraints: [ NotBlank, {Length: {'min': 3}} ]
+                placeholder: Enter some details…
+                class: my-css-class
+            constraints: [ NotBlank, {Length: {'min': 3, 'max': 64}} ]
 ```
 
 Field(s) default values
