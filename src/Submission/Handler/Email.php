@@ -13,10 +13,13 @@ use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Storage\EntityManager;
+use Closure;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Swift_Mailer as SwiftMailer;
 use Swift_Message as SwiftMessage;
-use Swift_Transport_EsmtpTransport as SwiftTransportEsmtpTransport;
+use Swift_RfcComplianceException as SwiftRfcComplianceException;
+use Swift_TransportException as SwiftTransportException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableStyle;
@@ -50,8 +53,6 @@ use Twig_Environment as TwigEnvironment;
  */
 class Email extends AbstractHandler
 {
-    /** @var SwiftTransportEsmtpTransport */
-    private $mailerTransport;
     /** @var EventDispatcherInterface */
     private $dispatcher;
     /** @var TwigEnvironment */
@@ -79,28 +80,26 @@ class Email extends AbstractHandler
     /**
      * Constructor.
      *
-     * @param Config                   $config
-     * @param EntityManager            $entityManager
-     * @param FlashBag                 $feedback
-     * @param LoggerInterface          $logger
-     * @param SwiftMailer              $mailer
-     * @param EventDispatcherInterface $dispatcher
-     * @param TwigEnvironment          $twig
-     * @param UrlGeneratorInterface    $urlGenerator
+     * @param Config                           $config
+     * @param EntityManager                    $entityManager
+     * @param FlashBag                         $feedback
+     * @param LoggerInterface                  $logger
+     * @param Closure                          $mailer
+     * @param EventDispatcherInterface         $dispatcher
+     * @param TwigEnvironment                  $twig
+     * @param UrlGeneratorInterface            $urlGenerator
      */
     public function __construct(
         Config $config,
         EntityManager $entityManager,
         FlashBag $feedback,
         LoggerInterface $logger,
-        SwiftMailer $mailer,
-        SwiftTransportEsmtpTransport $mailerTransport,
+        Closure $mailer,
         EventDispatcherInterface $dispatcher,
         TwigEnvironment $twig,
         UrlGeneratorInterface $urlGenerator
     ) {
         parent::__construct($config, $entityManager, $feedback, $logger, $mailer);
-        $this->mailerTransport = $mailerTransport;
         $this->dispatcher = $dispatcher;
         $this->twig = $twig;
         $this->urlGenerator = $urlGenerator;
@@ -320,19 +319,23 @@ class Email extends AbstractHandler
      */
     private function send(EmailConfig $emailConfig)
     {
+        /** @var SwiftMailer $mailer */
+        $mailer = $this->getMailer($emailConfig->isDebug());
         $failed = [];
-        $mailer = $this->getMailer();
-        if ($emailConfig->isDebug()) {
-            // Don't use spool in debug mode
-            $mailer = $this->getMailer()->newInstance($this->mailerTransport);
-        }
 
         try {
             // Queue the message in the mailer
             $mailer->send($this->emailMessage, $failed);
             $this->message(sprintf('Sent Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
-        } catch (\Swift_TransportException $e) {
+        } catch (SwiftTransportException $e) {
             $this->exception($e, false, sprintf('Failed sending Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
+            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
+        } catch (SwiftRfcComplianceException $e) {
+            $this->exception($e, false, 'Failed sending Bolt Forms notification due to an invalid email address:');
+            foreach ($failed as $fail) {
+                $this->message(sprintf('  * %s', $failed), 'debug', LogLevel::ERROR);
+            }
+
             throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
         } catch (\Exception $e) {
             $this->exception($e, false, sprintf('An exception was thrown during email dispatch:'));

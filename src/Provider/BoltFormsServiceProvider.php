@@ -12,6 +12,8 @@ use Bolt\Extension\Bolt\BoltForms\Twig;
 use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
+use Swift_FileSpool as SwiftFileSpool;
+use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
@@ -138,26 +140,27 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         /** @deprecated Since 3.1 and to be removed in 4.0. Use $app['boltforms.handlers']['database'] instead. */
         $app['boltforms.database'] = $app->share(
             function ($app) {
-                $database = new Submission\Handler\DatabaseTable($app['boltforms.config'], $app['storage'], $app['boltforms.feedback'], $app['logger.system'], $app['mailer']);
-
-                return $database;
+                return $app['boltforms.handlers']['database'];
             }
         );
 
         /** @deprecated Since 3.1 and to be removed in 4.0. Use $app['boltforms.handlers']['email'] instead. */
         $app['boltforms.email'] = $app->share(
             function ($app) {
-                return new Submission\Handler\Email(
-                    $app['boltforms.config'],
-                    $app['storage'],
-                    $app['boltforms.feedback'],
-                    $app['logger.system'],
-                    $app['mailer'],
-                    $app['swiftmailer.transport'],
-                    $app['dispatcher'],
-                    $app['twig'],
-                    $app['url_generator']
-                );
+                return $app['boltforms.handlers']['email'];
+            }
+        );
+
+        $app['boltforms.mailer'] = $app->protect(
+            function ($debug) use ($app) {
+                if ($debug) {
+                    $transport = $app['swiftmailer.transport'];
+                } else {
+                    $spoolDir = $app['resources']->getPath('cache/.spool');
+                    $transport = new SwiftTransportSpoolTransport($app['swiftmailer.transport.eventdispatcher'], new SwiftFileSpool($spoolDir));
+                }
+
+                return $app['mailer']->newInstance($transport);
             }
         );
 
@@ -171,7 +174,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['storage'],
                                 $app['boltforms.feedback'],
                                 $app['logger.system'],
-                                $app['mailer']
+                                $app['boltforms.mailer']
                             );
                         }
                     ),
@@ -182,7 +185,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['storage'],
                                 $app['boltforms.feedback'],
                                 $app['logger.system'],
-                                $app['mailer']
+                                $app['boltforms.mailer']
                             );
                         }
                     ),
@@ -193,8 +196,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['storage'],
                                 $app['boltforms.feedback'],
                                 $app['logger.system'],
-                                $app['mailer'],
-                                $app['swiftmailer.transport'],
+                                $app['boltforms.mailer'],
                                 $app['dispatcher'],
                                 $app['twig'],
                                 $app['url_generator']
