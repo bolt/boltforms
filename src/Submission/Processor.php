@@ -12,6 +12,7 @@ use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor\ProcessorInterface;
+use Pimple as Container;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Silex\Application;
@@ -53,6 +54,10 @@ class Processor implements EventSubscriberInterface
     private $config;
     /** @var BoltForms */
     private $boltForms;
+    /** @var Container */
+    private $handlers;
+    /** @var Container */
+    private $processors;
     /** @var EventDispatcherInterface */
     private $dispatcher;
     /** @var LoggerInterface */
@@ -63,6 +68,8 @@ class Processor implements EventSubscriberInterface
      *
      * @param Config                   $config
      * @param BoltForms                $boltForms
+     * @param Container                $processors
+     * @param Container                $handlers
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface          $loggerSystem
      * @param Application              $app
@@ -70,16 +77,20 @@ class Processor implements EventSubscriberInterface
     public function __construct(
         Config $config,
         BoltForms $boltForms,
+        Container $processors,
+        Container $handlers,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $loggerSystem,
         Application $app
     ) {
-        $this->app = $app;
-
         $this->config = $config;
         $this->boltForms = $boltForms;
+        $this->processors = $processors;
+        $this->handlers = $handlers;
         $this->dispatcher = $dispatcher;
         $this->loggerSystem = $loggerSystem;
+
+        $this->app = $app;
     }
 
     /**
@@ -117,7 +128,7 @@ class Processor implements EventSubscriberInterface
         $key = $map[$eventName];
 
         /** @var ProcessorInterface $processor */
-        $processor = $this->app['boltforms.processors'][$key];
+        $processor = $this->processors[$key];
         $processor->process($lifeEvent, $eventName, $dispatcher);
 
         // Move any messages generated
@@ -142,7 +153,7 @@ class Processor implements EventSubscriberInterface
     {
         $formName = $formConfig->getName();
         /** @var Handler\Request $requestHandler*/
-        $requestHandler = $this->app['boltforms.handlers']['request'];
+        $requestHandler = $this->handlers['request'];
         /** @var FormData $formData */
         $formData = $requestHandler->handle($formName, $this->boltForms, $this->dispatcher);
 
@@ -245,7 +256,7 @@ class Processor implements EventSubscriberInterface
      */
     protected function getLogger()
     {
-        return $this->app['logger.system'];
+        return $this->loggerSystem;
     }
 
     /**
