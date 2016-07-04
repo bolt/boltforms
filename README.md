@@ -11,14 +11,15 @@ If email notifications are to be sent, you should configure the `mailoptions`
 setting in your Bolt `app/config/config.yml` file.
 
 **Note:**
-It is recommended to set `spool: false` in `mailoptions`.
+BoltForms uses the Swiftmailer library to send email notifications, based on
+the `mailoptions:` setting in your Bolt `app/config/config.yml` file.
 
-Bolt uses the Swiftmailer library to send email notifications, which can be 
-configured to spool email (`spool: true`) which causes Swiftmailer to delay 
-sending emails until a `finish()` middleware event in the Silex service provider.
+When a form is in debug mode, BoltForms will process the email queue
+immediately upon submission of that form. The may cause a flood of debug 
+messages if the queue is large. 
 
-As such, Swiftmailer will return a true response to the caller, BoltForms in 
-this case, when the message is queued, and that's the last we know of it.
+Note that the queues can be managed see [Email Queues](doc/email.md#email-queues) for more.
+
 
 Use
 ---
