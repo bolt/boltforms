@@ -50,6 +50,8 @@ class Templates extends ParameterBag
     protected $fields;
     /** @var string */
     protected $recaptcha;
+    /** @var string */
+    protected $macros;
 
     /**
      * Constructor.
@@ -294,6 +296,26 @@ class Templates extends ParameterBag
     public function setReCaptcha($reCaptcha)
     {
         $this->recaptcha = $reCaptcha;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMacros()
+    {
+        return $this->macros;
+    }
+
+    /**
+     * @param string $macros
+     *
+     * @return Templates
+     */
+    public function setMacros($macros)
+    {
+        $this->macros = $macros;
 
         return $this;
     }

@@ -164,6 +164,7 @@ class Email extends AbstractHandler
             $fieldMap->getConfig()   => $emailConfig,
             $fieldMap->getData()     => $formData,
             $fieldMap->getMetaData() => $formMetaData->getUsedMeta('email'),
+            'templates'              => $this->getConfig()->getTemplates(),
         ]);
         $subject = new \Twig_Markup($html, 'UTF-8');
 
@@ -175,6 +176,7 @@ class Email extends AbstractHandler
             $fieldMap->getConfig()   => $emailConfig,
             $fieldMap->getData()     => $this->getBodyData($formConfig, $emailConfig, $formData),
             $fieldMap->getMetaData() => $formMetaData->getUsedMeta('email'),
+            'templates'              => $this->getConfig()->getTemplates(),
         ]);
         $body = new \Twig_Markup($html, 'UTF-8');
 

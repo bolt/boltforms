@@ -156,6 +156,7 @@ class BoltFormsExtension extends SimpleExtension
                 'form_theme' => '@BoltForms/form/_form_theme.twig',
                 'fields'     => '@BoltForms/form/_fields.twig',
                 'recaptcha'  => '@BoltForms/form/_recaptcha.twig',
+                'macros'     => '@BoltForms/_macros.twig',
             ],
             'debug' => [
                 'enabled' => false,
