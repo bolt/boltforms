@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Command;
 
+use Bolt\Filesystem\Exception\IOException;
 use Bolt\Filesystem\Handler\DirectoryInterface;
 use Bolt\Filesystem\Handler\FileInterface;
 use Bolt\Nut\BaseCommand;
@@ -44,9 +45,10 @@ class MailQueueCommand extends BaseCommand
         $this
             ->setName('boltforms:mailqueue')
             ->setDescription('Manage the BoltForms mail queue.')
-            ->addArgument('show', InputArgument::OPTIONAL,'Show any queued emails.')
+            ->addArgument('clear', InputArgument::OPTIONAL,'Clear all un-sent message files from the queue. USE WITH CAUTION!')
             ->addArgument('flush', InputArgument::OPTIONAL,'Flush (send) any queued emails.')
             ->addArgument('recover', InputArgument::OPTIONAL,'Attempt to restore any incomplete email to a valid state.')
+            ->addArgument('show', InputArgument::OPTIONAL,'Show any queued emails.')
         ;
     }
 
@@ -69,7 +71,42 @@ class MailQueueCommand extends BaseCommand
             $output->write('<info>Flushing queued emails…</info>');
             $spool->flushQueue($this->app['swiftmailer.transport']);
             $output->writeln('<info>  [OK]</info>');
+        } elseif ($input->getArgument('clear')) {
+            $output->writeln('<info>Deleting un-sent emails from the queue…</info>');
+            $this->clearQueue($output);
         }
+    }
+
+    /**
+     * Delete any unsent messages from the queue.
+     * 
+     * @param OutputInterface $output
+     */
+    protected function clearQueue(OutputInterface $output)
+    {
+        $failed = 0;
+        $messages = 0;
+        $spoolCache = $this->app['filesystem']->getFilesystem('cache');
+        foreach ($spoolCache->listContents('.spool', false) as $item) {
+            if ($item instanceof DirectoryInterface) {
+                continue;
+            }
+            /** @var FileInterface $item */
+            if ($item->getExtension() === 'message') {
+                try {
+                    $item->delete();
+                    $messages++;
+                } catch (IOException $e) {
+                    $failed++;
+                }
+            }
+        }
+        $table = new Table($output);
+        $table->addRows([
+            ['Deleted', $messages],
+            ['Failed', $failed],
+        ]);
+        $table->render();
     }
 
     /**

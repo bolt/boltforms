@@ -76,3 +76,14 @@ If you have queued emails due to SMTP server problems, of Bolt/BoltForms
 misconfiguration and wish to retry sending them, simplly execute the following command:
  
 `./app/nut boltforms:mailqueue flush`
+
+### Clearing (deleting) Queued Messages
+
+If you have stale message objects that you want to flush, e.g. debuging or 
+testing, you can clear the queued messages with:
+
+`./app/nut boltforms:mailqueue clear`
+
+**NOTE:**
+This is a destructive action and will delete the messages, which generally 
+means they have not been sent.
