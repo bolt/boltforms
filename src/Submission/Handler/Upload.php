@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
+use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -107,17 +108,19 @@ class Upload
     /**
      * Relative path of the file upload.
      *
+     * @throws InternalProcessorException
+     *
      * @return string
      */
     public function relativePath()
     {
         if (!$this->config->getUploads()->get('enabled')) {
-            throw new \RuntimeException('The relative path is not valid when uploads are disabled!');
+            throw new InternalProcessorException('The relative path is not valid when uploads are disabled!', null, null, false);
         }
 
         $realUploadPath = realpath($this->config->getUploads()->get('base_directory'));
         if (strpos($this->fullPath, $realUploadPath) !== 0) {
-            throw new \RuntimeException('The relative path is not valid before the file is moved!');
+            throw new InternalProcessorException('The relative path is not valid before the file is moved!', null, null, false);
         }
 
         return ltrim(str_replace($realUploadPath, '', $this->fullPath), '/');
@@ -141,7 +144,7 @@ class Upload
         try {
             $this->file->move($targetDir, $targetFile);
         } catch (FileException $e) {
-            throw new FileUploadException($e->getMessage(), $e->getMessage());
+            throw new FileUploadException($e->getMessage(), $e->getMessage(), $e->getCode(), $e, false);
         }
         $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
 
@@ -168,7 +171,7 @@ class Upload
                 $error = 'File upload aborted as the target directory could not be created: ' . $e->getMessage();
                 $systemMessage = sprintf('[BoltForms] %s Check permissions on %s', $error, $dir);
 
-                throw new FileUploadException($error, $systemMessage);
+                throw new FileUploadException($error, $systemMessage, $e->getCode(), $e);
             }
         }
 
@@ -176,7 +179,7 @@ class Upload
             $error = 'File upload aborted as the target directory is not writable.';
             $systemMessage = sprintf('[BoltForms] %s Check permissions on %s', $error, $dir);
 
-            throw new FileUploadException($error, $systemMessage);
+            throw new FileUploadException($error, $systemMessage, 0, null, false);
         }
 
         $this->baseDirName = realpath($dir);

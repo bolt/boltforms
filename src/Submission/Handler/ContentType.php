@@ -46,12 +46,10 @@ class ContentType extends AbstractHandler
         try {
             $repo = $this->getEntityManager()->getRepository($contentType);
         } catch (StorageException $e) {
-            $this->exception($e, false, sprintf('Invalid ContentType name `%s` specified.', $contentType));
-
-            return;
+            throw new InternalProcessorException(sprintf('Invalid ContentType name `%s` specified.', $contentType), $e->getCode(), $e, false);
         }
 
-        // Get an empty record for out contenttype
+        // Get an empty record for our ContentType
         $record = $repo->getEntityBuilder()->getEntity();
 
         // Set a published date
@@ -73,8 +71,7 @@ class ContentType extends AbstractHandler
         try {
             $repo->save($record);
         } catch (\Exception $e) {
-            $this->exception($e, false, sprintf('An exception occurred saving submission to ContentType table `%s`', $contentType));
-            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
+            throw new InternalProcessorException(sprintf('An exception occurred saving submission to ContentType table `%s`', $contentType), $e->getCode(), $e, false);
         }
     }
 

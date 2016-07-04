@@ -50,7 +50,7 @@ class DatabaseTable extends AbstractHandler
         $sm = $connection->getSchemaManager();
         if (!$sm->tablesExist([$tableName])) {
             // log failed attempt
-            $this->message(sprintf('Failed attempt to save submission: missing database table `%s`', $tableName), Processor::FEEDBACK_DEBUG, LogLevel::ERROR);
+            throw new InternalProcessorException(sprintf('Failed attempt to save submission: missing database table `%s`', $tableName), 0, null, false);
         }
 
         // Build a new array with only keys that match the database table
@@ -77,8 +77,7 @@ class DatabaseTable extends AbstractHandler
         try {
             $connection->insert($tableName, $saveData);
         } catch (\Exception $e) {
-            $this->exception($e, false, sprintf('An exception occurred saving submission to database table `%s`', $tableName));
-            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
+            throw new InternalProcessorException(sprintf('An exception occurred saving submission to database table `%s`', $tableName), $e->getCode(), $e, false);
         }
     }
 }

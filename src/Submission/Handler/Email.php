@@ -332,17 +332,15 @@ class Email extends AbstractHandler
             $this->message(sprintf('Sent Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()), Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
         } catch (SwiftTransportException $e) {
             $this->exception($e, false, sprintf('Failed sending Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
-            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
+            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e, false);
         } catch (SwiftRfcComplianceException $e) {
-            $this->exception($e, false, 'Failed sending Bolt Forms notification due to an invalid email address:');
+            $message = 'Failed sending Bolt Forms notification due to an invalid email address:' . PHP_EOL;
             foreach ($failed as $fail) {
-                $this->message(sprintf('  * %s', $fail), Processor::FEEDBACK_DEBUG, LogLevel::ERROR);
+                $message .= sprintf('  * %s%s', $fail, PHP_EOL);
             }
-
-            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
+            throw new InternalProcessorException($message, $e->getCode(), $e, false);
         } catch (\Exception $e) {
-            $this->exception($e, false, sprintf('An exception was thrown during email dispatch:'));
-            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
+            throw new InternalProcessorException('An exception was thrown during email dispatch:', $e->getCode(), $e, false);
         }
     }
 

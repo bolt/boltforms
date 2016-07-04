@@ -8,6 +8,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
+use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
@@ -133,7 +134,12 @@ class Processor implements EventSubscriberInterface
 
         /** @var ProcessorInterface $processor */
         $processor = $this->processors[$key];
-        $processor->process($lifeEvent, $eventName, $dispatcher);
+        try {
+            $processor->process($lifeEvent, $eventName, $dispatcher);
+        } catch (InternalProcessorException $e) {
+            $this->message('An internal processing error has occurred, and form submission has failed!', static::FEEDBACK_ERROR, LogLevel::ERROR);
+            $this->handleInternalProcessorException($e);
+        }
 
         // Move any messages generated
         foreach ($processor->getMessages() as $message) {
@@ -151,7 +157,7 @@ class Processor implements EventSubscriberInterface
      * @throws FormValidationException
      * @throws \Exception
      *
-     * @return array|bool
+     * @return FormData|bool
      */
     public function process(FormConfig $formConfig, array $reCaptchaResponse, $returnData = false)
     {
@@ -163,18 +169,30 @@ class Processor implements EventSubscriberInterface
 
 
         if ($formData !== null && $reCaptchaResponse['success']) {
-            try {
-                $this->dispatchProcessors($formConfig, $formData);
-            } catch (InternalProcessorException $e) {
-                $this->message('An internal processing error has occurred, and form submission has failed!', static::FEEDBACK_ERROR, LogLevel::ERROR);
-
-                return false;
-            }
+            $this->dispatchProcessors($formConfig, $formData);
 
             return $returnData ? $formData : true;
         }
 
         throw new FormValidationException($formConfig->getFeedback()->getError() ?: 'There are errors in the form, please fix before trying to resubmit');
+    }
+
+    /**
+     * Handle an internal exception.
+     *
+     * @param InternalProcessorException $e
+     *
+     * @throws \Exception
+     */
+    protected function handleInternalProcessorException(InternalProcessorException $e)
+    {
+        $previous = $e->getPrevious() ?: $e;
+        if ($e instanceof FileUploadException) {
+            $this->message($e->getMessage());
+            $this->exception($previous, $e->isAbort(), $e->getSystemMessage());
+        } else {
+            $this->exception($previous, $e->isAbort(), $e->getMessage());
+        }
     }
 
     /**
