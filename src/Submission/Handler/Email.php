@@ -12,6 +12,7 @@ use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Storage\EntityManager;
 use Closure;
 use Psr\Log\LoggerInterface;
@@ -326,14 +327,14 @@ class Email extends AbstractHandler
         try {
             // Queue the message in the mailer
             $mailer->send($this->emailMessage, $failed);
-            $this->message(sprintf('Sent Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
+            $this->message(sprintf('Sent Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()), Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
         } catch (SwiftTransportException $e) {
             $this->exception($e, false, sprintf('Failed sending Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
             throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
         } catch (SwiftRfcComplianceException $e) {
             $this->exception($e, false, 'Failed sending Bolt Forms notification due to an invalid email address:');
             foreach ($failed as $fail) {
-                $this->message(sprintf('  * %s', $failed), 'debug', LogLevel::ERROR);
+                $this->message(sprintf('  * %s', $failed), Processor::FEEDBACK_DEBUG, LogLevel::ERROR);
             }
 
             throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
@@ -377,7 +378,7 @@ class Email extends AbstractHandler
         ]);
         $table->render();
 
-        $this->message(sprintf('Compiled message:%s%s', "\n", $output->fetch()));
+        $this->message(sprintf('Compiled message:%s%s', "\n", $output->fetch()), Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
     }
 
     /**

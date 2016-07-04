@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 
+use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Pimple as Container;
 use Psr\Log\LogLevel;
 
@@ -59,7 +60,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      * @param string $feedbackLogLevel
      * @param string $systemLogLevel
      */
-    protected function message($message, $feedbackLogLevel = 'debug', $systemLogLevel = LogLevel::DEBUG)
+    protected function message($message, $feedbackLogLevel = Processor::FEEDBACK_DEBUG, $systemLogLevel = LogLevel::DEBUG)
     {
         $this->messages[] = [$message, $feedbackLogLevel, $systemLogLevel];
     }

@@ -37,7 +37,7 @@ trait FeedbackTrait
      * @param string $feedbackLogLevel
      * @param string $systemLogLevel
      */
-    protected function message($message, $feedbackLogLevel = 'debug', $systemLogLevel = LogLevel::DEBUG)
+    protected function message($message, $feedbackLogLevel = Processor::FEEDBACK_DEBUG, $systemLogLevel = LogLevel::DEBUG)
     {
         $this->getFeedback()->add($feedbackLogLevel, $message);
         $this->getLogger()->log($systemLogLevel, $message, ['event' => 'extensions']);

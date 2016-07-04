@@ -48,6 +48,10 @@ class Processor implements EventSubscriberInterface
 {
     use FeedbackTrait;
 
+    const FEEDBACK_INFO = 'info';
+    const FEEDBACK_ERROR = 'error';
+    const FEEDBACK_DEBUG = 'debug';
+
     /** @var Application */
     private $app;
     /** @var Config */
@@ -162,7 +166,7 @@ class Processor implements EventSubscriberInterface
             try {
                 $this->dispatchProcessors($formConfig, $formData);
             } catch (InternalProcessorException $e) {
-                $this->message('An internal processing error has occurred, and form submission has failed!', 'error', LogLevel::ERROR);
+                $this->message('An internal processing error has occurred, and form submission has failed!', static::FEEDBACK_ERROR, LogLevel::ERROR);
 
                 return false;
             }

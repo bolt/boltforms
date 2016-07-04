@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Psr\Log\LogLevel;
 
 /**
@@ -49,7 +50,7 @@ class DatabaseTable extends AbstractHandler
         $sm = $connection->getSchemaManager();
         if (!$sm->tablesExist([$tableName])) {
             // log failed attempt
-            $this->message(sprintf('Failed attempt to save submission: missing database table `%s`', $tableName), 'debug', LogLevel::ERROR);
+            $this->message(sprintf('Failed attempt to save submission: missing database table `%s`', $tableName), Processor::FEEDBACK_DEBUG, LogLevel::ERROR);
         }
 
         // Build a new array with only keys that match the database table
