@@ -153,6 +153,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                     $app['boltforms.feedback'],
                     $app['logger.system'],
                     $app['mailer'],
+                    $app['swiftmailer.transport'],
                     $app['dispatcher'],
                     $app['twig'],
                     $app['url_generator']
@@ -193,6 +194,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['boltforms.feedback'],
                                 $app['logger.system'],
                                 $app['mailer'],
+                                $app['swiftmailer.transport'],
                                 $app['dispatcher'],
                                 $app['twig'],
                                 $app['url_generator']

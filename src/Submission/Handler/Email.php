@@ -1,4 +1,5 @@
 <?php
+
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
@@ -14,6 +15,7 @@ use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer as SwiftMailer;
 use Swift_Message as SwiftMessage;
+use Swift_Transport_EsmtpTransport as SwiftTransportEsmtpTransport;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableStyle;
@@ -47,6 +49,8 @@ use Twig_Environment as TwigEnvironment;
  */
 class Email extends AbstractHandler
 {
+    /** @var SwiftTransportEsmtpTransport */
+    private $mailerTransport;
     /** @var EventDispatcherInterface */
     private $dispatcher;
     /** @var TwigEnvironment */
@@ -89,11 +93,13 @@ class Email extends AbstractHandler
         FlashBag $feedback,
         LoggerInterface $logger,
         SwiftMailer $mailer,
+        SwiftTransportEsmtpTransport $mailerTransport,
         EventDispatcherInterface $dispatcher,
         TwigEnvironment $twig,
         UrlGeneratorInterface $urlGenerator
     ) {
         parent::__construct($config, $entityManager, $feedback, $logger, $mailer);
+        $this->mailerTransport = $mailerTransport;
         $this->dispatcher = $dispatcher;
         $this->twig = $twig;
         $this->urlGenerator = $urlGenerator;
@@ -311,8 +317,16 @@ class Email extends AbstractHandler
      */
     private function send(EmailConfig $emailConfig)
     {
+        $failed = [];
+        $mailer = $this->getMailer();
+        if ($emailConfig->isDebug()) {
+            // Don't use spool in debug mode
+            $mailer = $this->getMailer()->newInstance($this->mailerTransport);
+        }
+
         try {
-            $this->getMailer()->send($this->emailMessage);
+            // Queue the message in the mailer
+            $mailer->send($this->emailMessage, $failed);
             $this->message(sprintf('Sent Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
         } catch (\Swift_TransportException $e) {
             $this->exception($e, false, sprintf('Failed sending Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
