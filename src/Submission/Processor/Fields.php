@@ -8,6 +8,7 @@ use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Submission\Handler\Upload;
+use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Pimple as Container;
 use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -90,7 +91,7 @@ class Fields extends AbstractProcessor
     protected function processFieldFile($fieldName, LifecycleEvent $lifeEvent, UploadedFile $field)
     {
         if (!$field->isValid()) {
-            throw new FileUploadException($field->getErrorMessage(), $field->getErrorMessage());
+            throw new FileUploadException($field->getErrorMessage(), $field->getErrorMessage(), 0, null, false);
         }
 
         $formConfig = $lifeEvent->getFormConfig();
@@ -102,13 +103,13 @@ class Fields extends AbstractProcessor
         $formData->set($fieldName, $fileHandler);
 
         if (!$this->config->getUploads()->get('enabled')) {
-            $this->message('File upload skipped as the administrator has disabled uploads for all forms.', 'debug', LogLevel::ERROR);
+            $this->message('File upload skipped as the administrator has disabled uploads for all forms.',  Processor::FEEDBACK_DEBUG, LogLevel::ERROR);
 
             return;
         }
 
         $fileHandler->move();
-        $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()), 'debug', LogLevel::DEBUG);
+        $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()),  Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
     }
 
     /**
