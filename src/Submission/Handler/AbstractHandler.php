@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
 use Bolt\Storage\EntityManager;
-use Closure;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer as SwiftMailer;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
@@ -22,7 +21,7 @@ abstract class AbstractHandler
     private $feedback;
     /** @var LoggerInterface */
     private $logger;
-    /** @var Closure */
+    /** @var SwiftMailer */
     private $mailer;
 
     /**
@@ -32,14 +31,14 @@ abstract class AbstractHandler
      * @param EntityManager   $entityManager
      * @param FlashBag        $feedback
      * @param LoggerInterface $logger
-     * @param Closure         $mailer
+     * @param SwiftMailer     $mailer
      */
     public function __construct(
         Config $config,
         EntityManager $entityManager,
         FlashBag $feedback,
         LoggerInterface $logger,
-        Closure $mailer
+        SwiftMailer $mailer
     ) {
         $this->config = $config;
         $this->entityManager = $entityManager;
@@ -81,14 +80,10 @@ abstract class AbstractHandler
     }
 
     /**
-     * @param bool $debug
-     *
      * @return SwiftMailer
      */
-    protected function getMailer($debug = false)
+    protected function getMailer()
     {
-        $mailer = $this->mailer;
-
-        return $mailer($debug);
+        return $this->mailer;
     }
 }

@@ -4,7 +4,12 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\SimpleExtension;
+use Pimple as Container;
 use Silex\Application;
+use Swift_Mailer as SwiftMailer;
+use Swift_FileSpool as SwiftFileSpool;
+use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * BoltForms a Symfony Forms interface for Bolt
@@ -49,7 +54,10 @@ class BoltFormsExtension extends SimpleExtension
     {
         parent::boot($app);
 
-        $this->container['dispatcher']->addSubscriber($app['boltforms.processor']);
+        $dispatcher = $this->container['dispatcher'];
+        $dispatcher->addSubscriber($app['boltforms.processor']);
+        $dispatcher->addListener(KernelEvents::TERMINATE, [$app['boltforms.mailer.queue'], 'flush']);
+        $dispatcher->addListener('boltforms.mailer.debug', [$app['boltforms.mailer.queue'], 'flush']);
     }
 
     /**
@@ -172,6 +180,16 @@ class BoltFormsExtension extends SimpleExtension
             'fieldmap' => [
                 'email' => new FieldMap\Email(),
             ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerNutCommands(Container $container)
+    {
+        return [
+            new Command\MailQueueCommand($container),
         ];
     }
 }

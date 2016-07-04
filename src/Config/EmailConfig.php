@@ -100,7 +100,7 @@ class EmailConfig implements \ArrayAccess
             }
         } else {
             $this->debug = $this->formConfig->getNotification()->getDebug();
-            $this->debugEmail = $this->formConfig->getNotification()->debug_address ?: $this->globalDebug['address'];
+            $this->debugEmail = $this->formConfig->getNotification()->get('debug_address') ?: $this->globalDebug['address'];
         }
     }
 

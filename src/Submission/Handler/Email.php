@@ -14,7 +14,6 @@ use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Storage\EntityManager;
-use Closure;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Swift_Mailer as SwiftMailer;
@@ -85,7 +84,7 @@ class Email extends AbstractHandler
      * @param EntityManager                    $entityManager
      * @param FlashBag                         $feedback
      * @param LoggerInterface                  $logger
-     * @param Closure                          $mailer
+     * @param SwiftMailer                      $mailer
      * @param EventDispatcherInterface         $dispatcher
      * @param TwigEnvironment                  $twig
      * @param UrlGeneratorInterface            $urlGenerator
@@ -95,7 +94,7 @@ class Email extends AbstractHandler
         EntityManager $entityManager,
         FlashBag $feedback,
         LoggerInterface $logger,
-        Closure $mailer,
+        SwiftMailer $mailer,
         EventDispatcherInterface $dispatcher,
         TwigEnvironment $twig,
         UrlGeneratorInterface $urlGenerator
@@ -321,12 +320,15 @@ class Email extends AbstractHandler
     private function send(EmailConfig $emailConfig)
     {
         /** @var SwiftMailer $mailer */
-        $mailer = $this->getMailer($emailConfig->isDebug());
+        $mailer = $this->getMailer();
         $failed = [];
 
         try {
             // Queue the message in the mailer
             $mailer->send($this->emailMessage, $failed);
+            if ($emailConfig->isDebug()) {
+                $this->dispatcher->dispatch('boltforms.mailer.debug');
+            }
             $this->message(sprintf('Sent Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()), Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
         } catch (SwiftTransportException $e) {
             $this->exception($e, false, sprintf('Failed sending Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
@@ -334,7 +336,7 @@ class Email extends AbstractHandler
         } catch (SwiftRfcComplianceException $e) {
             $this->exception($e, false, 'Failed sending Bolt Forms notification due to an invalid email address:');
             foreach ($failed as $fail) {
-                $this->message(sprintf('  * %s', $failed), Processor::FEEDBACK_DEBUG, LogLevel::ERROR);
+                $this->message(sprintf('  * %s', $fail), Processor::FEEDBACK_DEBUG, LogLevel::ERROR);
             }
 
             throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);

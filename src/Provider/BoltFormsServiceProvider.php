@@ -14,6 +14,9 @@ use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Swift_FileSpool as SwiftFileSpool;
 use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
+use Swift_Transport_EsmtpTransport as SwiftTransportEsmtpTransport;
+use Swift_Mailer as SwiftMailer;
+use Swift_Message as SwiftMessage;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
@@ -151,16 +154,21 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             }
         );
 
-        $app['boltforms.mailer'] = $app->protect(
-            function ($debug) use ($app) {
-                if ($debug) {
-                    $transport = $app['swiftmailer.transport'];
-                } else {
-                    $spoolDir = $app['resources']->getPath('cache/.spool');
-                    $transport = new SwiftTransportSpoolTransport($app['swiftmailer.transport.eventdispatcher'], new SwiftFileSpool($spoolDir));
-                }
+        $app['boltforms.mailer.initialized'] = false;
+
+        $app['boltforms.mailer'] = $app->share(
+            function () use ($app) {
+                $app['boltforms.mailer.initialized'] = true;
+                $spoolDir = $app['resources']->getPath('cache/.spool');
+                $transport = new SwiftTransportSpoolTransport($app['swiftmailer.transport.eventdispatcher'], new SwiftFileSpool($spoolDir));
 
                 return $app['mailer']->newInstance($transport);
+            }
+        );
+
+        $app['boltforms.mailer.queue'] = $app->share(
+            function ($app) {
+                return new Submission\MailerQueue($app);
             }
         );
 
