@@ -162,7 +162,7 @@ class Processor implements EventSubscriberInterface
             try {
                 $this->dispatchProcessors($formConfig, $formData);
             } catch (InternalProcessorException $e) {
-                $this->message('An event internal processing error has occurred, and form submission has failed.', 'error', LogLevel::ERROR);
+                $this->message('An internal processing error has occurred, and form submission has failed!', 'error', LogLevel::ERROR);
 
                 return false;
             }
