@@ -10,6 +10,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
@@ -314,6 +315,8 @@ class Email extends AbstractHandler
      * Send a notification
      *
      * @param EmailConfig $emailConfig
+     *
+     * @throws InternalProcessorException
      */
     private function send(EmailConfig $emailConfig)
     {
@@ -330,8 +333,10 @@ class Email extends AbstractHandler
             $this->message(sprintf('Sent Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
         } catch (\Swift_TransportException $e) {
             $this->exception($e, false, sprintf('Failed sending Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()));
+            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
         } catch (\Exception $e) {
             $this->exception($e, false, sprintf('An exception was thrown during email dispatch:'));
+            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
         }
     }
 

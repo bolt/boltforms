@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Exception\StorageException;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
+use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Carbon\Carbon;
 
@@ -37,6 +38,8 @@ class ContentType extends AbstractHandler
      * @param string       $contentType
      * @param FormData     $formData
      * @param FormMetaData $formMetaData
+     *
+     * @throws InternalProcessorException
      */
     public function handle($contentType, FormData $formData, FormMetaData $formMetaData)
     {
@@ -71,6 +74,7 @@ class ContentType extends AbstractHandler
             $repo->save($record);
         } catch (\Exception $e) {
             $this->exception($e, false, sprintf('An exception occurred saving submission to ContentType table `%s`', $contentType));
+            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
         }
     }
 

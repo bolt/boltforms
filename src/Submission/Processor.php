@@ -9,15 +9,16 @@ use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
+use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor\ProcessorInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -133,8 +134,9 @@ class Processor implements EventSubscriberInterface
      * @param boolean    $returnData
      *
      * @throws FormValidationException
+     * @throws \Exception
      *
-     * @return boolean|array
+     * @return array|bool
      */
     public function process(FormConfig $formConfig, array $reCaptchaResponse, $returnData = false)
     {
@@ -143,41 +145,63 @@ class Processor implements EventSubscriberInterface
         $requestHandler = $this->app['boltforms.handlers']['request'];
         /** @var FormData $formData */
         $formData = $requestHandler->handle($formName, $this->boltForms, $this->dispatcher);
-        /** @var Form $form */
-        $form = $this->boltForms->get($formName)->getForm();
-        $formMetaData = $this->boltForms->get($formName)->getMeta();
+
 
         if ($formData !== null && $reCaptchaResponse['success']) {
-            $lifeEvent = new LifecycleEvent($formConfig, $formData, $formMetaData, $form->getClickedButton());
+            try {
+                $this->dispatchProcessors($formConfig, $formData);
+            } catch (InternalProcessorException $e) {
+                $this->message('An event internal processing error has occurred, and form submission has failed.', 'error', LogLevel::ERROR);
 
-            // Prepare fields
-            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
-
-            // Process
-            if ($formConfig->getDatabase()->get('contenttype', false)) {
-                $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE, $lifeEvent);
+                return false;
             }
-            if ($formConfig->getDatabase()->get('table', false)) {
-                $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
-            }
-            if ($formConfig->getNotification()->getBoolean('enabled')) {
-                $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
-            }
-
-            // Post processing event
-            $processorEvent = new BoltFormsProcessorEvent($formName, $formData->all());
-            $this->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
-
-            // Feedback notices
-            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK, $lifeEvent);
-
-            // Redirect if a redirect is set and the page exists.
-            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT, $lifeEvent);
 
             return $returnData ? $formData : true;
         }
 
         throw new FormValidationException($formConfig->getFeedback()->getError() ?: 'There are errors in the form, please fix before trying to resubmit');
+    }
+
+    /**
+     * Dispatch all the processing events.
+     *
+     * @param FormConfig $formConfig
+     * @param FormData   $formData
+     *
+     * @throws \Exception
+     */
+    protected function dispatchProcessors(FormConfig $formConfig, FormData $formData)
+    {
+        $formName = $formConfig->getName();
+        /** @var Form $form */
+        $form = $this->boltForms->get($formName)->getForm();
+        $formMetaData = $this->boltForms->get($formName)->getMeta();
+
+        $lifeEvent = new LifecycleEvent($formConfig, $formData, $formMetaData, $form->getClickedButton());
+
+        // Prepare fields
+        $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
+
+        // Process
+        if ($formConfig->getDatabase()->get('contenttype', false)) {
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE, $lifeEvent);
+        }
+        if ($formConfig->getDatabase()->get('table', false)) {
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
+        }
+        if ($formConfig->getNotification()->getBoolean('enabled')) {
+            $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
+        }
+
+        // Post processing event
+        $processorEvent = new BoltFormsProcessorEvent($formName, $formData->all());
+        $this->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
+
+        // Feedback notices
+        $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK, $lifeEvent);
+
+        // Redirect if a redirect is set and the page exists.
+        $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT, $lifeEvent);
     }
 
     /**
@@ -197,6 +221,8 @@ class Processor implements EventSubscriberInterface
                 }
                 try {
                     call_user_func($listener, $event, $eventName, $this->dispatcher);
+                } catch (InternalProcessorException $e) {
+                    throw $e;
                 } catch (HttpException $e) {
                     throw $e;
                 } catch (\Exception $e) {

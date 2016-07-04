@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
+use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Psr\Log\LogLevel;
 
@@ -36,6 +37,8 @@ class DatabaseTable extends AbstractHandler
      * @param string       $tableName
      * @param FormData     $formData
      * @param FormMetaData $formMetaData
+     *
+     * @throws InternalProcessorException
      */
     public function handle($tableName, FormData $formData, FormMetaData $formMetaData)
     {
@@ -74,6 +77,7 @@ class DatabaseTable extends AbstractHandler
             $connection->insert($tableName, $saveData);
         } catch (\Exception $e) {
             $this->exception($e, false, sprintf('An exception occurred saving submission to database table `%s`', $tableName));
+            throw new InternalProcessorException($e->getMessage(), $e->getCode(), $e);
         }
     }
 }
