@@ -2,16 +2,17 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Command;
 
+use Bolt\Filesystem\Handler\DirectoryInterface;
+use Bolt\Filesystem\Handler\FileInterface;
 use Bolt\Nut\BaseCommand;
 use Carbon\Carbon;
-use DirectoryIterator;
 use Swift_Mailer as SwiftMailer;
 use Swift_Message as SwiftMessage;
 use Swift_FileSpool as SwiftFileSpool;
 use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -43,8 +44,9 @@ class MailQueueCommand extends BaseCommand
         $this
             ->setName('boltforms:mailqueue')
             ->setDescription('Manage the BoltForms mail queue.')
-            ->addOption('flush', null, InputOption::VALUE_NONE,'Flush (send) any queued emails.')
-            ->addOption('recover', null, InputOption::VALUE_NONE,'Attempt to restore any incomplete email to a valid state.')
+            ->addArgument('show', InputArgument::OPTIONAL,'Show any queued emails.')
+            ->addArgument('flush', InputArgument::OPTIONAL,'Flush (send) any queued emails.')
+            ->addArgument('recover', InputArgument::OPTIONAL,'Attempt to restore any incomplete email to a valid state.')
         ;
     }
 
@@ -57,45 +59,53 @@ class MailQueueCommand extends BaseCommand
         /** @var SwiftFileSpool $spool */
         $spool = $transport->getSpool();
 
-        if ($input->getOption('flush') === false && $input->getOption('recover') === false) {
-            $output->writeln('');
-            $output->writeln('<info>Currently queued emails:</info>');
+        if ($input->getArgument('show')) {
+            $this->showQueue($output);
+        } elseif ($input->getArgument('recover')) {
+            $output->write('<info>Attempting recovery of failed email messages to the queue…</info>');
+            $spool->recover();
+            $output->writeln('<info>  [OK]</info>');
+        } elseif ($input->getArgument('flush')) {
+            $output->write('<info>Flushing queued emails…</info>');
+            $spool->flushQueue($this->app['swiftmailer.transport']);
+            $output->writeln('<info>  [OK]</info>');
+        }
+    }
 
-            $table = new Table($output);
-            $table->setHeaders(['', 'Date', 'Address', 'Subject']);
+    /**
+     * Show a table of queued messages.
+     *
+     * @param OutputInterface $output
+     */
+    protected function showQueue(OutputInterface $output)
+    {
+        $output->writeln('');
+        $output->writeln('<info>Currently queued emails:</info>');
 
-            $i = 1;
-            $spoolPath = $this->app['resources']->getPath('cache/.spool');
-            $directoryIterator = new DirectoryIterator($spoolPath);
-            foreach ($directoryIterator as $file) {
-                $fileName = $file->getRealPath();
-                if (substr($fileName, -8) != '.message') {
-                    continue;
-                }
-                /** @var SwiftMessage $message */
-                $message = unserialize(file_get_contents($fileName));
+        $table = new Table($output);
+        $table->setHeaders(['', 'Date', 'Address', 'Subject']);
+
+        $i = 1;
+        $spoolCache = $this->app['filesystem']->getFilesystem('cache');
+        foreach ($spoolCache->listContents('.spool', false) as $item) {
+            if ($item instanceof DirectoryInterface) {
+                continue;
+            }
+            /** @var FileInterface $item */
+            if ($item->getExtension() !== 'message') {
+                continue;
+            }
+
+            /** @var SwiftMessage $message */
+            $message = unserialize($item->readStream());
+            if ($message) {
                 $to = $message->getTo();
                 $subject = $message->getSubject();
                 $date = Carbon::createFromTimestamp($message->getDate())->format('c');
 
                 $table->addRow([$i++, $date, sprintf('%s <%s>', current($to), key($to)), $subject]);
             }
-
-            $table->render();
-
-            return;
         }
-
-        if ($input->getOption('recover')) {
-            $output->write('<info>Attempting recovery of failed email messages to the queue…</info>');
-            $spool->recover();
-        }
-
-        if ($input->getOption('flush')) {
-            $output->write('<info>Flushing queued emails…</info>');
-            $spool->flushQueue($this->app['swiftmailer.transport']);
-        }
-
-        $output->writeln('<info>  [OK]</info>');
+        $table->render();
     }
 }

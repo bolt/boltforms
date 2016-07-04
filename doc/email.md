@@ -47,7 +47,7 @@ them after the request has been sent to the client.
 
 ### Viewing Queued Messages
 
-Queued messages can be viewed but running the following `nut` command: `./app/nut boltforms:mailqueue` 
+Queued messages can be viewed but running the following `nut` command: `./app/nut boltforms:mailqueue show` 
 
 Which will output a table of queued emails similar to:
 
@@ -67,7 +67,7 @@ Occassionally during sending, the Swiftmailer component used by BoltForms will
 encounter a severe error when processing and sending emails and the queued
 message file will have the `.sending` suffix.
 
-To re-add them to the queue for processing, you can just run `./app/nut boltforms:mailqueue --recover`
+To re-add them to the queue for processing, you can just run `./app/nut boltforms:mailqueue recover`
 
 
 ### Flushing (sending) Queues
@@ -75,4 +75,4 @@ To re-add them to the queue for processing, you can just run `./app/nut boltform
 If you have queued emails due to SMTP server problems, of Bolt/BoltForms
 misconfiguration and wish to retry sending them, simplly execute the following command:
  
-`./app/nut boltforms:mailqueue --flush`
+`./app/nut boltforms:mailqueue flush`
