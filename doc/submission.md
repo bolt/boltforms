@@ -26,7 +26,23 @@ The redirect is added to the `feedback` key of the form, for example:
   - `{ name: 'foo', email: 'bar' }` would create the query string `?name=foo&email=bar`
  
 
-AJAX
-----
+AJAX (beta)
+-----------
 
+Submissions can be done using AJAX request/responses.
 
+To enable this (beta) feature, simplly set `ajax: true` under the `submission:`
+key in your form's configuration, e.g.:
+
+```
+my_form:
+    submission:
+        ajax: true
+    fields:
+        # … and so on
+```
+
+**NOTE:**
+This feature *currently requires* jQuery, and we will request Bolt to attempt
+to load it via its asset loader chain, i.e. if you're inserting a javascript
+file  called `jquery.*.js` (note the wildcard), then Bolt shouldn't interfere.
