@@ -123,10 +123,10 @@ class FormHelper
                 $sent = $this->processor->process($formConfig, $reCaptchaResponse);
                 $compiler->setSent($sent);
             } catch (Exception\FileUploadException $e) {
-                $this->feedback->add('error', $e->getMessage());
+                $this->feedback->add(Processor::FEEDBACK_ERROR, $e->getMessage());
                 $this->loggerSystem->debug($e->getSystemMessage(), ['event' => 'extensions']);
             } catch (Exception\FormValidationException $e) {
-                $this->feedback->add('error', $e->getMessage());
+                $this->feedback->add(Processor::FEEDBACK_ERROR, $e->getMessage());
                 $this->loggerSystem->debug(
                     '[BoltForms] Form validation exception: ' . $e->getMessage(),
                     ['event' => 'extensions']
