@@ -245,7 +245,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                     'email'    => $app->share(function () use ($app) { return new Submission\Processor\Email($app['boltforms.handlers']); }),
                     'feedback' => $app->share(function () use ($app) { return new Submission\Processor\Feedback($app['boltforms.handlers'], $app['session']); }),
                     'fields'   => $app->share(function () use ($app) { return new Submission\Processor\Fields($app['boltforms.handlers'], $app['boltforms.config']); }),
-                    'redirect' => $app->share(function () use ($app) { return new Submission\Processor\Redirect($app['boltforms.handlers'], $app['url_matcher'], $app['request_stack']); }),
+                    'redirect' => $app->share(function () use ($app) { return new Submission\Processor\Redirect($app['boltforms.handlers'], $app['url_matcher'], $app['request_stack'], $app['session']); }),
                 ]);
             }
         );

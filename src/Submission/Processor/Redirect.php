@@ -9,6 +9,7 @@ use Silex\RedirectableUrlMatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -39,6 +40,8 @@ class Redirect extends AbstractProcessor
     private $redirectableUrlMatcher;
     /** @var RequestStack */
     private $requestStack;
+    /** @var SessionInterface */
+    private $session;
 
     /**
      * Constructor.
@@ -46,12 +49,14 @@ class Redirect extends AbstractProcessor
      * @param Container              $handlers
      * @param RedirectableUrlMatcher $redirectableUrlMatcher
      * @param RequestStack           $requestStack
+     * @param SessionInterface       $session
      */
-    public function __construct(Container $handlers, RedirectableUrlMatcher $redirectableUrlMatcher, RequestStack $requestStack)
+    public function __construct(Container $handlers, RedirectableUrlMatcher $redirectableUrlMatcher, RequestStack $requestStack, SessionInterface $session)
     {
         parent::__construct($handlers);
         $this->redirectableUrlMatcher = $redirectableUrlMatcher;
         $this->requestStack = $requestStack;
+        $this->session = $session;
     }
 
     /**
@@ -65,6 +70,9 @@ class Redirect extends AbstractProcessor
     {
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
+
+        // Save our session to persist though redirects
+        $this->session->save();
 
         if ($formConfig->getSubmission()->getAjax()) {
             return;

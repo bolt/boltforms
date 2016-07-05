@@ -59,6 +59,5 @@ class Feedback extends AbstractProcessor
 
         $this->message($formConfig->getFeedback()->getSuccess(), Processor::FEEDBACK_INFO, LogLevel::DEBUG);
         $this->session->set(sprintf('boltforms_submit_%s', $formConfig->getName()), true);
-        $this->session->save();
     }
 }
