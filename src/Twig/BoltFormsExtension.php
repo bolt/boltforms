@@ -92,14 +92,10 @@ class BoltFormsExtension
 
         /** @var Helper\FormHelper $formHelper */
         $formHelper = $this->app['boltforms.twig.helper']['form'];
-        /** @var RequestStack $requestStack */
-        $requestStack = $this->app['request_stack'];
         /** @var BoltForms $boltForms */
         $boltForms = $this->app['boltforms'];
         /** @var Session $session */
         $session = $this->app['session'];
-        /** @var Processor $processor */
-        $processor = $this->app['boltforms.processor'];
 
         try {
             $boltForms
