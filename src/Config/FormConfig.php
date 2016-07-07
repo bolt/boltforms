@@ -1,5 +1,8 @@
 <?php
+
 namespace Bolt\Extension\Bolt\BoltForms\Config;
+
+use Bolt\Extension\Bolt\BoltForms\Config\Section\FormRoot;
 
 /**
  * Form configuration for BoltForms
@@ -27,19 +30,19 @@ class FormConfig
 {
     /** @var string */
     protected $name;
-    /** @var FormConfigSection */
+    /** @var FormRoot */
     protected $database;
-    /** @var FormConfigSection */
+    /** @var FormRoot */
     protected $feedback;
-    /** @var FormConfigSection */
+    /** @var FormRoot */
     protected $fields;
-    /** @var FormConfigSection */
+    /** @var FormRoot */
     protected $submission;
-    /** @var FormConfigSection */
+    /** @var FormRoot */
     protected $notification;
-    /** @var FormConfigSection */
+    /** @var FormRoot */
     protected $templates;
-    /** @var FormConfigSection */
+    /** @var FormRoot */
     protected $uploads;
 
     /**
@@ -53,13 +56,13 @@ class FormConfig
         $defaults = $this->getDefaults();
         $formConfig = $this->mergeRecursiveDistinct($defaults, $formConfig);
 
-        $this->database     = new FormConfigSection($formConfig['database']);
-        $this->feedback     = new FormConfigSection($formConfig['feedback']);
-        $this->fields       = new FormConfigSection($formConfig['fields']);
-        $this->submission   = new FormConfigSection($formConfig['submission']);
-        $this->notification = new FormConfigSection($formConfig['notification']);
-        $this->templates    = new FormConfigSection($formConfig['templates']);
-        $this->uploads      = new FormConfigSection($formConfig['uploads']);
+        $this->database     = new FormRoot($formConfig['database']);
+        $this->feedback     = new FormRoot($formConfig['feedback']);
+        $this->fields       = new FormRoot($formConfig['fields']);
+        $this->submission   = new FormRoot($formConfig['submission']);
+        $this->notification = new FormRoot($formConfig['notification']);
+        $this->templates    = new FormRoot($formConfig['templates']);
+        $this->uploads      = new FormRoot($formConfig['uploads']);
     }
 
     /**
@@ -75,7 +78,7 @@ class FormConfig
     /**
      * Get form database configuration object.
      *
-     * @return FormConfigSection
+     * @return FormRoot
      */
     public function getDatabase()
     {
@@ -85,7 +88,7 @@ class FormConfig
     /**
      * Get form feedback configuration object.
      *
-     * @return FormConfigSection
+     * @return FormRoot
      */
     public function getFeedback()
     {
@@ -95,7 +98,7 @@ class FormConfig
     /**
      * Get form fields configuration object.
      *
-     * @return FormConfigSection
+     * @return FormRoot
      */
     public function getFields()
     {
@@ -105,7 +108,7 @@ class FormConfig
     /**
      * Get form submission configuration object.
      *
-     * @return FormConfigSection
+     * @return FormRoot
      */
     public function getSubmission()
     {
@@ -115,7 +118,7 @@ class FormConfig
     /**
      * Get form notification configuration object.
      *
-     * @return FormConfigSection
+     * @return FormRoot
      */
     public function getNotification()
     {
@@ -125,7 +128,7 @@ class FormConfig
     /**
      * Get form template configuration object.
      *
-     * @return FormConfigSection
+     * @return FormRoot
      */
     public function getTemplates()
     {
@@ -135,7 +138,7 @@ class FormConfig
     /**
      * Get form upload configuration object.
      *
-     * @return FormConfigSection
+     * @return FormRoot
      */
     public function getUploads()
     {

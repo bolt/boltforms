@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Event;
 
-use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
+use Bolt\Extension\Bolt\BoltForms\Config\Section\FormRoot;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -31,16 +31,16 @@ class BoltFormsCustomDataEvent extends Event
 {
     /** @var string */
     protected $eventName;
-    /** @var FormConfigSection */
+    /** @var FormRoot */
     protected $eventParams;
     /** @var mixed */
     protected $data;
 
     /**
-     * @param string            $eventName
-     * @param FormConfigSection $eventParams
+     * @param string   $eventName
+     * @param FormRoot $eventParams
      */
-    public function __construct($eventName, FormConfigSection $eventParams)
+    public function __construct($eventName, FormRoot $eventParams)
     {
         $this->eventName = $eventName;
         $this->eventParams = $eventParams;
@@ -59,7 +59,7 @@ class BoltFormsCustomDataEvent extends Event
     /**
      * Get the user supplied parameters.
      *
-     * @return FormConfigSection
+     * @return FormRoot
      */
     public function getParameters()
     {

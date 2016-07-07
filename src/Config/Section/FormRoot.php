@@ -1,7 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Config;
+namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
 
+use Bolt\Extension\Bolt\BoltForms\Config\LegacyArrayAccessTrait;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -26,40 +27,40 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  *
- * @method boolean           getAjax()
- * @method boolean           getEnabled()
- * @method boolean           getDebug()
- * @method string            getSubject()
- * @method string            getFromName()
- * @method string            getFromEmail()
- * @method string            getReplyToName()
- * @method string            getReplyToEmail()
- * @method string            getToName()
- * @method string            getToEmail()
- * @method string            getCcName()
- * @method string            getCcEmail()
- * @method string            getBccName()
- * @method string            getBccEmail()
- * @method boolean           getAttachFiles()
- * @method string            getSuccess()
- * @method string            getError()
- * @method string            getQuery()
- * @method string            getChoices()
- * @method string            getTable()
- * @method string            getTarget()
- * @method string            getType()
- * @method string            getContentType()
- * @method string            getForm()
- * @method string            getEmail()
- * @method string            getSubdirectory()
- * @method FormConfigSection getOptions()
- * @method FormConfigSection getRedirect()
- * @method FormConfigSection getSubmission()
+ * @method boolean  getAjax()
+ * @method boolean  getEnabled()
+ * @method boolean  getDebug()
+ * @method string   getSubject()
+ * @method string   getFromName()
+ * @method string   getFromEmail()
+ * @method string   getReplyToName()
+ * @method string   getReplyToEmail()
+ * @method string   getToName()
+ * @method string   getToEmail()
+ * @method string   getCcName()
+ * @method string   getCcEmail()
+ * @method string   getBccName()
+ * @method string   getBccEmail()
+ * @method boolean  getAttachFiles()
+ * @method string   getSuccess()
+ * @method string   getError()
+ * @method string   getQuery()
+ * @method string   getChoices()
+ * @method string   getTable()
+ * @method string   getTarget()
+ * @method string   getType()
+ * @method string   getContentType()
+ * @method string   getForm()
+ * @method string   getEmail()
+ * @method string   getSubdirectory()
+ * @method FormRoot getOptions()
+ * @method FormRoot getRedirect()
+ * @method FormRoot getSubmission()
  *
  * @property boolean attach_files
  * @property string  debug_address
  */
-class FormConfigSection extends ParameterBag implements \ArrayAccess
+class FormRoot extends ParameterBag implements \ArrayAccess
 {
     /** @var array */
     protected $parameters;

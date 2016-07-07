@@ -6,7 +6,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Bolt\Extension\Bolt\BoltForms\Config\FormConfigSection;
+use Bolt\Extension\Bolt\BoltForms\Config\Section\FormRoot;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
@@ -212,7 +212,7 @@ class Email extends AbstractHandler
     {
         $bodyData = [];
         foreach ($formData->all() as $key => $value) {
-            /** @var FormConfigSection $config */
+            /** @var FormRoot $config */
             $config = $formConfig->getFields()->{$key}();
             $formValue = $formData->get($key);
 
