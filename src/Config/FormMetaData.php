@@ -53,7 +53,7 @@ class FormMetaData extends ParameterBag
      */
     public function set($key, $value)
     {
-        $this->parameters[$key] = new FormMetaDataSection($key, $value);
+        $this->parameters[$key] = new Section\MetaData($key, $value);
     }
 
     /**
