@@ -29,7 +29,7 @@ use Symfony\Component\EventDispatcher\Event;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class BoltFormsEmailEvent extends Event
+class EmailEvent extends Event
 {
     /** @var EmailConfig */
     protected $emailConfig;

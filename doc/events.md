@@ -71,21 +71,21 @@ redirection. Redirection only occurs if a redirect is set and the page exists.
 
 ### Email Event Listeners
 
-BoltForms provides a `BoltFormsEmailEvent` that is dispatched immediately 
+BoltForms provides a `EmailEvent` that is dispatched immediately 
 prior to emails being sent, and during the internal 
 `BoltFormsEvents::SUBMISSION_PROCESS_EMAIL` listener's execution.
 
 This event object will contain the EmailConfig, FormConfig and FormData objects.
 
 ```php
-//use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
+//use Bolt\Extension\Bolt\BoltForms\Event\EmailEvent;
 
     public function initialize()
     {
         $this->app['dispatcher']->addListener(BoltFormsEvents::PRE_EMAIL_SEND,  array($this, 'myPreEmailSend'));
     }
 
-    public function myPreEmailSend(BoltFormsEmailEvent $event)
+    public function myPreEmailSend(EmailEvent $event)
     {
         $emailConfig = $event->getEmailConfig();
         $formConfig = $event->getFormConfig();
