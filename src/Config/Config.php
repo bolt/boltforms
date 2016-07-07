@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
+use Bolt\Extension\Bolt\BoltForms\Config\Section;
 use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Helpers\Arr;
 use Bolt\Storage\EntityManager;
@@ -53,7 +54,7 @@ class Config extends ParameterBag
             if ($value instanceof FieldMap\Email) {
                 $this->set($key, $value);
             } elseif ($key === 'templates') {
-                $this->set($key, new Templates($value));
+                $this->set($key, new Section\Templates($value));
             } elseif (is_array($value)) {
                 if (in_array($key, $nonForms)) {
                     $this->set($key, new ParameterBag($value));
@@ -83,7 +84,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return ParameterBag
+     * @return Section\Templates
      */
     public function getTemplates()
     {
