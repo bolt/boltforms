@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\Section\FormRoot;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\CustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Submission\Handler\Upload;
@@ -133,7 +133,7 @@ class Fields extends AbstractProcessor
         }
 
         $eventParams = $eventConfig->get('params');
-        $event = new BoltFormsCustomDataEvent($eventName, $eventParams);
+        $event = new CustomDataEvent($eventName, $eventParams);
         $dispatcher->dispatch($eventName, $event);
 
         return $event->getData();

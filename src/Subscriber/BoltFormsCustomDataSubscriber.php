@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\CustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Doctrine\DBAL\DBALException;
 use Silex\Application;
@@ -48,9 +48,9 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     /**
      * Get the next increment of a database column.
      *
-     * @param BoltFormsCustomDataEvent $event
+     * @param CustomDataEvent $event
      */
-    public function nextIncrement(BoltFormsCustomDataEvent $event)
+    public function nextIncrement(CustomDataEvent $event)
     {
         $params = $event->getParameters();
 
@@ -72,9 +72,9 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     /**
      * Create a random string.
      *
-     * @param BoltFormsCustomDataEvent $event
+     * @param CustomDataEvent $event
      */
-    public function randomString(BoltFormsCustomDataEvent $event)
+    public function randomString(CustomDataEvent $event)
     {
         $params = $event->getParameters();
         $length = $params->getInt('length', 12);
@@ -84,9 +84,9 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     /**
      * Fetch a value from the $_SERVER super global.
      *
-     * @param BoltFormsCustomDataEvent $event
+     * @param CustomDataEvent $event
      */
-    public function serverValue(BoltFormsCustomDataEvent $event)
+    public function serverValue(CustomDataEvent $event)
     {
         $params = $event->getParameters();
         $key = $params->get('key');
@@ -100,9 +100,9 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     /**
      * Fetch a value from the session data.
      *
-     * @param BoltFormsCustomDataEvent $event
+     * @param CustomDataEvent $event
      */
-    public function sessionValue(BoltFormsCustomDataEvent $event)
+    public function sessionValue(CustomDataEvent $event)
     {
         $params = $event->getParameters();
         $key = $params->get('key');
@@ -116,9 +116,9 @@ class BoltFormsCustomDataSubscriber implements EventSubscriberInterface
     /**
      * Fetch the current (formatted) timestamp.
      *
-     * @param BoltFormsCustomDataEvent $event
+     * @param CustomDataEvent $event
      */
-    public function timestamp(BoltFormsCustomDataEvent $event)
+    public function timestamp(CustomDataEvent $event)
     {
         $params = $event->getParameters();
         $format = $params->get('format');
