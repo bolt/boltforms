@@ -41,7 +41,7 @@ class Email extends AbstractProcessor
         $formData = $lifeEvent->getFormData();
         $formMeta = $lifeEvent->getFormMetaData();
 
-        if ($formConfig->getNotification()->getEnabled()) {
+        if ($formConfig->getNotification()->isEnabled()) {
             /** @var Handler\Email $handler */
             $handler = $this->handlers['email'];
             $handler->handle($formConfig, $formData, $formMeta);

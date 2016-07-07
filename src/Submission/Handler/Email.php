@@ -126,7 +126,7 @@ class Email extends AbstractHandler
      */
     public function handle(Config\FormConfig $formConfig, FormData $formData, Config\FormMetaData $formMetaData)
     {
-        $emailConfig = new Config\EmailConfig($this->getConfig()->getDebug()->all(), $formConfig, $formData);
+        $emailConfig = new Config\EmailConfig($formConfig, $formData);
 
         $event = new Event\EmailEvent($emailConfig, $formConfig, $formData);
         $this->dispatcher->dispatch(Event\BoltFormsEvents::PRE_EMAIL_SEND, $event);

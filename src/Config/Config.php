@@ -207,21 +207,21 @@ class Config extends ParameterBag
             throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
         }
 
-        $config = $this->baseForms->get($formName)->all();
+        $formConfig = $this->baseForms->get($formName)->all();
 
-        if (!isset($config['fields'])) {
+        if (!isset($formConfig['fields'])) {
             throw new Exception\FormOptionException(sprintf('[BoltForms] Form "%s" does not have any fields defined!', $formName));
         }
 
-        foreach ($config['fields'] as $fieldName => $data) {
+        foreach ($formConfig['fields'] as $fieldName => $data) {
             $this->assetValidField($formName, $fieldName, $data);
 
             $options = !empty($data['options']) ? $data['options'] : [];
             $fieldOptions = new FieldOptions($formName, $fieldName, $data['type'], $options, $em, $dispatcher);
-            $config['fields'][$fieldName]['options'] = $fieldOptions;
+            $formConfig['fields'][$fieldName]['options'] = $fieldOptions;
         }
 
-        $resolvedForm = new FormConfig($formName, $config);
+        $resolvedForm = new FormConfig($formName, $formConfig, $this);
         $this->resolvedForms->set($formName, $resolvedForm);
     }
 

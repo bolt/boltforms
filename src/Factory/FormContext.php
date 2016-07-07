@@ -108,7 +108,7 @@ class FormContext
                 'action' => $this->action,
             ],
             'webpath'   => $this->webPath,
-            'debug'     => $config->getDebug()->get('enabled') || $config->getForm($formName)->getNotification()->getDebug(),
+            'debug'     => $config->getForm($formName)->getNotification()->isDebug(),
         ];
 
         return $context;

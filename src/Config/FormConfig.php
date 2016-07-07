@@ -28,6 +28,8 @@ use Bolt\Extension\Bolt\BoltForms\Config\Section\FormRoot;
  */
 class FormConfig
 {
+    /** @var Config */
+    private $rootConfig;
     /** @var string */
     protected $name;
     /** @var FormRoot */
@@ -46,12 +48,16 @@ class FormConfig
     protected $uploads;
 
     /**
+     * Constructor.
+     *
      * @param string $formName
      * @param array  $formConfig
+     * @param Config $rootConfig
      */
-    public function __construct($formName, array $formConfig)
+    public function __construct($formName, array $formConfig, Config $rootConfig)
     {
         $this->name = $formName;
+        $this->rootConfig = $rootConfig;
 
         $defaults = $this->getDefaults();
         $formConfig = $this->mergeRecursiveDistinct($defaults, $formConfig);
@@ -60,9 +66,17 @@ class FormConfig
         $this->feedback     = new FormRoot($formConfig['feedback']);
         $this->fields       = new FormRoot($formConfig['fields']);
         $this->submission   = new FormRoot($formConfig['submission']);
-        $this->notification = new FormRoot($formConfig['notification']);
+        $this->notification = new Notification($formConfig['notification'], $rootConfig);
         $this->templates    = new FormRoot($formConfig['templates']);
         $this->uploads      = new FormRoot($formConfig['uploads']);
+    }
+
+    /**
+     * @return Config
+     */
+    public function getRootConfig()
+    {
+        return $this->rootConfig;
     }
 
     /**
@@ -118,7 +132,7 @@ class FormConfig
     /**
      * Get form notification configuration object.
      *
-     * @return FormRoot
+     * @return Notification
      */
     public function getNotification()
     {

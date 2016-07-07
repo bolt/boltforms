@@ -29,8 +29,6 @@ use Bolt\Extension\Bolt\BoltForms\FormData;
  */
 class EmailConfig implements \ArrayAccess
 {
-    /** @var array */
-    protected $globalDebug;
     /** @var FormConfig */
     protected $formConfig;
     /** @var FormData */
@@ -62,47 +60,13 @@ class EmailConfig implements \ArrayAccess
     /** @var string */
     protected $replyToEmail;
 
-    public function __construct(array $globalDebug, FormConfig $formConfig, FormData $formData)
+    public function __construct(FormConfig $formConfig, FormData $formData)
     {
-        $this->globalDebug = $globalDebug;
         $this->formConfig = $formConfig;
         $this->formData = $formData;
         $this->attachFiles = $formConfig->getNotification()->get('attach_files', false);
 
-        $this->setDebugState();
         $this->setEmailConfig();
-    }
-
-    /**
-     * Set the debugging state.
-     *
-     * Global debug enabled
-     *   - Messages should always go to the global debug address only
-     *   - Takes preference over form specific settings
-     *   - To address also takes precidence
-     *
-     * Global debug disabled
-     *   - Form specific debug settings are applied
-     *
-     * Form debug enabled
-     *   - For debug address takes priority if set
-     *
-     * @throws EmailException
-     */
-    protected function setDebugState()
-    {
-        if ($this->globalDebug['enabled']) {
-            $this->debug = true;
-
-            if (empty($this->globalDebug['address'])) {
-                throw new EmailException('[BoltForms] Debug email address can not be empty if debugging enabled!');
-            } else {
-                $this->debugEmail = $this->globalDebug['address'];
-            }
-        } else {
-            $this->debug = $this->formConfig->getNotification()->getDebug();
-            $this->debugEmail = $this->formConfig->getNotification()->get('debug_address') ?: $this->globalDebug['address'];
-        }
     }
 
     /**
@@ -112,17 +76,24 @@ class EmailConfig implements \ArrayAccess
      */
     public function isDebug()
     {
-        return $this->debug;
+        return $this->formConfig->getNotification()->isDebug();
     }
 
     /**
      * Get the debugging email address.
      *
+     * @throws EmailException
+     *
      * @return string
      */
     public function getDebugEmail()
     {
-        return $this->debugEmail;
+        $address = $this->formConfig->getNotification()->get('debug_address');
+        if ($address === null) {
+            throw new EmailException('[BoltForms] Debug email address can not be empty if debugging enabled!');
+        }
+
+        return $address;
     }
 
     /**
