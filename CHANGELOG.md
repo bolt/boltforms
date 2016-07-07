@@ -14,6 +14,11 @@
  * Fixed: Successfully submitted forms can no longer be resubmitted on page refresh
  * Fixed: File upload handling breakage
  * Changed: Cut over to Bolt v3 storage
+ * Changed: Events renamed:
+   * BoltFormsChoiceEvent to ChoiceEvent
+   * BoltFormsCustomDataEvent to CustomDataEvent
+   * BoltFormsEmailEvent to EmailEvent
+   * BoltFormsProcessorEvent to ProcessorEvent
  * Break: Processor constructor signature changed, and logic moved into handlers & processors
  * Break: Choice field key/value pairs revierse to match Symfony
 
