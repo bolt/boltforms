@@ -15,7 +15,7 @@ Events
 #### Pre & Post Processing Events 
 
 Listener's will be passed an event parameter that is an
-`Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent`
+`Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent`
 
 
 ##### BoltFormsEvents::SUBMISSION_PRE_PROCESSOR 

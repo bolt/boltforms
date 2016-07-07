@@ -6,7 +6,7 @@ use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
@@ -227,7 +227,7 @@ class Processor implements EventSubscriberInterface
         }
 
         // Post processing event
-        $processorEvent = new BoltFormsProcessorEvent($formName, $formData->all());
+        $processorEvent = new ProcessorEvent($formName, $formData->all());
         $this->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
 
         // Feedback notices

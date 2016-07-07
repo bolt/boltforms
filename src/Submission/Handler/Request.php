@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
@@ -74,7 +74,7 @@ class Request
         // Submitted data
         $data = $form->getData();
 
-        $event = new BoltFormsProcessorEvent($formName, $data);
+        $event = new ProcessorEvent($formName, $data);
         $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
 
         /** @deprecated will be removed in v4 */
