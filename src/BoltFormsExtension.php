@@ -6,9 +6,6 @@ use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\SimpleExtension;
 use Pimple as Container;
 use Silex\Application;
-use Swift_Mailer as SwiftMailer;
-use Swift_FileSpool as SwiftFileSpool;
-use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -110,7 +107,7 @@ class BoltFormsExtension extends SimpleExtension
     {
         return [
             'templates/legacy',
-            'templates' => ['namespace' => 'BoltForms']
+            'templates' => ['namespace' => 'BoltForms'],
         ];
     }
 

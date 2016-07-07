@@ -2,8 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
-use Bolt\Extension\Bolt\BoltForms\Event\ChoiceEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Bolt\Extension\Bolt\BoltForms\Event\ChoiceEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**

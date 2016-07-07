@@ -52,7 +52,7 @@ class Config extends ParameterBag
         foreach ($parameters as $key => $value) {
             if ($value instanceof FieldMap\Email) {
                 $this->set($key, $value);
-            } elseif($key === 'templates') {
+            } elseif ($key === 'templates') {
                 $this->set($key, new Templates($value));
             } elseif (is_array($value)) {
                 if (in_array($key, $nonForms)) {

@@ -6,8 +6,8 @@ use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
-use Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
@@ -167,7 +167,6 @@ class Processor implements EventSubscriberInterface
         /** @var FormData $formData */
         $formData = $requestHandler->handle($formName, $this->boltForms, $this->dispatcher);
 
-
         if ($formData !== null && $reCaptchaResponse['success']) {
             $this->dispatchProcessors($formConfig, $formData);
 
@@ -240,8 +239,8 @@ class Processor implements EventSubscriberInterface
     /**
      * Dispatch an event.
      *
-     * @param string $eventName
-     * @param EventDispatcher\Event  $event
+     * @param string                $eventName
+     * @param EventDispatcher\Event $event
      *
      * @throws \Exception
      */

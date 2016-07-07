@@ -7,9 +7,9 @@ use Bolt\Filesystem\Handler\DirectoryInterface;
 use Bolt\Filesystem\Handler\FileInterface;
 use Bolt\Nut\BaseCommand;
 use Carbon\Carbon;
+use Swift_FileSpool as SwiftFileSpool;
 use Swift_Mailer as SwiftMailer;
 use Swift_Message as SwiftMessage;
-use Swift_FileSpool as SwiftFileSpool;
 use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -45,10 +45,10 @@ class MailQueueCommand extends BaseCommand
         $this
             ->setName('boltforms:mailqueue')
             ->setDescription('Manage the BoltForms mail queue.')
-            ->addArgument('clear', InputArgument::OPTIONAL,'Clear all un-sent message files from the queue. USE WITH CAUTION!')
-            ->addArgument('flush', InputArgument::OPTIONAL,'Flush (send) any queued emails.')
-            ->addArgument('recover', InputArgument::OPTIONAL,'Attempt to restore any incomplete email to a valid state.')
-            ->addArgument('show', InputArgument::OPTIONAL,'Show any queued emails.')
+            ->addArgument('clear', InputArgument::OPTIONAL, 'Clear all un-sent message files from the queue. USE WITH CAUTION!')
+            ->addArgument('flush', InputArgument::OPTIONAL, 'Flush (send) any queued emails.')
+            ->addArgument('recover', InputArgument::OPTIONAL, 'Attempt to restore any incomplete email to a valid state.')
+            ->addArgument('show', InputArgument::OPTIONAL, 'Show any queued emails.')
         ;
     }
 

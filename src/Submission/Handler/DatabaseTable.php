@@ -5,8 +5,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
-use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
-use Psr\Log\LogLevel;
 
 /**
  * Database functions for BoltForms

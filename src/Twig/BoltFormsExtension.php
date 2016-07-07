@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Twig;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Exception;
-use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Silex\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;

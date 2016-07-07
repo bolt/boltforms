@@ -13,10 +13,8 @@ use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Swift_FileSpool as SwiftFileSpool;
-use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
-use Swift_Transport_EsmtpTransport as SwiftTransportEsmtpTransport;
 use Swift_Mailer as SwiftMailer;
-use Swift_Message as SwiftMessage;
+use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 

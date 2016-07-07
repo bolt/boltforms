@@ -2,8 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 
-use Bolt\Extension\Bolt\BoltForms\Event\CustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Bolt\Extension\Bolt\BoltForms\Event\CustomDataEvent;
 use Doctrine\DBAL\DBALException;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

@@ -2,11 +2,11 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
+use Silex\Application;
 use Swift_FileSpool as SwiftFileSpool;
 use Swift_Mailer as SwiftMailer;
-use Swift_TransportException as SwiftTransportException;
 use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
-use Silex\Application;
+use Swift_TransportException as SwiftTransportException;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 
