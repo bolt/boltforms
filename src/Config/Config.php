@@ -93,9 +93,17 @@ class Config extends ParameterBag
     /**
      * @return ParameterBag
      */
-    public function getDebug()
+    public function isDebug()
     {
-        return $this->get('debug');
+        return $this->get('debug')->getBoolean('enabled');
+    }
+
+    /**
+     * @return ParameterBag
+     */
+    public function getDebugAddress()
+    {
+        return $this->get('debug')->getBoolean('address');
     }
 
     /**

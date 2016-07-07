@@ -68,7 +68,7 @@ class Notification extends ParameterBag
      */
     public function isDebug()
     {
-        return  $this->rootConfig->get('debug')->get('enabled') || $this->get('debug');
+        return  $this->rootConfig->isDebug() || $this->get('debug');
     }
 
     /**
@@ -88,7 +88,7 @@ class Notification extends ParameterBag
      */
     public function getDebugAddress()
     {
-        return  $this->get('debug_address') ?: $this->rootConfig->get('debug')->get('address');
+        return  $this->get('debug_address') ?: $this->rootConfig->getDebugAddress();
     }
 
     /**
