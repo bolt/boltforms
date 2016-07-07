@@ -2,14 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Config;
-use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
-use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
-use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormRoot;
-use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEmailEvent;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Bolt\Extension\Bolt\BoltForms\Config;
+use Bolt\Extension\Bolt\BoltForms\Event;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
@@ -20,9 +14,7 @@ use Swift_Mailer as SwiftMailer;
 use Swift_Message as SwiftMessage;
 use Swift_RfcComplianceException as SwiftRfcComplianceException;
 use Swift_TransportException as SwiftTransportException;
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Helper\TableSeparator;
-use Symfony\Component\Console\Helper\TableStyle;
+use Symfony\Component\Console\Helper;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
@@ -80,17 +72,17 @@ class Email extends AbstractHandler
     /**
      * Constructor.
      *
-     * @param Config                           $config
-     * @param EntityManager                    $entityManager
-     * @param FlashBag                         $feedback
-     * @param LoggerInterface                  $logger
-     * @param SwiftMailer                      $mailer
-     * @param EventDispatcherInterface         $dispatcher
-     * @param TwigEnvironment                  $twig
-     * @param UrlGeneratorInterface            $urlGenerator
+     * @param Config\Config            $config
+     * @param EntityManager            $entityManager
+     * @param FlashBag                 $feedback
+     * @param LoggerInterface          $logger
+     * @param SwiftMailer              $mailer
+     * @param EventDispatcherInterface $dispatcher
+     * @param TwigEnvironment          $twig
+     * @param UrlGeneratorInterface    $urlGenerator
      */
     public function __construct(
-        Config $config,
+        Config\Config $config,
         EntityManager $entityManager,
         FlashBag $feedback,
         LoggerInterface $logger,
@@ -128,16 +120,16 @@ class Email extends AbstractHandler
     /**
      * Create a notification message.
      *
-     * @param FormConfig   $formConfig
-     * @param FormData     $formData
-     * @param FormMetaData $formMetaData
+     * @param Config\FormConfig   $formConfig
+     * @param FormData            $formData
+     * @param Config\FormMetaData $formMetaData
      */
-    public function handle(FormConfig $formConfig, FormData $formData, FormMetaData $formMetaData)
+    public function handle(Config\FormConfig $formConfig, FormData $formData, Config\FormMetaData $formMetaData)
     {
-        $emailConfig = new EmailConfig($this->getConfig()->getDebug()->all(), $formConfig, $formData);
+        $emailConfig = new Config\EmailConfig($this->getConfig()->getDebug()->all(), $formConfig, $formData);
 
-        $event = new BoltFormsEmailEvent($emailConfig, $formConfig, $formData);
-        $this->dispatcher->dispatch(BoltFormsEvents::PRE_EMAIL_SEND, $event);
+        $event = new Event\BoltFormsEmailEvent($emailConfig, $formConfig, $formData);
+        $this->dispatcher->dispatch(Event\BoltFormsEvents::PRE_EMAIL_SEND, $event);
 
         $this->compose($formConfig, $emailConfig, $formData, $formMetaData);
         $this->address($emailConfig);
@@ -149,17 +141,17 @@ class Email extends AbstractHandler
     /**
      * Compose the email data to be sent.
      *
-     * @param FormConfig   $formConfig
-     * @param EmailConfig  $emailConfig
-     * @param FormData     $formData
-     * @param FormMetaData $formMetaData
+     * @param Config\FormConfig   $formConfig
+     * @param Config\EmailConfig  $emailConfig
+     * @param FormData            $formData
+     * @param Config\FormMetaData $formMetaData
      */
-    private function compose(FormConfig $formConfig, EmailConfig $emailConfig, FormData $formData, FormMetaData $formMetaData)
+    private function compose(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, FormData $formData, Config\FormMetaData $formMetaData)
     {
         // If the form has it's own templates defined, use those, else the globals.
         $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->getConfig()->getTemplates()->get('subject');
         $templateEmail = $formConfig->getTemplates()->getEmail() ?: $this->getConfig()->getTemplates()->get('email');
-        /** @var FieldMap\Email $fieldMap */
+        /** @var Config\FieldMap\Email $fieldMap */
         $fieldMap = $this->getConfig()->getFieldMap()->get('email');
 
         /*
@@ -202,17 +194,17 @@ class Email extends AbstractHandler
     /**
      * Get the data suitable for using in TWig.
      *
-     * @param FormConfig  $formConfig
-     * @param EmailConfig $emailConfig
-     * @param FormData    $formData
+     * @param Config\FormConfig  $formConfig
+     * @param Config\EmailConfig $emailConfig
+     * @param FormData           $formData
      *
      * @return array
      */
-    private function getBodyData(FormConfig $formConfig, EmailConfig $emailConfig, FormData $formData)
+    private function getBodyData(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, FormData $formData)
     {
         $bodyData = [];
         foreach ($formData->all() as $key => $value) {
-            /** @var FormRoot $config */
+            /** @var Config\Section\FormRoot $config */
             $config = $formConfig->getFields()->{$key}();
             $formValue = $formData->get($key);
 
@@ -244,9 +236,9 @@ class Email extends AbstractHandler
     /**
      * Set the addresses.
      *
-     * @param EmailConfig $emailConfig
+     * @param Config\EmailConfig $emailConfig
      */
-    private function address(EmailConfig $emailConfig)
+    private function address(Config\EmailConfig $emailConfig)
     {
         $this->setFrom($emailConfig);
         $this->setReplyTo($emailConfig);
@@ -259,9 +251,9 @@ class Email extends AbstractHandler
     /**
      * Set From.
      *
-     * @param EmailConfig $emailConfig
+     * @param Config\EmailConfig $emailConfig
      */
-    private function setFrom(EmailConfig $emailConfig)
+    private function setFrom(Config\EmailConfig $emailConfig)
     {
         if ($emailConfig->getFromEmail()) {
             $this->getEmailMessage()->setFrom([
@@ -273,9 +265,9 @@ class Email extends AbstractHandler
     /**
      * Set the ReplyTo.
      *
-     * @param EmailConfig $emailConfig
+     * @param Config\EmailConfig $emailConfig
      */
-    private function setReplyTo(EmailConfig $emailConfig)
+    private function setReplyTo(Config\EmailConfig $emailConfig)
     {
         if ($emailConfig->getReplyToEmail()) {
             $this->getEmailMessage()->setReplyTo([
@@ -287,10 +279,10 @@ class Email extends AbstractHandler
     /**
      * Ensure email addresses are sanitised during debug.
      *
-     * @param EmailConfig $emailConfig
-     * @param string      $type
+     * @param Config\EmailConfig $emailConfig
+     * @param string             $type
      */
-    private function setEmailDeliveryField(EmailConfig $emailConfig, $type)
+    private function setEmailDeliveryField(Config\EmailConfig $emailConfig, $type)
     {
         $emailMessage = $this->getEmailMessage();
         $swiftFunc = key($this->map[$type]);
@@ -313,11 +305,11 @@ class Email extends AbstractHandler
     /**
      * Send a notification
      *
-     * @param EmailConfig $emailConfig
+     * @param Config\EmailConfig $emailConfig
      *
      * @throws InternalProcessorException
      */
-    private function send(EmailConfig $emailConfig)
+    private function send(Config\EmailConfig $emailConfig)
     {
         /** @var SwiftMailer $mailer */
         $mailer = $this->getMailer();
@@ -345,17 +337,17 @@ class Email extends AbstractHandler
     }
 
     /**
-     * @param EmailConfig $emailConfig
+     * @param Config\EmailConfig $emailConfig
      */
-    private function log(EmailConfig $emailConfig)
+    private function log(Config\EmailConfig $emailConfig)
     {
         if (!$emailConfig->isDebug()) {
             return;
         }
 
         $output = new BufferedOutput();
-        $table = new Table($output);
-        $style = new TableStyle();
+        $table = new Helper\Table($output);
+        $style = new Helper\TableStyle();
 
         $style
             ->setHorizontalBorderChar(null)
@@ -366,14 +358,14 @@ class Email extends AbstractHandler
             [$this->getHeader('X-BoltForms-debug-to')],
             [$this->getHeader('X-BoltForms-debug-cc')],
             [$this->getHeader('X-BoltForms-debug-bcc')],
-            new TableSeparator(),
+            new Helper\TableSeparator(),
             [$this->getHeader('to')],
             [$this->getHeader('cc')],
             [$this->getHeader('bcc')],
             [$this->getHeader('from')],
             [$this->getHeader('reply-to')],
             [$this->getHeader('subject')],
-            new TableSeparator(),
+            new Helper\TableSeparator(),
             [$this->getEmailMessage()->getBody()],
         ]);
         $table->render();
