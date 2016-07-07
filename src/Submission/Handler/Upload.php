@@ -114,11 +114,11 @@ class Upload
      */
     public function relativePath()
     {
-        if (!$this->config->getUploads()->get('enabled')) {
+        if (!$this->config->getUploads()->isEnabled()) {
             throw new InternalProcessorException('The relative path is not valid when uploads are disabled!', null, null, false);
         }
 
-        $realUploadPath = realpath($this->config->getUploads()->get('base_directory'));
+        $realUploadPath = realpath($this->config->getUploads()->getBaseDirectory());
         if (strpos($this->fullPath, $realUploadPath) !== 0) {
             throw new InternalProcessorException('The relative path is not valid before the file is moved!', null, null, false);
         }
@@ -195,7 +195,7 @@ class Upload
         if ($this->baseDirName !== null) {
             return $this->baseDirName;
         }
-        $baseDir = $this->config->getUploads()->get('base_directory');
+        $baseDir = $this->config->getUploads()->getBaseDirectory();
         $subDir = $this->formConfig->getUploads()->getSubdirectory();
         if ($subDir !== null) {
             return $this->baseDirName = $baseDir . DIRECTORY_SEPARATOR . $subDir;
@@ -250,12 +250,12 @@ class Upload
      */
     protected function getTargetFileNamePattern()
     {
-        if ($this->config->getUploads()->get('filename_handling') === 'keep') {
+        if ($this->config->getUploads()->getFilenameHandling() === 'keep') {
             return '%s.%s';
         }
 
         $key = bin2hex(random_bytes(12));
-        if ($this->config->getUploads()->get('filename_handling') === 'prefix') {
+        if ($this->config->getUploads()->getFilenameHandling() === 'prefix') {
             return "%s.$key.%s";
         }
 

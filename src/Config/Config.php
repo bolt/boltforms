@@ -57,6 +57,8 @@ class Config extends ParameterBag
                 $this->set($key, new Section\ReCaptcha($value));
             } elseif ($key === 'templates') {
                 $this->set($key, new Section\Templates($value));
+            } elseif ($key === 'uploads') {
+                $this->set($key, new Section\Uploads($value));
             } elseif (is_array($value)) {
                 if (in_array($key, $nonForms)) {
                     $this->set($key, new ParameterBag($value));
@@ -110,7 +112,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return ParameterBag
+     * @return Section\Uploads
      */
     public function getUploads()
     {
