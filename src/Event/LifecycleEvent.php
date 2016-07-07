@@ -30,7 +30,7 @@ use Symfony\Component\Form\Button;
  * @copyright Copyright (c) 2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class BoltFormsSubmissionLifecycleEvent extends Event
+class LifecycleEvent extends Event
 {
     /** @var FormConfig $formConfig */
     protected $formConfig;

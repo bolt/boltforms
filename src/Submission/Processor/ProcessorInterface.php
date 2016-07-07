@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**

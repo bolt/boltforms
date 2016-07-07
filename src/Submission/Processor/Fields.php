@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\Section\FormRoot;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsCustomDataEvent;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Submission\Handler\Upload;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;

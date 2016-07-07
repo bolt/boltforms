@@ -7,7 +7,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsProcessorEvent;
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsSubmissionLifecycleEvent as LifecycleEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
@@ -17,7 +17,7 @@ use Pimple as Container;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Silex\Application;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
@@ -241,11 +241,11 @@ class Processor implements EventSubscriberInterface
      * Dispatch an event.
      *
      * @param string $eventName
-     * @param Event  $event
+     * @param EventDispatcher\Event  $event
      *
      * @throws \Exception
      */
-    protected function dispatch($eventName, Event $event)
+    protected function dispatch($eventName, EventDispatcher\Event $event)
     {
         if ($listeners = $this->dispatcher->getListeners($eventName)) {
             foreach ($listeners as $listener) {

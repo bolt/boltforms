@@ -36,8 +36,7 @@ field, database & email processing events.
 #### Processing Lifecycle Events
 
 Listener's will be passed an event parameter that is an
-`Bolt\Extension\Bolt\BoltForms\Event\BoltFormsLifecycleEvent` commonly aliased
-as `LifecycleEvent`.
+`Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent`.
 
 
 ##### BoltFormsEvents::SUBMISSION_PROCESS_FIELDS
