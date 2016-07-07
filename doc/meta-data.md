@@ -24,7 +24,7 @@ An example would be:
             value: record.id
         },
         'koala': {
-            value: { food: 'Gum Leaves', shelter: 'Gum Tree }
+            value: { food: 'Gum Leaves', shelter: 'Gum Tree' }
         }
     }) 
 }}
