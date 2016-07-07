@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Choice;
 
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsChoiceEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\ChoiceEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -71,7 +71,7 @@ class EventResolver extends AbstractChoiceOptionResolver
     public function getChoices()
     {
         if ($this->choices === null) {
-            $event = new BoltFormsChoiceEvent($this->formName, $this->name, $this->options);
+            $event = new ChoiceEvent($this->formName, $this->name, $this->options);
 
             $this->dispatcher->dispatch($this->getEventName(), $event);
 

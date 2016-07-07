@@ -2,7 +2,7 @@
 
 namespace Example;
 
-use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsChoiceEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\ChoiceEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\SimpleExtension;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -19,7 +19,7 @@ class EventChoice extends SimpleExtension
         $dispatcher->addListener(BoltFormsEvents::DATA_CHOICE_EVENT, [$this, 'onDataChoiceEvent']);
     }
 
-    public function onDataChoiceEvent(BoltFormsChoiceEvent $event)
+    public function onDataChoiceEvent(ChoiceEvent $event)
     {
         if ($event->getFormName() === 'contact' && $event->getFieldName() === 'department') {
             $choices = [

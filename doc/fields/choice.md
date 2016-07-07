@@ -181,7 +181,7 @@ In the above example the choices for the `event_based` field will be an array
 gathered from `BoltFormsEvents::DATA_CHOICE_EVENT`, and `event_based_custom`
 will be dispatched to listeners to the `my.custom.event` event.
 
-Each listener will be passed in a `BoltFormsChoiceEvent` event object to work
+Each listener will be passed in a `ChoiceEvent` event object to work
 with, that has getters for field name, options, and configured choices, as well
 as setters for an array of choices.
 
@@ -192,12 +192,12 @@ as setters for an array of choices.
         $dispatcher->addListener('my.custom.event', [$this, 'wantChoices']);
     }
 
-    public function replyChoices(BoltFormsChoiceEvent $event)
+    public function replyChoices(ChoiceEvent $event)
     {
         $event->setChoices(['yes' => 'Yes of course', 'no' => 'No way!']);
     }
 
-    public function wantChoices(BoltFormsChoiceEvent $event)
+    public function wantChoices(ChoiceEvent $event)
     {
         $event->setChoices(['yes' => 'Sure', 'no' => 'Not in this life']);
     }
