@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Twig function helpers.
@@ -131,6 +132,8 @@ class FormHelper
                     '[BoltForms] Form validation exception: ' . $e->getMessage(),
                     ['event' => 'extensions']
                 );
+            } catch (HttpException $e) {
+                throw $e;
             }
         } elseif ($request->isMethod(Request::METHOD_GET)) {
             $compiler->setSent($this->session->get($sessionKey));

@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Twig functions for BoltForms
@@ -113,7 +114,11 @@ class BoltFormsExtension
 
         // Handle the POST
         $reCaptchaResponse = $this->app['recapture.response.factory']();
-        $formHelper->handleFormRequest($formConfig, $formContext, $reCaptchaResponse);
+        try {
+            $formHelper->handleFormRequest($formConfig, $formContext, $reCaptchaResponse);
+        } catch (HttpException $e) {
+            return null;
+        }
 
         $loadAjax = $formConfig->getSubmission()->getAjax();
         $twig = $this->app['twig'];
