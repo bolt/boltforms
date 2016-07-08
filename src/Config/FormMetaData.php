@@ -61,7 +61,7 @@ class FormMetaData extends ParameterBag
      */
     public function replace(array $parameters = [])
     {
-        $this->parameters = null;
+        $this->parameters = [];
         foreach ($parameters as $key => $value) {
             $this->set($key, $value);
         }
@@ -85,7 +85,7 @@ class FormMetaData extends ParameterBag
 
     /**
      * Return the meta data for a particular use.
-     * 
+     *
      * @param string $target
      *
      * @return array
@@ -98,7 +98,7 @@ class FormMetaData extends ParameterBag
                 $meta[$key] = $this->get($key)->getValue();
             }
         }
-        
+
         return $meta;
     }
 }
