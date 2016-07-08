@@ -60,7 +60,7 @@ class UploadManagement implements ControllerProviderInterface
         }
         /** @var Config\Config $config */
         $config = $app['boltforms.config'];
-        $fullPath = $config->getUploads()->get('base_directory') . '/' . $file;
+        $fullPath = $config->getUploads()->getBaseDirectory() . '/' . $file;
         if (!$fs->exists($fullPath)) {
             return new Response('File not found', Response::HTTP_NOT_FOUND);
         }

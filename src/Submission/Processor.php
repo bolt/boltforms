@@ -215,13 +215,13 @@ class Processor implements EventSubscriberInterface
         $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
 
         // Process
-        if ($formConfig->getDatabase()->get('contenttype', false)) {
+        if ($formConfig->getDatabase()->getContentType()) {
             $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE, $lifeEvent);
         }
-        if ($formConfig->getDatabase()->get('table', false)) {
+        if ($formConfig->getDatabase()->getTable()) {
             $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_DATABASE, $lifeEvent);
         }
-        if ($formConfig->getNotification()->getBoolean('enabled')) {
+        if ($formConfig->getNotification()->isEnabled()) {
             $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_EMAIL, $lifeEvent);
         }
 

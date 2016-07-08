@@ -44,9 +44,9 @@ class BoltFormsEvent extends FormEvent
      */
     public function __construct(FormEvent $event, $formsEventName)
     {
+        parent::__construct($event->getForm(), $event->getData());
+
         $this->event = $event;
-        $this->data  = $event->getData();
-        $this->form  = $event->getForm();
         $this->formsEventName = $formsEventName;
     }
 

@@ -56,7 +56,7 @@ class Async implements ControllerProviderInterface
      * @param Application $app
      * @param Request     $request
      *
-     * @return JsonResponse
+     * @return JsonResponse$formConfig
      */
     public function submit(Application $app, Request $request)
     {
@@ -99,7 +99,7 @@ class Async implements ControllerProviderInterface
 
         $formContext->setSent($sent);
         $context = $formContext->build($boltForms, $config, $formName, $app['boltforms.feedback']);
-        $template = $config->getForm($formName)->getTemplates()->getForm() ?: $config->getTemplates()->get('form');
+        $template = $config->getForm($formName)->getTemplates()->getForm();
 
         // Render the Twig_Markup
         return $boltForms->render($formName, $template, $context, false);
