@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Config;
+namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
 
 use Bolt\Extension\Bolt\BoltForms\Config\Section\AbstractCascadingBag;
 
