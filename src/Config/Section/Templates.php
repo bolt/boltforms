@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
 
+use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -28,56 +29,19 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class Templates extends ParameterBag
 {
-    /** @var string */
-    protected $ajax;
-    /** @var string */
-    protected $css;
-    /** @var string */
-    protected $email;
-    /** @var string */
-    protected $subject;
-    /** @var string */
-    protected $messages;
-    /** @var string */
-    protected $exception;
-    /** @var string */
-    protected $files;
-    /** @var string */
-    protected $form;
-    /** @var string */
-    protected $formtheme;
-    /** @var string */
-    protected $fields;
-    /** @var string */
-    protected $recaptcha;
-    /** @var string */
-    protected $macros;
+    /** @var Config */
+    private $rootConfig;
 
     /**
      * Constructor.
      *
-     * @param array $parameters
+     * @param array       $parameters
+     * @param Config|null $rootConfig
      */
-    public function __construct(array $parameters = [])
+    public function __construct(array $parameters = [], Config $rootConfig = null)
     {
         parent::__construct($parameters);
-        foreach ($parameters as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $value;
-            }
-        }
-    }
-
-    /**
-     * Get a global template name.
-     *
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function getGlobal($name)
-    {
-        return $this->get($name);
+        $this->rootConfig = $rootConfig;
     }
 
     /**
@@ -85,7 +49,7 @@ class Templates extends ParameterBag
      */
     public function getAjax()
     {
-        return $this->ajax;
+        return $this->getHierarchicalValue('ajax');
     }
 
     /**
@@ -95,7 +59,7 @@ class Templates extends ParameterBag
      */
     public function setAjax($ajax)
     {
-        $this->ajax = $ajax;
+        $this->set('ajax', $ajax);
 
         return $this;
     }
@@ -105,7 +69,7 @@ class Templates extends ParameterBag
      */
     public function getCss()
     {
-        return $this->css;
+        return $this->getHierarchicalValue('css');
     }
 
     /**
@@ -115,7 +79,7 @@ class Templates extends ParameterBag
      */
     public function setCss($css)
     {
-        $this->css = $css;
+        $this->set('css', $css);
 
         return $this;
     }
@@ -125,7 +89,7 @@ class Templates extends ParameterBag
      */
     public function getEmail()
     {
-        return $this->email;
+        return $this->getHierarchicalValue('email');
     }
 
     /**
@@ -135,7 +99,7 @@ class Templates extends ParameterBag
      */
     public function setEmail($email)
     {
-        $this->email = $email;
+        $this->set('email', $email);
 
         return $this;
     }
@@ -145,7 +109,7 @@ class Templates extends ParameterBag
      */
     public function getSubject()
     {
-        return $this->subject;
+        return $this->getHierarchicalValue('subject');
     }
 
     /**
@@ -155,7 +119,7 @@ class Templates extends ParameterBag
      */
     public function setSubject($subject)
     {
-        $this->subject = $subject;
+        $this->set('subject', $subject);
 
         return $this;
     }
@@ -165,7 +129,7 @@ class Templates extends ParameterBag
      */
     public function getMessages()
     {
-        return $this->messages;
+        return $this->getHierarchicalValue('messages');
     }
 
     /**
@@ -175,7 +139,7 @@ class Templates extends ParameterBag
      */
     public function setMessages($messages)
     {
-        $this->messages = $messages;
+        $this->set('messages', $messages);
 
         return $this;
     }
@@ -185,7 +149,7 @@ class Templates extends ParameterBag
      */
     public function getException()
     {
-        return $this->exception;
+        return $this->getHierarchicalValue('exception');
     }
 
     /**
@@ -195,7 +159,7 @@ class Templates extends ParameterBag
      */
     public function setException($exception)
     {
-        $this->exception = $exception;
+        $this->set('exception', $exception);
 
         return $this;
     }
@@ -205,7 +169,7 @@ class Templates extends ParameterBag
      */
     public function getFiles()
     {
-        return $this->files;
+        return $this->getHierarchicalValue('files');
     }
 
     /**
@@ -215,7 +179,7 @@ class Templates extends ParameterBag
      */
     public function setFiles($files)
     {
-        $this->files = $files;
+        $this->set('files', $files);
 
         return $this;
     }
@@ -225,7 +189,7 @@ class Templates extends ParameterBag
      */
     public function getForm()
     {
-        return $this->form;
+        return $this->getHierarchicalValue('form');
     }
 
     /**
@@ -235,7 +199,7 @@ class Templates extends ParameterBag
      */
     public function setForm($form)
     {
-        $this->form = $form;
+        $this->set('form', $form);
 
         return $this;
     }
@@ -245,7 +209,7 @@ class Templates extends ParameterBag
      */
     public function getFormTheme()
     {
-        return $this->formtheme;
+        return $this->getHierarchicalValue('formtheme');
     }
 
     /**
@@ -255,7 +219,7 @@ class Templates extends ParameterBag
      */
     public function setFormTheme($formTheme)
     {
-        $this->formtheme = $formTheme;
+        $this->set('formtheme', $formTheme);
 
         return $this;
     }
@@ -265,7 +229,7 @@ class Templates extends ParameterBag
      */
     public function getFields()
     {
-        return $this->fields;
+        return $this->getHierarchicalValue('fields');
     }
 
     /**
@@ -275,7 +239,7 @@ class Templates extends ParameterBag
      */
     public function setFields($fields)
     {
-        $this->fields = $fields;
+        $this->set('fields', $fields);
 
         return $this;
     }
@@ -285,7 +249,7 @@ class Templates extends ParameterBag
      */
     public function getReCaptcha()
     {
-        return $this->recaptcha;
+        return $this->getHierarchicalValue('recaptcha');
     }
 
     /**
@@ -295,7 +259,7 @@ class Templates extends ParameterBag
      */
     public function setReCaptcha($reCaptcha)
     {
-        $this->recaptcha = $reCaptcha;
+        $this->set('recaptcha', $reCaptcha);
 
         return $this;
     }
@@ -305,7 +269,7 @@ class Templates extends ParameterBag
      */
     public function getMacros()
     {
-        return $this->macros;
+        return $this->getHierarchicalValue('macros');
     }
 
     /**
@@ -315,8 +279,24 @@ class Templates extends ParameterBag
      */
     public function setMacros($macros)
     {
-        $this->macros = $macros;
+        $this->set('macros', $macros);
 
         return $this;
+    }
+
+    /**
+     * If there is a root configuration supplied, return its value as a default.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    private function getHierarchicalValue($key)
+    {
+        if ($this->rootConfig === null) {
+            return $this->get($key);
+        }
+
+        return $this->get($key) ?: $this->rootConfig->getTemplates()->get($key);
     }
 }

@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
 use Bolt\Extension\Bolt\BoltForms\Config\Section\FormRoot;
+use Bolt\Extension\Bolt\BoltForms\Config\Section\Templates;
 
 /**
  * Form configuration for BoltForms
@@ -67,7 +68,7 @@ class FormConfig
         $this->fields       = new FormRoot($formConfig['fields']);
         $this->submission   = new FormRoot($formConfig['submission']);
         $this->notification = new Notification($formConfig['notification'], $rootConfig);
-        $this->templates    = new FormRoot($formConfig['templates']);
+        $this->templates    = new Templates($formConfig['templates'], $rootConfig);
         $this->uploads      = new FormRoot($formConfig['uploads']);
     }
 
