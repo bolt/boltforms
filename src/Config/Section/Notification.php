@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Section\AbstractCascadingBag;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Notification configuration object.
@@ -333,6 +333,6 @@ class Notification extends AbstractCascadingBag
      */
     protected function getRootSection()
     {
-        return $this->rootConfig->getNotification();
+        return new ParameterBag();
     }
 }
