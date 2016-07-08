@@ -216,7 +216,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                     ),
                     'request' => $app->share(
                         function () use ($app) {
-                            return new Submission\Handler\Request($app['request_stack']);
+                            return new Submission\Handler\PostRequest($app['request_stack']);
                         }
                     ),
                     'upload'  => $app->protect(

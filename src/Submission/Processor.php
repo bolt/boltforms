@@ -162,7 +162,7 @@ class Processor implements EventSubscriberInterface
     public function process(FormConfig $formConfig, array $reCaptchaResponse, $returnData = false)
     {
         $formName = $formConfig->getName();
-        /** @var Handler\Request $requestHandler*/
+        /** @var Handler\PostRequest $requestHandler*/
         $requestHandler = $this->handlers['request'];
         /** @var FormData $formData */
         $formData = $requestHandler->handle($formName, $this->boltForms, $this->dispatcher);
