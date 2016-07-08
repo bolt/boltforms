@@ -352,7 +352,7 @@ class EmailConfig implements \ArrayAccess
 
             return implode(' ', $parts);
         }
-        if ($this->formData->has($value)) {
+        if (is_string($value) && $this->formData->has($value)) {
             return $this->formData->get($value);
         }
 
