@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -27,23 +26,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Templates extends ParameterBag
+class Templates extends AbstractCascadingBag
 {
-    /** @var Config */
-    private $rootConfig;
-
-    /**
-     * Constructor.
-     *
-     * @param array       $parameters
-     * @param Config|null $rootConfig
-     */
-    public function __construct(array $parameters = [], Config $rootConfig = null)
-    {
-        parent::__construct($parameters);
-        $this->rootConfig = $rootConfig;
-    }
-
     /**
      * @return string
      */
@@ -285,18 +269,10 @@ class Templates extends ParameterBag
     }
 
     /**
-     * If there is a root configuration supplied, return its value as a default.
-     *
-     * @param string $key
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    private function getHierarchicalValue($key)
+    protected function getRootSection()
     {
-        if ($this->rootConfig === null) {
-            return $this->get($key);
-        }
-
-        return $this->get($key) ?: $this->rootConfig->getTemplates()->get($key);
+        return $this->rootConfig->getTemplates();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Bolt\Extension\Bolt\BoltForms\Config\Section\AbstractCascadingBag;
 
 /**
  * Notification configuration object.
@@ -26,23 +26,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Notification extends ParameterBag
+class Notification extends AbstractCascadingBag
 {
-    /** @var Config */
-    private $rootConfig;
-
-    /**
-     * Constructor.
-     *
-     * @param array       $parameters
-     * @param Config|null $rootConfig
-     */
-    public function __construct(array $parameters, Config $rootConfig = null)
-    {
-        $this->rootConfig = $rootConfig;
-        parent::__construct($parameters);
-    }
-
     /**
      * @return boolean
      */
@@ -68,7 +53,7 @@ class Notification extends ParameterBag
      */
     public function isDebug()
     {
-        return  $this->rootConfig->isDebug() || $this->get('debug');
+        return  $this->getHierarchicalValue('debug');
     }
 
     /**
@@ -88,7 +73,7 @@ class Notification extends ParameterBag
      */
     public function getDebugAddress()
     {
-        return  $this->get('debug_address') ?: $this->rootConfig->getDebugAddress();
+        return  $this->getHierarchicalValue('debug_address');
     }
 
     /**
@@ -108,7 +93,7 @@ class Notification extends ParameterBag
      */
     public function getSubject()
     {
-        return  $this->get('subject');
+        return  $this->getHierarchicalValue('subject');
     }
 
     /**
@@ -128,7 +113,7 @@ class Notification extends ParameterBag
      */
     public function getFromName()
     {
-        return  $this->get('from_name');
+        return  $this->getHierarchicalValue('from_name');
     }
 
     /**
@@ -148,7 +133,7 @@ class Notification extends ParameterBag
      */
     public function getFromEmail()
     {
-        return  $this->get('from_email');
+        return  $this->getHierarchicalValue('from_email');
     }
 
     /**
@@ -168,7 +153,7 @@ class Notification extends ParameterBag
      */
     public function getReplyToName()
     {
-        return  $this->get('replyto_name');
+        return  $this->getHierarchicalValue('replyto_name');
     }
 
     /**
@@ -188,7 +173,7 @@ class Notification extends ParameterBag
      */
     public function getReplyToEmail()
     {
-        return  $this->get('replyto_email');
+        return  $this->getHierarchicalValue('replyto_email');
     }
 
     /**
@@ -208,7 +193,7 @@ class Notification extends ParameterBag
      */
     public function getToName()
     {
-        return  $this->get('to_name');
+        return  $this->getHierarchicalValue('to_name');
     }
 
     /**
@@ -228,7 +213,7 @@ class Notification extends ParameterBag
      */
     public function getToEmail()
     {
-        return  $this->get('to_email');
+        return  $this->getHierarchicalValue('to_email');
     }
 
     /**
@@ -248,7 +233,7 @@ class Notification extends ParameterBag
      */
     public function getCcName()
     {
-        return  $this->get('cc_name');
+        return  $this->getHierarchicalValue('cc_name');
     }
 
     /**
@@ -268,7 +253,7 @@ class Notification extends ParameterBag
      */
     public function getCcEmail()
     {
-        return  $this->get('cc_email');
+        return  $this->getHierarchicalValue('cc_email');
     }
 
     /**
@@ -288,7 +273,7 @@ class Notification extends ParameterBag
      */
     public function getBccName()
     {
-        return  $this->get('bcc_name');
+        return  $this->getHierarchicalValue('bcc_name');
     }
 
     /**
@@ -308,7 +293,7 @@ class Notification extends ParameterBag
      */
     public function getBccEmail()
     {
-        return  $this->get('bcc_email');
+        return  $this->getHierarchicalValue('bcc_email');
     }
 
     /**
@@ -328,7 +313,7 @@ class Notification extends ParameterBag
      */
     public function isAttachFiles()
     {
-        return  $this->get('attach_files');
+        return  $this->getHierarchicalValue('attach_files');
     }
 
     /**
@@ -341,5 +326,13 @@ class Notification extends ParameterBag
         $this->set('attach_files', $attachFiles);
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRootSection()
+    {
+        return $this->rootConfig->getNotification();
     }
 }
