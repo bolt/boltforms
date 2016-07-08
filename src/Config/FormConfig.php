@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormRoot;
+use Bolt\Extension\Bolt\BoltForms\Config\Section\FormBase;
 
 /**
  * Form configuration for BoltForms
@@ -32,19 +32,19 @@ class FormConfig
     private $rootConfig;
     /** @var string */
     protected $name;
-    /** @var FormRoot */
+    /** @var FormBase */
     protected $database;
-    /** @var FormRoot */
+    /** @var FormBase */
     protected $feedback;
-    /** @var FormRoot */
+    /** @var FormBase */
     protected $fields;
-    /** @var FormRoot */
+    /** @var FormBase */
     protected $submission;
-    /** @var FormRoot */
+    /** @var FormBase */
     protected $notification;
-    /** @var FormRoot */
+    /** @var FormBase */
     protected $templates;
-    /** @var FormRoot */
+    /** @var FormBase */
     protected $uploads;
 
     /**
@@ -62,13 +62,13 @@ class FormConfig
         $defaults = $this->getDefaults();
         $formConfig = $this->mergeRecursiveDistinct($defaults, $formConfig);
 
-        $this->database     = new FormRoot($formConfig['database']);
-        $this->feedback     = new FormRoot($formConfig['feedback']);
-        $this->fields       = new FormRoot($formConfig['fields']);
-        $this->submission   = new FormRoot($formConfig['submission']);
+        $this->database     = new FormBase($formConfig['database']);
+        $this->feedback     = new FormBase($formConfig['feedback']);
+        $this->fields       = new FormBase($formConfig['fields']);
+        $this->submission   = new FormBase($formConfig['submission']);
         $this->notification = new Section\Notification($formConfig['notification'], $rootConfig);
         $this->templates    = new Section\Templates($formConfig['templates'], $rootConfig);
-        $this->uploads      = new FormRoot($formConfig['uploads']);
+        $this->uploads      = new FormBase($formConfig['uploads']);
     }
 
     /**
@@ -92,7 +92,7 @@ class FormConfig
     /**
      * Get form database configuration object.
      *
-     * @return FormRoot
+     * @return FormBase
      */
     public function getDatabase()
     {
@@ -102,7 +102,7 @@ class FormConfig
     /**
      * Get form feedback configuration object.
      *
-     * @return FormRoot
+     * @return FormBase
      */
     public function getFeedback()
     {
@@ -112,7 +112,7 @@ class FormConfig
     /**
      * Get form fields configuration object.
      *
-     * @return FormRoot
+     * @return FormBase
      */
     public function getFields()
     {
@@ -122,7 +122,7 @@ class FormConfig
     /**
      * Get form submission configuration object.
      *
-     * @return FormRoot
+     * @return FormBase
      */
     public function getSubmission()
     {
@@ -142,7 +142,7 @@ class FormConfig
     /**
      * Get form template configuration object.
      *
-     * @return FormRoot
+     * @return FormBase
      */
     public function getTemplates()
     {
@@ -152,7 +152,7 @@ class FormConfig
     /**
      * Get form upload configuration object.
      *
-     * @return FormRoot
+     * @return FormBase
      */
     public function getUploads()
     {
