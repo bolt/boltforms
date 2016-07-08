@@ -1,4 +1,5 @@
 <?php
+
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
 use Bolt\Extension\Bolt\BoltForms\Config\Section\FormBase;

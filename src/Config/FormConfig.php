@@ -40,11 +40,11 @@ class FormConfig
     protected $fields;
     /** @var FormBase */
     protected $submission;
-    /** @var FormBase */
+    /** @var Section\Notification */
     protected $notification;
-    /** @var FormBase */
+    /** @var Section\Templates */
     protected $templates;
-    /** @var FormBase */
+    /** @var Section\Uploads */
     protected $uploads;
 
     /**
@@ -132,7 +132,7 @@ class FormConfig
     /**
      * Get form notification configuration object.
      *
-     * @return Notification
+     * @return Section\Notification
      */
     public function getNotification()
     {
