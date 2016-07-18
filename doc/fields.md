@@ -85,7 +85,8 @@ For more information on this field type, see the [choice fields documentation](f
 Upload Types
 ------------
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SECURITY WARNING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### SECURITY WARNING
+
 Handling file uploads is a very common attack vector used to compromise (hack)
 a server.
 
@@ -111,9 +112,8 @@ options, e.g. uploading the file kitten.jpg:
 We recommend "suffix" as this is the most secure, alternatively "prefix" will
 aid in file browsing. However "keep" should always be used with caution!
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SECURITY WARNING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Configuration parameters:
+### Configuration Parameters
 
 ```
 uploads:
@@ -252,3 +252,29 @@ e.g.:
     }}
 ```
 
+
+Controlling Field Rendering
+---------------------------
+
+If you want to simply render the reamining fields, you can use the `form_rest`
+function, passing in the form variable, e.g.:
+
+```twig
+{{ form_rest(form) }}
+```
+
+Should you want to exclude a single field, you can set the `setRendered`
+property for that field, e.g.:
+
+```twig
+{% do form.your_field_name.setRendered %}
+```
+
+If you know you have remaining fields, and you don't want them remdered,
+you can simply pass `form_end` the `render_rest: false` option, i.e.:
+
+```twig
+{{ form_end(form, { 'render_rest': false }) }}
+```
+
+For more details, see Symfony's [Twig reference](http://symfony.com/doc/2.8/reference/forms/twig_reference.html#form-rest-view-variables).

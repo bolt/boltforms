@@ -65,7 +65,7 @@
                 {% endfor %}
             {% endblock boltforms_form_fields %}
 
-            {{ form_end(form) }}
+            {{ form_end(form, { 'render_rest': false }) }}
 
         {% endif %}
     </div>
