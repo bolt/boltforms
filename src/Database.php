@@ -90,8 +90,8 @@ class Database
         $record = $this->app['storage']->getEmptyContent($contenttype);
 
         // Set a published date
-        if (! $formData->has('datepublish')) {
-            $formData->set('datepublish', date('Y-m-d H:i:s'));
+        if (!$formData->has('datepublish')) {
+            $record->setValue('datepublish', date('Y-m-d H:i:s'));
         }
 
         foreach ($formData->keys() as $name) {
