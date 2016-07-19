@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 3.0.3 (2016-07-19)
+ * Fixed: Errors in sent notification when ContentType saves enabled (credit: @dantleech)
+
 * 3.0.2 (2016-06-04)
  * Fixed: Forms wiping values on failed submit
 
