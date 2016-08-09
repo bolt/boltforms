@@ -65,6 +65,11 @@
                 {% endfor %}
             {% endblock boltforms_form_fields %}
 
+            {# This is the CSRF token row and must be included if using CSRF (default) #}
+            {% if form._token is defined %}
+                {{ form_row(form._token) }}
+            {% endif %}
+
             {{ form_end(form, { 'render_rest': false }) }}
 
         {% endif %}
