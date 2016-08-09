@@ -223,7 +223,7 @@ class Email extends AbstractHandler
                     $formData->get($key)->getFile()->getClientOriginalName()
                 );
             } elseif ($config->get('type') === 'choice') {
-                $choices = $config->getOptions()->getChoices();
+                $choices = $config->getOptions()->toArray();
                 $bodyData[$key] = isset($choices[$formValue]) ? $choices[$formValue] : $formValue;
             } else {
                 $bodyData[$key] = $formData->get($key, true);
