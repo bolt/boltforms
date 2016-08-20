@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
 
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 /**
  * Templates configuration object.
  *

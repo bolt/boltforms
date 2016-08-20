@@ -13,10 +13,10 @@ use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Swift_FileSpool as SwiftFileSpool;
-use Swift_Mailer as SwiftMailer;
 use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * BoltForms service provider.
@@ -46,7 +46,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
     {
         $app['session'] = $app->extend(
             'session',
-            function ($session) use ($app) {
+            function (SessionInterface $session) use ($app) {
                 $session->registerBag($app['boltforms.feedback']);
 
                 return $session;
@@ -107,7 +107,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
     private function registerTwig(Application $app)
     {
         $app['boltforms.twig.helper'] = $app->share(
-            function ($app) {
+            function (Application $app) {
                 return new Container([
                     'form' => $app->share(
                         function () use ($app) {
@@ -171,7 +171,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         );
 
         $app['boltforms.handlers'] = $app->share(
-            function ($app) {
+            function (Application $app) {
                 return new Container([
                     'content'  => $app->share(
                         function () use ($app) {
@@ -236,7 +236,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
     private function registerProcessors(Application $app)
     {
         $app['boltforms.processors'] = $app->share(
-            function ($app) {
+            function (Application $app) {
                 return new Container([
                     'content'  => $app->share(function () use ($app) { return new Submission\Processor\ContentType($app['boltforms.handlers']); }),
                     'database' => $app->share(function () use ($app) { return new Submission\Processor\DatabaseTable($app['boltforms.handlers']); }),
@@ -249,7 +249,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         );
 
         $app['boltforms.processor'] = $app->share(
-            function ($app) {
+            function (Application $app) {
                 $processor = new Submission\Processor(
                     $app['boltforms.config'],
                     $app['boltforms'],

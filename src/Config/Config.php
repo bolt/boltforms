@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Section;
 use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Helpers\Arr;
 use Bolt\Storage\EntityManager;
