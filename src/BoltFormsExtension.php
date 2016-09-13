@@ -53,8 +53,6 @@ class BoltFormsExtension extends SimpleExtension
 
         $dispatcher = $this->container['dispatcher'];
         $dispatcher->addSubscriber($app['boltforms.processor']);
-        $dispatcher->addListener(KernelEvents::TERMINATE, [$app['boltforms.mailer.queue'], 'flush']);
-        $dispatcher->addListener('boltforms.mailer.debug', [$app['boltforms.mailer.queue'], 'flush']);
     }
 
     /**
@@ -177,16 +175,6 @@ class BoltFormsExtension extends SimpleExtension
             'fieldmap' => [
                 'email' => new FieldMap\Email(),
             ],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function registerNutCommands(Container $container)
-    {
-        return [
-            new Command\MailQueueCommand($container),
         ];
     }
 }

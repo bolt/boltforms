@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\BoltForms\Event;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
+use Bolt\Extension\Bolt\EmailSpooler\EventListener\QueueListener;
 use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -319,7 +320,7 @@ class Email extends AbstractHandler
             // Queue the message in the mailer
             $mailer->send($this->emailMessage, $failed);
             if ($emailConfig->isDebug()) {
-                $this->dispatcher->dispatch('boltforms.mailer.debug');
+                $this->dispatcher->dispatch(QueueListener::FLUSH);
             }
             $this->message(sprintf('Sent Bolt Forms notification to "%s <%s>"', $emailConfig->getToName(), $emailConfig->getToEmail()), Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
         } catch (SwiftTransportException $e) {

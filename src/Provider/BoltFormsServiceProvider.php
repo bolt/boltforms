@@ -152,24 +152,6 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             }
         );
 
-        $app['boltforms.mailer.initialized'] = false;
-
-        $app['boltforms.mailer'] = $app->share(
-            function () use ($app) {
-                $app['boltforms.mailer.initialized'] = true;
-                $spoolDir = $app['resources']->getPath('cache/.spool');
-                $transport = new SwiftTransportSpoolTransport($app['swiftmailer.transport.eventdispatcher'], new SwiftFileSpool($spoolDir));
-
-                return $app['mailer']->newInstance($transport);
-            }
-        );
-
-        $app['boltforms.mailer.queue'] = $app->share(
-            function ($app) {
-                return new Submission\MailerQueue($app);
-            }
-        );
-
         $app['boltforms.handlers'] = $app->share(
             function (Application $app) {
                 return new Container([
@@ -180,7 +162,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['storage'],
                                 $app['boltforms.feedback'],
                                 $app['logger.system'],
-                                $app['boltforms.mailer']
+                                $app['mailer']
                             );
                         }
                     ),
@@ -191,7 +173,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['storage'],
                                 $app['boltforms.feedback'],
                                 $app['logger.system'],
-                                $app['boltforms.mailer']
+                                $app['mailer']
                             );
                         }
                     ),
@@ -202,7 +184,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['storage'],
                                 $app['boltforms.feedback'],
                                 $app['logger.system'],
-                                $app['boltforms.mailer'],
+                                $app['mailer'],
                                 $app['dispatcher'],
                                 $app['twig'],
                                 $app['url_generator']
