@@ -10,7 +10,8 @@
         "uploads"
     ],
     "require": {
-        "bolt/bolt": "^3.0"
+        "bolt/bolt": "^3.0",
+        "bolt/email-spooler": "^3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.7"
