@@ -7,7 +7,7 @@ use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
 use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Factory;
 use Bolt\Extension\Bolt\BoltForms\Submission;
-use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsCustomDataSubscriber;
+use Bolt\Extension\Bolt\BoltForms\Subscriber\DynamicDataSubscriber;
 use Bolt\Extension\Bolt\BoltForms\Twig;
 use Bolt\Filesystem\Filesystem;
 use Bolt\Filesystem\Handler\File;
@@ -107,7 +107,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         );
 
         $app['boltforms.subscriber.custom_data'] = $app->share(function ($app) {
-            return new BoltFormsCustomDataSubscriber($app);
+            return new DynamicDataSubscriber($app);
         });
 
         $this->registerHandlers($app);
