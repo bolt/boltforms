@@ -47,7 +47,7 @@ class FormHelper
     private $boltForms;
     /** @var Processor */
     private $processor;
-    /** @var \Closure */
+    /** @var callable */
     private $contextFactory;
     /** @var FlashBag */
     private $feedback;
@@ -62,7 +62,7 @@ class FormHelper
      * @param BoltForms        $boltForms
      * @param Config           $config
      * @param Processor        $processor
-     * @param \Closure         $contextFactory
+     * @param callable         $contextFactory
      * @param FlashBag         $feedback
      * @param SessionInterface $session
      * @param RequestStack     $requestStack
@@ -72,7 +72,7 @@ class FormHelper
         BoltForms $boltForms,
         Config $config,
         Processor $processor,
-        \Closure $contextFactory,
+        callable $contextFactory,
         FlashBag $feedback,
         SessionInterface $session,
         RequestStack $requestStack,
@@ -100,7 +100,8 @@ class FormHelper
         /** @var FormContext $compiler */
         $compiler = $this->session->get('boltforms_compiler_' . $formName);
         if ($compiler === null) {
-            $compiler = $this->contextFactory->__invoke();
+            $factory = $this->contextFactory;
+            $compiler = $factory();
         }
 
         return $compiler;
