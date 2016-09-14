@@ -2,6 +2,22 @@
 ### Bolt Forms
 ###
 
+## Debugging
+#
+# Global debugging on/off switch
+#
+# If enabled, ALL forms will go into debug mode.  However, when disabled an individual
+# form can still enable it's own debug — specific for and to that form
+debug:
+    enabled: true
+    address: noreply@example.com
+
+## CSRF protection
+#
+# Enable CSRF protection for forms. You should leave this set to 'true', unless
+# you know what you're doing.
+csrf: true
+
 # Global templates used for rendering forms and emails.
 #
 # You can find assorted templates to copy and modify in the templates/
@@ -36,12 +52,6 @@
 #    private_key: ''
 #    error_message: "The CAPTCHA wasn't entered correctly. Please try again."
 #    theme: clean
-
-## CSRF protection
-#
-# Enable CSRF protection for forms. You should leave this set to 'true', unless
-# you know what you're doing.
-csrf: true
 
 ## File Uploads
 #
@@ -79,16 +89,6 @@ csrf: true
 #    base_directory: /full/path/for/uploaded/files/ # Outside web root and writable by the web server's user
 #    filename_handling: suffix                      # Can be either "prefix", "suffix", or "keep"
 #    management_controller: false                   # Enable a controller to handle browsing and downloading of uploaded files
-
-## Debugging
-#
-# Global debugging on/off switch
-#
-# If enabled, ALL forms will go into debug mode.  However, when disabled an individual
-# form can still enable it's own debug — specific for and to that form
-debug:
-    enabled: true
-    address: noreply@example.com
 
 ## Example 1
 #
