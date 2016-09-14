@@ -9,11 +9,13 @@ use Bolt\Extension\Bolt\BoltForms\Factory;
 use Bolt\Extension\Bolt\BoltForms\Submission;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsCustomDataSubscriber;
 use Bolt\Extension\Bolt\BoltForms\Twig;
+use Bolt\Filesystem\Filesystem;
+use Bolt\Filesystem\Handler\File;
 use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
-use Swift_FileSpool as SwiftFileSpool;
-use Swift_Transport_SpoolTransport as SwiftTransportSpoolTransport;
+use Symfony\Component\Config\ConfigCache;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -63,9 +65,24 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
         $app['boltforms.config'] = $app->share(
             function ($app) {
-                /** @var BoltFormsExtension $boltForms */
-                $boltForms = $app['extensions']->get('Bolt/BoltForms');
-                $config = new Config\Config($boltForms->getConfig());
+                /** @var Filesystem $cacheFs */
+                $cacheFs = $app['filesystem']->getFilesystem('cache');
+                /** @var File $cacheFile */
+                $cacheFile = $cacheFs->getFile('boltforms.config.cache');
+                $cachePath = $cacheFs->getAdapter()->getPathPrefix();
+                $cacheFilePath = $cachePath . $cacheFile->getPath();
+                $configCache = new ConfigCache($cacheFilePath, $app['debug']);
+
+                if ($configCache->isFresh()) {
+                    $config = unserialize($cacheFile->read());
+                } else {
+                    $configFile = $app['resources']->getPath('extensionsconfig/boltforms.bolt.yml');
+                    /** @var BoltFormsExtension $boltForms */
+                    $boltForms = $app['extensions']->get('Bolt/BoltForms');
+                    $config = new Config\Config($boltForms->getConfig());
+                    $resources = new FileResource($configFile);
+                    $configCache->write(serialize($config), [$resources]);
+                }
 
                 return $config;
             }
@@ -152,24 +169,6 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             }
         );
 
-        $app['boltforms.mailer.initialized'] = false;
-
-        $app['boltforms.mailer'] = $app->share(
-            function () use ($app) {
-                $app['boltforms.mailer.initialized'] = true;
-                $spoolDir = $app['resources']->getPath('cache/.spool');
-                $transport = new SwiftTransportSpoolTransport($app['swiftmailer.transport.eventdispatcher'], new SwiftFileSpool($spoolDir));
-
-                return $app['mailer']->newInstance($transport);
-            }
-        );
-
-        $app['boltforms.mailer.queue'] = $app->share(
-            function ($app) {
-                return new Submission\MailerQueue($app);
-            }
-        );
-
         $app['boltforms.handlers'] = $app->share(
             function (Application $app) {
                 return new Container([
@@ -180,7 +179,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['storage'],
                                 $app['boltforms.feedback'],
                                 $app['logger.system'],
-                                $app['boltforms.mailer']
+                                $app['mailer']
                             );
                         }
                     ),
@@ -191,7 +190,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['storage'],
                                 $app['boltforms.feedback'],
                                 $app['logger.system'],
-                                $app['boltforms.mailer']
+                                $app['mailer']
                             );
                         }
                     ),
@@ -202,7 +201,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['storage'],
                                 $app['boltforms.feedback'],
                                 $app['logger.system'],
-                                $app['boltforms.mailer'],
+                                $app['mailer'],
                                 $app['dispatcher'],
                                 $app['twig'],
                                 $app['url_generator']
