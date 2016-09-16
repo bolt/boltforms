@@ -100,12 +100,13 @@ contact:
         enabled: true
         debug: false
         subject: Your message was submitted
-        from_name: name               # Email addresses and names can be either the
-        from_email: email             # name of a field below or valid text.
-        replyto_email: email          #
-        replyto_name: name            # NOTE: Email addresses must be valid
-        to_name: My Site              #
-        to_email: noreply@example.com #
+        from_name: name                 # Email addresses and names can be either the
+        from_email: email               # name of a field below or valid text.
+        replyto_email: email            #
+        replyto_name: name              # NOTE: Email addresses must be valid
+        to_name: My Site                #
+        to_email: noreply@example.com   #
+        debug_address: name@example.com # Email address used when debug mode is enabled
     feedback:
         success: Message submission successful
         error: There are errors in the form, please fix before trying to resubmit
