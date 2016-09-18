@@ -44,7 +44,7 @@ class FormConfig
     protected $notification;
     /** @var Section\Templates */
     protected $templates;
-    /** @var Section\Uploads */
+    /** @var Section\UploadsOptionBag */
     protected $uploads;
 
     /**

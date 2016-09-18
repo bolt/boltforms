@@ -57,7 +57,7 @@ class Config extends ParameterBag
             } elseif ($key === 'templates') {
                 $this->set($key, new Section\Templates($value));
             } elseif ($key === 'uploads') {
-                $this->set($key, new Section\Uploads($value));
+                $this->set($key, new Section\UploadsOptionBag($value));
             } elseif (is_array($value)) {
                 if (in_array($key, $nonForms)) {
                     $this->set($key, new ParameterBag($value));
@@ -111,7 +111,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return Section\Uploads
+     * @return Section\UploadsOptionBag
      */
     public function getUploads()
     {

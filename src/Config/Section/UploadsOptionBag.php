@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Uploads extends ParameterBag
+class UploadsOptionBag extends ParameterBag
 {
     /**
      * Constructor.
@@ -47,7 +47,7 @@ class Uploads extends ParameterBag
     /**
      * @param boolean $enabled
      *
-     * @return Uploads
+     * @return UploadsOptionBag
      */
     public function setEnabled($enabled)
     {
@@ -67,7 +67,7 @@ class Uploads extends ParameterBag
     /**
      * @param string $baseDirectory
      *
-     * @return Uploads
+     * @return UploadsOptionBag
      */
     public function setBaseDirectory($baseDirectory)
     {
@@ -87,7 +87,7 @@ class Uploads extends ParameterBag
     /**
      * @param string $filenameHandling
      *
-     * @return Uploads
+     * @return UploadsOptionBag
      */
     public function setFilenameHandling($filenameHandling)
     {
@@ -107,7 +107,7 @@ class Uploads extends ParameterBag
     /**
      * @param string $managementController
      *
-     * @return Uploads
+     * @return UploadsOptionBag
      */
     public function setManagementController($managementController)
     {
