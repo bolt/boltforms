@@ -62,9 +62,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class FormBase extends ParameterBag implements \ArrayAccess
 {
-    /** @var array */
-    protected $parameters;
-
     /** @deprecated */
     use LegacyArrayAccessTrait;
 
