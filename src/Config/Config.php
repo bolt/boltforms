@@ -55,7 +55,7 @@ class Config extends ParameterBag
             } elseif ($key === 'recaptcha') {
                 $this->set($key, new Section\ReCaptchaOptionsBag($value));
             } elseif ($key === 'templates') {
-                $this->set($key, new Section\TemplateOptionsBag($value));
+                $this->set($key, new Form\TemplateOptionsBag($value));
             } elseif ($key === 'uploads') {
                 $this->set($key, new Section\UploadsOptionBag($value));
             } elseif (is_array($value)) {
@@ -87,7 +87,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return Section\TemplateOptionsBag
+     * @return Form\TemplateOptionsBag
      */
     public function getTemplates()
     {
