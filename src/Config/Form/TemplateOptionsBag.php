@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Section\AbstractCascadingBag;
+use Bolt\Extension\Bolt\BoltForms\Config\AbstractCascadingBag;
 
 /**
  * Templates configuration object.
