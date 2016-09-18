@@ -121,7 +121,7 @@ class BoltForms
         $formMeta = new Config\FormMetaData();
         $this->forms[$formName] = new BoltForm($form, $formConfig, $formMeta);
 
-        if ($formConfig->getSubmission()->getAjax()) {
+        if ($formConfig->getSubmission()->isAjax()) {
             $request = $this->app['request_stack']->getCurrentRequest();
             $request->attributes->set(static::META_FIELD_NAME, [$formName => $formMeta->getMetaId()]);
         }

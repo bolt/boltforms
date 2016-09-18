@@ -39,7 +39,7 @@ class FormConfig
     protected $feedback;
     /** @var FormOptionBag */
     protected $fields;
-    /** @var FormOptionBag */
+    /** @var Form\SubmissionOptionsBag */
     protected $submission;
     /** @var Section\NotificationOptionsBag */
     protected $notification;
@@ -66,7 +66,7 @@ class FormConfig
         $this->database     = new Form\DatabaseOptionsBag($formConfig['database']);
         $this->feedback     = new Form\FeedbackOptionsBag($formConfig['feedback']);
         $this->fields       = new FormOptionBag($formConfig['fields']);
-        $this->submission   = new FormOptionBag($formConfig['submission']);
+        $this->submission   = new Form\SubmissionOptionsBag($formConfig['submission']);
         $this->notification = new Section\NotificationOptionsBag($formConfig['notification'], $rootConfig);
         $this->templates    = new Section\TemplateOptionsBag($formConfig['templates'], $rootConfig);
         $this->uploads      = new FormOptionBag($formConfig['uploads']);
@@ -123,7 +123,7 @@ class FormConfig
     /**
      * Get form submission configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\SubmissionOptionsBag
      */
     public function getSubmission()
     {
