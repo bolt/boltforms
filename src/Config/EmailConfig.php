@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormOptionBag;
+use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -326,7 +326,7 @@ class EmailConfig extends ParameterBag
      */
     private function getConfigValue(FormData $formData, $value)
     {
-        if ($value instanceof FormOptionBag) {
+        if ($value instanceof FieldOptionsBag) {
             $parts = [];
             foreach ($value->all() as $val) {
                 $parts[$val] = $this->getConfigValue($formData, $val);

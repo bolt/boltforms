@@ -1,11 +1,11 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
+namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Form section configuration for BoltForms
+ * Form field configuration for BoltForms
  *
  * Copyright (c) 2014-2016 Gawain Lynch
  *
@@ -25,41 +25,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
- *
- * @method boolean  getAjax()
- * @method boolean  getEnabled()
- * @method boolean  getDebug()
- * @method string   getSubject()
- * @method string   getFromName()
- * @method string   getFromEmail()
- * @method string   getReplyToName()
- * @method string   getReplyToEmail()
- * @method string   getToName()
- * @method string   getToEmail()
- * @method string   getCcName()
- * @method string   getCcEmail()
- * @method string   getBccName()
- * @method string   getBccEmail()
- * @method boolean  getAttachFiles()
- * @method string   getSuccess()
- * @method string   getError()
- * @method string   getQuery()
- * @method string   getChoices()
- * @method string   getTable()
- * @method string   getTarget()
- * @method string   getType()
- * @method string   getContentType()
- * @method string   getForm()
- * @method string   getEmail()
- * @method string   getSubdirectory()
- * @method FormOptionBag getOptions()
- * @method FormOptionBag getRedirect()
- * @method FormOptionBag getSubmission()
- *
- * @property boolean attach_files
- * @property string  debug_address
  */
-class FormOptionBag extends ParameterBag
+class FieldOptionsBag extends ParameterBag
 {
     public function __construct(array $parameters)
     {

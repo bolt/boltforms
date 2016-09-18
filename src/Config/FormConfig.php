@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
 use Bolt\Extension\Bolt\BoltForms\Config\Form;
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormOptionBag;
 
 /**
  * Form configuration for BoltForms
@@ -37,7 +36,7 @@ class FormConfig
     protected $database;
     /** @var Form\FeedbackOptionsBag */
     protected $feedback;
-    /** @var FormOptionBag */
+    /** @var Form\FieldOptionsBag */
     protected $fields;
     /** @var Form\SubmissionOptionsBag */
     protected $submission;
@@ -65,7 +64,7 @@ class FormConfig
 
         $this->database     = new Form\DatabaseOptionsBag($formConfig['database']);
         $this->feedback     = new Form\FeedbackOptionsBag($formConfig['feedback']);
-        $this->fields       = new FormOptionBag($formConfig['fields']);
+        $this->fields       = new Form\FieldOptionsBag($formConfig['fields']);
         $this->submission   = new Form\SubmissionOptionsBag($formConfig['submission']);
         $this->notification = new Form\NotificationOptionsBag($formConfig['notification'], $rootConfig);
         $this->templates    = new Form\TemplateOptionsBag($formConfig['templates'], $rootConfig);
@@ -113,7 +112,7 @@ class FormConfig
     /**
      * Get form fields configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\FieldOptionsBag
      */
     public function getFields()
     {
