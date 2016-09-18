@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
 
-use Bolt\Extension\Bolt\BoltForms\Config\LegacyArrayAccessTrait;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -60,11 +59,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @property boolean attach_files
  * @property string  debug_address
  */
-class FormOptionBag extends ParameterBag implements \ArrayAccess
+class FormOptionBag extends ParameterBag
 {
-    /** @deprecated */
-    use LegacyArrayAccessTrait;
-
     public function __construct(array $parameters)
     {
         parent::__construct();
@@ -98,15 +94,5 @@ class FormOptionBag extends ParameterBag implements \ArrayAccess
         }
 
         return null;
-    }
-
-    /**
-     * @deprecated For legacy use. To be removed in 4.0
-     *
-     * @internal
-     */
-    protected function getParameters()
-    {
-        return $this->parameters;
     }
 }
