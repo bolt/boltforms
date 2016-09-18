@@ -85,13 +85,13 @@ class EmailConfig implements \ArrayAccess
      *
      * @throws EmailException
      *
-     * @return string
+     * @return string|null
      */
     public function getDebugEmail()
     {
         $address = $this->formConfig->getNotification()->get('debug_address');
-        if ($address === null) {
-            throw new EmailException('[BoltForms] Debug email address can not be empty if debugging enabled!');
+        if ($address === null && $this->isDebug()) {
+            throw new EmailException('BoltForms debug email address can not be empty if BoltForms, or an individual form\'s debugging is enabled!');
         }
 
         return $address;
