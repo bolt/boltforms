@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
+use Bolt\Extension\Bolt\BoltForms\Config\Form;
 use Bolt\Extension\Bolt\BoltForms\Config\Section\FormOptionBag;
 
 /**
@@ -32,7 +33,7 @@ class FormConfig
     private $rootConfig;
     /** @var string */
     protected $name;
-    /** @var FormOptionBag */
+    /** @var Form\DatabaseOptionsBag */
     protected $database;
     /** @var FormOptionBag */
     protected $feedback;
@@ -62,7 +63,7 @@ class FormConfig
         $defaults = $this->getDefaults();
         $formConfig = $this->mergeRecursiveDistinct($defaults, $formConfig);
 
-        $this->database     = new FormOptionBag($formConfig['database']);
+        $this->database     = new Form\DatabaseOptionsBag($formConfig['database']);
         $this->feedback     = new FormOptionBag($formConfig['feedback']);
         $this->fields       = new FormOptionBag($formConfig['fields']);
         $this->submission   = new FormOptionBag($formConfig['submission']);
@@ -92,7 +93,7 @@ class FormConfig
     /**
      * Get form database configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\DatabaseOptionsBag
      */
     public function getDatabase()
     {
