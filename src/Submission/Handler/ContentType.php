@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Exception\StorageException;
-use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
+use Bolt\Extension\Bolt\BoltForms\Config\MetaData;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Carbon\Carbon;
@@ -35,13 +35,13 @@ class ContentType extends AbstractHandler
     /**
      * Write out form data to a specified ContentType record.
      *
-     * @param string       $contentType
-     * @param FormData     $formData
-     * @param FormMetaData $formMetaData
+     * @param string   $contentType
+     * @param FormData $formData
+     * @param MetaData $formMetaData
      *
      * @throws InternalProcessorException
      */
-    public function handle($contentType, FormData $formData, FormMetaData $formMetaData)
+    public function handle($contentType, FormData $formData, MetaData $formMetaData)
     {
         try {
             $repo = $this->getEntityManager()->getRepository($contentType);
@@ -78,7 +78,7 @@ class ContentType extends AbstractHandler
     /**
      * @deprecated
      */
-    public function writeToContenType($contentType, FormData $formData, FormMetaData $formMetaData)
+    public function writeToContenType($contentType, FormData $formData, MetaData $formMetaData)
     {
         $this->handle($contentType, $formData, $formMetaData);
     }
