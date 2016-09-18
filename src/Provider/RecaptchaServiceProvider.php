@@ -29,7 +29,7 @@ class RecaptchaServiceProvider implements ServiceProviderInterface
                 $config = $app['boltforms.config'];
 
                 // Check reCaptcha, if enabled.  If not just return true
-                if (!$request->isMethod(Request::METHOD_POST) || $config->getReCaptcha()->get('enabled') === false) {
+                if (!$request->isMethod(Request::METHOD_POST) || !$config->getReCaptcha()->isEnabled()) {
                     return [
                         'success'    => true,
                         'errorCodes' => null,
