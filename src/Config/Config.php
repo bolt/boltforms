@@ -53,7 +53,7 @@ class Config extends ParameterBag
             if ($value instanceof FieldMap\Email) {
                 $this->set($key, $value);
             } elseif ($key === 'recaptcha') {
-                $this->set($key, new Section\ReCaptcha($value));
+                $this->set($key, new Section\ReCaptchaOptionsBag($value));
             } elseif ($key === 'templates') {
                 $this->set($key, new Section\Templates($value));
             } elseif ($key === 'uploads') {
@@ -79,7 +79,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return Section\ReCaptcha
+     * @return Section\ReCaptchaOptionsBag
      */
     public function getReCaptcha()
     {

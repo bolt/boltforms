@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class ReCaptcha extends ParameterBag
+class ReCaptchaOptionsBag extends ParameterBag
 {
     /**
      * Constructor.
@@ -47,7 +47,7 @@ class ReCaptcha extends ParameterBag
     /**
      * @param boolean $enabled
      *
-     * @return ReCaptcha
+     * @return ReCaptchaOptionsBag
      */
     public function setEnabled($enabled)
     {
@@ -67,7 +67,7 @@ class ReCaptcha extends ParameterBag
     /**
      * @param string $label
      *
-     * @return ReCaptcha
+     * @return ReCaptchaOptionsBag
      */
     public function setLabel($label)
     {
@@ -87,7 +87,7 @@ class ReCaptcha extends ParameterBag
     /**
      * @param string $publicKey
      *
-     * @return ReCaptcha
+     * @return ReCaptchaOptionsBag
      */
     public function setPublicKey($publicKey)
     {
@@ -107,7 +107,7 @@ class ReCaptcha extends ParameterBag
     /**
      * @param string $privateKey
      *
-     * @return ReCaptcha
+     * @return ReCaptchaOptionsBag
      */
     public function setPrivateKey($privateKey)
     {
@@ -127,7 +127,7 @@ class ReCaptcha extends ParameterBag
     /**
      * @param string $errorMessage
      *
-     * @return ReCaptcha
+     * @return ReCaptchaOptionsBag
      */
     public function setErrorMessage($errorMessage)
     {
@@ -147,7 +147,7 @@ class ReCaptcha extends ParameterBag
     /**
      * @param string $theme
      *
-     * @return ReCaptcha
+     * @return ReCaptchaOptionsBag
      */
     public function setTheme($theme)
     {
