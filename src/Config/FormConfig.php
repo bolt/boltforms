@@ -42,7 +42,7 @@ class FormConfig
     protected $submission;
     /** @var Section\NotificationOptionsBag */
     protected $notification;
-    /** @var Section\Templates */
+    /** @var Section\TemplateOptionsBag */
     protected $templates;
     /** @var Section\UploadsOptionBag */
     protected $uploads;
@@ -67,7 +67,7 @@ class FormConfig
         $this->fields       = new FormOptionBag($formConfig['fields']);
         $this->submission   = new FormOptionBag($formConfig['submission']);
         $this->notification = new Section\NotificationOptionsBag($formConfig['notification'], $rootConfig);
-        $this->templates    = new Section\Templates($formConfig['templates'], $rootConfig);
+        $this->templates    = new Section\TemplateOptionsBag($formConfig['templates'], $rootConfig);
         $this->uploads      = new FormOptionBag($formConfig['uploads']);
     }
 

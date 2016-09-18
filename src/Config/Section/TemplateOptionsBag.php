@@ -24,7 +24,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Templates extends AbstractCascadingBag
+class TemplateOptionsBag extends AbstractCascadingBag
 {
     /**
      * @return string
@@ -37,7 +37,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $ajax
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setAjax($ajax)
     {
@@ -57,7 +57,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $css
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setCss($css)
     {
@@ -77,7 +77,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $email
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setEmail($email)
     {
@@ -97,7 +97,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $subject
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setSubject($subject)
     {
@@ -117,7 +117,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $messages
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setMessages($messages)
     {
@@ -137,7 +137,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $exception
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setException($exception)
     {
@@ -157,7 +157,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $files
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setFiles($files)
     {
@@ -177,7 +177,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $form
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setForm($form)
     {
@@ -197,7 +197,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $formTheme
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setFormTheme($formTheme)
     {
@@ -217,7 +217,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $fields
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setFields($fields)
     {
@@ -237,7 +237,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $reCaptcha
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setReCaptcha($reCaptcha)
     {
@@ -257,7 +257,7 @@ class Templates extends AbstractCascadingBag
     /**
      * @param string $macros
      *
-     * @return Templates
+     * @return TemplateOptionsBag
      */
     public function setMacros($macros)
     {
