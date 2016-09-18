@@ -41,7 +41,7 @@ class ReCaptchaOptionsBag extends ParameterBag
      */
     public function isEnabled()
     {
-        return $this->get('enabled');
+        return $this->getBoolean('enabled');
     }
 
     /**
