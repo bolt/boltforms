@@ -99,6 +99,8 @@ class FieldOptions extends ParameterBag
      */
     public function getOptions()
     {
+        $this->initialise();
+
         return $this->get('options');
     }
 
@@ -109,8 +111,6 @@ class FieldOptions extends ParameterBag
      */
     public function toArray()
     {
-        $this->initialise();
-
         return (array) $this->get('options');
     }
 
