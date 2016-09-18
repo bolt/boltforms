@@ -173,7 +173,7 @@ class Processor implements EventSubscriberInterface
             return $returnData ? $formData : true;
         }
 
-        throw new FormValidationException($formConfig->getFeedback()->getError() ?: 'There are errors in the form, please fix before trying to resubmit');
+        throw new FormValidationException($formConfig->getFeedback()->getErrorMessage());
     }
 
     /**
