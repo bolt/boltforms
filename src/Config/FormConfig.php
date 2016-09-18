@@ -143,7 +143,7 @@ class FormConfig
     /**
      * Get form template configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\TemplateOptionsBag
      */
     public function getTemplates()
     {

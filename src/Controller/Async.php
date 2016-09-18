@@ -56,7 +56,7 @@ class Async implements ControllerProviderInterface
      * @param Application $app
      * @param Request     $request
      *
-     * @return JsonResponse$formConfig
+     * @return JsonResponse|\Twig_Markup
      */
     public function submit(Application $app, Request $request)
     {
