@@ -35,7 +35,7 @@ class FormConfig
     protected $name;
     /** @var Form\DatabaseOptionsBag */
     protected $database;
-    /** @var FormOptionBag */
+    /** @var Form\FeedbackOptionsBag */
     protected $feedback;
     /** @var FormOptionBag */
     protected $fields;
@@ -64,7 +64,7 @@ class FormConfig
         $formConfig = $this->mergeRecursiveDistinct($defaults, $formConfig);
 
         $this->database     = new Form\DatabaseOptionsBag($formConfig['database']);
-        $this->feedback     = new FormOptionBag($formConfig['feedback']);
+        $this->feedback     = new Form\FeedbackOptionsBag($formConfig['feedback']);
         $this->fields       = new FormOptionBag($formConfig['fields']);
         $this->submission   = new FormOptionBag($formConfig['submission']);
         $this->notification = new Section\NotificationOptionsBag($formConfig['notification'], $rootConfig);
@@ -103,7 +103,7 @@ class FormConfig
     /**
      * Get form feedback configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\FeedbackOptionsBag
      */
     public function getFeedback()
     {
