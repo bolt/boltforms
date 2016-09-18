@@ -41,7 +41,7 @@ class FormConfig
     protected $fields;
     /** @var Form\SubmissionOptionsBag */
     protected $submission;
-    /** @var Section\NotificationOptionsBag */
+    /** @var Form\NotificationOptionsBag */
     protected $notification;
     /** @var Section\TemplateOptionsBag */
     protected $templates;
@@ -67,7 +67,7 @@ class FormConfig
         $this->feedback     = new Form\FeedbackOptionsBag($formConfig['feedback']);
         $this->fields       = new FormOptionBag($formConfig['fields']);
         $this->submission   = new Form\SubmissionOptionsBag($formConfig['submission']);
-        $this->notification = new Section\NotificationOptionsBag($formConfig['notification'], $rootConfig);
+        $this->notification = new Form\NotificationOptionsBag($formConfig['notification'], $rootConfig);
         $this->templates    = new Section\TemplateOptionsBag($formConfig['templates'], $rootConfig);
         $this->uploads      = new FormOptionBag($formConfig['uploads']);
     }
@@ -133,7 +133,7 @@ class FormConfig
     /**
      * Get form notification configuration object.
      *
-     * @return Section\NotificationOptionsBag
+     * @return Form\NotificationOptionsBag
      */
     public function getNotification()
     {
