@@ -53,14 +53,14 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @method string   getForm()
  * @method string   getEmail()
  * @method string   getSubdirectory()
- * @method FormBase getOptions()
- * @method FormBase getRedirect()
- * @method FormBase getSubmission()
+ * @method FormOptionBag getOptions()
+ * @method FormOptionBag getRedirect()
+ * @method FormOptionBag getSubmission()
  *
  * @property boolean attach_files
  * @property string  debug_address
  */
-class FormBase extends ParameterBag implements \ArrayAccess
+class FormOptionBag extends ParameterBag implements \ArrayAccess
 {
     /** @deprecated */
     use LegacyArrayAccessTrait;

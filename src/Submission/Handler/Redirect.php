@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormBase;
+use Bolt\Extension\Bolt\BoltForms\Config\Section\FormOptionBag;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Helpers\Arr;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -90,12 +90,12 @@ class Redirect
     /**
      * Build a GET query if required.
      *
-     * @param FormBase $redirect
-     * @param FormData $formData
+     * @param FormOptionBag $redirect
+     * @param FormData      $formData
      *
      * @return string
      */
-    protected function getRedirectQuery(FormBase $redirect, FormData $formData)
+    protected function getRedirectQuery(FormOptionBag $redirect, FormData $formData)
     {
         $query = $redirect->getQuery();
 
@@ -125,12 +125,12 @@ class Redirect
     /**
      * Get the redirect response object.
      *
-     * @param FormBase $redirect
-     * @param string   $query
+     * @param FormOptionBag $redirect
+     * @param string        $query
      *
      * @return null|RedirectResponse
      */
-    protected function getRedirectResponse(FormBase $redirect, $query)
+    protected function getRedirectResponse(FormOptionBag $redirect, $query)
     {
         if (strpos($redirect->getTarget(), 'http') === 0) {
             return new RedirectResponse($redirect->getTarget() . $query);

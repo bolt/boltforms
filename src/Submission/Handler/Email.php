@@ -205,7 +205,7 @@ class Email extends AbstractHandler
     {
         $bodyData = [];
         foreach ($formData->all() as $key => $value) {
-            /** @var Config\Section\FormBase $config */
+            /** @var Config\Section\FormOptionBag $config */
             $config = $formConfig->getFields()->{$key}();
             $formValue = $formData->get($key);
 

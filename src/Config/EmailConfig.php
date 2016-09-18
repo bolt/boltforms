@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormBase;
+use Bolt\Extension\Bolt\BoltForms\Config\Section\FormOptionBag;
 use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 
@@ -344,7 +344,7 @@ class EmailConfig implements \ArrayAccess
      */
     private function getConfigValue($value)
     {
-        if ($value instanceof FormBase) {
+        if ($value instanceof FormOptionBag) {
             $parts = [];
             foreach ($value->all() as $val) {
                 $parts[$val] = $this->getConfigValue($val);
