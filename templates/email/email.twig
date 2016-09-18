@@ -10,12 +10,14 @@
 
 <p>Somebody used the form on {{ paths.currenturl }} to send you a message. The posted data is as follows:</p>
 <hr>
-{% for label, value in data -%}
-    {%- if value is json -%}
-        {%- set value = value|json_decode -%}
-    {%- endif -%}
-    {%- set field = fields.label -%}
-    {%- if field.options.label|default('') is empty -%}
+{% for name, value in data -%}{% spaceless %}
+    {% if value is json %}
+        {% set value = value|json_decode %}
+    {% endif -%}
+    {% set field = fields.name %}
+    {% set label = field.options.options.label|default() %}
+{% endspaceless %}
+    {%- if label is empty -%}
 {{ macros.label_value(label, value) }}
     {%- else -%}
         {%- if value is iterable -%}
@@ -30,4 +32,4 @@
 {%- endfor -%}
 
 <hr>
-<em>Sent by the <a href="https://github.com/GawainLynch/bolt-extension-boltforms">BoltForms</a> extension for <a href="https://bolt.cm">Bolt</a>.</em>
+<em>Sent by the <a href="https://github.com/bolt/bolt-extension-boltforms">BoltForms</a> extension for <a href="https://bolt.cm">Bolt</a>.</em>
