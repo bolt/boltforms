@@ -101,9 +101,7 @@ class FieldOptions
     }
 
     /**
-     * Get a clean array of options to be passed to Symfony Forms.
-     *
-     * @return array
+     * Set a clean array of options to be passed to Symfony Forms.
      */
     protected function setValidOptions()
     {
