@@ -45,7 +45,7 @@ class FormConfig
     protected $notification;
     /** @var Form\TemplateOptionsBag */
     protected $templates;
-    /** @var Section\UploadsOptionBag */
+    /** @var Form\UploadsOptionsBag */
     protected $uploads;
 
     /**
@@ -69,7 +69,7 @@ class FormConfig
         $this->submission   = new Form\SubmissionOptionsBag($formConfig['submission']);
         $this->notification = new Form\NotificationOptionsBag($formConfig['notification'], $rootConfig);
         $this->templates    = new Form\TemplateOptionsBag($formConfig['templates'], $rootConfig);
-        $this->uploads      = new FormOptionBag($formConfig['uploads']);
+        $this->uploads      = new Form\UploadsOptionsBag($formConfig['uploads']);
     }
 
     /**
@@ -153,7 +153,7 @@ class FormConfig
     /**
      * Get form upload configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\UploadsOptionsBag
      */
     public function getUploads()
     {
