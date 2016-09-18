@@ -3,10 +3,10 @@
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
 use Bolt\Extension\Bolt\BoltForms\Choice;
-use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Extension\Bolt\BoltForms\Factory;
 use Bolt\Storage\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Choices options for BoltForms
@@ -30,18 +30,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class FieldOptions
+class FieldOptions extends ParameterBag
 {
-    /** @var string */
-    private $formName;
-    /** @var string */
-    private $fieldName;
-    /** @var string */
-    private $type;
     /** @var array */
     private $baseOptions;
-    /** @var array */
-    private $options;
     /** @var EntityManager */
     private $em;
     /** @var boolean */
@@ -67,12 +59,47 @@ class FieldOptions
         EntityManager $storage,
         EventDispatcherInterface $dispatcher
     ) {
-        $this->formName = $formName;
-        $this->fieldName = $fieldName;
-        $this->type = $type;
+        parent::__construct([
+            'formName'  => $formName,
+            'fieldName' => $fieldName,
+            'type'      => $type,
+        ]);
+
         $this->baseOptions = $baseOptions;
         $this->em = $storage;
         $this->dispatcher = $dispatcher;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormName()
+    {
+        return $this->get('formName');
+    }
+
+    /**
+     * @return string
+     */
+    public function getFieldName()
+    {
+        return $this->get('fieldName');
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->get('type');
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->get('options');
     }
 
     /**
@@ -84,7 +111,7 @@ class FieldOptions
     {
         $this->initialise();
 
-        return (array) $this->options;
+        return (array) $this->get('options');
     }
 
     /**
@@ -101,38 +128,39 @@ class FieldOptions
     }
 
     /**
-     * Get a clean array of options to be passed to Symfony Forms.
-     *
-     * @return array
+     * Set a clean array of options to be passed to Symfony Forms.
      */
     protected function setValidOptions()
     {
-        $this->options = isset($this->baseOptions) ? $this->baseOptions : null;
-        if ($this->type === 'choice') {
-            $this->resolveChoiceOptions();
+        $options = (array) $this->baseOptions;
+        if ($this->get('type') === 'choice') {
+            $options = $this->resolveChoiceOptions($options);
         }
 
         // Set up constraint objects
-        $this->setConstraints();
+        $options = $this->setConstraints($options);
+
+        $this->set('options', $options);
     }
 
     /**
      * Get customised value parameters for choice field types.
      *
-     * @throws Exception\FormOptionException
+     * @param array $options
+     *
+     * @return array
      */
-    protected function resolveChoiceOptions()
+    protected function resolveChoiceOptions(array $options)
     {
-        $options = $this->baseOptions;
         $choices = isset($options['choices']) ? $options['choices'] : null;
 
         if (is_string($choices)) {
             $choiceObj = $this->handleCustomChoice($choices);
         } else {
-            $choiceObj = new Choice\ChoiceResolver($this->formName, $this->fieldName, $this->baseOptions);
+            $choiceObj = new Choice\ChoiceResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions);
         }
 
-        $options = [
+        $choiceOptions = [
             'choices'           => $choiceObj->getChoices(),
             'choices_as_values' => $choiceObj->isChoicesAsValues(),
             'choice_loader'     => $choiceObj->getChoiceLoader(),
@@ -144,13 +172,15 @@ class FieldOptions
             'preferred_choices' => $choiceObj->getPreferredChoices(),
         ];
 
-        $this->options = array_merge($this->baseOptions, $options);
+        $this->options = array_merge($options, $choiceOptions);
 
-        unset($this->options['params']);
+        unset($options['params']);
+
+        return $options;
     }
 
     /**
-     * @param $choices
+     * @param string $choices
      *
      * @return Choice\AbstractChoiceOptionResolver
      */
@@ -159,37 +189,43 @@ class FieldOptions
         // Check if it is one of our custom types
         if (strpos($choices, 'contenttype::') === 0) {
             // @deprecated Will be remove in BoltForms v4
-            return new Choice\ContentTypeResolver($this->formName, $this->fieldName, $this->baseOptions, $this->em, true);
+            return new Choice\ContentTypeResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $this->em, true);
         }
 
         if (strpos($choices, 'content') === 0) {
-            return new Choice\ContentTypeResolver($this->formName, $this->fieldName, $this->baseOptions, $this->em);
+            return new Choice\ContentTypeResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $this->em);
         }
 
         if (strpos($choices, 'event') === 0) {
-            return new Choice\EventResolver($this->formName, $this->fieldName, $this->baseOptions, $this->dispatcher);
+            return new Choice\EventResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $this->dispatcher);
         }
 
-        return new Choice\ChoiceResolver($this->formName, $this->fieldName, $this->baseOptions);
+        return new Choice\ChoiceResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions);
     }
 
     /**
      * Set the constraints classes properly.
+     *
+     * @param array $options
+     *
+     * @return array
      */
-    protected function setConstraints()
+    protected function setConstraints(array $options)
     {
         if (!isset($this->baseOptions['constraints'])) {
-            return;
+            return $options;
         }
 
         if (gettype($this->baseOptions['constraints']) === 'string') {
-            $this->options['constraints'] = Factory\FieldConstraint::get($this->formName, $this->baseOptions['constraints']);
+            $options['constraints'] = Factory\FieldConstraint::get($this->get('formName'), $this->baseOptions['constraints']);
 
-            return;
+            return $options;
         }
 
         foreach ($this->baseOptions['constraints'] as $key => $constraint) {
-            $this->options['constraints'][$key] = Factory\FieldConstraint::get($this->formName, [$key => $constraint]);
+            $options['constraints'][$key] = Factory\FieldConstraint::get($this->get('formName'), [$key => $constraint]);
         }
+
+        return $options;
     }
 }

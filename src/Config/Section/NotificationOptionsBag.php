@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Notification extends AbstractCascadingBag
+class NotificationOptionsBag extends AbstractCascadingBag
 {
     /**
      * @return boolean
@@ -39,7 +39,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param boolean $enabled
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setEnabled($enabled)
     {
@@ -59,7 +59,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param boolean $debug
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setDebug($debug)
     {
@@ -79,7 +79,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param string $debugAddress
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setDebugAddress($debugAddress)
     {
@@ -99,7 +99,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param string $subject
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setSubject($subject)
     {
@@ -119,7 +119,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param mixed $fromName
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setFromName($fromName)
     {
@@ -139,7 +139,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param mixed $fromEmail
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setFromEmail($fromEmail)
     {
@@ -159,7 +159,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param mixed $replyToName
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setReplyToName($replyToName)
     {
@@ -179,7 +179,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param mixed $replyToEmail
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setReplyToEmail($replyToEmail)
     {
@@ -199,7 +199,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param mixed $toName
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setToName($toName)
     {
@@ -219,7 +219,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param mixed $toEmail
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setToEmail($toEmail)
     {
@@ -239,7 +239,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param mixed $ccName
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setCcName($ccName)
     {
@@ -259,7 +259,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param mixed $ccEmail
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setCcEmail($ccEmail)
     {
@@ -279,7 +279,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param mixed $bccName
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setBccName($bccName)
     {
@@ -299,7 +299,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param mixed $bccEmail
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setBccEmail($bccEmail)
     {
@@ -319,7 +319,7 @@ class Notification extends AbstractCascadingBag
     /**
      * @param boolean $attachFiles
      *
-     * @return Notification
+     * @return NotificationOptionsBag
      */
     public function setAttachFiles($attachFiles)
     {

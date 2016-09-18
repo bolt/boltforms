@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Global reCaptcha configuration.
+ * File upload configuration.
  *
  * Copyright (c) 2014-2016 Gawain Lynch
  *
@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class ReCaptcha extends ParameterBag
+class UploadsOptionBag extends ParameterBag
 {
     /**
      * Constructor.
@@ -41,17 +41,17 @@ class ReCaptcha extends ParameterBag
      */
     public function isEnabled()
     {
-        return $this->get('enabled');
+        return $this->get('enabled', false);
     }
 
     /**
      * @param boolean $enabled
      *
-     * @return ReCaptcha
+     * @return UploadsOptionBag
      */
     public function setEnabled($enabled)
     {
-        $this->set('enabled', $enabled);
+        $this->enabled = $enabled;
 
         return $this;
     }
@@ -59,19 +59,19 @@ class ReCaptcha extends ParameterBag
     /**
      * @return string
      */
-    public function getLabel()
+    public function getBaseDirectory()
     {
-        return $this->get('label', 'Please enter the reCaptcha text to prove you\'re a human');
+        return $this->get('base_directory');
     }
 
     /**
-     * @param string $label
+     * @param string $baseDirectory
      *
-     * @return ReCaptcha
+     * @return UploadsOptionBag
      */
-    public function setLabel($label)
+    public function setBaseDirectory($baseDirectory)
     {
-        $this->set('label', $label);
+        $this->set('base_directory', $baseDirectory);
 
         return $this;
     }
@@ -79,19 +79,19 @@ class ReCaptcha extends ParameterBag
     /**
      * @return string
      */
-    public function getPublicKey()
+    public function getFilenameHandling()
     {
-        return $this->get('public_key');
+        return $this->get('filename_handling', 'suffix');
     }
 
     /**
-     * @param string $publicKey
+     * @param string $filenameHandling
      *
-     * @return ReCaptcha
+     * @return UploadsOptionBag
      */
-    public function setPublicKey($publicKey)
+    public function setFilenameHandling($filenameHandling)
     {
-        $this->set('public_key', $publicKey);
+        $this->set('filename_handling', $filenameHandling);
 
         return $this;
     }
@@ -99,59 +99,19 @@ class ReCaptcha extends ParameterBag
     /**
      * @return string
      */
-    public function getPrivateKey()
+    public function getManagementController()
     {
-        return $this->get('private_key');
+        return $this->get('management_controller', false);
     }
 
     /**
-     * @param string $privateKey
+     * @param string $managementController
      *
-     * @return ReCaptcha
+     * @return UploadsOptionBag
      */
-    public function setPrivateKey($privateKey)
+    public function setManagementController($managementController)
     {
-        $this->set('private_key', $privateKey);
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getErrorMessage()
-    {
-        return $this->get('error_message', 'The CAPTCHA wasn\'t entered correctly. Please try again.');
-    }
-
-    /**
-     * @param string $errorMessage
-     *
-     * @return ReCaptcha
-     */
-    public function setErrorMessage($errorMessage)
-    {
-        $this->set('error_message', $errorMessage);
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTheme()
-    {
-        return $this->get('theme', 'clean');
-    }
-
-    /**
-     * @param string $theme
-     *
-     * @return ReCaptcha
-     */
-    public function setTheme($theme)
-    {
-        $this->set('theme', $theme);
+        $this->set('management_controller', $managementController);
 
         return $this;
     }

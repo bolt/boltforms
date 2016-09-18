@@ -53,11 +53,11 @@ class Config extends ParameterBag
             if ($value instanceof FieldMap\Email) {
                 $this->set($key, $value);
             } elseif ($key === 'recaptcha') {
-                $this->set($key, new Section\ReCaptcha($value));
+                $this->set($key, new Section\ReCaptchaOptionsBag($value));
             } elseif ($key === 'templates') {
-                $this->set($key, new Section\Templates($value));
+                $this->set($key, new Section\TemplateOptionsBag($value));
             } elseif ($key === 'uploads') {
-                $this->set($key, new Section\Uploads($value));
+                $this->set($key, new Section\UploadsOptionBag($value));
             } elseif (is_array($value)) {
                 if (in_array($key, $nonForms)) {
                     $this->set($key, new ParameterBag($value));
@@ -79,7 +79,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return Section\ReCaptcha
+     * @return Section\ReCaptchaOptionsBag
      */
     public function getReCaptcha()
     {
@@ -87,7 +87,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return Section\Templates
+     * @return Section\TemplateOptionsBag
      */
     public function getTemplates()
     {
@@ -111,7 +111,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return Section\Uploads
+     * @return Section\UploadsOptionBag
      */
     public function getUploads()
     {

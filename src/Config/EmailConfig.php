@@ -2,9 +2,11 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormBase;
+use Bolt\Extension\Bolt\BoltForms\Config\Section\FormOptionBag;
 use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 
 /**
  * Email configuration for BoltForms
@@ -28,46 +30,22 @@ use Bolt\Extension\Bolt\BoltForms\FormData;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class EmailConfig implements \ArrayAccess
+class EmailConfig extends ParameterBag
 {
-    /** @var FormConfig */
-    protected $formConfig;
-    /** @var FormData */
-    protected $formData;
-    /** @var boolean */
-    protected $attachFiles;
     /** @var boolean */
     protected $debug;
-    /** @var string */
-    protected $debugEmail;
-    /** @var string */
-    protected $toName;
-    /** @var string */
-    protected $toEmail;
-    /** @var string */
-    protected $fromName;
-    /** @var string */
-    protected $fromEmail;
-    /** @var string */
-    protected $ccName;
-    /** @var string */
-    protected $ccEmail;
-    /** @var string */
-    protected $bccName;
-    /** @var string */
-    protected $bccEmail;
-    /** @var string */
-    protected $replyToName;
-    /** @var string */
-    protected $replyToEmail;
 
     public function __construct(FormConfig $formConfig, FormData $formData)
     {
         $this->formConfig = $formConfig;
         $this->formData = $formData;
-        $this->attachFiles = $formConfig->getNotification()->get('attach_files', false);
 
-        $this->setEmailConfig();
+        parent::__construct();
+
+        $this->set('attachFiles', $formConfig->getNotification()->get('attach_files', false));
+        $this->set('debug', $formConfig->getNotification()->isDebug());
+        $this->set('debugEmail', $formConfig->getNotification()->get('debug_address'));
+        $this->setEmailConfig($formConfig, $formData);
     }
 
     /**
@@ -77,7 +55,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function isDebug()
     {
-        return $this->formConfig->getNotification()->isDebug();
+        return $this->getBoolean('debug');
     }
 
     /**
@@ -85,13 +63,13 @@ class EmailConfig implements \ArrayAccess
      *
      * @throws EmailException
      *
-     * @return string
+     * @return string|null
      */
     public function getDebugEmail()
     {
-        $address = $this->formConfig->getNotification()->get('debug_address');
-        if ($address === null) {
-            throw new EmailException('[BoltForms] Debug email address can not be empty if debugging enabled!');
+        $address = $this->get('debugEmail');
+        if ($address === null && $this->isDebug()) {
+            throw new EmailException('BoltForms debug email address can not be empty if BoltForms, or an individual form\'s debugging is enabled!');
         }
 
         return $address;
@@ -104,7 +82,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function attachFiles()
     {
-        return $this->attachFiles;
+        return $this->getBoolean('attachFiles');
     }
 
     /**
@@ -114,7 +92,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function getFromName()
     {
-        return $this->fromName;
+        return $this->get('fromName');
     }
 
     /**
@@ -124,7 +102,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function setFromName($fromName)
     {
-        $this->fromName = $fromName;
+        $this->set('fromName', $fromName);
     }
 
     /**
@@ -134,7 +112,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function getFromEmail()
     {
-        return $this->fromEmail;
+        return $this->get('fromEmail');
     }
 
     /**
@@ -144,7 +122,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function setFromEmail($fromEmail)
     {
-        $this->fromEmail = $fromEmail;
+        $this->set('fromEmail', $fromEmail);
     }
 
     /**
@@ -154,7 +132,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function getReplyToName()
     {
-        return $this->replyToName;
+        return $this->get('replyToName');
     }
 
     /**
@@ -164,7 +142,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function setReplyToName($replyToName)
     {
-        $this->replyToName = $replyToName;
+        $this->set('replyToName', $replyToName);
     }
 
     /**
@@ -174,7 +152,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function getReplyToEmail()
     {
-        return $this->replyToEmail;
+        return $this->get('replyToEmail');
     }
 
     /**
@@ -184,7 +162,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function setReplyToEmail($replyToEmail)
     {
-        $this->replyToEmail = $replyToEmail;
+        $this->set('replyToEmail', $replyToEmail);
     }
 
     /**
@@ -194,7 +172,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function getToName()
     {
-        return $this->toName;
+        return $this->get('toName');
     }
 
     /**
@@ -204,7 +182,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function setToName($toName)
     {
-        $this->toName = $toName;
+        $this->set('toName', $toName);
     }
 
     /**
@@ -214,7 +192,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function getToEmail()
     {
-        return $this->toEmail;
+        return $this->get('toEmail');
     }
 
     /**
@@ -224,7 +202,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function setToEmail($toEmail)
     {
-        $this->toEmail = $toEmail;
+        $this->set('toEmail', $toEmail);
     }
 
     /**
@@ -234,7 +212,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function getCcName()
     {
-        return $this->ccName;
+        return $this->get('ccName');
     }
 
     /**
@@ -244,7 +222,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function setCcName($ccName)
     {
-        $this->ccName = $ccName;
+        $this->set('ccName', $ccName);
     }
 
     /**
@@ -254,7 +232,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function getCcEmail()
     {
-        return $this->ccEmail;
+        return $this->get('ccEmail');
     }
 
     /**
@@ -264,7 +242,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function setCcEmail($ccEmail)
     {
-        $this->ccEmail = $ccEmail;
+        $this->set('ccEmail', $ccEmail);
     }
 
     /**
@@ -274,7 +252,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function getBccName()
     {
-        return $this->bccName;
+        return $this->get('bccName');
     }
 
     /**
@@ -284,7 +262,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function setBccName($bccName)
     {
-        $this->bccName = $bccName;
+        $this->set('bccName', $bccName);
     }
 
     /**
@@ -294,7 +272,7 @@ class EmailConfig implements \ArrayAccess
      */
     public function getBccEmail()
     {
-        return $this->bccEmail;
+        return $this->get('bccEmail');
     }
 
     /**
@@ -304,16 +282,18 @@ class EmailConfig implements \ArrayAccess
      */
     public function setBccEmail($bccEmail)
     {
-        $this->bccEmail = $bccEmail;
+        $this->set('bccEmail', $bccEmail);
     }
 
     /**
      * Get resolved email configuration settings.
+     *
+     * @param FormConfig $formConfig
+     * @param FormData   $formData
      */
-    private function setEmailConfig()
+    private function setEmailConfig(FormConfig $formConfig, FormData $formData)
     {
-        $notify = $this->formConfig->getNotification();
-
+        $notifyConfig = $formConfig->getNotification();
         $hashMap = [
             'fromName'     => 'from_name',
             'fromEmail'    => 'from_email',
@@ -327,8 +307,9 @@ class EmailConfig implements \ArrayAccess
             'bccEmail'     => 'bcc_email',
         ];
 
-        foreach ($hashMap as $property => $key) {
-            $this->{$property} = $this->getConfigValue($notify->get($key));
+        foreach ($hashMap as $internalName => $keyName) {
+            $value = $this->getConfigValue($formData, $notifyConfig->get($keyName));
+            $this->set($internalName, $value);
         }
     }
 
@@ -338,51 +319,26 @@ class EmailConfig implements \ArrayAccess
      * If the form notification configuration wants a value to be returned from
      * a submitted field we use this, otherwise the configured parameter.
      *
-     * @param string $value
+     * @param FormData $formData
+     * @param string   $value
      *
      * @return string
      */
-    private function getConfigValue($value)
+    private function getConfigValue(FormData $formData, $value)
     {
-        if ($value instanceof FormBase) {
+        if ($value instanceof FormOptionBag) {
             $parts = [];
             foreach ($value->all() as $val) {
-                $parts[$val] = $this->getConfigValue($val);
+                $parts[$val] = $this->getConfigValue($formData, $val);
             }
 
             return implode(' ', $parts);
         }
-        if (is_string($value) && $this->formData->has($value)) {
-            return $this->formData->get($value);
+        if (is_string($value) && $formData->has($value)) {
+            return $formData->get($value);
         }
 
         return $value;
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        $offset = $this->toPsr2CamelCase($offset);
-        $this->{$offset} = $value;
-    }
-
-    public function offsetExists($offset)
-    {
-        $offset = $this->toPsr2CamelCase($offset);
-
-        return isset($this->{$offset});
-    }
-
-    public function offsetUnset($offset)
-    {
-        $offset = $this->toPsr2CamelCase($offset);
-        unset($this->{$offset});
-    }
-
-    public function offsetGet($offset)
-    {
-        $offset = $this->toPsr2CamelCase($offset);
-
-        return isset($this->{$offset}) ? $this->{$offset} : null;
     }
 
     /**

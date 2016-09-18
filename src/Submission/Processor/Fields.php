@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormBase;
+use Bolt\Extension\Bolt\BoltForms\Config\Section\FormOptionBag;
 use Bolt\Extension\Bolt\BoltForms\Event\CustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
@@ -116,11 +116,11 @@ class Fields extends AbstractProcessor
      * Dispatch custom data events.
      *
      * @param EventDispatcherInterface $dispatcher
-     * @param FormBase                 $eventConfig
+     * @param FormOptionBag            $eventConfig
      *
      * @return mixed|null
      */
-    protected function dispatchCustomDataEvent(EventDispatcherInterface $dispatcher, FormBase $eventConfig)
+    protected function dispatchCustomDataEvent(EventDispatcherInterface $dispatcher, FormOptionBag $eventConfig)
     {
         if (strpos('boltforms.', $eventConfig->get('name')) === false) {
             $eventName = 'boltforms.' . $eventConfig->get('name');
