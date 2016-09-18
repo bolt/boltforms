@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Event;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormOptionBag;
+use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -31,16 +31,16 @@ class CustomDataEvent extends Event
 {
     /** @var string */
     protected $eventName;
-    /** @var FormOptionBag */
+    /** @var FieldOptionsBag */
     protected $eventParams;
     /** @var mixed */
     protected $data;
 
     /**
-     * @param string        $eventName
-     * @param FormOptionBag $eventParams
+     * @param string          $eventName
+     * @param FieldOptionsBag $eventParams
      */
-    public function __construct($eventName, FormOptionBag $eventParams)
+    public function __construct($eventName, FieldOptionsBag $eventParams)
     {
         $this->eventName = $eventName;
         $this->eventParams = $eventParams;
@@ -59,7 +59,7 @@ class CustomDataEvent extends Event
     /**
      * Get the user supplied parameters.
      *
-     * @return FormOptionBag
+     * @return FieldOptionsBag
      */
     public function getParameters()
     {
