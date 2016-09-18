@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
+use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsResolver;
 use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Helpers\Arr;
 use Bolt\Storage\EntityManager;
@@ -229,7 +230,7 @@ class Config extends ParameterBag
             $this->assetValidField($formName, $fieldName, $data);
 
             $options = !empty($data['options']) ? $data['options'] : [];
-            $fieldOptions = new FieldOptions($formName, $fieldName, $data['type'], $options, $em, $dispatcher);
+            $fieldOptions = new FieldOptionsResolver($formName, $fieldName, $data['type'], $options, $em, $dispatcher);
             $formConfig['fields'][$fieldName]['options'] = $fieldOptions;
         }
 

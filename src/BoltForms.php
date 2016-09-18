@@ -151,17 +151,17 @@ class BoltForms
     /**
      * Add a field to the form.
      *
-     * @param string                    $formName  Name of the form
-     * @param string                    $fieldName
-     * @param string                    $type
-     * @param Config\FieldOptions|array $options
+     * @param string                                 $formName  Name of the form
+     * @param string                                 $fieldName
+     * @param string                                 $type
+     * @param Config\Form\FieldOptionsResolver|array $options
      */
     public function addField($formName, $fieldName, $type, $options)
     {
         if (is_array($options)) {
             $em = $this->app['storage'];
             $dispatcher = $this->app['dispatcher'];
-            $options = new Config\FieldOptions($formName, $fieldName, $type, $options, $em, $dispatcher);
+            $options = new Config\Form\FieldOptionsResolver($formName, $fieldName, $type, $options, $em, $dispatcher);
         }
 
         try {
