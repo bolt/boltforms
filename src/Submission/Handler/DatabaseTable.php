@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
-use Bolt\Extension\Bolt\BoltForms\Config\FormMetaData;
+use Bolt\Extension\Bolt\BoltForms\Config\MetaData;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 
@@ -33,13 +33,13 @@ class DatabaseTable extends AbstractHandler
     /**
      * Write out form data to a specified database table row.
      *
-     * @param string       $tableName
-     * @param FormData     $formData
-     * @param FormMetaData $formMetaData
+     * @param string   $tableName
+     * @param FormData $formData
+     * @param MetaData $formMetaData
      *
      * @throws InternalProcessorException
      */
-    public function handle($tableName, FormData $formData, FormMetaData $formMetaData)
+    public function handle($tableName, FormData $formData, MetaData $formMetaData)
     {
         $saveData = [];
         $connection = $this->getEntityManager()->getConnection();

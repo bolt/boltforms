@@ -121,11 +121,11 @@ class Email extends AbstractHandler
     /**
      * Create a notification message.
      *
-     * @param Config\FormConfig   $formConfig
-     * @param FormData            $formData
-     * @param Config\FormMetaData $formMetaData
+     * @param Config\FormConfig $formConfig
+     * @param FormData          $formData
+     * @param Config\MetaData   $formMetaData
      */
-    public function handle(Config\FormConfig $formConfig, FormData $formData, Config\FormMetaData $formMetaData)
+    public function handle(Config\FormConfig $formConfig, FormData $formData, Config\MetaData $formMetaData)
     {
         $emailConfig = new Config\EmailConfig($formConfig, $formData);
 
@@ -142,12 +142,12 @@ class Email extends AbstractHandler
     /**
      * Compose the email data to be sent.
      *
-     * @param Config\FormConfig   $formConfig
-     * @param Config\EmailConfig  $emailConfig
-     * @param FormData            $formData
-     * @param Config\FormMetaData $formMetaData
+     * @param Config\FormConfig  $formConfig
+     * @param Config\EmailConfig $emailConfig
+     * @param FormData           $formData
+     * @param Config\MetaData    $formMetaData
      */
-    private function compose(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, FormData $formData, Config\FormMetaData $formMetaData)
+    private function compose(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, FormData $formData, Config\MetaData $formMetaData)
     {
         // If the form has it's own templates defined, use those, else the globals.
         $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->getConfig()->getTemplates()->get('subject');

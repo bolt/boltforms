@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Form meta data bag.
+ * Meta data bag.
  *
  * NOTE: Parameter values must be serialisable.
  *
@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class FormMetaData extends ParameterBag
+class MetaData extends ParameterBag
 {
     /** @var string */
     protected $_metaId;

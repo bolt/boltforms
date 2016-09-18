@@ -118,7 +118,7 @@ class BoltForms
 
         /** @var Config\FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
-        $formMeta = new Config\FormMetaData();
+        $formMeta = new Config\MetaData();
         $this->forms[$formName] = new BoltForm($form, $formConfig, $formMeta);
 
         if ($formConfig->getSubmission()->isAjax()) {
