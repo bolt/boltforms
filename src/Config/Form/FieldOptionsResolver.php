@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Config;
+namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
 use Bolt\Extension\Bolt\BoltForms\Choice;
 use Bolt\Extension\Bolt\BoltForms\Factory;
@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class FieldOptions extends ParameterBag
+class FieldOptionsResolver extends ParameterBag
 {
     /** @var array */
     private $baseOptions;
