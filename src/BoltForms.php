@@ -104,6 +104,10 @@ class BoltForms
      */
     public function create($formName, $type = FormType::class, $data = null, $options = [])
     {
+        if (isset($this->forms[$formName])) {
+            throw new \RuntimeException(sprintf('A form of the name "%s" has already been created.', $formName));
+        }
+
         $options['csrf_protection'] = $this->config->isCsrf();
         /** @var Form $form */
         $form = $this->app['form.factory']
