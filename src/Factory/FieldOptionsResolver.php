@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
+namespace Bolt\Extension\Bolt\BoltForms\Factory;
 
 use Bolt\Extension\Bolt\BoltForms\Choice;
 use Bolt\Extension\Bolt\BoltForms\Factory;
@@ -32,14 +32,14 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class FieldOptionsResolver extends ParameterBag
 {
+    /** @var string */
+    private $formName;
+    /** @var string */
+    private $fieldName;
+    /** @var string */
+    private $type;
     /** @var array */
     private $baseOptions;
-    /** @var EntityManager */
-    private $em;
-    /** @var boolean */
-    private $initialised;
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
 
     /**
      * Constructor.
@@ -48,93 +48,40 @@ class FieldOptionsResolver extends ParameterBag
      * @param string                   $fieldName
      * @param string                   $type
      * @param array                    $baseOptions
-     * @param EntityManager            $storage
-     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(
-        $formName,
-        $fieldName,
-        $type,
-        array $baseOptions,
-        EntityManager $storage,
-        EventDispatcherInterface $dispatcher
-    ) {
-        parent::__construct([
-            'formName'  => $formName,
-            'fieldName' => $fieldName,
-            'type'      => $type,
-        ]);
+    public function __construct($formName, $fieldName, $type, array $baseOptions)
+    {
+        parent::__construct();
 
+        $this->formName = $formName;
+        $this->fieldName = $fieldName;
+        $this->type = $type;
         $this->baseOptions = $baseOptions;
-        $this->em = $storage;
-        $this->dispatcher = $dispatcher;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFormName()
-    {
-        return $this->get('formName');
-    }
-
-    /**
-     * @return string
-     */
-    public function getFieldName()
-    {
-        return $this->get('fieldName');
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->get('type');
-    }
-
-    /**
-     * @return array
-     */
-    public function getOptions()
-    {
-        $this->initialise();
-
-        return $this->get('options');
     }
 
     /**
      * Get the options array suitable for passing to Symfony Forms.
      *
+     * @param EntityManager            $storage
+     * @param EventDispatcherInterface $dispatcher
+     *
      * @return array
      */
-    public function toArray()
+    public function getOptions(EntityManager $storage, EventDispatcherInterface $dispatcher)
     {
-        return (array) $this->get('options');
-    }
+        $this->initialise($storage, $dispatcher);
 
-    /**
-     * Build the options.
-     */
-    protected function initialise()
-    {
-        if ($this->initialised) {
-            return;
-        }
-
-        $this->setValidOptions();
-        $this->initialised = true;
+        return $this->get('options', []);
     }
 
     /**
      * Set a clean array of options to be passed to Symfony Forms.
      */
-    protected function setValidOptions()
+    protected function initialise(EntityManager $storage, EventDispatcherInterface $dispatcher)
     {
         $options = (array) $this->baseOptions;
         if ($this->get('type') === 'choice') {
-            $options = $this->resolveChoiceOptions($options);
+            $options = $this->resolveChoiceOptions($options, $storage, $dispatcher);
         }
 
         // Set up constraint objects
@@ -146,16 +93,18 @@ class FieldOptionsResolver extends ParameterBag
     /**
      * Get customised value parameters for choice field types.
      *
-     * @param array $options
+     * @param array                    $options
+     * @param EntityManager            $storage
+     * @param EventDispatcherInterface $dispatcher
      *
      * @return array
      */
-    protected function resolveChoiceOptions(array $options)
+    protected function resolveChoiceOptions(array $options, EntityManager $storage, EventDispatcherInterface $dispatcher)
     {
         $choices = isset($options['choices']) ? $options['choices'] : null;
 
         if (is_string($choices)) {
-            $choiceObj = $this->handleCustomChoice($choices);
+            $choiceObj = $this->handleCustomChoice($choices, $storage, $dispatcher);
         } else {
             $choiceObj = new Choice\ChoiceResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions);
         }
@@ -180,24 +129,26 @@ class FieldOptionsResolver extends ParameterBag
     }
 
     /**
-     * @param string $choices
+     * @param string                   $choices
+     * @param EntityManager            $storage
+     * @param EventDispatcherInterface $dispatcher
      *
      * @return Choice\AbstractChoiceOptionResolver
      */
-    protected function handleCustomChoice($choices)
+    protected function handleCustomChoice($choices, EntityManager $storage, EventDispatcherInterface $dispatcher)
     {
         // Check if it is one of our custom types
         if (strpos($choices, 'contenttype::') === 0) {
             // @deprecated Will be remove in BoltForms v4
-            return new Choice\ContentTypeResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $this->em, true);
+            return new Choice\ContentTypeResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $storage, true);
         }
 
         if (strpos($choices, 'content') === 0) {
-            return new Choice\ContentTypeResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $this->em);
+            return new Choice\ContentTypeResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $storage);
         }
 
         if (strpos($choices, 'event') === 0) {
-            return new Choice\EventResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $this->dispatcher);
+            return new Choice\EventResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $dispatcher);
         }
 
         return new Choice\ChoiceResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions);
