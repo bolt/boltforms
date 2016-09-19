@@ -87,6 +87,14 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             }
         );
 
+        $app['boltforms.form.field_options.factory'] = $app->protect(
+            function ($formName, $fieldName, $type, $options) use ($app) {
+                $resolver = new Factory\FieldOptionsResolver($formName, $fieldName, $type, $options);
+
+                return $resolver->getOptions($app['storage'], $app['dispatcher']);
+            }
+        );
+
         $app['boltforms.subscriber.custom_data'] = $app->share(function ($app) {
             return new DynamicDataSubscriber($app);
         });

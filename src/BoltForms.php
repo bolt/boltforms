@@ -5,12 +5,16 @@ use Bolt\Asset\Snippet\Snippet;
 use Bolt\Asset\Target;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\BoltForms\Asset\ReCaptcha;
+use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
+use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
+use Bolt\Extension\Bolt\BoltForms\Factory\FieldOptionsResolver;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Silex\Application;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -109,16 +113,16 @@ class BoltForms
         }
 
         $options['csrf_protection'] = $this->config->isCsrf();
-        /** @var Form $form */
-        $form = $this->app['form.factory']
+
+        /** @var FormBuilderInterface $builder */
+        $builder = $this->app['form.factory']
             ->createNamedBuilder($formName, $type, $data, $options)
             ->addEventSubscriber(new BoltFormsSubscriber($this->app))
-            ->getForm()
         ;
+        /** @var Form $form */
+        $form = $builder->getForm();
 
-        $em = $this->app['storage'];
-        $dispatcher = $this->app['dispatcher'];
-        $this->config->resolveForm($formName, $em, $dispatcher);
+        $this->resolveFormConfiguration($formName);
 
         /** @var Config\FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
@@ -155,18 +159,16 @@ class BoltForms
     /**
      * Add a field to the form.
      *
-     * @param string                                 $formName  Name of the form
-     * @param string                                 $fieldName
-     * @param string                                 $type
-     * @param Config\Form\FieldOptionsResolver|array $options
+     * @param string                $formName  Name of the form
+     * @param string                $fieldName
+     * @param string                $type
+     * @param array|FieldOptionsBag $options
      */
     public function addField($formName, $fieldName, $type, $options)
     {
-        if (is_array($options)) {
-            $em = $this->app['storage'];
-            $dispatcher = $this->app['dispatcher'];
-            $options = new Config\Form\FieldOptionsResolver($formName, $fieldName, $type, $options, $em, $dispatcher);
-        }
+if (is_array($options)) {
+    $options = new FieldOptionsBag($options);
+}
 
         try {
             $this->get($formName)
@@ -338,5 +340,39 @@ class BoltForms
 
         $this->app['asset.queue.file']->add($reCaptcha);
         $this->queuedReCaptcha = true;
+    }
+
+    /**
+     * Resolve a form's configuration.
+     *
+     * @param string $formName
+     *
+     * @throws Exception\FormOptionException
+     */
+    private function resolveFormConfiguration($formName)
+    {
+        if (!$this->config->getForms()->has($formName)) {
+            throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
+        }
+
+        $formConfig = $this->config->getForms()->get($formName)->all();
+
+        if (!isset($formConfig['fields'])) {
+            throw new Exception\FormOptionException(sprintf('[BoltForms] Form "%s" does not have any fields defined!', $formName));
+        }
+
+        // Field option resolver factory
+        $resolverFactory = $this->app['boltforms.form.field_options.factory'];
+
+        foreach ($formConfig['fields'] as $fieldName => $data) {
+            $this->config->assetValidField($formName, $fieldName, $data);
+
+            $options = !empty($data['options']) ? $data['options'] : [];
+
+            $formConfig['fields'][$fieldName]['options'] = $resolverFactory($formName, $fieldName, $data['type'], $options);
+        }
+
+        $resolvedFormConfig = new FormConfig($formName, $formConfig, $this->app['boltforms.config']);
+        $this->config->setResolvedFormConfig($formName, $resolvedFormConfig);
     }
 }
