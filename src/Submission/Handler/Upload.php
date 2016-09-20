@@ -10,6 +10,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 /**
  * File upload handler for BoltForms
@@ -41,6 +42,9 @@ class Upload
     private $formConfig;
     /** @var UploadedFile */
     private $file;
+    /** @var FlashBagInterface */
+    private $feedback;
+
     /** @var string */
     private $fileName;
     /** @var string */
@@ -55,15 +59,17 @@ class Upload
     /**
      * Constructor.
      *
-     * @param Config       $config
-     * @param FormConfig   $formConfig
-     * @param UploadedFile $file
+     * @param Config            $config
+     * @param FormConfig        $formConfig
+     * @param UploadedFile      $file
+     * @param FlashBagInterface $feedback
      */
-    public function __construct(Config $config, FormConfig $formConfig, UploadedFile $file)
+    public function __construct(Config $config, FormConfig $formConfig, UploadedFile $file, FlashBagInterface $feedback)
     {
         $this->config = $config;
         $this->formConfig = $formConfig;
         $this->file = $file;
+        $this->feedback = $feedback;
 
         $this->fullPath = (string) $file;
         $this->fileName = basename($this->fullPath);
@@ -237,7 +243,7 @@ class Upload
             $i++;
         }
 
-        //$this->app['logger.system']->debug("[BoltForms] Setting uploaded file '$originalName' to use the name '$fileName'.", ['event' => 'extensions']);
+        $this->feedback->add('debug', "Setting uploaded file '$originalName' to use the name '$fileName'.");
         $this->final = true;
 
         return $this->fileName = $fileName;

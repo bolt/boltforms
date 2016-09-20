@@ -212,7 +212,8 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                             return new Submission\Handler\Upload(
                                 $app['boltforms.config'],
                                 $formConfig,
-                                $file
+                                $file,
+                                $app['boltforms.feedback']
                             );
                         }
                     ),
