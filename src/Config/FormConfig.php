@@ -64,7 +64,7 @@ class FormConfig
 
         $this->database     = new Form\DatabaseOptionsBag($formConfig['database']);
         $this->feedback     = new Form\FeedbackOptionsBag($formConfig['feedback']);
-        $this->fields       = new Form\FieldOptionsBag($formConfig['fields']);
+        $this->fields       = new Form\FieldsBag($formConfig['fields']);
         $this->submission   = new Form\SubmissionOptionsBag($formConfig['submission']);
         $this->notification = new Form\NotificationOptionsBag($formConfig['notification'], $rootConfig);
         $this->templates    = new Form\TemplateOptionsBag($formConfig['templates'], $rootConfig);

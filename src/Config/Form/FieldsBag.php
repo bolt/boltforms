@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Form field configuration for BoltForms
+ * Form fields collection for BoltForms
  *
  * Copyright (c) 2014-2016 Gawain Lynch
  *
@@ -26,17 +26,21 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class FieldOptionsBag extends ParameterBag
+class FieldsBag extends ParameterBag
 {
+    /** @var bool */
+    private $resolved;
+
     public function __construct(array $parameters)
     {
         parent::__construct();
         foreach ($parameters as $key => $value) {
             if (is_array($value)) {
-                $value = new self($value);
+                $value = new FieldOptionsBag($value);
             }
             $this->parameters[$key] = $value;
         }
+        $this->resolved = false;
     }
 
     /**
@@ -44,14 +48,21 @@ class FieldOptionsBag extends ParameterBag
      */
     public function all()
     {
-        return $this->parameters;
+        $config = [];
+        foreach ($this->parameters as $key => $value) {
+            if ($value instanceof ParameterBag) {
+                $config[$key] = $value->all();
+            } else {
+                $config[$key] = $value;
+            }
+        }
+
+        return $config;
     }
 
-    public function getOptions()
-    {
-        return $this->get('options');
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function __call($name, $args = [])
     {
         $name = strtolower(preg_replace('/^get/', '', $name));
@@ -59,6 +70,6 @@ class FieldOptionsBag extends ParameterBag
             return $this->parameters[$name];
         }
 
-        return null;
+        throw new \BadMethodCallException(sprintf('%s ', __CLASS__));
     }
 }
