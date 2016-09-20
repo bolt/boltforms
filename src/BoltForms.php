@@ -134,7 +134,7 @@ class BoltForms
             $request->attributes->set(static::META_FIELD_NAME, [$formName => $formMeta->getMetaId()]);
         }
 
-        foreach ($formConfig->getFields()->toArray() as $key => $field) {
+        foreach ($formConfig->getFields()->all() as $key => $field) {
             $field['options'] = !empty($field['options']) ? $field['options'] : [];
 
             if (!isset($field['type'])) {
@@ -166,14 +166,14 @@ class BoltForms
      */
     public function addField($formName, $fieldName, $type, $options)
     {
-if (is_array($options)) {
-    $options = new FieldOptionsBag($options);
-}
+        if (is_array($options)) {
+            $options = new FieldOptionsBag($options);
+        }
 
         try {
             $this->get($formName)
                 ->getForm()
-                ->add($fieldName, $type, $options->toArray())
+                ->add($fieldName, $type, $options->all())
             ;
         } catch (InvalidConstraintException $e) {
             $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
