@@ -2,11 +2,10 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
-use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Form field configuration for BoltForms
+ * Form fields collection for BoltForms
  *
  * Copyright (c) 2014-2016 Gawain Lynch
  *
@@ -27,21 +26,22 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class FieldOptionsBag extends ParameterBag
+class FieldBag extends ParameterBag
 {
+    /** @var string */
+    protected $fieldName;
+
     /**
      * Constructor.
      *
+     * @param array $fieldName
      * @param array $parameters
      */
-    public function __construct(array $parameters)
+    public function __construct($fieldName, array $parameters)
     {
-        foreach ($parameters as $key => $value) {
-            if (is_array($value)) {
-                $value = new ParameterBag($value);
-            }
-            $parameters[$key] = $value;
-        }
+        $this->fieldName = $fieldName;
+        $parameters += ['type' => null, 'options' => null];
+        $parameters['options'] = new FieldOptionsBag($parameters['options']);
 
         parent::__construct($parameters);
     }
@@ -66,13 +66,13 @@ class FieldOptionsBag extends ParameterBag
     /**
      * @return string
      */
-    public function getType()
+    public function getFieldName()
     {
-        return $this->get('type');
+        return $this->fieldName;
     }
 
     /**
-     * @return array
+     * @return mixed
      */
     public function getOptions()
     {

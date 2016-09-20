@@ -169,7 +169,7 @@ class BoltForms
     public function addField($formName, $fieldName, $type, $options)
     {
         if (is_array($options)) {
-            $options = new FieldOptionsBag($fieldName, $options);
+            $options = new FieldOptionsBag($options);
         }
         if (!$options instanceof ParameterBag) {
             throw new FormOptionException(sprintf('Options passed to %s must of of type array or %s', __METHOD__, ParameterBag::class));

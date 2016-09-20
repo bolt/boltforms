@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
+use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -28,19 +29,20 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class FieldsBag extends ParameterBag
 {
-    /** @var bool */
-    private $resolved;
-
+    /**
+     * Constructor.
+     *
+     * @param array $parameters
+     *
+     * @throws FormOptionException
+     */
     public function __construct(array $parameters)
     {
-        parent::__construct();
-        foreach ($parameters as $key => $value) {
-            if (is_array($value)) {
-                $value = new FieldOptionsBag($value);
-            }
-            $this->parameters[$key] = $value;
+        foreach ($parameters as $fieldName => $fieldConfig) {
+            $parameters[$fieldName] = new FieldBag($fieldName, $fieldConfig);
         }
-        $this->resolved = false;
+
+        parent::__construct($parameters);
     }
 
     /**
@@ -48,16 +50,16 @@ class FieldsBag extends ParameterBag
      */
     public function all()
     {
-        $config = [];
-        foreach ($this->parameters as $key => $value) {
+        $parameters = $this->parameters;
+        foreach ($parameters as $key => $value) {
             if ($value instanceof ParameterBag) {
-                $config[$key] = $value->all();
+                $parameters[$key] = $value->all();
             } else {
-                $config[$key] = $value;
+                $parameters[$key] = $value;
             }
         }
 
-        return $config;
+        return $parameters;
     }
 
     /**
