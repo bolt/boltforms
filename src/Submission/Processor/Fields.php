@@ -75,8 +75,8 @@ class Fields extends AbstractProcessor
 
             // Handle events for custom data
             $fieldConf = $formConfig->getFields()->get($fieldName);
-            if ($fieldConf->has('event') && $fieldConf->get('event')->has('name')) {
-                $formData->set($fieldName, $this->dispatchCustomDataEvent($dispatcher, $fieldConf->get('event')));
+            if ($fieldConf->getOptions()->has('event') && $fieldConf->getOptions()->get('event')->has('name')) {
+                $formData->set($fieldName, $this->dispatchCustomDataEvent($dispatcher, $fieldConf->getOptions()->get('event')));
             }
         }
     }

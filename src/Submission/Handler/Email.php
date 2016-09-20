@@ -204,30 +204,30 @@ class Email extends AbstractHandler
     private function getBodyData(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, FormData $formData)
     {
         $bodyData = [];
-        foreach ($formData->all() as $key => $value) {
-            /** @var Config\Form\FieldOptionsBag $config */
-            $config = $formConfig->getFields()->{$key}();
-            $formValue = $formData->get($key);
+        foreach ($formData->all() as $fieldName => $value) {
+            /** @var Config\Form\FieldBag $fieldConfig */
+            $fieldConfig = $formConfig->getFields()->{$fieldName}();
+            $formValue = $formData->get($fieldName);
 
-            if ($formData->get($key) instanceof Upload) {
-                if ($formData->get($key)->isValid() && $emailConfig->attachFiles()) {
-                    $attachment = \Swift_Attachment::fromPath($formData->get($key)->fullPath())
-                            ->setFilename($formData->get($key)->getFile()->getClientOriginalName());
+            if ($formData->get($fieldName) instanceof Upload) {
+                if ($formData->get($fieldName)->isValid() && $emailConfig->attachFiles()) {
+                    $fromPath = $formData->get($fieldName)->fullPath();
+                    $fileName = $formData->get($fieldName)->getFile()->getClientOriginalName();
+                    $attachment = \Swift_Attachment::fromPath($fromPath)->setFilename($fileName);
                     $this->getEmailMessage()->attach($attachment);
                 }
-                $relativePath = $formData->get($key, true);
+                $relativePath = $formData->get($fieldName, true);
 
-                $bodyData[$key] = sprintf(
+                $bodyData[$fieldName] = sprintf(
                     '<a href"%s">%s</a>',
                     $this->urlGenerator->generate('BoltFormsDownload', ['file' => $relativePath], UrlGeneratorInterface::ABSOLUTE_URL),
-
-                    $formData->get($key)->getFile()->getClientOriginalName()
+                    $formData->get($fieldName)->getFile()->getClientOriginalName()
                 );
-            } elseif ($config->get('type') === 'choice') {
-                $choices = $config->getOptions()->toArray();
-                $bodyData[$key] = isset($choices[$formValue]) ? $choices[$formValue] : $formValue;
+            } elseif ($fieldConfig->get('type') === 'choice') {
+                $options = $fieldConfig->getOptions();
+                $bodyData[$fieldName] = $options->get($fieldName, $formValue);
             } else {
-                $bodyData[$key] = $formData->get($key, true);
+                $bodyData[$fieldName] = $formData->get($fieldName, true);
             }
         }
 
