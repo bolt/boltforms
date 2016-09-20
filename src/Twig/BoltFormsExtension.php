@@ -120,7 +120,7 @@ class BoltFormsExtension
             return null;
         }
 
-        $loadAjax = $formConfig->getSubmission()->getAjax();
+        $loadAjax = $formConfig->getSubmission()->isAjax();
         $twig = $this->app['twig'];
 
         $formContext

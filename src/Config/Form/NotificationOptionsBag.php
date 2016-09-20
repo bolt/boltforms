@@ -1,7 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
+namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
+use Bolt\Extension\Bolt\BoltForms\Config\AbstractCascadingBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**

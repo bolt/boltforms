@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
+namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -41,7 +41,7 @@ class ReCaptchaOptionsBag extends ParameterBag
      */
     public function isEnabled()
     {
-        return $this->get('enabled');
+        return $this->getBoolean('enabled');
     }
 
     /**

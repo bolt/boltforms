@@ -121,11 +121,11 @@ class Email extends AbstractHandler
     /**
      * Create a notification message.
      *
-     * @param Config\FormConfig   $formConfig
-     * @param FormData            $formData
-     * @param Config\FormMetaData $formMetaData
+     * @param Config\FormConfig $formConfig
+     * @param FormData          $formData
+     * @param Config\MetaData   $formMetaData
      */
-    public function handle(Config\FormConfig $formConfig, FormData $formData, Config\FormMetaData $formMetaData)
+    public function handle(Config\FormConfig $formConfig, FormData $formData, Config\MetaData $formMetaData)
     {
         $emailConfig = new Config\EmailConfig($formConfig, $formData);
 
@@ -142,12 +142,12 @@ class Email extends AbstractHandler
     /**
      * Compose the email data to be sent.
      *
-     * @param Config\FormConfig   $formConfig
-     * @param Config\EmailConfig  $emailConfig
-     * @param FormData            $formData
-     * @param Config\FormMetaData $formMetaData
+     * @param Config\FormConfig  $formConfig
+     * @param Config\EmailConfig $emailConfig
+     * @param FormData           $formData
+     * @param Config\MetaData    $formMetaData
      */
-    private function compose(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, FormData $formData, Config\FormMetaData $formMetaData)
+    private function compose(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, FormData $formData, Config\MetaData $formMetaData)
     {
         // If the form has it's own templates defined, use those, else the globals.
         $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->getConfig()->getTemplates()->get('subject');
@@ -204,30 +204,30 @@ class Email extends AbstractHandler
     private function getBodyData(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, FormData $formData)
     {
         $bodyData = [];
-        foreach ($formData->all() as $key => $value) {
-            /** @var Config\Section\FormOptionBag $config */
-            $config = $formConfig->getFields()->{$key}();
-            $formValue = $formData->get($key);
+        foreach ($formData->all() as $fieldName => $value) {
+            /** @var Config\Form\FieldBag $fieldConfig */
+            $fieldConfig = $formConfig->getFields()->{$fieldName}();
+            $formValue = $formData->get($fieldName);
 
-            if ($formData->get($key) instanceof Upload) {
-                if ($formData->get($key)->isValid() && $emailConfig->attachFiles()) {
-                    $attachment = \Swift_Attachment::fromPath($formData->get($key)->fullPath())
-                            ->setFilename($formData->get($key)->getFile()->getClientOriginalName());
+            if ($formData->get($fieldName) instanceof Upload) {
+                if ($formData->get($fieldName)->isValid() && $emailConfig->attachFiles()) {
+                    $fromPath = $formData->get($fieldName)->fullPath();
+                    $fileName = $formData->get($fieldName)->getFile()->getClientOriginalName();
+                    $attachment = \Swift_Attachment::fromPath($fromPath)->setFilename($fileName);
                     $this->getEmailMessage()->attach($attachment);
                 }
-                $relativePath = $formData->get($key, true);
+                $relativePath = $formData->get($fieldName, true);
 
-                $bodyData[$key] = sprintf(
+                $bodyData[$fieldName] = sprintf(
                     '<a href"%s">%s</a>',
                     $this->urlGenerator->generate('BoltFormsDownload', ['file' => $relativePath], UrlGeneratorInterface::ABSOLUTE_URL),
-
-                    $formData->get($key)->getFile()->getClientOriginalName()
+                    $formData->get($fieldName)->getFile()->getClientOriginalName()
                 );
-            } elseif ($config->get('type') === 'choice') {
-                $choices = $config->getOptions()->toArray();
-                $bodyData[$key] = isset($choices[$formValue]) ? $choices[$formValue] : $formValue;
+            } elseif ($fieldConfig->get('type') === 'choice') {
+                $options = $fieldConfig->getOptions();
+                $bodyData[$fieldName] = $options->get($fieldName, $formValue);
             } else {
-                $bodyData[$key] = $formData->get($key, true);
+                $bodyData[$fieldName] = $formData->get($fieldName, true);
             }
         }
 

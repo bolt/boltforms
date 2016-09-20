@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
+namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
 /**
  * Form meta data section bag.
@@ -24,7 +24,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config\Section;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class MetaData
+class MetaDataBag
 {
     /** @var string */
     protected $name;
@@ -57,7 +57,7 @@ class MetaData
     /**
      * @param string $name
      *
-     * @return MetaData
+     * @return MetaDataBag
      */
     public function setName($name)
     {
@@ -77,7 +77,7 @@ class MetaData
     /**
      * @param array $use
      *
-     * @return MetaData
+     * @return MetaDataBag
      */
     public function setUse($use)
     {
@@ -97,7 +97,7 @@ class MetaData
     /**
      * @param mixed $value
      *
-     * @return MetaData
+     * @return MetaDataBag
      */
     public function setValue($value)
     {

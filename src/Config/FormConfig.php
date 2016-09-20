@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormOptionBag;
+use Bolt\Extension\Bolt\BoltForms\Config\Form;
 
 /**
  * Form configuration for BoltForms
@@ -32,19 +32,19 @@ class FormConfig
     private $rootConfig;
     /** @var string */
     protected $name;
-    /** @var FormOptionBag */
+    /** @var Form\DatabaseOptionsBag */
     protected $database;
-    /** @var FormOptionBag */
+    /** @var Form\FeedbackOptionsBag */
     protected $feedback;
-    /** @var FormOptionBag */
+    /** @var Form\FieldOptionsBag */
     protected $fields;
-    /** @var FormOptionBag */
+    /** @var Form\SubmissionOptionsBag */
     protected $submission;
-    /** @var Section\NotificationOptionsBag */
+    /** @var Form\NotificationOptionsBag */
     protected $notification;
-    /** @var Section\TemplateOptionsBag */
+    /** @var Form\TemplateOptionsBag */
     protected $templates;
-    /** @var Section\UploadsOptionBag */
+    /** @var Form\UploadsOptionsBag */
     protected $uploads;
 
     /**
@@ -62,13 +62,13 @@ class FormConfig
         $defaults = $this->getDefaults();
         $formConfig = $this->mergeRecursiveDistinct($defaults, $formConfig);
 
-        $this->database     = new FormOptionBag($formConfig['database']);
-        $this->feedback     = new FormOptionBag($formConfig['feedback']);
-        $this->fields       = new FormOptionBag($formConfig['fields']);
-        $this->submission   = new FormOptionBag($formConfig['submission']);
-        $this->notification = new Section\NotificationOptionsBag($formConfig['notification'], $rootConfig);
-        $this->templates    = new Section\TemplateOptionsBag($formConfig['templates'], $rootConfig);
-        $this->uploads      = new FormOptionBag($formConfig['uploads']);
+        $this->database     = new Form\DatabaseOptionsBag($formConfig['database']);
+        $this->feedback     = new Form\FeedbackOptionsBag($formConfig['feedback']);
+        $this->fields       = new Form\FieldsBag($formConfig['fields']);
+        $this->submission   = new Form\SubmissionOptionsBag($formConfig['submission']);
+        $this->notification = new Form\NotificationOptionsBag($formConfig['notification'], $rootConfig);
+        $this->templates    = new Form\TemplateOptionsBag($formConfig['templates'], $rootConfig);
+        $this->uploads      = new Form\UploadsOptionsBag($formConfig['uploads']);
     }
 
     /**
@@ -92,7 +92,7 @@ class FormConfig
     /**
      * Get form database configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\DatabaseOptionsBag
      */
     public function getDatabase()
     {
@@ -102,7 +102,7 @@ class FormConfig
     /**
      * Get form feedback configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\FeedbackOptionsBag
      */
     public function getFeedback()
     {
@@ -112,7 +112,7 @@ class FormConfig
     /**
      * Get form fields configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\FieldOptionsBag
      */
     public function getFields()
     {
@@ -122,7 +122,7 @@ class FormConfig
     /**
      * Get form submission configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\SubmissionOptionsBag
      */
     public function getSubmission()
     {
@@ -132,7 +132,7 @@ class FormConfig
     /**
      * Get form notification configuration object.
      *
-     * @return Section\NotificationOptionsBag
+     * @return Form\NotificationOptionsBag
      */
     public function getNotification()
     {
@@ -142,7 +142,7 @@ class FormConfig
     /**
      * Get form template configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\TemplateOptionsBag
      */
     public function getTemplates()
     {
@@ -152,7 +152,7 @@ class FormConfig
     /**
      * Get form upload configuration object.
      *
-     * @return FormOptionBag
+     * @return Form\UploadsOptionsBag
      */
     public function getUploads()
     {

@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Bolt\Extension\Bolt\BoltForms\Config\Section\FormOptionBag;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Helpers\Arr;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -56,10 +55,7 @@ class Redirect
      */
     public function handle(FormConfig $formConfig, FormData $formData)
     {
-        $redirect = $formConfig->getFeedback()->getRedirect();
-        $query = $this->getRedirectQuery($redirect, $formData);
-
-        $response = $this->getRedirectResponse($redirect, $query);
+        $response = $this->getRedirectResponse($formConfig, $formData);
         if ($response instanceof RedirectResponse) {
             $response->send();
         }
@@ -90,22 +86,21 @@ class Redirect
     /**
      * Build a GET query if required.
      *
-     * @param FormOptionBag $redirect
-     * @param FormData      $formData
+     * @param FormConfig $formConfig
+     * @param FormData   $formData
      *
      * @return string
      */
-    protected function getRedirectQuery(FormOptionBag $redirect, FormData $formData)
+    protected function getRedirectQuery(FormConfig $formConfig, FormData $formData)
     {
-        $query = $redirect->getQuery();
-
+        $query = $formConfig->getFeedback()->getRedirectQuery();
         if ($query === null) {
             return '';
         }
 
         $queryParams = [];
         if (is_array($query)) {
-            if (Arr::isIndexedArray($redirect->getQuery())) {
+            if (Arr::isIndexedArray($query)) {
                 foreach ($query as $param) {
                     $queryParams[$param] = $formData->get($param);
                 }
@@ -125,18 +120,22 @@ class Redirect
     /**
      * Get the redirect response object.
      *
-     * @param FormOptionBag $redirect
-     * @param string        $query
+     * @param FormConfig $formConfig
+     * @param FormData   $formData
      *
-     * @return null|RedirectResponse
+     * @return RedirectResponse|false
+     *
      */
-    protected function getRedirectResponse(FormOptionBag $redirect, $query)
+    protected function getRedirectResponse(FormConfig $formConfig, FormData $formData)
     {
-        if (strpos($redirect->getTarget(), 'http') === 0) {
-            return new RedirectResponse($redirect->getTarget() . $query);
+        $redirect = $formConfig->getFeedback()->getRedirectTarget();
+        $query = $this->getRedirectQuery($formConfig, $formData);
+
+        if (strpos($redirect, 'http') === 0) {
+            return new RedirectResponse($redirect . $query);
         } else {
             try {
-                $url = '/' . ltrim($redirect->getTarget(), '/');
+                $url = '/' . ltrim($redirect, '/');
                 $this->urlMatcher->match($url);
 
                 return new RedirectResponse($url . $query);

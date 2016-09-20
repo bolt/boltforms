@@ -4,8 +4,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
 
 use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Helpers\Arr;
-use Bolt\Storage\EntityManager;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -53,11 +51,11 @@ class Config extends ParameterBag
             if ($value instanceof FieldMap\Email) {
                 $this->set($key, $value);
             } elseif ($key === 'recaptcha') {
-                $this->set($key, new Section\ReCaptchaOptionsBag($value));
+                $this->set($key, new Form\ReCaptchaOptionsBag($value));
             } elseif ($key === 'templates') {
-                $this->set($key, new Section\TemplateOptionsBag($value));
+                $this->set($key, new Form\TemplateOptionsBag($value));
             } elseif ($key === 'uploads') {
-                $this->set($key, new Section\UploadsOptionBag($value));
+                $this->set($key, new Form\UploadsOptionBag($value));
             } elseif (is_array($value)) {
                 if (in_array($key, $nonForms)) {
                     $this->set($key, new ParameterBag($value));
@@ -71,6 +69,21 @@ class Config extends ParameterBag
     }
 
     /**
+     * @internal
+     *
+     * @param string     $formName
+     * @param FormConfig $resolvedFormConfig
+     *
+     * @return Config
+     */
+    public function setResolvedFormConfig($formName, FormConfig $resolvedFormConfig)
+    {
+        $this->resolvedForms->set($formName, $resolvedFormConfig);
+
+        return $this;
+    }
+
+    /**
      * @return boolean
      */
     public function isCsrf()
@@ -79,7 +92,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return Section\ReCaptchaOptionsBag
+     * @return Form\ReCaptchaOptionsBag
      */
     public function getReCaptcha()
     {
@@ -87,7 +100,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return Section\TemplateOptionsBag
+     * @return Form\TemplateOptionsBag
      */
     public function getTemplates()
     {
@@ -111,7 +124,7 @@ class Config extends ParameterBag
     }
 
     /**
-     * @return Section\UploadsOptionBag
+     * @return Form\UploadsOptionBag
      */
     public function getUploads()
     {
@@ -205,46 +218,13 @@ class Config extends ParameterBag
     }
 
     /**
-     * Resolve a form's configuration.
-     *
-     * @param string                   $formName
-     * @param EntityManager            $em
-     * @param EventDispatcherInterface $dispatcher
-     *
-     * @throws Exception\FormOptionException
-     */
-    public function resolveForm($formName, EntityManager $em, EventDispatcherInterface $dispatcher)
-    {
-        if (!$this->baseForms->has($formName)) {
-            throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
-        }
-
-        $formConfig = $this->baseForms->get($formName)->all();
-
-        if (!isset($formConfig['fields'])) {
-            throw new Exception\FormOptionException(sprintf('[BoltForms] Form "%s" does not have any fields defined!', $formName));
-        }
-
-        foreach ($formConfig['fields'] as $fieldName => $data) {
-            $this->assetValidField($formName, $fieldName, $data);
-
-            $options = !empty($data['options']) ? $data['options'] : [];
-            $fieldOptions = new FieldOptions($formName, $fieldName, $data['type'], $options, $em, $dispatcher);
-            $formConfig['fields'][$fieldName]['options'] = $fieldOptions;
-        }
-
-        $resolvedForm = new FormConfig($formName, $formConfig, $this);
-        $this->resolvedForms->set($formName, $resolvedForm);
-    }
-
-    /**
      * @param string $formName
      * @param string $fieldName
      * @param string $data
      *
      * @throws Exception\FormOptionException
      */
-    protected function assetValidField($formName, $fieldName, $data)
+    public function assetValidField($formName, $fieldName, $data)
     {
         if (!isset($data['type'])) {
             throw new Exception\FormOptionException(sprintf('[BoltForms] Form "%s" field "%s" does not have a type defined!', $formName, $fieldName));

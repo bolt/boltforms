@@ -104,7 +104,6 @@ class BoltFormsExtension extends SimpleExtension
     protected function registerTwigPaths()
     {
         return [
-            'templates/legacy',
             'templates' => ['namespace' => 'BoltForms'],
         ];
     }

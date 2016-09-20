@@ -74,13 +74,13 @@ class Redirect extends AbstractProcessor
         // Save our session to persist though redirects
         $this->session->save();
 
-        if ($formConfig->getSubmission()->getAjax()) {
+        if ($formConfig->getSubmission()->isAjax()) {
             return;
         }
 
         /** @var Handler\Redirect $handler */
         $handler = $this->handlers['redirect'];
-        if ($formConfig->getFeedback()->getRedirect()->getTarget() !== null) {
+        if ($formConfig->getFeedback()->getRedirectTarget() !== null) {
             $handler->handle($formConfig, $formData);
         }
 
