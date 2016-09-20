@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
-use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**

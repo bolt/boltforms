@@ -4,9 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Bolt\Extension\SimpleExtension;
-use Pimple as Container;
 use Silex\Application;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * BoltForms a Symfony Forms interface for Bolt

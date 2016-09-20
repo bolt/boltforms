@@ -44,4 +44,3 @@ class DatabaseOptionsBag extends ParameterBag
         return $this->get('contenttype');
     }
 }
-

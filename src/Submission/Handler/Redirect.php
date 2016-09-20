@@ -124,7 +124,6 @@ class Redirect
      * @param FormData   $formData
      *
      * @return RedirectResponse|false
-     *
      */
     protected function getRedirectResponse(FormConfig $formConfig, FormData $formData)
     {

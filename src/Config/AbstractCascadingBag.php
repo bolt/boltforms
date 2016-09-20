@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 abstract class AbstractCascadingBag extends ParameterBag

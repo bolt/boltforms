@@ -9,7 +9,6 @@ use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
-use Bolt\Extension\Bolt\BoltForms\Factory\FieldOptionsResolver;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Silex\Application;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -159,7 +158,7 @@ class BoltForms
     /**
      * Add a field to the form.
      *
-     * @param string                $formName Name of the form
+     * @param string                $formName  Name of the form
      * @param string                $fieldName
      * @param string                $type
      * @param array|FieldOptionsBag $options

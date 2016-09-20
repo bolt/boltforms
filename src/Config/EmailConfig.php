@@ -7,7 +7,6 @@ use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-
 /**
  * Email configuration for BoltForms
  *

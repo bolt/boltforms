@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
 
-use Bolt\Extension\Bolt\BoltForms\Config\Form;
-
 /**
  * Form configuration for BoltForms
  *

@@ -44,10 +44,10 @@ class FieldOptionsResolver extends ParameterBag
     /**
      * Constructor.
      *
-     * @param string                   $formName
-     * @param string                   $fieldName
-     * @param string                   $type
-     * @param array                    $baseOptions
+     * @param string $formName
+     * @param string $fieldName
+     * @param string $type
+     * @param array  $baseOptions
      */
     public function __construct($formName, $fieldName, $type, array $baseOptions)
     {
