@@ -135,7 +135,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
         $app['boltforms.twig'] = $app->share(
             function ($app) {
-                $twig = new Twig\BoltFormsExtension($app, $app['boltforms.config']);
+                $twig = new Twig\BoltFormsTwigExtension($app, $app['boltforms.config']);
 
                 return $twig;
             }
