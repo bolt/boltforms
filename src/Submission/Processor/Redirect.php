@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Pimple as Container;
-use Silex\RedirectableUrlMatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,8 +35,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class Redirect extends AbstractProcessor
 {
-    /** @var RedirectableUrlMatcher */
-    private $redirectableUrlMatcher;
     /** @var RequestStack */
     private $requestStack;
     /** @var SessionInterface */
@@ -47,14 +44,12 @@ class Redirect extends AbstractProcessor
      * Constructor.
      *
      * @param Container              $handlers
-     * @param RedirectableUrlMatcher $redirectableUrlMatcher
      * @param RequestStack           $requestStack
      * @param SessionInterface       $session
      */
-    public function __construct(Container $handlers, RedirectableUrlMatcher $redirectableUrlMatcher, RequestStack $requestStack, SessionInterface $session)
+    public function __construct(Container $handlers, RequestStack $requestStack, SessionInterface $session)
     {
         parent::__construct($handlers);
-        $this->redirectableUrlMatcher = $redirectableUrlMatcher;
         $this->requestStack = $requestStack;
         $this->session = $session;
     }

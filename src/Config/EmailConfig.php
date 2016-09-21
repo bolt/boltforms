@@ -36,9 +36,6 @@ class EmailConfig extends ParameterBag
 
     public function __construct(FormConfig $formConfig, FormData $formData)
     {
-        $this->formConfig = $formConfig;
-        $this->formData = $formData;
-
         parent::__construct();
 
         $this->set('attachFiles', $formConfig->getNotification()->get('attach_files', false));
@@ -338,22 +335,5 @@ class EmailConfig extends ParameterBag
         }
 
         return $value;
-    }
-
-    /**
-     * Convert a snake_case string to CamelCase PSR-2 property.
-     *
-     * @param string $input
-     *
-     * @return string
-     */
-    private function toPsr2CamelCase($input)
-    {
-        $parts = explode('_', $input);
-        foreach ($parts as &$part) {
-            $part = ucfirst($part);
-        }
-
-        return lcfirst(implode('', $parts));
     }
 }

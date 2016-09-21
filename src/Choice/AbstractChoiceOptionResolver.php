@@ -31,13 +31,13 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 abstract class AbstractChoiceOptionResolver implements ChoiceInterface
 {
     /** @var string */
+    private $formName;
+    /** @var string */
     protected $name;
     /** @var array */
     protected $options;
     /** @var bool */
     protected $initialised;
-    /** @var string */
-    private $formName;
 
     /**
      * @param string $formName     Name of the form containing the field
@@ -49,6 +49,14 @@ abstract class AbstractChoiceOptionResolver implements ChoiceInterface
         $this->formName = $formName;
         $this->name = $fieldName;
         $this->options = $fieldOptions;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormName()
+    {
+        return $this->formName;
     }
 
     /**

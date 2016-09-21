@@ -232,7 +232,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                     'email'    => $app->share(function () use ($app) { return new Submission\Processor\Email($app['boltforms.handlers']); }),
                     'feedback' => $app->share(function () use ($app) { return new Submission\Processor\Feedback($app['boltforms.handlers'], $app['session']); }),
                     'fields'   => $app->share(function () use ($app) { return new Submission\Processor\Fields($app['boltforms.handlers'], $app['boltforms.config']); }),
-                    'redirect' => $app->share(function () use ($app) { return new Submission\Processor\Redirect($app['boltforms.handlers'], $app['url_matcher'], $app['request_stack'], $app['session']); }),
+                    'redirect' => $app->share(function () use ($app) { return new Submission\Processor\Redirect($app['boltforms.handlers'], $app['request_stack'], $app['session']); }),
                 ]);
             }
         );
@@ -240,7 +240,6 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         $app['boltforms.processor'] = $app->share(
             function (Application $app) {
                 $processor = new Submission\Processor(
-                    $app['boltforms.config'],
                     $app['boltforms'],
                     $app['boltforms.processors'],
                     $app['boltforms.handlers'],

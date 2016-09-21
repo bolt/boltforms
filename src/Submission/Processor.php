@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
-use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
@@ -53,10 +52,6 @@ class Processor implements EventSubscriberInterface
     const FEEDBACK_ERROR = 'error';
     const FEEDBACK_DEBUG = 'debug';
 
-    /** @var Application */
-    private $app;
-    /** @var Config */
-    private $config;
     /** @var BoltForms */
     private $boltForms;
     /** @var Container */
@@ -68,10 +63,12 @@ class Processor implements EventSubscriberInterface
     /** @var LoggerInterface */
     private $loggerSystem;
 
+    /** @var Application */
+    private $app;
+
     /**
      * Constructor.
      *
-     * @param Config                   $config
      * @param BoltForms                $boltForms
      * @param Container                $processors
      * @param Container                $handlers
@@ -80,7 +77,6 @@ class Processor implements EventSubscriberInterface
      * @param Application              $app
      */
     public function __construct(
-        Config $config,
         BoltForms $boltForms,
         Container $processors,
         Container $handlers,
@@ -88,7 +84,6 @@ class Processor implements EventSubscriberInterface
         LoggerInterface $loggerSystem,
         Application $app
     ) {
-        $this->config = $config;
         $this->boltForms = $boltForms;
         $this->processors = $processors;
         $this->handlers = $handlers;
