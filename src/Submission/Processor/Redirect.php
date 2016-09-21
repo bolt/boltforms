@@ -43,9 +43,9 @@ class Redirect extends AbstractProcessor
     /**
      * Constructor.
      *
-     * @param Container              $handlers
-     * @param RequestStack           $requestStack
-     * @param SessionInterface       $session
+     * @param Container        $handlers
+     * @param RequestStack     $requestStack
+     * @param SessionInterface $session
      */
     public function __construct(Container $handlers, RequestStack $requestStack, SessionInterface $session)
     {

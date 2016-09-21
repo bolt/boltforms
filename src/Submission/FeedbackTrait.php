@@ -76,11 +76,4 @@ trait FeedbackTrait
      * @return LoggerInterface
      */
     abstract protected function getLogger();
-
-    /**
-     * Return the SMTP mailer service.
-     *
-     * @return \Swift_Mailer
-     */
-    abstract protected function getMailer();
 }

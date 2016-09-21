@@ -15,11 +15,11 @@ use Bolt\Extension\Bolt\BoltForms\Submission\Processor\ProcessorInterface;
 use Pimple as Container;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
-use Silex\Application;
 use Symfony\Component\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -62,6 +62,8 @@ class Processor implements EventSubscriberInterface
     private $dispatcher;
     /** @var LoggerInterface */
     private $loggerSystem;
+    /** @var FlashBagInterface */
+    private $feedback;
 
     /** @var Application */
     private $app;
@@ -74,7 +76,7 @@ class Processor implements EventSubscriberInterface
      * @param Container                $handlers
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface          $loggerSystem
-     * @param Application              $app
+     * @param FlashBagInterface        $feedback
      */
     public function __construct(
         BoltForms $boltForms,
@@ -82,15 +84,14 @@ class Processor implements EventSubscriberInterface
         Container $handlers,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $loggerSystem,
-        Application $app
+        FlashBagInterface $feedback
     ) {
         $this->boltForms = $boltForms;
         $this->processors = $processors;
         $this->handlers = $handlers;
         $this->dispatcher = $dispatcher;
         $this->loggerSystem = $loggerSystem;
-
-        $this->app = $app;
+        $this->feedback = $feedback;
     }
 
     /**
@@ -264,7 +265,7 @@ class Processor implements EventSubscriberInterface
      */
     protected function getFeedback()
     {
-        return $this->app['boltforms.feedback'];
+        return $this->feedback;
     }
 
     /**
@@ -273,13 +274,5 @@ class Processor implements EventSubscriberInterface
     protected function getLogger()
     {
         return $this->loggerSystem;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getMailer()
-    {
-        return $this->app['mailer'];
     }
 }
