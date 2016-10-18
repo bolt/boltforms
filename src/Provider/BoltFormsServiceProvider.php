@@ -88,8 +88,8 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         );
 
         $app['boltforms.form.field_options.factory'] = $app->protect(
-            function ($formName, $fieldName, $type, $options) use ($app) {
-                $resolver = new Factory\FieldOptionsResolver($formName, $fieldName, $type, $options);
+            function ($formName, $fieldName, $options) use ($app) {
+                $resolver = new Factory\FieldOptionsResolver($formName, $fieldName, $options);
 
                 return $resolver->getOptions($app['storage'], $app['dispatcher']);
             }

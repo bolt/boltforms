@@ -360,7 +360,6 @@ class BoltForms
         }
 
         $formConfig = $this->config->getForms()->get($formName)->all();
-
         if (!isset($formConfig['fields'])) {
             throw new Exception\FormOptionException(sprintf('[BoltForms] Form "%s" does not have any fields defined!', $formName));
         }
@@ -370,10 +369,7 @@ class BoltForms
 
         foreach ($formConfig['fields'] as $fieldName => $data) {
             $this->config->assetValidField($formName, $fieldName, $data);
-
-            $options = !empty($data['options']) ? $data['options'] : [];
-
-            $formConfig['fields'][$fieldName]['options'] = $resolverFactory($formName, $fieldName, $data['type'], $options);
+            $formConfig['fields'][$fieldName]['options'] = $resolverFactory($formName, $fieldName, (array) $data['options']);
         }
 
         $resolvedFormConfig = new FormConfig($formName, $formConfig, $this->app['boltforms.config']);

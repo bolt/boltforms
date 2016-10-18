@@ -36,9 +36,7 @@ class FieldOptionsResolver extends ParameterBag
     private $formName;
     /** @var string */
     private $fieldName;
-    /** @var string */
-    private $type;
-    /** @var array */
+   /** @var array */
     private $baseOptions;
 
     /**
@@ -46,16 +44,14 @@ class FieldOptionsResolver extends ParameterBag
      *
      * @param string $formName
      * @param string $fieldName
-     * @param string $type
      * @param array  $baseOptions
      */
-    public function __construct($formName, $fieldName, $type, array $baseOptions)
+    public function __construct($formName, $fieldName, array $baseOptions)
     {
         parent::__construct();
 
         $this->formName = $formName;
         $this->fieldName = $fieldName;
-        $this->type = $type;
         $this->baseOptions = $baseOptions;
     }
 
@@ -76,6 +72,9 @@ class FieldOptionsResolver extends ParameterBag
 
     /**
      * Set a clean array of options to be passed to Symfony Forms.
+     *
+     * @param EntityManager            $storage
+     * @param EventDispatcherInterface $dispatcher
      */
     protected function initialise(EntityManager $storage, EventDispatcherInterface $dispatcher)
     {
