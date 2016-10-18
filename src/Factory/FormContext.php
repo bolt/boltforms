@@ -81,8 +81,6 @@ class FormContext
             'defaults'  => $this->defaults,
             'html_pre'  => $this->htmlPreSubmit,
             'html_post' => $this->htmlPostSubmit,
-            'error'     => !empty($errors) ? $errors[0] : null, // @deprecated
-            'message'   => !empty($info) ? $info[0] : null,     // @deprecated
             'messages'  => [
                 'info'  => $info,
                 'error' => $errors,

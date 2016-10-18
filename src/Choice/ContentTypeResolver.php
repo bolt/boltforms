@@ -52,9 +52,8 @@ class ContentTypeResolver extends AbstractChoiceOptionResolver
      * @param string        $fieldName    Name of the field
      * @param array         $fieldOptions Options for field
      * @param EntityManager $em
-     * @param bool          $legacy       True if using deprecated value format
      */
-    public function __construct($formName, $fieldName, array $fieldOptions, EntityManager $em, $legacy = false)
+    public function __construct($formName, $fieldName, array $fieldOptions, EntityManager $em)
     {
         parent::__construct($formName, $fieldName, $fieldOptions);
 
@@ -93,31 +92,6 @@ class ContentTypeResolver extends AbstractChoiceOptionResolver
         ;
 
         return $this->choices = $this->getParameterValues($params);
-    }
-
-    /**
-     * Handle legacy parameters.
-     *
-     * @deprecated To be removed in BoltForms v4.
-     *
-     * @return array
-     */
-    private function getParameterValuesLegacy()
-    {
-        $key = $this->options['choices'];
-        $parts = explode('::', $key);
-        if ($parts === false || count($parts) !== 4) {
-            throw new \UnexpectedValueException(sprintf('The configured ContentType choice field "%s" has an invalid key string: "%s"', $this->name, $key));
-        }
-        $params = array_merge($this->getDefaultParameters(),
-            [
-                'contenttype' => $parts[1],
-                'label'       => $parts[2],
-                'value'       => $parts[3],
-            ]
-        );
-
-        return $this->getParameterValues($params);
     }
 
     /**

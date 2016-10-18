@@ -38,7 +38,6 @@ final class BoltFormsEvents
     /*
      * Events in the data processor
      */
-    const SUBMISSION_PROCESSOR = 'boltforms.submission_processor';
     const SUBMISSION_PRE_PROCESSOR = 'boltforms.submission_pre_processor';
     const SUBMISSION_POST_PROCESSOR = 'boltforms.submission_post_processor';
 

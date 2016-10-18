@@ -137,11 +137,6 @@ class FieldOptionsResolver extends ParameterBag
     protected function handleCustomChoice($choices, EntityManager $storage, EventDispatcherInterface $dispatcher)
     {
         // Check if it is one of our custom types
-        if (strpos($choices, 'contenttype::') === 0) {
-            // @deprecated Will be remove in BoltForms v4
-            return new Choice\ContentTypeResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $storage, true);
-        }
-
         if (strpos($choices, 'content') === 0) {
             return new Choice\ContentTypeResolver($this->get('formName'), $this->get('fieldName'), $this->baseOptions, $storage);
         }

@@ -41,18 +41,6 @@ class FormData extends ParameterBag
     }
 
     /**
-     * Get the data that was received during the POST.
-     *
-     * @deprecated Deprecated since 3.0 and to be removed in 4.0
-     *
-     * @return array
-     */
-    public function getPostData()
-    {
-        return $this->parameters;
-    }
-
-    /**
      * Get a POST value.
      *
      * @param string  $name

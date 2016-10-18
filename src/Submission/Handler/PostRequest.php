@@ -77,9 +77,6 @@ class PostRequest
         $event = new ProcessorEvent($formName, $data);
         $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
 
-        /** @deprecated will be removed in v4 */
-        $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PROCESSOR, $event);
-
         return new FormData($event->getData());
     }
 }

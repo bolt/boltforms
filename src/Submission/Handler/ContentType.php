@@ -74,12 +74,4 @@ class ContentType extends AbstractHandler
             throw new InternalProcessorException(sprintf('An exception occurred saving submission to ContentType table `%s`', $contentType), $e->getCode(), $e, false);
         }
     }
-
-    /**
-     * @deprecated
-     */
-    public function writeToContenType($contentType, FormData $formData, MetaData $formMetaData)
-    {
-        $this->handle($contentType, $formData, $formMetaData);
-    }
 }

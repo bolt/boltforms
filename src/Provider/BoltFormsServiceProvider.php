@@ -144,20 +144,6 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
     private function registerHandlers(Application $app)
     {
-        /** @deprecated Since 3.1 and to be removed in 4.0. Use $app['boltforms.handlers']['database'] instead. */
-        $app['boltforms.database'] = $app->share(
-            function ($app) {
-                return $app['boltforms.handlers']['database'];
-            }
-        );
-
-        /** @deprecated Since 3.1 and to be removed in 4.0. Use $app['boltforms.handlers']['email'] instead. */
-        $app['boltforms.email'] = $app->share(
-            function ($app) {
-                return $app['boltforms.handlers']['email'];
-            }
-        );
-
         $app['boltforms.handlers'] = $app->share(
             function (Application $app) {
                 return new Container([

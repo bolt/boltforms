@@ -147,15 +147,6 @@ class BoltForms
     }
 
     /**
-     * @deprecated Since 3.1 and to be removed in 4.0. Use create() instead.
-     * @see self::create()
-     */
-    public function makeForm($formName, $type = FormType::class, $data = null, $options = [])
-    {
-        $this->create($formName, $type, $data, $options);
-    }
-
-    /**
      * Add a field to the form.
      *
      * @param string                $formName  Name of the form
@@ -198,14 +189,6 @@ class BoltForms
         }
 
         throw new Exception\UnknownFormException(sprintf('Unknown form requested: %s', $formName));
-    }
-
-    /**
-     * @deprecated Deprecated since 3.1, to be removed in 4.0.
-     */
-    public function getForm($formName)
-    {
-        return $this->get($formName)->getForm();
     }
 
     /**
@@ -291,14 +274,6 @@ class BoltForms
 
         // Return the result
         return new \Twig_Markup($html, 'UTF-8');
-    }
-
-    /**
-     * @deprecated use render()
-     */
-    public function renderForm($formName, $template = '', array $context = [], $loadAjax = false)
-    {
-        return $this->render($formName, $template, $context, $loadAjax);
     }
 
     /**
