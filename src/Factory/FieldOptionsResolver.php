@@ -32,27 +32,19 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class FieldOptionsResolver extends ParameterBag
 {
-    /** @var string */
-    private $formName;
-    /** @var string */
-    private $fieldName;
    /** @var array */
     private $baseOptions;
 
     /**
      * Constructor.
      *
-     * @param string $formName
-     * @param string $fieldName
-     * @param array  $baseOptions
+     * @param array $parameters
      */
-    public function __construct($formName, $fieldName, array $baseOptions)
+    public function __construct(array $parameters)
     {
         parent::__construct();
 
-        $this->formName = $formName;
-        $this->fieldName = $fieldName;
-        $this->baseOptions = $baseOptions;
+        $this->baseOptions = $parameters;
     }
 
     /**

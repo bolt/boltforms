@@ -65,9 +65,6 @@ class Processor implements EventSubscriberInterface
     /** @var FlashBagInterface */
     private $feedback;
 
-    /** @var Application */
-    private $app;
-
     /**
      * Constructor.
      *
