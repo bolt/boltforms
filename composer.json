@@ -19,7 +19,10 @@
     "suggest": {
         "rossriley/formeditor": "A UI editor for form configuration."
     },
-    "license": "GPL-3.0+",
+    "license": [
+        "GPL-3.0+",
+        "LGPL-3.0+"
+    ],
     "authors": [
         {
             "name": "Gawain Lynch",
