@@ -1,5 +1,8 @@
 # Changelog for Bolt Forms
 
+* 3.1.0 (2016-31-11)
+ * Dual-license under GPL & LGPL
+
 * 3.0.3 (2016-07-19)
  * Fixed: Errors in sent notification when ContentType saves enabled (credit: @dantleech)
 
