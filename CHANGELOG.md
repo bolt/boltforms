@@ -1,6 +1,6 @@
 # Changelog for Bolt Forms
 
-* 3.1.0 (xxx-xx-xx)
+* 4.0.0 (xxx-xx-xx)
  * Added: More details debug logging
  * Added: More complete exception handling
  * Added: Event driven choice selection
@@ -21,6 +21,9 @@
    * BoltFormsProcessorEvent to ProcessorEvent
  * Break: Processor constructor signature changed, and logic moved into handlers & processors
  * Break: Choice field key/value pairs revierse to match Symfony
+
+* 3.1.0 (2016-31-11)
+ * Dual-license under GPL & LGPL
 
 * 3.0.3 (2016-07-19)
  * Fixed: Errors in sent notification when ContentType saves enabled (credit: @dantleech)
