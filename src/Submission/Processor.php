@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
+use \Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
@@ -65,11 +66,14 @@ class Processor implements EventSubscriberInterface
     private $loggerSystem;
     /** @var FlashBagInterface */
     private $feedback;
+    /** @var Config */
+    private $config;
 
     /**
      * Constructor.
      *
      * @param BoltForms                $boltForms
+     * @param Config                   $config
      * @param Container                $processors
      * @param Container                $handlers
      * @param EventDispatcherInterface $dispatcher
@@ -78,6 +82,7 @@ class Processor implements EventSubscriberInterface
      */
     public function __construct(
         BoltForms $boltForms,
+        Config $config,
         Container $processors,
         Container $handlers,
         EventDispatcherInterface $dispatcher,
@@ -85,6 +90,7 @@ class Processor implements EventSubscriberInterface
         FlashBagInterface $feedback
     ) {
         $this->boltForms = $boltForms;
+        $this->config = $config;
         $this->processors = $processors;
         $this->handlers = $handlers;
         $this->dispatcher = $dispatcher;
@@ -252,7 +258,7 @@ class Processor implements EventSubscriberInterface
                 } catch (HttpException $e) {
                     throw $e;
                 } catch (\Exception $e) {
-                    $this->exception($e, false, 'An event dispatcher encountered an exception.');
+                    $this->exception($e, $this->config->isDebug(), 'An event dispatcher encountered an exception.');
                 }
             }
         }

@@ -228,6 +228,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             function (Application $app) {
                 $processor = new Submission\Processor(
                     $app['boltforms'],
+                    $app['boltforms.config'],
                     $app['boltforms.processors'],
                     $app['boltforms.handlers'],
                     $app['dispatcher'],
