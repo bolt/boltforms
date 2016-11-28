@@ -53,7 +53,7 @@ trait FeedbackTrait
      *
      * @throws \Exception
      */
-    protected function exception(\Exception $e, $rethrow = true, $messagePrefix = 'An exception has occured during form processing:')
+    protected function exception(\Exception $e, $rethrow = true, $messagePrefix = 'An exception has occurred during form processing:')
     {
         $message = sprintf('%s%s%s', $messagePrefix, "\n", $e->getMessage());
         $this->getFeedback()->add('debug', $message);
