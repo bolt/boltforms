@@ -1,6 +1,6 @@
 {
     "name": "bolt/boltforms",
-    "description": "Symfony Forms API for bolt",
+    "description": "Powerful and flexible HTML form generator for Bolt based on Symfony Forms",
     "type": "bolt-extension",
     "keywords": [
         "forms",
