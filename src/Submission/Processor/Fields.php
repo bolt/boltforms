@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Event\CustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
+use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Submission\Handler\Upload;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Pimple as Container;
@@ -74,8 +75,21 @@ class Fields extends AbstractProcessor
                 $this->processFieldFile($fieldName, $lifeEvent, $field);
             }
 
-            // Handle events for custom data
             $fieldConf = $formConfig->getFields()->get($fieldName);
+            if ($fieldConf === null && $this->config->isDebug()) {
+                $message = sprintf(
+                    'Attempted to use an invalid field name "%s" on the form "%s". Available fields are: %s',
+                    $fieldName,
+                    $formConfig->getName(),
+                    implode(', ', $formConfig->getFields()->keys())
+                );
+                throw new FormOptionException($message);
+            }
+            if ($fieldConf === null) {
+                continue;
+            }
+
+            // Handle events for custom data
             if ($fieldConf->getOptions()->has('event') && $fieldConf->getOptions()->get('event')->has('name')) {
                 $formData->set($fieldName, $this->dispatchCustomDataEvent($dispatcher, $fieldConf->getOptions()->get('event')));
             }
