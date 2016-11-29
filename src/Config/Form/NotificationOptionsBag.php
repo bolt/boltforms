@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
 use Bolt\Extension\Bolt\BoltForms\Config\AbstractCascadingBag;
+use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -30,6 +31,20 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class NotificationOptionsBag extends AbstractCascadingBag
 {
+    /**
+     * Constructor.
+     *
+     * @param array  $parameters
+     * @param Config $rootConfig
+     */
+    public function __construct(array $parameters = [], Config $rootConfig)
+    {
+        parent::__construct($parameters, $rootConfig);
+        if ($rootConfig->isDebug()) {
+            $this->set('debug', true);
+        }
+    }
+
     /**
      * @return boolean
      */
