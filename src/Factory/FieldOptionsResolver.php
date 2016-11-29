@@ -33,18 +33,22 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class FieldOptionsResolver extends ParameterBag
 {
-   /** @var array */
+    /** @var string */
+    private $type;
+    /** @var array */
     private $baseOptions;
 
     /**
      * Constructor.
      *
-     * @param array $parameters
+     * @param string $type
+     * @param array  $parameters
      */
-    public function __construct(array $parameters)
+    public function __construct($type, array $parameters)
     {
         parent::__construct();
 
+        $this->type = $type;
         $this->baseOptions = $parameters;
     }
 
@@ -72,7 +76,7 @@ class FieldOptionsResolver extends ParameterBag
     protected function initialise(EntityManager $storage, EventDispatcherInterface $dispatcher)
     {
         $options = (array) $this->baseOptions;
-        if ($this->get('type') === 'choice') {
+        if ($this->type === 'choice') {
             $options = $this->resolveChoiceOptions($options, $storage, $dispatcher);
         }
 
@@ -113,7 +117,7 @@ class FieldOptionsResolver extends ParameterBag
             'preferred_choices' => $choiceObj->getPreferredChoices(),
         ];
 
-        $this->options = array_merge($options, $choiceOptions);
+        $options = array_merge($options, $choiceOptions);
 
         unset($options['params']);
 
