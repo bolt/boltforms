@@ -42,6 +42,7 @@ class NotificationOptionsBag extends AbstractCascadingBag
         parent::__construct($parameters, $rootConfig);
         if ($rootConfig->isDebug()) {
             $this->set('debug', true);
+            $this->set('debug_address', $rootConfig->getDebugAddress());
         }
     }
 

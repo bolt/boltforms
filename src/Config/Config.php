@@ -121,7 +121,7 @@ class Config extends ParameterBag
      */
     public function getDebugAddress()
     {
-        return $this->get('debug')->getBoolean('address');
+        return $this->get('debug')->get('address');
     }
 
     /**
