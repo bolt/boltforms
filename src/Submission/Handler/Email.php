@@ -157,6 +157,11 @@ class Email extends AbstractHandler
         $fieldMap = $this->getConfig()->getFieldMap()->get('email');
 
         /*
+         * Build empty email
+         */
+        $this->emailMessage = SwiftMessage::newInstance();
+        
+        /*
          * Subject
          */
         $html = $this->twig->render($templateSubject, [
@@ -183,9 +188,9 @@ class Email extends AbstractHandler
         $text = strip_tags(preg_replace('/<style\\b[^>]*>(.*?)<\\/style>/s', '', $body));
 
         /*
-         * Build email
+         * Append email parts
          */
-        $this->emailMessage = SwiftMessage::newInstance()
+        $this->emailMessage
             ->addPart($body, 'text/html')
             ->setSubject($subject)
             ->setBody($text)
