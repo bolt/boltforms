@@ -91,7 +91,7 @@ class BoltFormsTwigExtension
             $this->config->addFormOverride($formName, $override);
         }
 
-        /** @var Helper\FormHelper $formHelper */
+        /** @var \Bolt\Extension\Bolt\BoltForms\Twig\Runtime\BoltFormsRuntime $formHelper */
         $formHelper = $this->app['boltforms.twig.helper']['form'];
         /** @var BoltForms $boltForms */
         $boltForms = $this->app['boltforms'];
@@ -205,7 +205,7 @@ class BoltFormsTwigExtension
     {
         /** @var RequestStack $requestStack */
         $requestStack = $this->app['request_stack'];
-        /** @var Helper\FormHelper $formHelper */
+        /** @var \Bolt\Extension\Bolt\BoltForms\Twig\Runtime\BoltFormsRuntime $formHelper */
         $formHelper = $this->app['boltforms.twig.helper']['form'];
         /** @var FlashBag $feedback */
         $feedback = $this->app['boltforms.feedback'];

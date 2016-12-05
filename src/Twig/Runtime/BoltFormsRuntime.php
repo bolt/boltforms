@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Twig\Helper;
+namespace Bolt\Extension\Bolt\BoltForms\Twig\Runtime;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
@@ -38,7 +38,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  * @license   http://opensource.org/licenses/LGPL-3.0 GNU Lesser General Public License 3.0
  */
-class FormHelper
+class BoltFormsRuntime
 {
     /** @var Config */
     private $config;

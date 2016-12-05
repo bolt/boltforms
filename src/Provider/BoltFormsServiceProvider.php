@@ -118,7 +118,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 return new Container([
                     'form' => $app->share(
                         function () use ($app) {
-                            return new Twig\Helper\FormHelper(
+                            return new Twig\Runtime\BoltFormsRuntime(
                                 $app['boltforms'],
                                 $app['boltforms.config'],
                                 $app['boltforms.processor'],
