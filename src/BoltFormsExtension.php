@@ -110,19 +110,6 @@ class BoltFormsExtension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
-    protected function registerTwigFunctions()
-    {
-        $app = $this->getContainer();
-
-        return [
-            'boltforms'         => [[$app['boltforms.twig'], 'twigBoltForms'], ['is_safe' => ['html'], 'is_safe_callback' => true]],
-            'boltforms_uploads' => [[$app['boltforms.twig'], 'twigBoltFormsUploads'], []],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function isSafe()
     {
         return true;

@@ -113,33 +113,41 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
     private function registerTwig(Application $app)
     {
-        $app['boltforms.twig.helper'] = $app->share(
-            function (Application $app) {
-                return new Container([
-                    'form' => $app->share(
-                        function () use ($app) {
-                            return new Twig\Runtime\BoltFormsRuntime(
-                                $app['boltforms'],
-                                $app['boltforms.config'],
-                                $app['boltforms.processor'],
-                                $app['boltforms.form.context.factory'],
-                                $app['boltforms.feedback'],
-                                $app['session'],
-                                $app['request_stack'],
-                                $app['logger.system']
-                            );
-                        }
-                    ),
-                ]);
+        $app['twig.runtime.boltforms'] = function ($app) {
+            return new Twig\Extension\BoltFormsRuntime(
+                $app['boltforms'],
+                $app['boltforms.config'],
+                $app['boltforms.processor'],
+                $app['boltforms.feedback'],
+                $app['boltforms.form.context.factory'],
+                $app['recapture.response.factory'],
+                $app['session'],
+                $app['request_stack'],
+                $app['logger.system'],
+                $app['url_generator'],
+                $app['extensions']->get('bolt/boltforms')->getWebDirectory()->getPath(),
+                $app['resources']->getPath('root')
+            );
+        };
+
+        $app['twig.runtimes'] = $app->extend(
+            'twig.runtimes',
+            function (array $runtimes) {
+                return $runtimes + [
+                    Twig\Extension\BoltFormsRuntime::class => 'twig.runtime.boltforms',
+                ];
             }
         );
 
-        $app['boltforms.twig'] = $app->share(
-            function ($app) {
-                $twig = new Twig\BoltFormsTwigExtension($app, $app['boltforms.config']);
+        $app['twig'] = $app->share(
+            $app->extend(
+                'twig',
+                function (\Twig_Environment $twig, $app) {
+                    $twig->addExtension(new Twig\Extension\BoltFormsExtension());
 
-                return $twig;
-            }
+                    return $twig;
+                }
+            )
         );
     }
 
