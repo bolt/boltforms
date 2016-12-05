@@ -71,8 +71,8 @@ class Fields extends AbstractProcessor
             $field = $formData->get($fieldName);
 
             // Handle file uploads
-            if ($field instanceof UploadedFile) {
-                $this->processFieldFile($fieldName, $lifeEvent, $field);
+            if ($field instanceof UploadedFile || (is_array($field) && $field[0] instanceof UploadedFile)) {
+                $this->processFileUploadField($fieldName, $lifeEvent, $field);
             }
 
             $fieldConf = $formConfig->getFields()->get($fieldName);
@@ -97,34 +97,36 @@ class Fields extends AbstractProcessor
     }
 
     /**
-     * @param string         $fieldName
-     * @param LifecycleEvent $lifeEvent
-     * @param UploadedFile   $field
+     * @param string                      $fieldName
+     * @param LifecycleEvent              $lifeEvent
+     * @param UploadedFile|UploadedFile[] $field
      *
      * @throws FileUploadException
      */
-    protected function processFieldFile($fieldName, LifecycleEvent $lifeEvent, UploadedFile $field)
+    protected function processFileUploadField($fieldName, LifecycleEvent $lifeEvent, $field)
     {
-        if (!$field->isValid()) {
-            throw new FileUploadException($field->getErrorMessage(), $field->getErrorMessage(), 0, null, false);
-        }
-
-        $formConfig = $lifeEvent->getFormConfig();
-        $formData = $lifeEvent->getFormData();
-
-        // Get the upload object
-        /** @var Upload $fileHandler */
-        $fileHandler = $this->handlers['upload']($formConfig, $field);
-        $formData->set($fieldName, $fileHandler);
-
         if (!$this->config->getUploads()->get('enabled')) {
             $this->message('File upload skipped as the administrator has disabled uploads for all forms.',  Processor::FEEDBACK_DEBUG, LogLevel::ERROR);
 
             return;
         }
 
-        $fileHandler->move();
-        $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()),  Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
+        $formConfig = $lifeEvent->getFormConfig();
+        $formData = $lifeEvent->getFormData();
+        $fields = is_array($field) ? $field : [$field];
+        foreach ($fields as $upload) {
+            if (!$upload->isValid()) {
+                throw new FileUploadException($upload->getErrorMessage(), $upload->getErrorMessage(), 0, null, false);
+            }
+
+            // Get the upload object
+            /** @var Upload $fileHandler */
+            $fileHandler = $this->handlers['upload']($formConfig, $upload);
+            $formData->set($fieldName, $fileHandler);
+
+            $fileHandler->move();
+            $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()),  Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
+        }
     }
 
     /**
