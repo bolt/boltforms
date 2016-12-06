@@ -5,14 +5,14 @@ Choice Fields
 Simple Choice Selection
 -----------------------
 
-```
+```yaml
     choice_simple:
         type: choice
         options:
             label: A very simple choice
             choices: { 'Item One': 'item_1', 'Item Two': 'item_2' }
 ```
-```
+```yaml
     group_simple:
         type: choice
         options:
@@ -67,7 +67,7 @@ To use ContentType records for choice data, you need to specify a `params:` key 
 
 Other parameters are optional.
 
-```
+```yaml
     contenttype_choice:
         type: choice
         options:
@@ -92,7 +92,7 @@ PHP Class Choices
 Choice data can be supplied via PHP objects. Examples of these object classes
 can be seen [in the examples directory](../example/Choice)
 
-```
+```yaml
     choice_traversable_choices_class:
         type: choice
         options:
@@ -102,7 +102,7 @@ can be seen [in the examples directory](../example/Choice)
             choice_label: Example\StaticChoice::choiceLabel
 ```
 
-```
+```yaml
     choice_static_choices_class:
         type: choice
         options:
@@ -112,7 +112,7 @@ can be seen [in the examples directory](../example/Choice)
             choice_label: Example\StaticChoice::choiceLabel
 ```
 
-```
+```yaml
     choice_with_attrib:
         type: choice
         options:
@@ -122,7 +122,8 @@ can be seen [in the examples directory](../example/Choice)
             choice_label: Example\StaticChoice::choiceLabel
             choice_attr: Example\StaticChoice::choiceAttr
 ```
-```
+
+```yaml
     choice_group_callouts:
         type: choice
         options:
@@ -133,7 +134,7 @@ can be seen [in the examples directory](../example/Choice)
             group_by: Example\StaticChoice::groupBy
 ```
 
-```
+```yaml
     choice_group_callouts_preferred_choices:
         type: choice
         options:
@@ -145,7 +146,7 @@ can be seen [in the examples directory](../example/Choice)
             multiple: false
 ```
 
-```
+```yaml
     choice_group_callouts_preferred_choices:
         type: choice
         options:
