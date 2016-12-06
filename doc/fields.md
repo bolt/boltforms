@@ -102,15 +102,11 @@ Secondly, is the "filename_handling" parameter. If an attacker knows the
 uploaded file name, this can make their job a bit easier. So we provide three
 options, e.g. uploading the file kitten.jpg:
 
-```
--------------------------------------
-| Setting | Resulting file name     |
-|-----------------------------------|
-| prefix  | kitten.Ze1d352rrI3p.jpg |
-| suffix  | kitten.jpg.Ze1d352rrI3p |
-| keep    | kitten.jpg              |
--------------------------------------
-```
+| Setting   | Resulting file name     |
+|-----------|-------------------------|
+| `prefix`  | kitten.Ze1d352rrI3p.jpg |
+| `suffix`  | kitten.jpg.Ze1d352rrI3p |
+| `keep`    | kitten.jpg              |
 
 We recommend "suffix" as this is the most secure, alternatively "prefix" will
 aid in file browsing. However "keep" should always be used with caution!
