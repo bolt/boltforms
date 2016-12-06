@@ -149,7 +149,7 @@ Use the option `label: false` to hide the field from the html output.
 
 ### Hidden Field Data Providers
 
-**NOTE:** These filed values are set upon successful submission of the form, not during render!
+**Note:** These filed values are set upon successful submission of the form, not during render!
 
 BoltForms allows you to specify, and customise, certain input data upon form
 submission. 
