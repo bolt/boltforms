@@ -8,7 +8,7 @@ You can safely remove, or comment out, this form if you don't need
 it. But it is a handy first place to look, this file will be located at
 `app/config/extensions/boltforms.bolt.yml`.
 
-**NOTE:**
+**Note:**
 When first installed, BoltForms defaults to turning debugging on in the
 configuration.  This should be turned off when deployed in production.
 
@@ -29,7 +29,7 @@ email addresses, the minimum list shown below.
 Then we define two fields; a `comment` field that allows text entry, and
 the `submit` button.
 
-```
+```yaml
 anonymous-comments:
     notification:
         enabled: true

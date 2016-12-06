@@ -78,6 +78,7 @@ record lookups & event based lookups.
               choices: event::my.custom.event
 ```
 
+**Note:** If you use the `array_assoc` style, the choices are inverted compared to the select fields in Bolt contenttypes.
 
 For more information on this field type, see the [choice fields documentation](fields/choice.md)
 
@@ -101,13 +102,11 @@ Secondly, is the "filename_handling" parameter. If an attacker knows the
 uploaded file name, this can make their job a bit easier. So we provide three
 options, e.g. uploading the file kitten.jpg:
 
--------------------------------------
-| Setting | Resulting file name     |
-|-----------------------------------|
-| prefix  | kitten.Ze1d352rrI3p.jpg |
-| suffix  | kitten.jpg.Ze1d352rrI3p |
-| keep    | kitten.jpg              |
--------------------------------------
+| Setting   | Resulting file name     |
+|-----------|-------------------------|
+| `prefix`  | kitten.Ze1d352rrI3p.jpg |
+| `suffix`  | kitten.jpg.Ze1d352rrI3p |
+| `keep`    | kitten.jpg              |
 
 We recommend "suffix" as this is the most secure, alternatively "prefix" will
 aid in file browsing. However "keep" should always be used with caution!
@@ -146,7 +145,7 @@ Use the option `label: false` to hide the field from the html output.
 
 ### Hidden Field Data Providers
 
-**NOTE:** These filed values are set upon successful submission of the form, not during render!
+**Note:** These filed values are set upon successful submission of the form, not during render!
 
 BoltForms allows you to specify, and customise, certain input data upon form
 submission. 

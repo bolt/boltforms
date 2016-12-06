@@ -12,7 +12,7 @@ and a set of value keys:
 
 An example would be:
 
-```
+```twig
 {{ boltforms('my_form', 
     meta = {
         'name': {
