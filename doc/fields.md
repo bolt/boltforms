@@ -78,6 +78,7 @@ record lookups & event based lookups.
               choices: event::my.custom.event
 ```
 
+**Note:** If you use the `array_assoc` style, the choices are inverted compared to the select fields in Bolt contenttypes.
 
 For more information on this field type, see the [choice fields documentation](fields/choice.md)
 
