@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\BoltForms\Factory;
 use Bolt\Extension\Bolt\BoltForms\Submission;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\DynamicDataSubscriber;
 use Bolt\Extension\Bolt\BoltForms\Twig;
+use Bolt\Version as BoltVersion;
 use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -113,6 +114,19 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 
     private function registerTwig(Application $app)
     {
+        if (version_compare(BoltVersion::forComposer(), '3.3.0', '<')) {
+            if (!isset($app['twig.runtimes'])) {
+                $app['twig.runtimes'] = function () {
+                    return [];
+                };
+            }
+            if (!isset($app['twig.runtime_loader'])) {
+                $app['twig.runtime_loader'] = function ($app) {
+                    return new Twig\RuntimeLoader($app, $app['twig.runtimes']);
+                };
+            }
+        }
+
         $app['twig.runtime.boltforms'] = function ($app) {
             return new Twig\Extension\BoltFormsRuntime(
                 $app['boltforms'],
@@ -144,6 +158,10 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 'twig',
                 function (\Twig_Environment $twig, $app) {
                     $twig->addExtension(new Twig\Extension\BoltFormsExtension());
+
+                    if (version_compare(BoltVersion::forComposer(), '3.3.0', '<')) {
+                        $twig->addRuntimeLoader($app['twig.runtime_loader']);
+                    }
 
                     return $twig;
                 }
