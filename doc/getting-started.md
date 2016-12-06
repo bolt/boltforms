@@ -8,7 +8,7 @@ You can safely remove, or comment out, this form if you don't need
 it. But it is a handy first place to look, this file will be located at
 `app/config/extensions/boltforms.bolt.yml`.
 
-**Note:**
+**NOTE:**
 When first installed, BoltForms defaults to turning debugging on in the
 configuration.  This should be turned off when deployed in production.
 

@@ -28,7 +28,7 @@ form unless you have locked it.
 
 To lock the value, you may use the attribute `readonly: true`.
 
-**Note:** If you use a `value` the `placeholder` will not be used.
+**NOTE:** If you use a `value` the `placeholder` will not be used.
 
 ```yaml
     field_name:
@@ -78,7 +78,7 @@ record lookups & event based lookups.
               choices: event::my.custom.event
 ```
 
-**Note:** If you use the `array_assoc` style, the choices are inverted compared to the select fields in Bolt contenttypes.
+**NOTE:** If you use the `array_assoc` style, the choices are inverted compared to the select fields in Bolt contenttypes.
 
 For more information on this field type, see the [choice fields documentation](fields/choice.md)
 
@@ -145,7 +145,7 @@ Use the option `label: false` to hide the field from the html output.
 
 ### Hidden Field Data Providers
 
-**Note:** These filed values are set upon successful submission of the form, not during render!
+**NOTE:** These filed values are set upon successful submission of the form, not during render!
 
 BoltForms allows you to specify, and customise, certain input data upon form
 submission. 

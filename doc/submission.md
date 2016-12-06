@@ -19,7 +19,7 @@ The redirect is added to the `feedback` key of the form, for example:
             query: [ name, email ]     # Optional keys for the GET parameters
 ```
 
-**Note:**
+**NOTE:**
 * `target:` — Either a route in the form of `contenttype/slug` or a full URL
 * `query:` — (optional) Either an indexed, or associative array
   - `[ name, email ]` would create the query string `?name=value-of-name-field&email=value-of-email-field`
