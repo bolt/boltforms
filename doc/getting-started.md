@@ -16,7 +16,7 @@ When debugging is on, all outbound emails are sent to the configured debug
 email address.
 
 
-You First Form
+Your First Form
 --------------
 
 For a first form, let us use a simple "anonymous-comments" form as an example.
@@ -49,7 +49,7 @@ anonymous-comments:
 
 ### Template
 
-To render our anonymous comments form, we woul just place it in the required
+To render our anonymous comments form, we would just place it in the required
 location in the desired Twig template, e.g.:
 
 ```twig
