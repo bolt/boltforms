@@ -49,7 +49,7 @@ anonymous-comments:
 
 ### Template
 
-To render our anonymous comments form, we woul just place it in the required
+To render our anonymous comments form, we would just place it in the required
 location in the desired Twig template, e.g.:
 
 ```twig
