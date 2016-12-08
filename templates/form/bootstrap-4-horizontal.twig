@@ -10,15 +10,21 @@
 
 <div class="boltform">
 {% if debug %}
-    <p class="boltform-error">[Debug] Notification debug mode enabled!</p>
+    <div class="alert alert-info form-group">
+        <p class="boltform-error">[Debug] Notification debug mode enabled!</p>
+    </div>
 {% endif %}
 
 {% if error and app.request.get(formname) %}
-    <p class="boltform-error">{{ error }}</p>
+    <div class="alert alert-danger form-group">
+        <p class="boltform-error">{{ error }}</p>
+    </div>
 {% endif %}
 
 {% if message and app.request.get(formname) %}
-    <p class="boltform-message">{{ message }}</p>
+    <div class="alert alert-success form-group">
+        <p class="boltform-message">{{ message }}</p>
+    </div>
 {% endif %}
 
 {% if not sent %}
@@ -55,9 +61,11 @@
         {% if recaptcha.enabled %}
 
             {% if not recaptcha.valid %}
-            <ul class="boltform-error form-group">
-                <li class="boltform-errors">{{ recaptcha.error_message }}</li>
-            </ul>
+            <div class="alert alert-warning form-group">
+                <ul class="boltform-error">
+                    <li class="boltform-errors">{{ recaptcha.error_message }}</li>
+                </ul>
+            </div>
             {% endif %}
 
             <div class="boltform-row form-group">
