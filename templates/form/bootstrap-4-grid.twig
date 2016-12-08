@@ -67,12 +67,12 @@
         {% if recaptcha.enabled %}
 
             {% if not recaptcha.valid %}
-            <ul class="boltform-error">
+            <ul class="boltform-error form-group">
                 <li class="boltform-errors">{{ recaptcha.error_message }}</li>
             </ul>
             {% endif %}
 
-            <div class="boltform-row">
+            <div class="boltform-row form-group">
                 <label for="form_message" class="required">{{ recaptcha.label|trans({}, translation_domain) }}</label>
                 <script src="https://www.google.com/recaptcha/api.js?hl={{ htmllang() }}" async defer></script>
                 <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
