@@ -1,0 +1,84 @@
+{#
+ # Passed in variables:
+ #   webpath     - URI for the default web assets
+ #}
+{% form_theme form 'boltforms_custom.twig' %}
+
+{#
+    Note: You're expected to have Bootstrap 4 loaded externally!
+#}
+
+<div class="boltform">
+{% if debug %}
+    <p class="boltform-error">[Debug] Notification debug mode enabled!</p>
+{% endif %}
+
+{% if error and app.request.get(formname) %}
+    <p class="boltform-error">{{ error }}</p>
+{% endif %}
+
+{% if message and app.request.get(formname) %}
+    <p class="boltform-message">{{ message }}</p>
+{% endif %}
+
+{% if not sent %}
+
+    {{ html_pre }}
+
+    {% if recaptcha.enabled and recaptcha.theme|default('clean') %}
+    <script>
+        var RecaptchaOptions = {
+            theme : '{{ recaptcha.theme }}'
+        };
+    </script>
+    {% endif %}
+
+    {{ form_start(form, {'attr': {'name': formname}}) }}
+        {{ form_errors(form) }}
+        {% set attr = { 'attr': {'class': 'form-control' } } %}
+
+        {% for key, value in fields  %}
+            {% if value.config.name != 'submit' %}
+            <div class="boltforms-row form-group{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
+                <span class="boltforms-label">{{ form_label(form[key]) }}</span>
+                <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
+                {% set value = {} %}
+                {% if defaults[key]|default() %}
+                    {% set value = { 'value': defaults[key]|default() } %}
+                {% endif %}
+                {% set options = value|merge(attr) %}
+                <span class="boltforms-value">{{ form_widget(form[key], options) }}</span>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        {% if recaptcha.enabled %}
+
+            {% if not recaptcha.valid %}
+            <ul class="boltform-error">
+                <li class="boltform-errors">{{ recaptcha.error_message }}</li>
+            </ul>
+            {% endif %}
+
+            <div class="boltform-row">
+                <label for="form_message" class="required">{{ recaptcha.label|trans({}, translation_domain) }}</label>
+                <script src="https://www.google.com/recaptcha/api.js?hl={{ htmllang() }}" async defer></script>
+                <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
+            </div>
+
+        {% endif %}
+
+        {% set attr = { 'attr': { 'class': 'btn btn-primary' } } %}
+        {% if form.submit.vars.attr.class is defined %}
+            {% set attr = { 'attr': { 'class': form.submit.vars.attr.class } } %}
+        {% endif %}
+        <div class="boltforms-row{% if form.submit.vars.attr.class is defined %} boltforms-{{ form.submit.vars.attr.class }}-row{% endif %}">
+            {{ form_widget(form.submit, attr) }}
+        </div>
+
+    {{ form_end(form) }}
+
+{% else %}
+    {{ html_post }}
+{% endif %}
+</div>

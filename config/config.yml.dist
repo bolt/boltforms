@@ -325,3 +325,29 @@ contact:
 #                label: Submit my message &raquo;
 #                attr:
 #                    class: button primary
+
+## Example Bootstrap 4 form
+#
+#register:
+#    fields:
+#        name:
+#            type: text
+#            options:
+#                label: Name
+#                attr:
+#                    # These match up with the bootstrap grid classes, allowing you to customize the sizing of your form
+#                    # Note: ONLY when using the columns template!
+#                    labelclass: col-sm-3
+#                    inputclass: col-sm-9
+#        email:
+#            type: email
+#            options:
+#                label: Email
+#        submit:
+#            type: submit
+#            options:
+#                label: Subscribe
+#                # By default, the button uses the classes "btn btn-primary" which can be changed below
+#                attr:
+#                    class: 'btn btn-secondary'
+#
