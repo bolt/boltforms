@@ -135,6 +135,7 @@ class BoltFormsExtension extends SimpleExtension
             'templates' => [
                 'ajax'       => '@BoltForms/asset/_ajax.twig',
                 'css'        => '@BoltForms/asset/_css.twig',
+                'js'         => '@BoltForms/asset/_js.twig',
                 'email'      => '@BoltForms/email/email.twig',
                 'subject'    => '@BoltForms/email/_subject.twig',
                 'messages'   => '@BoltForms/feedback/_messages.twig',

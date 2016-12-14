@@ -72,6 +72,26 @@ class TemplateOptionsBag extends AbstractCascadingBag
     /**
      * @return string
      */
+    public function getJs()
+    {
+        return $this->getHierarchicalValue('js');
+    }
+
+    /**
+     * @param string $js
+     *
+     * @return TemplateOptionsBag
+     */
+    public function setJs($js)
+    {
+        $this->set('js', $js);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getEmail()
     {
         return $this->getHierarchicalValue('email');
