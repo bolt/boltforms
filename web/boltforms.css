@@ -36,3 +36,7 @@ p.boltform-message {
     color: #468847;
     background-color: #DFF0D8;
 }
+
+.boltforms-preview-image {
+    display: inline-block;
+}
