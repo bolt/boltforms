@@ -19,7 +19,11 @@ var $handleImage = function (file, preview) {
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0, img.width, img.height);
 
-            preview.appendChild(img);
+            var upload = document.createElement('div');
+            upload.className = 'boltforms-preview-image';
+            upload.appendChild(img);
+
+            preview.appendChild(upload);
         }
     };
     reader.readAsDataURL(file);
