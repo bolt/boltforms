@@ -1,12 +1,25 @@
+{# Widgets #}
 
-{% block form_errors %}
-    {% spaceless %}
-        {% if errors|length > 0 %}
+{%- block form_widget_simple -%}
+    {%- set type = type|default('text') -%}
+    {%- if type != 'file' -%}
+        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+    {%- else -%}
+        {%- set html_id = 'handleFiles(this.files, "boltforms_preview_' ~ id ~ '")' -%}
+        {%- set attr = attr|merge({'onChange': html_id}) -%}
+        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+        <div class="boltforms-preview" id="boltforms_preview_{{ id }}"></div>
+    {%- endif -%}
+{%- endblock form_widget_simple -%}
+
+{# Misc #}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
         <ul class="boltform-error">
-            {% for error in errors %}
+            {%- for error in errors -%}
                 <li class="boltform-error">{{ error.message }}</li>
-            {% endfor %}
+            {%- endfor -%}
         </ul>
-        {% endif %}
-    {% endspaceless %}
-{% endblock form_errors %}
+    {%- endif -%}
+{%- endblock form_errors -%}
