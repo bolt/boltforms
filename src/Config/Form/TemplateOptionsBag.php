@@ -214,7 +214,7 @@ class TemplateOptionsBag extends AbstractCascadingBag
      */
     public function getFormTheme()
     {
-        return $this->getHierarchicalValue('formtheme');
+        return $this->getHierarchicalValue('form_theme');
     }
 
     /**
@@ -224,7 +224,7 @@ class TemplateOptionsBag extends AbstractCascadingBag
      */
     public function setFormTheme($formTheme)
     {
-        $this->set('formtheme', $formTheme);
+        $this->set('form_theme', $formTheme);
 
         return $this;
     }
