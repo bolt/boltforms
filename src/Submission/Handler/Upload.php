@@ -6,10 +6,10 @@ use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
+use Bolt\Extension\Bolt\BoltForms\Submission\File;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
@@ -150,7 +150,7 @@ class Upload
         }
         $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
 
-        return new File($this->fullPath);
+        return new File($this->fullPath, true, $this->config->getUploads()->getBaseDirectory());
     }
 
     /**
