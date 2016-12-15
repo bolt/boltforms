@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
@@ -133,7 +134,7 @@ class Upload
      *
      * @throws FileUploadException
      *
-     * @return true
+     * @return File
      */
     public function move()
     {
@@ -149,7 +150,7 @@ class Upload
         }
         $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
 
-        return true;
+        return new File($this->fullPath);
     }
 
     /**

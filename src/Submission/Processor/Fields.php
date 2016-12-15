@@ -114,19 +114,22 @@ class Fields extends AbstractProcessor
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
         $fields = is_array($field) ? $field : [$field];
-        foreach ($fields as $upload) {
+        $handlerFactory = $this->handlers['upload'];
+        foreach ($fields as $index => $upload) {
             if (!$upload->isValid()) {
                 throw new FileUploadException($upload->getErrorMessage(), $upload->getErrorMessage(), 0, null, false);
             }
 
-            // Get the upload object
             /** @var Upload $fileHandler */
-            $fileHandler = $this->handlers['upload']($formConfig, $upload);
-            $formData->set($fieldName, $fileHandler);
+            $fileHandler = $handlerFactory($formConfig, $upload);
+            // Get the upload object
+            $fields[$index] = $fileHandler->move();
 
-            $fileHandler->move();
             $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()),  Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
         }
+
+        // Update the stored for data, depending on how we started
+        $formData->set($fieldName, is_array($field) ? $fields : reset($fields));
     }
 
     /**
