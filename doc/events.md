@@ -41,9 +41,12 @@ Listener's will be passed an event parameter that is an
 
 ##### BoltFormsEvents::SUBMISSION_PROCESS_FIELDS
 
-The internal listener for this event does the processing of fields, currently
-uploads and custom data events and handled here.
+The internal listener for this event does the processing of fields, custom data
+events and handled here.
 
+#### BoltFormsEvents::SUBMISSION_PROCESS_UPLOADS
+
+The internal listener for this event does the processing of uploads.
 
 ##### BoltFormsEvents::SUBMISSION_PROCESS_DATABASE
 

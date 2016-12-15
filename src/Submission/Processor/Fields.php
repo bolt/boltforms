@@ -8,12 +8,8 @@ use Bolt\Extension\Bolt\BoltForms\Event\CustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
-use Bolt\Extension\Bolt\BoltForms\Submission\Handler\Upload;
-use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Pimple as Container;
-use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Submission processor file value processing.
@@ -68,13 +64,6 @@ class Fields extends AbstractProcessor
         $formData = $lifeEvent->getFormData();
 
         foreach ($formData->keys() as $fieldName) {
-            $field = $formData->get($fieldName);
-
-            // Handle file uploads
-            if ($field instanceof UploadedFile || (is_array($field) && $field[0] instanceof UploadedFile)) {
-                $this->processFileUploadField($fieldName, $lifeEvent, $field);
-            }
-
             $fieldConf = $formConfig->getFields()->get($fieldName);
             if ($fieldConf === null && $this->config->isDebug()) {
                 $message = sprintf(
@@ -94,42 +83,6 @@ class Fields extends AbstractProcessor
                 $formData->set($fieldName, $this->dispatchCustomDataEvent($dispatcher, $fieldConf->getOptions()->get('event')));
             }
         }
-    }
-
-    /**
-     * @param string                      $fieldName
-     * @param LifecycleEvent              $lifeEvent
-     * @param UploadedFile|UploadedFile[] $field
-     *
-     * @throws FileUploadException
-     */
-    protected function processFileUploadField($fieldName, LifecycleEvent $lifeEvent, $field)
-    {
-        if (!$this->config->getUploads()->get('enabled')) {
-            $this->message('File upload skipped as the administrator has disabled uploads for all forms.',  Processor::FEEDBACK_DEBUG, LogLevel::ERROR);
-
-            return;
-        }
-
-        $formConfig = $lifeEvent->getFormConfig();
-        $formData = $lifeEvent->getFormData();
-        $fields = is_array($field) ? $field : [$field];
-        $handlerFactory = $this->handlers['upload'];
-        foreach ($fields as $index => $upload) {
-            if (!$upload->isValid()) {
-                throw new FileUploadException($upload->getErrorMessage(), $upload->getErrorMessage(), 0, null, false);
-            }
-
-            /** @var Upload $fileHandler */
-            $fileHandler = $handlerFactory($formConfig, $upload);
-            // Get the upload object
-            $fields[$index] = $fileHandler->move();
-
-            $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()),  Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
-        }
-
-        // Update the stored for data, depending on how we started
-        $formData->set($fieldName, is_array($field) ? $fields : reset($fields));
     }
 
     /**

@@ -105,6 +105,7 @@ class Processor implements EventSubscriberInterface
     {
         return [
             BoltFormsEvents::SUBMISSION_PROCESS_FIELDS      => ['onProcessLifecycleEvent', 0],
+            BoltFormsEvents::SUBMISSION_PROCESS_UPLOADS     => ['onProcessLifecycleEvent', 0],
             BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE => ['onProcessLifecycleEvent', 0],
             BoltFormsEvents::SUBMISSION_PROCESS_DATABASE    => ['onProcessLifecycleEvent', 0],
             BoltFormsEvents::SUBMISSION_PROCESS_EMAIL       => ['onProcessLifecycleEvent', 0],
@@ -124,6 +125,7 @@ class Processor implements EventSubscriberInterface
     {
         $map = [
             BoltFormsEvents::SUBMISSION_PROCESS_FIELDS      => 'fields',
+            BoltFormsEvents::SUBMISSION_PROCESS_UPLOADS     => 'uploads',
             BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE => 'content',
             BoltFormsEvents::SUBMISSION_PROCESS_DATABASE    => 'database',
             BoltFormsEvents::SUBMISSION_PROCESS_EMAIL       => 'email',
@@ -213,6 +215,7 @@ class Processor implements EventSubscriberInterface
 
         // Prepare fields
         $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_FIELDS, $lifeEvent);
+        $this->dispatch(BoltFormsEvents::SUBMISSION_PROCESS_UPLOADS, $lifeEvent);
 
         // Process
         if ($formConfig->getDatabase()->getContentType()) {

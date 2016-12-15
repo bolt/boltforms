@@ -43,6 +43,7 @@ final class BoltFormsEvents
     const SUBMISSION_POST_PROCESSOR = 'boltforms.submission_post_processor';
 
     const SUBMISSION_PROCESS_FIELDS = 'boltforms.submission_process_fields';
+    const SUBMISSION_PROCESS_UPLOADS = 'boltforms.submission_process_uploads';
     const SUBMISSION_PROCESS_CONTENTTYPE = 'boltforms.submission_process_contenttype';
     const SUBMISSION_PROCESS_DATABASE = 'boltforms.submission_process_database';
     const SUBMISSION_PROCESS_EMAIL = 'boltforms.submission_process_email';
