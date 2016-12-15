@@ -160,7 +160,7 @@ class Email extends AbstractHandler
          * Build empty email
          */
         $this->emailMessage = SwiftMessage::newInstance();
-        
+
         /*
          * Subject
          */
@@ -215,10 +215,10 @@ class Email extends AbstractHandler
             $fieldConfig = $formConfig->getFields()->{$fieldName}();
             $formValue = $formData->get($fieldName);
 
-            if ($formData->get($fieldName) instanceof Upload) {
-                if ($formData->get($fieldName)->isValid() && $emailConfig->attachFiles()) {
-                    $fromPath = $formData->get($fieldName)->fullPath();
-                    $fileName = $formData->get($fieldName)->getFile()->getClientOriginalName();
+            if ($formValue instanceof Upload) {
+                if ($formValue->isValid() && $emailConfig->attachFiles()) {
+                    $fromPath = $formValue->fullPath();
+                    $fileName = $formValue->getFile()->getClientOriginalName();
                     $attachment = \Swift_Attachment::fromPath($fromPath)->setFilename($fileName);
                     $this->getEmailMessage()->attach($attachment);
                 }
@@ -227,7 +227,7 @@ class Email extends AbstractHandler
                 $bodyData[$fieldName] = sprintf(
                     '<a href"%s">%s</a>',
                     $this->urlGenerator->generate('BoltFormsDownload', ['file' => $relativePath], UrlGeneratorInterface::ABSOLUTE_URL),
-                    $formData->get($fieldName)->getFile()->getClientOriginalName()
+                    $formValue->getFile()->getClientOriginalName()
                 );
             } elseif ($fieldConfig->get('type') === 'choice') {
                 $options = $fieldConfig->getOptions();

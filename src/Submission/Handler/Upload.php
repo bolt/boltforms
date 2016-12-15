@@ -85,7 +85,7 @@ class Upload
     /**
      * Get the uploaded file object.
      *
-     * @return \Symfony\Component\HttpFoundation\File\File
+     * @return UploadedFile
      */
     public function getFile()
     {
