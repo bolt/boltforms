@@ -53,8 +53,6 @@ class Upload
     /** @var string */
     private $fullPath;
     /** @var boolean */
-    private $valid;
-    /** @var boolean */
     private $final;
 
     /**
@@ -71,10 +69,6 @@ class Upload
         $this->formConfig = $formConfig;
         $this->file = $file;
         $this->feedback = $feedback;
-
-        $this->fullPath = (string) $file;
-        $this->fileName = basename($this->fullPath);
-        $this->valid = $file->isValid();
     }
 
     public function __toString()
@@ -99,7 +93,7 @@ class Upload
      */
     public function isValid()
     {
-        return $this->valid;
+        return $this->file->isValid();
     }
 
     /**
@@ -109,7 +103,7 @@ class Upload
      */
     public function fullPath()
     {
-        return $this->fullPath;
+        return (string) $this->fullPath;
     }
 
     /**
@@ -163,8 +157,6 @@ class Upload
      * and exist.
      *
      * @throws FileUploadException
-     *
-     * @return boolean
      */
     protected function checkDirectories()
     {
