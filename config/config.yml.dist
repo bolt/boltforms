@@ -35,7 +35,7 @@ csrf: true
 #templates:
 #    form: extensions/boltforms/form.twig
 #    email: extensions/boltforms/email.twig
-#    subject: extensions/boltforms/_subject.twig
+#    subject: extensions/boltforms/subject.twig
 #    files: extensions/boltforms/file_browser.twig
 
 ## reCAPTCHa set up
@@ -173,7 +173,7 @@ contact:
 #    templates:                      # Over ride the global Twig templates for this form
 #        form: extensions/boltforms/form.twig
 #        email: extensions/boltforms/email.twig
-#        subject: extensions/boltforms/_subject.twig
+#        subject: extensions/boltforms/subject.twig
 #        files: extensions/boltforms/file_browser.twig
 #    feedback:
 #        success: Form submission sucessful

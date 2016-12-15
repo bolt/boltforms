@@ -20,7 +20,7 @@ match, e.g.:
     templates:
         form:    my_sub_directory/form.twig
         email:   my_sub_directory/email.twig
-        subject: my_sub_directory/_subject.twig
+        subject: my_sub_directory/subject.twig
         files:   my_sub_directory/file_browser.twig
 ```
 
