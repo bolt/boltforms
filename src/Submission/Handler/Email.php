@@ -234,7 +234,7 @@ class Email extends AbstractHandler
                 $options = $fieldConfig->getOptions();
                 $bodyData[$fieldName] = $options->get($fieldName, $formValue);
             } else {
-                $bodyData[$fieldName] = $formData->get($fieldName, true);
+                $bodyData[$fieldName] = $formData->get($fieldName, null, true);
             }
         }
 

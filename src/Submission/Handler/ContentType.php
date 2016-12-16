@@ -61,7 +61,7 @@ class ContentType extends AbstractHandler
 
         foreach ($formData->keys() as $name) {
             // Store the data array into the record
-            $data = $formData->get($name, false);
+            $data = $formData->get($name);
             $record->set($name, $data);
         }
 

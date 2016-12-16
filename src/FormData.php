@@ -45,12 +45,12 @@ class FormData extends ParameterBag
      * Get a POST value.
      *
      * @param string  $name
-     * @param boolean $transform
      * @param mixed   $default
+     * @param boolean $transform
      *
      * @return mixed
      */
-    public function get($name, $transform = false, $default = null)
+    public function get($name, $default = null, $transform = false)
     {
         if ($transform === false) {
             return array_key_exists($name, $this->parameters) ? $this->parameters[$name] : $default;

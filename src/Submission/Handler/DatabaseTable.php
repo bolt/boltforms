@@ -62,7 +62,7 @@ class DatabaseTable extends AbstractHandler
             // have fields in your table that are not in the form eg. an auto
             // increment id field of a field to track status of a submission
             if ($formData->has($colName)) {
-                $saveData[$colName] = $formData->get($colName, true);
+                $saveData[$colName] = $formData->get($colName, null, true);
             }
 
             // Add any meta values that are requested for 'database' use
