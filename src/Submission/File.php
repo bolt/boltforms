@@ -63,7 +63,8 @@ class File extends HttpFile implements ArrayAccess, JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'filename' => $this->getRelativePath(),
+            'file'     => $this->getRelativePath(), // images
+            'filename' => $this->getRelativePath(), // image lists
             'title'    => $this->getFilename(),
             'basepath' => $this->baseDir,
         ];
