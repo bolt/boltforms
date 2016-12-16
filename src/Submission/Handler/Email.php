@@ -18,6 +18,7 @@ use Swift_TransportException as SwiftTransportException;
 use Symfony\Component\Console\Helper;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig_Environment as TwigEnvironment;
@@ -215,21 +216,21 @@ class Email extends AbstractHandler
             $fieldConfig = $formConfig->getFields()->{$fieldName}();
             $formValue = $formData->get($fieldName);
 
-            if ($formValue instanceof Upload) {
-                if ($formValue->isValid() && $emailConfig->attachFiles()) {
-                    $fromPath = $formValue->fullPath();
-                    $fileName = $formValue->getFile()->getClientOriginalName();
-                    $attachment = \Swift_Attachment::fromPath($fromPath)->setFilename($fileName);
-                    $this->getEmailMessage()->attach($attachment);
+            $type = $fieldConfig->get('type');
+            if ($type === 'file') {
+                $files = (array) $formValue;
+                if ($emailConfig->attachFiles()) {
+                    $this->attachFiles($files);
                 }
-                $relativePath = $formData->get($fieldName, true);
 
-                $bodyData[$fieldName] = sprintf(
-                    '<a href"%s">%s</a>',
-                    $this->urlGenerator->generate('BoltFormsDownload', ['file' => $relativePath], UrlGeneratorInterface::ABSOLUTE_URL),
-                    $formValue->getFile()->getClientOriginalName()
-                );
-            } elseif ($fieldConfig->get('type') === 'choice') {
+                /** @var \Bolt\Extension\Bolt\BoltForms\Submission\File $file */
+                foreach ($files as $file) {
+                    $relativePath = $file->getRelativePath();
+                    $fileName = $file->getFilename();
+                    $link = $this->urlGenerator->generate('BoltFormsDownload', ['file' => $relativePath], UrlGeneratorInterface::ABSOLUTE_URL);
+                    $bodyData[$fieldName][$fileName] = $link;
+                }
+            } elseif ($type === 'choice') {
                 $options = $fieldConfig->getOptions();
                 $bodyData[$fieldName] = $options->get($fieldName, $formValue);
             } else {
@@ -238,6 +239,23 @@ class Email extends AbstractHandler
         }
 
         return $bodyData;
+    }
+
+    /**
+     * Attach uploaded files to the message body.
+     *
+     * @param File[] $formValues
+     */
+    private function attachFiles(array $formValues)
+    {
+        /** @var File $uploadedFile */
+        foreach ($formValues as $uploadedFile)
+        {
+            $fromPath = $uploadedFile->getPath();
+            $fileName = $uploadedFile->getBasename();
+            $attachment = \Swift_Attachment::fromPath($fromPath)->setFilename($fileName);
+            $this->getEmailMessage()->attach($attachment);
+        }
     }
 
     /**
