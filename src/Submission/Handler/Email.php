@@ -218,9 +218,9 @@ class Email extends AbstractHandler
 
             $type = $fieldConfig->get('type');
             if ($type === 'file') {
-                $files = (array) $formValue;
+                $files = $formValue;
                 if ($emailConfig->attachFiles()) {
-                    $this->attachFiles($files);
+                    $this->setFileAttachments($files);
                 }
 
                 /** @var \Bolt\Extension\Bolt\BoltForms\Submission\File $file */
@@ -244,18 +244,36 @@ class Email extends AbstractHandler
     /**
      * Attach uploaded files to the message body.
      *
-     * @param File[] $formValues
+     * @param File|File[] $formValues
      */
-    private function attachFiles(array $formValues)
+    private function setFileAttachments($formValues)
     {
+        if ($formValues instanceof File) {
+            $this->attachFile($formValues);
+
+            return;
+        }
+
         /** @var File $uploadedFile */
         foreach ($formValues as $uploadedFile)
         {
-            $fromPath = $uploadedFile->getPath();
-            $fileName = $uploadedFile->getBasename();
-            $attachment = \Swift_Attachment::fromPath($fromPath)->setFilename($fileName);
-            $this->getEmailMessage()->attach($attachment);
+            if ($uploadedFile instanceof File) {
+                $this->attachFile($uploadedFile);
+            }
         }
+    }
+
+    /**
+     * Attach a single uploaded file to the message body.
+     *
+     * @param File $uploadedFile
+     */
+    private function attachFile(File $uploadedFile)
+    {
+        $fromPath = $uploadedFile->getPath();
+        $fileName = $uploadedFile->getBasename();
+        $attachment = \Swift_Attachment::fromPath($fromPath)->setFilename($fileName);
+        $this->getEmailMessage()->attach($attachment);
     }
 
     /**
