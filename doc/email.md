@@ -47,7 +47,7 @@ them after the request has been sent to the client.
 
 ### Viewing Queued Messages
 
-Queued messages can be viewed but running the following `nut` command: `.app/nut email:spool --show` 
+Queued messages can be viewed but running the following `nut` command: `./app/nut email:spool --show` 
 
 Which will output a table of queued emails similar to:
 
