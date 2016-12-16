@@ -2,33 +2,15 @@
  # Passed in variables:
  #   fields   — Field data from the form configuration
  #   config   — Email configuration data
- #   data     — Posted data
+ #   data     — POSTed data
  #   metadata — Form meta data
  #}
-{% import templates.macros as macros %}
 <p>Hi,</p>
 
 <p>Somebody used the form on {{ paths.currenturl }} to send you a message.</p>
 
 <p>The posted data is as follows:</p>
 <hr>
-{%- for fieldname, value in data %}
-    {% if value is json %}{% set value = value|json_decode %}{% endif -%}
-    {% set field = attribute(fields, fieldname) %}
-    {% set label = field.options.label|default(fieldname) %}
-    {% if label is empty -%}
-{{ macros.label_value(label, value) }}
-    {%- else -%}
-        {%- if value is iterable -%}
-<p>
-{{ macros.label(label) }}
-{{ macros.label_array(label, value) }}
-</p>
-        {%- else %}
-{{ macros.label_value(label, value) }}
-        {%- endif -%}
-    {% endif -%}
-{%- endfor -%}
-
+{{ block('submission_summary', '@BoltForms/email/_blocks.twig') }}
 <hr>
 <em>Sent by the <a href="https://github.com/bolt/boltforms">BoltForms</a> extension for <a href="https://bolt.cm">Bolt</a>.</em>
