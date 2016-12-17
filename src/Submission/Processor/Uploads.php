@@ -139,18 +139,18 @@ class Uploads extends AbstractProcessor
      */
     protected function processFileUploadField(LifecycleEvent $lifeEvent, UploadedFile $field)
     {
-        $formConfig = $lifeEvent->getFormConfig();
-        $handlerFactory = $this->handlers['upload'];
         if (!$field->isValid()) {
             throw new FileUploadException($field->getErrorMessage(), $field->getErrorMessage(), 0, null, false);
         }
 
+        $formConfig = $lifeEvent->getFormConfig();
+        $handlerFactory = $this->handlers['upload'];
         /** @var Upload $fileHandler */
         $fileHandler = $handlerFactory($formConfig, $field);
 
         // Get the upload object
         $file = $fileHandler->move();
-        $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()),  Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
+        $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()), Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
 
         return $file;
     }
