@@ -51,6 +51,13 @@ final class BoltFormsEvents
     const SUBMISSION_PROCESS_REDIRECT = 'boltforms.submission_process_redirect';
 
     /*
+     * Shortcut priorities for processor event priority
+     */
+    const PRIORITY_EARLY = 128;
+    const PRIORITY_INTERNAL = 0;
+    const PRIORITY_LATE = -128;
+
+    /*
      * Custom data events
      */
     const DATA_NEXT_INCREMENT = 'boltforms.next_increment';
