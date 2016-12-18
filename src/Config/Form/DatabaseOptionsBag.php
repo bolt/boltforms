@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Config\Form;
 
+use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -30,6 +31,18 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class DatabaseOptionsBag extends ParameterBag
 {
     /**
+     * Constructor.
+     *
+     * @param array     $parameters
+     * @param FieldsBag $fieldsConfig
+     */
+    public function __construct(array $parameters = [], FieldsBag $fieldsConfig)
+    {
+        parent::__construct($parameters);
+        $this->initialise($fieldsConfig);
+    }
+
+    /**
      * @return string
      */
     public function getTable()
@@ -43,5 +56,59 @@ class DatabaseOptionsBag extends ParameterBag
     public function getContentType()
     {
         return $this->get('contenttype');
+    }
+
+    /**
+     * @return FieldMap\ContentType|null
+     */
+    public function getContentTypeFieldMap()
+    {
+        return $this->get('field_map');
+    }
+
+    /**
+     * We may get the config value `contenttype` as a string, in which case we
+     * map form field names to ContentType field names one-to-one.
+     *
+     * If we get an array, we check for the `field_map` associative array of
+     * form field names to ContentType field names to alternatively map to..
+     *
+     * @param FieldsBag $fieldsConfig
+     */
+    private function initialise(FieldsBag $fieldsConfig)
+    {
+        if ($this->has('contenttype') === false) {
+            return;
+        }
+
+        $contentType = $this->get('contenttype');
+        if ($contentType === null) {
+            // Would be something weird here
+            return;
+        }
+
+        if (is_string($contentType)) {
+            $name = $contentType;
+            $fieldNameMap = [];
+        } elseif (isset($contentType['name'])) {
+            $name = $contentType['name'];
+            $fieldNameMap = isset($contentType['field_map']) ? (array) $contentType['field_map'] : [];
+        } else {
+            return;
+        }
+
+        $fieldNames = $fieldsConfig->keys();
+        $mapParams = array_combine($fieldNames, $fieldNames);
+        $map = new FieldMap\ContentType($mapParams);
+        foreach ($map->all() as $formFieldName => $contentTypeFieldName) {
+            if (array_key_exists($formFieldName, $fieldNameMap) && $fieldNameMap[$formFieldName] === null) {
+                $map->remove($formFieldName);
+            } elseif (isset($fieldNameMap[$formFieldName])) {
+                $map->set($formFieldName, $fieldNameMap[$formFieldName]);
+            }
+        }
+
+        $this->set('field_map', $map);
+        $this->set('contenttype', $name);
     }
 }

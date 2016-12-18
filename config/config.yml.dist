@@ -182,7 +182,11 @@ contact:
 #            target: page/another-page  # A page path, or URL
 #            query: [ name, email ]     # Optional keys for the GET parameters
 #    database:
-#        contenttype: mycontenttype  # ContentType record to create
+#        contenttype:
+#           name: mycontenttype  # ContentType record to create
+#           field_map:
+#               email: ~                # Do not try to save this field to the ContentType
+#               message: 'sent_message' # Form field "message" will be saved to the ContentType field "sent_message"
 #        table: bolt_secret_table    # Specific database table to write to
 #    uploads:
 #        subdirectory: showcase_files # The (optional) subdirectory for uploaded files

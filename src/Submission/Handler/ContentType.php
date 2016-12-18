@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
+use Bolt\Extension\Bolt\BoltForms\Config\FieldMap\ContentType as FieldMap;
 use Bolt\Exception\StorageException;
 use Bolt\Extension\Bolt\BoltForms\Config\MetaData;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
@@ -39,10 +40,11 @@ class ContentType extends AbstractHandler
      * @param string   $contentType
      * @param FormData $formData
      * @param MetaData $formMetaData
+     * @param FieldMap $fieldMap
      *
      * @throws InternalProcessorException
      */
-    public function handle($contentType, FormData $formData, MetaData $formMetaData)
+    public function handle($contentType, FormData $formData, MetaData $formMetaData, FieldMap $fieldMap)
     {
         try {
             $repo = $this->getEntityManager()->getRepository($contentType);
@@ -59,10 +61,14 @@ class ContentType extends AbstractHandler
             $record->setDatepublish(Carbon::now());
         }
 
-        foreach ($formData->keys() as $name) {
+        foreach ($formData->all() as $name => $data) {
             // Store the data array into the record
-            $data = $formData->get($name);
-            $record->set($name, $data);
+            if ($fieldMap->has($name) === false) {
+                continue;
+            }
+
+            $fieldName = $fieldMap->get($name);
+            $record->set($fieldName, $data);
         }
 
         // Add any meta values that are requested for 'database' use

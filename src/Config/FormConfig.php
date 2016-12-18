@@ -27,8 +27,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
  */
 class FormConfig
 {
-    /** @var Config */
-    private $rootConfig;
     /** @var string */
     protected $name;
     /** @var Form\DatabaseOptionsBag */
@@ -46,6 +44,9 @@ class FormConfig
     /** @var Form\UploadsOptionsBag */
     protected $uploads;
 
+    /** @var Config */
+    private $rootConfig;
+
     /**
      * Constructor.
      *
@@ -61,11 +62,11 @@ class FormConfig
         $defaults = $this->getDefaults();
         $formConfig = $this->mergeRecursiveDistinct($defaults, $formConfig);
 
-        $this->database     = new Form\DatabaseOptionsBag($formConfig['database']);
         $this->feedback     = new Form\FeedbackOptionsBag($formConfig['feedback']);
         $this->fields       = new Form\FieldsBag($formConfig['fields']);
-        $this->submission   = new Form\SubmissionOptionsBag($formConfig['submission']);
+        $this->database     = new Form\DatabaseOptionsBag($formConfig['database'], $this->fields);
         $this->notification = new Form\NotificationOptionsBag($formConfig['notification'], $rootConfig);
+        $this->submission   = new Form\SubmissionOptionsBag($formConfig['submission']);
         $this->templates    = new Form\TemplateOptionsBag($formConfig['templates'], $rootConfig);
         $this->uploads      = new Form\UploadsOptionsBag($formConfig['uploads']);
     }
