@@ -75,6 +75,7 @@ class File extends HttpFile implements ArrayAccess, JsonSerializable
      */
     public function offsetExists($offset)
     {
+        return in_array($offset, ['file', 'filename', 'title', 'basepath']);
     }
 
     /**
@@ -82,6 +83,17 @@ class File extends HttpFile implements ArrayAccess, JsonSerializable
      */
     public function offsetGet($offset)
     {
+        if ($offset === 'file') {
+            return $this->getRelativePath();
+        } elseif ($offset === 'filename') {
+            return $this->getRelativePath();
+        } elseif ($offset === 'title') {
+            return $this->getFilename();
+        } elseif ($offset === 'basepath') {
+            return $this->baseDir;
+        };
+
+        throw new \BadMethodCallException(sprintf('Property "%s" does not exists in %s.', $offset, __CLASS__));
     }
 
     /**
