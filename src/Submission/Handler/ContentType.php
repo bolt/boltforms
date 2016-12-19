@@ -2,11 +2,13 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
-use Bolt\Extension\Bolt\BoltForms\Config\FieldMap\ContentType as FieldMap;
 use Bolt\Exception\StorageException;
+use Bolt\Extension\Bolt\BoltForms\Config\FieldMap\ContentType as FieldMap;
 use Bolt\Extension\Bolt\BoltForms\Config\MetaData;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Storage\Entity;
+use Bolt\Storage\Repository\ContentRepository;
 use Carbon\Carbon;
 
 /**
@@ -47,13 +49,14 @@ class ContentType extends AbstractHandler
     public function handle($contentType, FormData $formData, MetaData $formMetaData, FieldMap $fieldMap)
     {
         try {
+            /** @var ContentRepository $repo */
             $repo = $this->getEntityManager()->getRepository($contentType);
         } catch (StorageException $e) {
             throw new InternalProcessorException(sprintf('Invalid ContentType name `%s` specified.', $contentType), $e->getCode(), $e, false);
         }
 
         // Get an empty record for our ContentType
-        $record = $repo->getEntityBuilder()->getEntity();
+        $record = $this->getRecord($repo, $formData);
 
         // Set a published date
         $record->setStatus('published');
@@ -81,5 +84,28 @@ class ContentType extends AbstractHandler
         } catch (\Exception $e) {
             throw new InternalProcessorException(sprintf('An exception occurred saving submission to ContentType table `%s`', $contentType), $e->getCode(), $e, false);
         }
+    }
+
+
+    /**
+     * Get an appropriate entity object.
+     *
+     * @param ContentRepository $repo
+     * @param FormData          $formData
+     *
+     * @return Entity\Content
+     */
+    protected function getRecord(ContentRepository $repo, FormData $formData)
+    {
+        if ($formData->has('id') === false) {
+            return $repo->getEntityBuilder()->getEntity();
+        }
+
+        $record = $repo->find($formData->get('id'));
+        if ($record === false) {
+            return $repo->getEntityBuilder()->getEntity();
+        }
+
+        return $record;
     }
 }
