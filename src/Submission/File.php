@@ -54,7 +54,7 @@ class File extends HttpFile implements ArrayAccess, JsonSerializable
      */
     public function getRelativePath()
     {
-        return str_replace($this->baseDir, '', $this->getPathname());
+        return ltrim(str_replace($this->baseDir, '', $this->getPathname()), '/');
     }
 
     /**
