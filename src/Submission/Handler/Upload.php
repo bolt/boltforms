@@ -171,7 +171,7 @@ class Upload
                 $error = 'File upload aborted as the target directory could not be created: ' . $e->getMessage();
                 $systemMessage = sprintf('[BoltForms] %s Check permissions on %s', $error, $dir);
 
-                throw new FileUploadException($error, $systemMessage, $e->getCode(), $e);
+                throw new FileUploadException($error, $systemMessage, $e->getCode(), $e, false);
             }
         }
 
