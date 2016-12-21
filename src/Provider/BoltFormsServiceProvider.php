@@ -44,15 +44,6 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 {
     public function register(Application $app)
     {
-        $app['session'] = $app->extend(
-            'session',
-            function (SessionInterface $session) use ($app) {
-                $session->registerBag($app['boltforms.feedback']);
-
-                return $session;
-            }
-        );
-
         $app['boltforms'] = $app->share(
             function ($app) {
                 $forms = new BoltForms($app);
@@ -77,6 +68,15 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 $bag->setName('boltforms');
 
                 return $bag;
+            }
+        );
+
+        $app['session'] = $app->extend(
+            'session',
+            function (SessionInterface $session) use ($app) {
+                $session->registerBag($app['boltforms.feedback']);
+
+                return $session;
             }
         );
 
@@ -132,7 +132,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 $app['boltforms'],
                 $app['boltforms.config'],
                 $app['boltforms.processor'],
-                $app['boltforms.feedback'],
+                $app['session']->getBag('boltforms'),
                 $app['boltforms.form.context.factory'],
                 $app['recapture.response.factory'],
                 $app['session'],
@@ -179,7 +179,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                             return new Submission\Handler\ContentType(
                                 $app['boltforms.config'],
                                 $app['storage'],
-                                $app['boltforms.feedback'],
+                                $app['session']->getBag('boltforms'),
                                 $app['logger.system'],
                                 $app['mailer']
                             );
@@ -190,7 +190,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                             return new Submission\Handler\DatabaseTable(
                                 $app['boltforms.config'],
                                 $app['storage'],
-                                $app['boltforms.feedback'],
+                                $app['session']->getBag('boltforms'),
                                 $app['logger.system'],
                                 $app['mailer']
                             );
@@ -201,7 +201,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                             return new Submission\Handler\Email(
                                 $app['boltforms.config'],
                                 $app['storage'],
-                                $app['boltforms.feedback'],
+                                $app['session']->getBag('boltforms'),
                                 $app['logger.system'],
                                 $app['mailer'],
                                 $app['dispatcher'],
@@ -226,7 +226,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                                 $app['boltforms.config'],
                                 $formConfig,
                                 $file,
-                                $app['boltforms.feedback']
+                                $app['session']->getBag('boltforms')
                             );
                         }
                     ),
