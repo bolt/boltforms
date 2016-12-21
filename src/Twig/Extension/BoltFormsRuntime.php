@@ -262,7 +262,6 @@ class BoltFormsRuntime
     protected function handleFormRequest(FormConfig $formConfig, FormContext $compiler, $reCaptchaResponse)
     {
         $formName = $formConfig->getName();
-        $sessionKey = sprintf('boltforms_submit_%s', $formName);
 
         $request = $this->requestStack->getCurrentRequest();
         if ($request && $request->isMethod(Request::METHOD_POST) && $request->request->get($formName) !== null) {
@@ -282,7 +281,7 @@ class BoltFormsRuntime
                 throw $e;
             }
         } elseif ($request->isMethod(Request::METHOD_GET)) {
-            $compiler->setSent($this->session->get($sessionKey));
+            $compiler->setSent(false);
 
             // For BC on templates
             $request->attributes->set($formName, $formName);
