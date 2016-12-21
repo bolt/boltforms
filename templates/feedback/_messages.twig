@@ -1,22 +1,30 @@
+{#
+ # Informational message blocks
+ #}
+{% block messages_debug %}
+    {% if debug %}
+        <p class="boltform-debug">[Debug] Notification debug mode enabled!</p>
 
-{% if debug %}
-    <p class="boltform-debug">[Debug] Notification debug mode enabled!</p>
+        {% if messages.debug and app.request.get(formname) %}
+            {% for debug in messages.debug %}
+                <p class="boltform-debug">[Debug] {{ debug|nl2br }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endblock %}
 
-    {% if messages.debug and app.request.get(formname) %}
-        {% for debug in messages.debug %}
-            <p class="boltform-debug">[Debug] {{ debug|nl2br }}</p>
+{% block messages_error %}
+    {% if messages.error and app.request.get(formname) %}
+        {% for error in messages.error %}
+            <p class="boltform-error">{{ error }}</p>
         {% endfor %}
     {% endif %}
-{% endif %}
+{% endblock %}
 
-{% if messages.error and app.request.get(formname) %}
-    {% for error in messages.error %}
-        <p class="boltform-error">{{ error }}</p>
-    {% endfor %}
-{% endif %}
-
-{% if messages.info and app.request.get(formname) %}
-    {% for info in messages.info %}
-        <p class="boltform-info boltform-message">{{ info }}</p>
-    {% endfor %}
-{% endif %}
+{% block messages_info %}
+    {% if messages.info and app.request.get(formname) %}
+        {% for info in messages.info %}
+            <p class="boltform-info boltform-message">{{ info }}</p>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
