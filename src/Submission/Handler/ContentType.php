@@ -82,7 +82,8 @@ class ContentType extends AbstractHandler
         try {
             $repo->save($record);
         } catch (\Exception $e) {
-            throw new InternalProcessorException(sprintf('An exception occurred saving submission to ContentType table `%s`', $contentType), $e->getCode(), $e, false);
+            $message = sprintf('An exception occurred saving submission to ContentType table `%s`', $contentType);
+            throw new InternalProcessorException($message, $e->getCode(), $e, false);
         }
     }
 
