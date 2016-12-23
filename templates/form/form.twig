@@ -35,7 +35,7 @@
         {{ include(templates.messages) }}
         {% import templates.recaptcha as spambot %}
 
-        {% if result.email %}
+        {% if result.pass('email') %}
             {# If the form is successfully submitted, this block will be displayed #}
             {{ html_post }}
         {% else %}
