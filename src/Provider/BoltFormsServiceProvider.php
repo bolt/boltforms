@@ -178,7 +178,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                             return new Submission\Handler\ContentType(
                                 $app['boltforms.config'],
                                 $app['storage'],
-                                $app['session']->getBag('boltforms'),
+                                $app['session'],
                                 $app['logger.system'],
                                 $app['mailer']
                             );
@@ -189,7 +189,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                             return new Submission\Handler\DatabaseTable(
                                 $app['boltforms.config'],
                                 $app['storage'],
-                                $app['session']->getBag('boltforms'),
+                                $app['session'],
                                 $app['logger.system'],
                                 $app['mailer']
                             );
@@ -200,7 +200,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                             return new Submission\Handler\Email(
                                 $app['boltforms.config'],
                                 $app['storage'],
-                                $app['session']->getBag('boltforms'),
+                                $app['session'],
                                 $app['logger.system'],
                                 $app['mailer'],
                                 $app['dispatcher'],

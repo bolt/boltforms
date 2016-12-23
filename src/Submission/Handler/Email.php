@@ -20,6 +20,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig_Environment as TwigEnvironment;
 
@@ -77,7 +78,7 @@ class Email extends AbstractHandler
      *
      * @param Config\Config            $config
      * @param EntityManager            $entityManager
-     * @param FlashBag                 $feedback
+     * @param SessionInterface         $session
      * @param LoggerInterface          $logger
      * @param SwiftMailer              $mailer
      * @param EventDispatcherInterface $dispatcher
@@ -87,14 +88,14 @@ class Email extends AbstractHandler
     public function __construct(
         Config\Config $config,
         EntityManager $entityManager,
-        FlashBag $feedback,
+        SessionInterface $session,
         LoggerInterface $logger,
         SwiftMailer $mailer,
         EventDispatcherInterface $dispatcher,
         TwigEnvironment $twig,
         UrlGeneratorInterface $urlGenerator
     ) {
-        parent::__construct($config, $entityManager, $feedback, $logger, $mailer);
+        parent::__construct($config, $entityManager, $session, $logger, $mailer);
         $this->dispatcher = $dispatcher;
         $this->twig = $twig;
         $this->urlGenerator = $urlGenerator;

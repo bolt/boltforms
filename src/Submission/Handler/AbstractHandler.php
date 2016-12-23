@@ -7,7 +7,8 @@ use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
 use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer as SwiftMailer;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Base handler.
@@ -40,8 +41,8 @@ abstract class AbstractHandler
     private $config;
     /** @var EntityManager */
     private $entityManager;
-    /** @var FlashBag */
-    private $feedback;
+    /** @var SessionInterface */
+    private $session;
     /** @var LoggerInterface */
     private $logger;
     /** @var SwiftMailer */
@@ -50,22 +51,22 @@ abstract class AbstractHandler
     /**
      * Constructor.
      *
-     * @param Config          $config
-     * @param EntityManager   $entityManager
-     * @param FlashBag        $feedback
-     * @param LoggerInterface $logger
-     * @param SwiftMailer     $mailer
+     * @param Config           $config
+     * @param EntityManager    $entityManager
+     * @param SessionInterface $session
+     * @param LoggerInterface  $logger
+     * @param SwiftMailer      $mailer
      */
     public function __construct(
         Config $config,
         EntityManager $entityManager,
-        FlashBag $feedback,
+        SessionInterface $session,
         LoggerInterface $logger,
         SwiftMailer $mailer
     ) {
         $this->config = $config;
         $this->entityManager = $entityManager;
-        $this->feedback = $feedback;
+        $this->session = $session;
         $this->logger = $logger;
         $this->mailer = $mailer;
     }
@@ -87,11 +88,14 @@ abstract class AbstractHandler
     }
 
     /**
-     * @return FlashBag
+     * @return FlashBagInterface
      */
     protected function getFeedback()
     {
-        return $this->feedback;
+        /** @var FlashBagInterface $feedback */
+        $feedback = $this->session->getBag('boltforms');
+
+        return $feedback;
     }
 
     /**
