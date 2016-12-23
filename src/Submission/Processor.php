@@ -125,12 +125,7 @@ class Processor implements EventSubscriberInterface
 
         /** @var ProcessorInterface $processor */
         $processor = $this->processors[$key];
-        try {
-            $processor->process($lifeEvent, $eventName, $dispatcher);
-        } catch (InternalProcessorException $e) {
-            $this->message('An internal processing error has occurred, and form submission has failed!', static::FEEDBACK_ERROR, LogLevel::ERROR);
-            $this->handleInternalProcessorException($e);
-        }
+        $processor->process($lifeEvent, $eventName, $dispatcher);
 
         // Move any messages generated
         foreach ($processor->getMessages() as $message) {
@@ -164,24 +159,6 @@ class Processor implements EventSubscriberInterface
         }
 
         throw new FormValidationException($formConfig->getFeedback()->getErrorMessage());
-    }
-
-    /**
-     * Handle an internal exception.
-     *
-     * @param InternalProcessorException $e
-     *
-     * @throws \Exception
-     */
-    protected function handleInternalProcessorException(InternalProcessorException $e)
-    {
-        $previous = $e->getPrevious() ?: $e;
-        if ($e instanceof FileUploadException) {
-            $this->message($e->getMessage());
-            $this->exception($previous, $e->isAbort(), $e->getSystemMessage());
-        } else {
-            $this->exception($previous, $e->isAbort(), $e->getMessage());
-        }
     }
 
     /**
@@ -249,13 +226,9 @@ class Processor implements EventSubscriberInterface
             try {
                 call_user_func($listener, $event, $eventName, $this->dispatcher);
                 $this->result->passEvent($eventName);
-            } catch (InternalProcessorException $e) {
-                throw $e;
-            } catch (HttpException $e) {
-                throw $e;
             } catch (\Exception $e) {
                 $this->result->failEvent($eventName);
-                $this->exception($e, $this->config->isDebug(), 'An event dispatcher encountered an exception.');
+                $this->exception($e, true, 'An event dispatcher encountered an exception.');
             }
         }
     }
