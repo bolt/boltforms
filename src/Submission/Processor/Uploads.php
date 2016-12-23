@@ -11,6 +11,8 @@ use Pimple as Container;
 use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Submission processor final redirection.
@@ -39,17 +41,21 @@ class Uploads extends AbstractProcessor
 {
     /** @var Config */
     private $config;
+    /** @var SessionInterface */
+    private $session;
 
     /**
      * Constructor.
      *
-     * @param Container $handlers
-     * @param Config    $config
+     * @param Container        $handlers
+     * @param Config           $config
+     * @param SessionInterface $session
      */
-    public function __construct(Container $handlers, Config $config)
+    public function __construct(Container $handlers, Config $config, SessionInterface $session)
     {
         parent::__construct($handlers);
         $this->config = $config;
+        $this->session = $session;
     }
 
     /**
@@ -147,9 +153,11 @@ class Uploads extends AbstractProcessor
         $handlerFactory = $this->handlers['upload'];
         /** @var Upload $fileHandler */
         $fileHandler = $handlerFactory($formConfig, $field);
+        /** @var FlashBagInterface $flashBag */
+        $flashBag = $this->session->getBag('boltforms');
 
         // Get the upload object
-        $file = $fileHandler->move();
+        $file = $fileHandler->handle($flashBag);
         $this->message(sprintf('Moving uploaded file to %s', $fileHandler->fullPath()), Processor::FEEDBACK_DEBUG, LogLevel::DEBUG);
 
         return $file;

@@ -44,8 +44,6 @@ class Upload
     private $formConfig;
     /** @var UploadedFile */
     private $file;
-    /** @var FlashBagInterface */
-    private $feedback;
 
     /** @var string */
     private $fileName;
@@ -59,17 +57,41 @@ class Upload
     /**
      * Constructor.
      *
-     * @param Config            $config
-     * @param FormConfig        $formConfig
-     * @param UploadedFile      $file
-     * @param FlashBagInterface $feedback
+     * @param Config       $config
+     * @param FormConfig   $formConfig
+     * @param UploadedFile $file
      */
-    public function __construct(Config $config, FormConfig $formConfig, UploadedFile $file, FlashBagInterface $feedback)
+    public function __construct(Config $config, FormConfig $formConfig, UploadedFile $file)
     {
         $this->config = $config;
         $this->formConfig = $formConfig;
         $this->file = $file;
-        $this->feedback = $feedback;
+    }
+
+    /**
+     * Move the uploaded file from the temporary location to the permanent one
+     * if required by configuration.
+     *
+     * @param FlashBagInterface $feedback
+     *
+     * @return File
+     * @throws FileUploadException
+     */
+    public function handle(FlashBagInterface $feedback)
+    {
+        $this->checkDirectories();
+
+        $targetDir = $this->getTargetFileDirectory();
+        $targetFile = $this->getTargetFileName($feedback);
+
+        try {
+            $this->file->move($targetDir, $targetFile);
+        } catch (FileException $e) {
+            throw new FileUploadException($e->getMessage(), $e->getMessage(), $e->getCode(), $e, false);
+        }
+        $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
+
+        return new File($this->fullPath, true, $this->config->getUploads()->getBaseDirectory());
     }
 
     public function __toString()
@@ -129,31 +151,6 @@ class Upload
     }
 
     /**
-     * Move the uploaded file from the temporary location to the permanent one
-     * if required by configuration.
-     *
-     * @throws FileUploadException
-     *
-     * @return File
-     */
-    public function move()
-    {
-        $this->checkDirectories();
-
-        $targetDir = $this->getTargetFileDirectory();
-        $targetFile = $this->getTargetFileName();
-
-        try {
-            $this->file->move($targetDir, $targetFile);
-        } catch (FileException $e) {
-            throw new FileUploadException($e->getMessage(), $e->getMessage(), $e->getCode(), $e, false);
-        }
-        $this->fullPath = realpath($targetDir . DIRECTORY_SEPARATOR . $targetFile);
-
-        return new File($this->fullPath, true, $this->config->getUploads()->getBaseDirectory());
-    }
-
-    /**
      * Check that the base directory, and optional sub-directory, is/are valid
      * and exist.
      *
@@ -207,9 +204,11 @@ class Upload
     /**
      * Get the full target name for the uploaded file.
      *
+     * @param FlashBagInterface $feedback
+     *
      * @return string
      */
-    protected function getTargetFileName()
+    protected function getTargetFileName(FlashBagInterface $feedback)
     {
         if ($this->final) {
             return $this->fileName;
@@ -237,7 +236,7 @@ class Upload
             $i++;
         }
 
-        $this->feedback->add('debug', "Setting uploaded file '$originalName' to use the name '$fileName'.");
+        $feedback->add('debug', "Setting uploaded file '$originalName' to use the name '$fileName'.");
         $this->final = true;
 
         return $this->fileName = $fileName;

@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Factory;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 /**
  * Form context compiler.
@@ -59,14 +59,14 @@ class FormContext
     }
 
     /**
-     * @param BoltForms $boltForms
-     * @param Config    $config
-     * @param string    $formName
-     * @param FlashBag  $feedBack
+     * @param BoltForms         $boltForms
+     * @param Config            $config
+     * @param string            $formName
+     * @param FlashBagInterface $feedBack
      *
      * @return array
      */
-    public function build(BoltForms $boltForms, Config $config, $formName, FlashBag $feedBack)
+    public function build(BoltForms $boltForms, Config $config, $formName, FlashBagInterface $feedBack)
     {
         // reCaptcha configuration
         $reCaptchaConfig = $config->getReCaptcha();

@@ -132,7 +132,6 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 $app['boltforms'],
                 $app['boltforms.config'],
                 $app['boltforms.processor'],
-                $app['session']->getBag('boltforms'),
                 $app['boltforms.form.context.factory'],
                 $app['recapture.response.factory'],
                 $app['session'],
@@ -225,8 +224,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                             return new Submission\Handler\Upload(
                                 $app['boltforms.config'],
                                 $formConfig,
-                                $file,
-                                $app['session']->getBag('boltforms')
+                                $file
                             );
                         }
                     ),
@@ -246,7 +244,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                     'feedback' => $app->share(function () use ($app) { return new Submission\Processor\Feedback($app['boltforms.handlers'], $app['session']); }),
                     'fields'   => $app->share(function () use ($app) { return new Submission\Processor\Fields($app['boltforms.handlers'], $app['boltforms.config']); }),
                     'redirect' => $app->share(function () use ($app) { return new Submission\Processor\Redirect($app['boltforms.handlers'], $app['request_stack'], $app['session']); }),
-                    'uploads'  => $app->share(function () use ($app) { return new Submission\Processor\Uploads($app['boltforms.handlers'], $app['boltforms.config']); }),
+                    'uploads'  => $app->share(function () use ($app) { return new Submission\Processor\Uploads($app['boltforms.handlers'], $app['boltforms.config'], $app['session']); }),
                 ]);
             }
         );
