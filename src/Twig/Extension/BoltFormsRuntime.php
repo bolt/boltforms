@@ -7,13 +7,14 @@ use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Extension\Bolt\BoltForms\Factory\FormContext;
+use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -45,6 +46,8 @@ use Twig_Markup;
  */
 class BoltFormsRuntime
 {
+    use FeedbackTrait;
+
     /** @var Config */
     private $config;
     /** @var SessionInterface */
@@ -55,12 +58,10 @@ class BoltFormsRuntime
     private $processor;
     /** @var callable */
     private $contextFactory;
-    /** @var FlashBag */
-    private $feedback;
     /** @var RequestStack */
     private $requestStack;
     /** @var LoggerInterface */
-    private $loggerSystem;
+    private $logger;
     /** @var callable */
     private $recaptureResponseFactory;
     /** @var UrlGeneratorInterface */
@@ -76,12 +77,11 @@ class BoltFormsRuntime
      * @param BoltForms             $boltForms
      * @param Config                $config
      * @param Processor             $processor
-     * @param FlashBag              $feedback
      * @param callable              $contextFactory
      * @param callable              $recaptureResponseFactory
      * @param SessionInterface      $session
      * @param RequestStack          $requestStack
-     * @param LoggerInterface       $loggerSystem
+     * @param LoggerInterface       $logger
      * @param UrlGeneratorInterface $urlGenerator
      * @param string                $webPath
      * @param string                $rootPath
@@ -90,12 +90,11 @@ class BoltFormsRuntime
         BoltForms $boltForms,
         Config $config,
         Processor $processor,
-        FlashBag $feedback,
         callable $contextFactory,
         callable $recaptureResponseFactory,
         SessionInterface $session,
         RequestStack $requestStack,
-        LoggerInterface $loggerSystem,
+        LoggerInterface $logger,
         UrlGeneratorInterface $urlGenerator,
         $webPath,
         $rootPath
@@ -103,12 +102,11 @@ class BoltFormsRuntime
         $this->boltForms = $boltForms;
         $this->config = $config;
         $this->processor = $processor;
-        $this->feedback = $feedback;
         $this->contextFactory = $contextFactory;
         $this->recaptureResponseFactory = $recaptureResponseFactory;
         $this->session = $session;
         $this->requestStack = $requestStack;
-        $this->loggerSystem = $loggerSystem;
+        $this->logger = $logger;
         $this->urlGenerator = $urlGenerator;
         $this->webPath = $webPath;
         $this->rootPath = $rootPath;
@@ -269,14 +267,11 @@ class BoltFormsRuntime
                 $sent = $this->processor->process($formConfig, $reCaptchaResponse);
                 $compiler->setSent($sent);
             } catch (Exception\FileUploadException $e) {
-                $this->feedback->add(Processor::FEEDBACK_ERROR, $e->getMessage());
-                $this->loggerSystem->debug($e->getSystemMessage(), ['event' => 'extensions']);
+                $this->message(Processor::FEEDBACK_ERROR, $e->getMessage());
+                $this->exception($e, false, 'File upload exception: ');
             } catch (Exception\FormValidationException $e) {
-                $this->feedback->add(Processor::FEEDBACK_ERROR, $e->getMessage());
-                $this->loggerSystem->debug(
-                    '[BoltForms] Form validation exception: ' . $e->getMessage(),
-                    ['event' => 'extensions']
-                );
+                $this->message(Processor::FEEDBACK_ERROR, $e->getMessage());
+                $this->exception($e, false, 'Form validation exception: ');
             } catch (HttpException $e) {
                 throw $e;
             }
@@ -302,7 +297,7 @@ class BoltFormsRuntime
     {
         // If the form has it's own templates defined, use those, else the globals.
         $template = $formConfig->getTemplates()->getForm();
-        $context = $compiler->build($this->boltForms, $this->config, $formName, $this->feedback);
+        $context = $compiler->build($this->boltForms, $this->config, $formName, $this->getFeedback());
 
         // Render the Twig_Markup
         return $this->boltForms->render($formName, $template, $context, $loadAjax);
@@ -320,7 +315,7 @@ class BoltFormsRuntime
     protected function getExceptionRender($formName, FormContext $compiler, Twig_Environment $twig)
     {
         $template = $this->config->getTemplates()->getException();
-        $context = $compiler->build($this->boltForms, $this->config, $formName, $this->feedback);
+        $context = $compiler->build($this->boltForms, $this->config, $formName, $this->getFeedback());
 
         return $twig->render($template, $context);
     }
@@ -370,8 +365,8 @@ class BoltFormsRuntime
     protected function handleException($formName, Exception\BoltFormsException $e, Twig_Environment $twig)
     {
         /** @var \Exception $e */
-        $this->feedback->add('debug', $this->getSafeTrace($e));
-        $this->feedback->add('error', $e->getMessage());
+        $this->message('debug', $this->getSafeTrace($e));
+        $this->message('error', $e->getMessage());
 
         $this->requestStack->getCurrentRequest()->request->set($formName, true);
         $compiler = $this->getContextCompiler($formName);
@@ -401,5 +396,24 @@ class BoltFormsRuntime
         );
 
         return $message;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFeedback()
+    {
+        /** @var FlashBagInterface $feedback */
+        $feedback = $this->session->getBag('boltforms');
+
+        return $feedback;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getLogger()
+    {
+        return $this->logger;
     }
 }
