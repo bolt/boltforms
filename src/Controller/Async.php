@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Factory\FormContext;
+use Bolt\Extension\Bolt\BoltForms\Submission\Result;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -88,18 +89,16 @@ class Async implements ControllerProviderInterface
         $formConfig = $config->getForm($formName);
 
         try {
-            $sent = $app['boltforms.processor']->process($formConfig, $app['recapture.response.factory']());
+            $result = $app['boltforms.processor']->process($formConfig, $app['recapture.response.factory']());
+            $formContext->setResult($result);
         } catch (FileUploadException $e) {
-            $sent = false;
             $app['boltforms.feedback']->add('error', $e->getMessage());
             $app['logger.system']->debug($e->getSystemMessage(), ['event' => 'extensions']);
         } catch (FormValidationException $e) {
-            $sent = false;
             $app['boltforms.feedback']->add('error', $e->getMessage());
             $app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
         }
 
-        $formContext->setSent($sent);
         $context = $formContext->build($boltForms, $config, $formName, $app['boltforms.feedback']);
         $template = $config->getForm($formName)->getTemplates()->getForm();
 

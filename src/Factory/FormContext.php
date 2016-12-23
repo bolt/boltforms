@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Factory;
 
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
+use Bolt\Extension\Bolt\BoltForms\Submission\Result;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
@@ -43,8 +44,8 @@ class FormContext
     protected $htmlPreSubmit;
     /** @var string */
     protected $htmlPostSubmit;
-    /** @var bool */
-    protected $sent = false;
+    /** @var Result */
+    protected $result;
     /** @var array */
     protected $reCaptchaResponse;
 
@@ -87,7 +88,8 @@ class FormContext
                 'error' => $errors,
                 'debug' => $debugs,
             ],
-            'sent'      => $this->sent,
+            'sent'      => $this->result ? $this->result->isPass('email') : false,
+            'result'    => $this->result ?: new Result(),
             'templates' => $config->getForm($formName)->getTemplates(),
             'recaptcha' => [
                 'enabled'       => $reCaptchaConfig->isEnabled(),
@@ -162,13 +164,13 @@ class FormContext
     }
 
     /**
-     * @param boolean $sent
+     * @param Result $result
      *
      * @return FormContext
      */
-    public function setSent($sent)
+    public function setResult(Result $result)
     {
-        $this->sent = $sent;
+        $this->result = $result;
 
         return $this;
     }

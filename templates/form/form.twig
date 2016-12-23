@@ -3,7 +3,10 @@
  #   formname        — The form name
  #   form            — The form object
  #   fields          — Field data
- #   sent            — True when the form has been submitted successfully
+ #   result
+ #     email         — True when the form has been submitted successfully
+ #     contenttype   — True when saving of ContentType was successful
+ #     uploads       — True when file uploads were a success
  #   html_pre        — HTML to display before successful submission
  #   html_post       — HTML to display after successful submission
  #   messages        — Arrays of messages by type
@@ -32,7 +35,7 @@
         {{ include(templates.messages) }}
         {% import templates.recaptcha as spambot %}
 
-        {% if sent %}
+        {% if result.email %}
             {# If the form is successfully submitted, this block will be displayed #}
             {{ html_post }}
         {% else %}

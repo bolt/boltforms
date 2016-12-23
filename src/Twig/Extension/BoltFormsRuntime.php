@@ -264,8 +264,8 @@ class BoltFormsRuntime
         $request = $this->requestStack->getCurrentRequest();
         if ($request && $request->isMethod(Request::METHOD_POST) && $request->request->get($formName) !== null) {
             try {
-                $sent = $this->processor->process($formConfig, $reCaptchaResponse);
-                $compiler->setSent($sent);
+                $result = $this->processor->process($formConfig, $reCaptchaResponse);
+                $compiler->setResult($result);
             } catch (Exception\FileUploadException $e) {
                 $this->message(Processor::FEEDBACK_ERROR, $e->getMessage());
                 $this->exception($e, false, 'File upload exception: ');
@@ -276,7 +276,6 @@ class BoltFormsRuntime
                 throw $e;
             }
         } elseif ($request->isMethod(Request::METHOD_GET)) {
-            $compiler->setSent(false);
 
             // For BC on templates
             $request->attributes->set($formName, $formName);

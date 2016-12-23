@@ -68,6 +68,8 @@ class Processor implements EventSubscriberInterface
     private $feedback;
     /** @var Config */
     private $config;
+    /** @var Result */
+    private $result;
 
     /**
      * Constructor.
@@ -96,6 +98,7 @@ class Processor implements EventSubscriberInterface
         $this->dispatcher = $dispatcher;
         $this->loggerSystem = $loggerSystem;
         $this->feedback = $feedback;
+        $this->result = new Result();
     }
 
     /**
@@ -154,14 +157,13 @@ class Processor implements EventSubscriberInterface
      *
      * @param FormConfig $formConfig
      * @param array      $reCaptchaResponse
-     * @param boolean    $returnData
      *
      * @throws FormValidationException
      * @throws \Exception
      *
-     * @return FormData|bool
+     * @return Result
      */
-    public function process(FormConfig $formConfig, array $reCaptchaResponse, $returnData = false)
+    public function process(FormConfig $formConfig, array $reCaptchaResponse)
     {
         $formName = $formConfig->getName();
         /** @var Handler\PostRequest $requestHandler*/
@@ -172,7 +174,7 @@ class Processor implements EventSubscriberInterface
         if ($formData !== null && $reCaptchaResponse['success']) {
             $this->dispatchProcessors($formConfig, $formData);
 
-            return $returnData ? $formData : true;
+            return $this->result;
         }
 
         throw new FormValidationException($formConfig->getFeedback()->getErrorMessage());
@@ -249,20 +251,25 @@ class Processor implements EventSubscriberInterface
      */
     protected function dispatch($eventName, EventDispatcher\Event $event)
     {
-        if ($listeners = $this->dispatcher->getListeners($eventName)) {
-            foreach ($listeners as $listener) {
-                if ($event->isPropagationStopped()) {
-                    break;
-                }
-                try {
-                    call_user_func($listener, $event, $eventName, $this->dispatcher);
-                } catch (InternalProcessorException $e) {
-                    throw $e;
-                } catch (HttpException $e) {
-                    throw $e;
-                } catch (\Exception $e) {
-                    $this->exception($e, $this->config->isDebug(), 'An event dispatcher encountered an exception.');
-                }
+        $listeners = $this->dispatcher->getListeners($eventName);
+        if (!is_array($listeners)) {
+            return;
+        }
+
+        foreach ($listeners as $listener) {
+            if ($event->isPropagationStopped()) {
+                break;
+            }
+            try {
+                call_user_func($listener, $event, $eventName, $this->dispatcher);
+                $this->result->passEvent($eventName);
+            } catch (InternalProcessorException $e) {
+                throw $e;
+            } catch (HttpException $e) {
+                throw $e;
+            } catch (\Exception $e) {
+                $this->result->failEvent($eventName);
+                $this->exception($e, $this->config->isDebug(), 'An event dispatcher encountered an exception.');
             }
         }
     }
