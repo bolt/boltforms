@@ -106,15 +106,7 @@ class Processor implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [
-            BoltFormsEvents::SUBMISSION_PROCESS_FIELDS      => ['onProcessLifecycleEvent', BoltFormsEvents::PRIORITY_INTERNAL],
-            BoltFormsEvents::SUBMISSION_PROCESS_UPLOADS     => ['onProcessLifecycleEvent', BoltFormsEvents::PRIORITY_INTERNAL],
-            BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE => ['onProcessLifecycleEvent', BoltFormsEvents::PRIORITY_INTERNAL],
-            BoltFormsEvents::SUBMISSION_PROCESS_DATABASE    => ['onProcessLifecycleEvent', BoltFormsEvents::PRIORITY_INTERNAL],
-            BoltFormsEvents::SUBMISSION_PROCESS_EMAIL       => ['onProcessLifecycleEvent', BoltFormsEvents::PRIORITY_INTERNAL],
-            BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK    => ['onProcessLifecycleEvent', BoltFormsEvents::PRIORITY_INTERNAL],
-            BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT    => ['onProcessLifecycleEvent', BoltFormsEvents::PRIORITY_INTERNAL],
-        ];
+        return ProcessorMap::subscribedEvents();
     }
 
     /**
@@ -126,16 +118,10 @@ class Processor implements EventSubscriberInterface
      */
     public function onProcessLifecycleEvent(LifecycleEvent $lifeEvent, $eventName, EventDispatcherInterface $dispatcher)
     {
-        $map = [
-            BoltFormsEvents::SUBMISSION_PROCESS_FIELDS      => 'fields',
-            BoltFormsEvents::SUBMISSION_PROCESS_UPLOADS     => 'uploads',
-            BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE => 'content',
-            BoltFormsEvents::SUBMISSION_PROCESS_DATABASE    => 'database',
-            BoltFormsEvents::SUBMISSION_PROCESS_EMAIL       => 'email',
-            BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK    => 'feedback',
-            BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT    => 'redirect',
-        ];
-        $key = $map[$eventName];
+        $key = ProcessorMap::getEventMethodName($eventName);
+        if ($key === null) {
+            throw new \RuntimeException(sprintf('No internal process mapping to "%s"', $eventName));
+        }
 
         /** @var ProcessorInterface $processor */
         $processor = $this->processors[$key];
