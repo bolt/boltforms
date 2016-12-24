@@ -189,7 +189,11 @@ class BoltFormsRuntime
             ->setReCaptchaResponse($reCaptchaResponse)
             ->setDefaults((array) $defaults)
         ;
-        $this->session->set('boltforms_compiler_' . $formName, $formContext);
+
+        // Save to session for AJAX requests
+        if ($this->requestStack->getCurrentRequest()->isXmlHttpRequest()) {
+            $this->session->set('boltforms_compiler_' . $formName, $formContext);
+        }
 
         return $this->getFormRender($formName, $formConfig, $formContext, $loadAjax);
     }
