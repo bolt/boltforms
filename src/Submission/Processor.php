@@ -8,14 +8,13 @@ use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent;
-use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
+use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
-use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
 use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor\ProcessorInterface;
+use Exception;
 use Pimple as Container;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -70,6 +69,8 @@ class Processor implements EventSubscriberInterface
     private $config;
     /** @var Result */
     private $result;
+    /** @var bool */
+    private $debug;
 
     /**
      * Constructor.
@@ -81,6 +82,7 @@ class Processor implements EventSubscriberInterface
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface          $loggerSystem
      * @param FlashBagInterface        $feedback
+     * @param bool                     $debug
      */
     public function __construct(
         BoltForms $boltForms,
@@ -89,7 +91,8 @@ class Processor implements EventSubscriberInterface
         Container $handlers,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $loggerSystem,
-        FlashBagInterface $feedback
+        FlashBagInterface $feedback,
+        $debug
     ) {
         $this->boltForms = $boltForms;
         $this->config = $config;
@@ -99,6 +102,7 @@ class Processor implements EventSubscriberInterface
         $this->loggerSystem = $loggerSystem;
         $this->feedback = $feedback;
         $this->result = new Result();
+        $this->debug = $debug;
     }
 
     /**
@@ -140,7 +144,7 @@ class Processor implements EventSubscriberInterface
      * @param array      $reCaptchaResponse
      *
      * @throws FormValidationException
-     * @throws \Exception
+     * @throws Exception
      *
      * @return Result
      */
@@ -167,7 +171,7 @@ class Processor implements EventSubscriberInterface
      * @param FormConfig $formConfig
      * @param FormData   $formData
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function dispatchProcessors(FormConfig $formConfig, FormData $formData)
     {
@@ -210,7 +214,7 @@ class Processor implements EventSubscriberInterface
      * @param string                $eventName
      * @param EventDispatcher\Event $event
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function dispatch($eventName, EventDispatcher\Event $event)
     {
@@ -226,9 +230,22 @@ class Processor implements EventSubscriberInterface
             try {
                 call_user_func($listener, $event, $eventName, $this->dispatcher);
                 $this->result->passEvent($eventName);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->result->failEvent($eventName);
-                $this->exception($e, true, 'An event dispatcher encountered an exception.');
+                $this->exception($e, false, 'An event dispatcher encountered an exception.');
+
+                // If we have processor exceptions, and debugging is turned on, out of here!
+                if ($this->debug) {
+                    throw $e;
+                }
+                // Rethrow early exceptions to stop processing.
+                if ($e instanceof FormOptionException) {
+                    throw $e;
+                }
+                // Rethrow redirect exception;
+                if ($e instanceof HttpException) {
+                    throw $e;
+                }
             }
         }
     }

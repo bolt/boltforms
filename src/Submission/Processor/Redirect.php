@@ -84,6 +84,6 @@ class Redirect extends AbstractProcessor
         $request = $this->requestStack->getCurrentRequest();
         $handler->refresh($request);
 
-        throw new HttpException(Response::HTTP_OK, '', null, []);
+        throw new HttpException(Response::HTTP_FOUND, '', null, []);
     }
 }

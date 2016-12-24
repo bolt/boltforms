@@ -177,7 +177,7 @@ class BoltFormsRuntime
         try {
             $this->handleFormRequest($formConfig, $formContext, $reCaptchaResponse);
         } catch (HttpException $e) {
-            return null;
+            throw $e;
         }
 
         $loadAjax = $formConfig->getSubmission()->isAjax();

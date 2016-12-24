@@ -258,7 +258,8 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                     $app['boltforms.handlers'],
                     $app['dispatcher'],
                     $app['logger.system'],
-                    $app['boltforms.feedback']
+                    $app['boltforms.feedback'],
+                    $app['config']->get('general/debug')
                 );
 
                 return $processor;
