@@ -30,7 +30,7 @@ use Symfony\Component\Form\Form;
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  * @license   http://opensource.org/licenses/LGPL-3.0 GNU Lesser General Public License 3.0
  */
-class BoltForm
+class ResolvedBoltForm
 {
     /** @var Form */
     protected $form;
@@ -64,7 +64,7 @@ class BoltForm
     /**
      * @param Form $form
      *
-     * @return BoltForm
+     * @return ResolvedBoltForm
      */
     public function setForm($form)
     {
@@ -84,7 +84,7 @@ class BoltForm
     /**
      * @param MetaData|array $meta
      *
-     * @return BoltForm
+     * @return ResolvedBoltForm
      */
     public function setMeta($meta)
     {
@@ -110,7 +110,7 @@ class BoltForm
     /**
      * @param FormConfig $formConfig
      *
-     * @return BoltForm
+     * @return ResolvedBoltForm
      */
     public function setFormConfig($formConfig)
     {

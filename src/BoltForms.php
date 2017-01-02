@@ -9,7 +9,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
-use Bolt\Extension\Bolt\BoltForms\Form\BoltForm;
+use Bolt\Extension\Bolt\BoltForms\Form\ResolvedBoltForm;
 use Bolt\Extension\Bolt\BoltForms\Form\Type\BoltFormType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Silex\Application;
@@ -51,7 +51,7 @@ class BoltForms
     private $app;
     /** @var ParameterBag */
     private $config;
-    /** @var BoltForm[] */
+    /** @var ResolvedBoltForm[] */
     private $forms;
     /** @var boolean */
     private $queuedAjax;
@@ -106,7 +106,7 @@ class BoltForms
      *
      * @throws FormOptionException
      *
-     * @return BoltForm
+     * @return ResolvedBoltForm
      */
     public function create($formName, $type = BoltFormType::class, $data = null, $options = [])
     {
@@ -129,7 +129,7 @@ class BoltForms
         /** @var Config\FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
         $formMeta = new Config\MetaData();
-        $this->forms[$formName] = new BoltForm($form, $formConfig, $formMeta);
+        $this->forms[$formName] = new ResolvedBoltForm($form, $formConfig, $formMeta);
 
         if ($formConfig->getSubmission()->isAjax()) {
             $request = $this->app['request_stack']->getCurrentRequest();
@@ -183,7 +183,7 @@ class BoltForms
      *
      * @param string $formName
      *
-     * @return BoltForm
+     * @return ResolvedBoltForm
      */
     public function get($formName)
     {
