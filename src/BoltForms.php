@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
+use Bolt\Extension\Bolt\BoltForms\Form\Type\BoltFormType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Silex\Application;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -106,7 +107,7 @@ class BoltForms
      *
      * @return BoltForm
      */
-    public function create($formName, $type = FormType::class, $data = null, $options = [])
+    public function create($formName, $type = BoltFormType::class, $data = null, $options = [])
     {
         if (isset($this->forms[$formName])) {
             throw new \RuntimeException(sprintf('A form of the name "%s" has already been created.', $formName));

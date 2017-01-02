@@ -7,12 +7,13 @@ use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Extension\Bolt\BoltForms\Factory\FormContext;
+use Bolt\Extension\Bolt\BoltForms\Form\Type\BoltFormType;
 use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
+use Bolt\Legacy;
 use Bolt\Storage\Entity;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -150,13 +151,12 @@ class BoltFormsRuntime
         // data array that might also be passed in
         if ($data === null && $defaults !== null) {
             $data = $defaults;
+        } elseif ($data instanceof Legacy\Content) {
+            $data = new Entity\Content($data->getValues());
         }
         if (isset($options['data_class']) && $data && is_array($data)) {
             $data['title'] = isset($data['title']) ? $data['title'] : null;
             $data = new $options['data_class']($data);
-        } elseif ($data && is_array($data)) {
-            $data['title'] = isset($data['title']) ? $data['title'] : null;
-            $data = new Entity\Content($data);
         }
 
         // Set form runtime overrides
@@ -166,7 +166,7 @@ class BoltFormsRuntime
 
         try {
             $this->boltForms
-                ->create($formName, FormType::class, $data, $options)
+                ->create($formName, BoltFormType::class, $data, $options)
                 ->setMeta((array) $meta)
             ;
         } catch (Exception\BoltFormsException $e) {
