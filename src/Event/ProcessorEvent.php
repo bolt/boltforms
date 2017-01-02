@@ -32,12 +32,12 @@ class ProcessorEvent extends Event
 {
     /** @var string */
     protected $formName;
-    /** @var Entity */
+    /** @var Entity\Entity */
     protected $data;
 
     /**
-     * @param string $formName
-     * @param Entity $data
+     * @param string        $formName
+     * @param Entity\Entity $data
      */
     public function __construct($formName, Entity\Entity $data)
     {
