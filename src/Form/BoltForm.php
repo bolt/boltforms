@@ -1,9 +1,10 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms;
+namespace Bolt\Extension\Bolt\BoltForms\Form;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\MetaData;
+use Bolt\Extension\Bolt\BoltForms\Exception;
 use Symfony\Component\Form\Form;
 
 /**

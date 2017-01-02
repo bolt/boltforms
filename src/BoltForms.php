@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
+use Bolt\Extension\Bolt\BoltForms\Form\BoltForm;
 use Bolt\Extension\Bolt\BoltForms\Form\Type\BoltFormType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Silex\Application;
