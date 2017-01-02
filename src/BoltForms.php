@@ -9,11 +9,11 @@ use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
+use Bolt\Extension\Bolt\BoltForms\Form\Entity;
 use Bolt\Extension\Bolt\BoltForms\Form\ResolvedBoltForm;
 use Bolt\Extension\Bolt\BoltForms\Form\Type\BoltFormType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
 use Silex\Application;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -115,6 +115,7 @@ class BoltForms
         }
 
         $options['csrf_protection'] = $this->config->isCsrf();
+        $data = is_array($data) ? new Entity\Content() : $data;
 
         /** @var FormBuilderInterface $builder */
         $builder = $this->app['form.factory']
