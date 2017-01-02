@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Config;
 
 use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Exception\EmailException;
-use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Storage\Entity;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -35,7 +35,7 @@ class EmailConfig extends ParameterBag
     /** @var boolean */
     protected $debug;
 
-    public function __construct(FormConfig $formConfig, FormData $formData)
+    public function __construct(FormConfig $formConfig, Entity\Entity $formData)
     {
         parent::__construct();
 
@@ -283,12 +283,12 @@ class EmailConfig extends ParameterBag
     }
 
     /**
-     * Get resolved email configuration settings.
+     * Set resolved email configuration settings.
      *
-     * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param FormConfig    $formConfig
+     * @param Entity\Entity $formData
      */
-    private function setEmailConfig(FormConfig $formConfig, FormData $formData)
+    private function setEmailConfig(FormConfig $formConfig, Entity\Entity $formData)
     {
         $notifyConfig = $formConfig->getNotification();
         $hashMap = [
@@ -305,7 +305,11 @@ class EmailConfig extends ParameterBag
         ];
 
         foreach ($hashMap as $internalName => $keyName) {
-            $value = $this->getConfigValue($formData, $notifyConfig->get($keyName));
+            $configValue = $this->getConfigValue($formData, $notifyConfig->get($keyName));
+            $value = $formData->get($configValue);
+            if ($value === null) {
+                $value = $notifyConfig->get($keyName);
+            }
             $this->set($internalName, $value);
         }
     }
@@ -316,12 +320,12 @@ class EmailConfig extends ParameterBag
      * If the form notification configuration wants a value to be returned from
      * a submitted field we use this, otherwise the configured parameter.
      *
-     * @param FormData $formData
-     * @param string   $value
+     * @param Entity\Entity $formData
+     * @param string        $value
      *
      * @return string
      */
-    private function getConfigValue(FormData $formData, $value)
+    private function getConfigValue(Entity\Entity $formData, $value)
     {
         if ($value instanceof FieldOptionsBag) {
             $parts = [];

@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt\Extension\Bolt\BoltForms\Submission\Handler\Upload;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Bolt\Storage\Entity;
 
 /**
  * Submitted form data functionality for BoltForms
@@ -28,12 +28,12 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  * @license   http://opensource.org/licenses/LGPL-3.0 GNU Lesser General Public License 3.0
  */
-class FormData extends ParameterBag
+class FormData extends Entity\Content
 {
     /**
      * @param array $parameters
      */
-    public function __construct(array $parameters)
+    public function __construct($parameters)
     {
         parent::__construct($parameters);
 
@@ -53,7 +53,7 @@ class FormData extends ParameterBag
     public function get($name, $default = null, $transform = false)
     {
         if ($transform === false) {
-            return array_key_exists($name, $this->parameters) ? $this->parameters[$name] : $default;
+            return array_key_exists($name, $this->toArray()) ? $this->{$name} : $default;
         }
 
         return $this->getTransform($name);
@@ -68,7 +68,7 @@ class FormData extends ParameterBag
      */
     protected function getTransform($name)
     {
-        $value = $this->parameters[$name];
+        $value = $this->{$name};
 
         // Don't try to insert NULLs
         if ($value === null) {

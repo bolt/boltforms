@@ -7,7 +7,6 @@ use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Event\CustomDataEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
-use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Pimple as Container;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -63,16 +62,16 @@ class Fields extends AbstractProcessor
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
 
-        foreach ($formData->keys() as $fieldName) {
+        foreach ($formData->toArray() as $fieldName => $fieldValue) {
             $fieldConf = $formConfig->getFields()->get($fieldName);
             if ($fieldConf === null && $this->config->isDebug()) {
-                $message = sprintf(
-                    'Attempted to use an invalid field name "%s" on the form "%s". Available fields are: %s',
-                    $fieldName,
-                    $formConfig->getName(),
-                    implode(', ', $formConfig->getFields()->keys())
-                );
-                throw new FormOptionException($message);
+                //$message = sprintf(
+//    'Attempted to use an invalid field name "%s" on the form "%s". Available fields are: %s',
+//    $fieldName,
+//    $formConfig->getName(),
+//    implode(', ', $formConfig->getFields()->keys())
+//);
+//throw new FormOption\Exception($message);
             }
             if ($fieldConf === null) {
                 continue;

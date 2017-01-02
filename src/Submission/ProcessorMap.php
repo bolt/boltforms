@@ -29,7 +29,7 @@ use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
  */
 class ProcessorMap
 {
-    static $eventMap = [
+    public static $eventMap = [
         'fields'   => BoltFormsEvents::SUBMISSION_PROCESS_FIELDS,
         'uploads'  => BoltFormsEvents::SUBMISSION_PROCESS_UPLOADS,
         'content'  => BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE,
@@ -70,7 +70,7 @@ class ProcessorMap
      */
     public static function getEventMethodName($name)
     {
-        $map = array_flip(self::$eventMap);;
+        $map = array_flip(self::$eventMap);
 
         return isset($map[$name]) && ($value = $map[$name]) ? $value : null;
     }

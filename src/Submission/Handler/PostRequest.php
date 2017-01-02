@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent;
-use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Storage\Entity;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -53,7 +53,7 @@ class PostRequest
      * @param BoltForms                $boltForms
      * @param EventDispatcherInterface $dispatcher
      *
-     * @return FormData|null
+     * @return Entity\Entity|null
      */
     public function handle($formName, BoltForms $boltForms, EventDispatcherInterface $dispatcher)
     {
@@ -78,6 +78,6 @@ class PostRequest
         $event = new ProcessorEvent($formName, $data);
         $dispatcher->dispatch(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, $event);
 
-        return new FormData($event->getData());
+        return $event->getData();
     }
 }

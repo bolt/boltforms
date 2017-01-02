@@ -6,7 +6,6 @@ use Bolt\Exception\StorageException;
 use Bolt\Extension\Bolt\BoltForms\Config\FieldMap\ContentType as FieldMap;
 use Bolt\Extension\Bolt\BoltForms\Config\MetaData;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
-use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Storage\Entity;
 use Bolt\Storage\Repository\ContentRepository;
 use Carbon\Carbon;
@@ -39,14 +38,14 @@ class ContentType extends AbstractHandler
     /**
      * Write out form data to a specified ContentType record.
      *
-     * @param string   $contentType
-     * @param FormData $formData
-     * @param MetaData $formMetaData
-     * @param FieldMap $fieldMap
+     * @param string        $contentType
+     * @param Entity\Entity $formData
+     * @param MetaData      $formMetaData
+     * @param FieldMap      $fieldMap
      *
      * @throws InternalProcessorException
      */
-    public function handle($contentType, FormData $formData, MetaData $formMetaData, FieldMap $fieldMap)
+    public function handle($contentType, Entity\Entity $formData, MetaData $formMetaData, FieldMap $fieldMap)
     {
         try {
             /** @var ContentRepository $repo */
@@ -64,7 +63,7 @@ class ContentType extends AbstractHandler
             $record->setDatepublish(Carbon::now());
         }
 
-        foreach ($formData->all() as $name => $data) {
+        foreach ($formData->toArray() as $name => $data) {
             // Store the data array into the record
             if ($fieldMap->has($name) === false) {
                 continue;
@@ -89,16 +88,15 @@ class ContentType extends AbstractHandler
         }
     }
 
-
     /**
      * Get an appropriate entity object.
      *
      * @param ContentRepository $repo
-     * @param FormData          $formData
+     * @param Entity\Entity     $formData
      *
-     * @return Entity\Content
+     * @return Entity\Content|object
      */
-    protected function getRecord(ContentRepository $repo, FormData $formData)
+    protected function getRecord(ContentRepository $repo, Entity\Entity $formData)
     {
         if ($formData->has('id') === false) {
             return $repo->getEntityBuilder()->getEntity();

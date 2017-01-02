@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Event;
 
+use Bolt\Storage\Entity;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -31,14 +32,14 @@ class ProcessorEvent extends Event
 {
     /** @var string */
     protected $formName;
-    /** @var array */
+    /** @var Entity */
     protected $data;
 
     /**
      * @param string $formName
-     * @param array  $data
+     * @param Entity $data
      */
-    public function __construct($formName, array $data)
+    public function __construct($formName, Entity\Entity $data)
     {
         $this->formName = $formName;
         $this->data = $data;
@@ -54,7 +55,7 @@ class ProcessorEvent extends Event
         return $this->data;
     }
 
-    public function setData(array $data)
+    public function setData($data)
     {
         $this->data = $data;
     }

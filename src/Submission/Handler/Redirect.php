@@ -3,8 +3,8 @@
 namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Helpers\Arr;
+use Bolt\Storage\Entity\Entity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -52,9 +52,9 @@ class Redirect
      * Do a redirect.
      *
      * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param Entity     $formData
      */
-    public function handle(FormConfig $formConfig, FormData $formData)
+    public function handle(FormConfig $formConfig, Entity $formData)
     {
         $response = $this->getRedirectResponse($formConfig, $formData);
         if ($response instanceof RedirectResponse) {
@@ -88,11 +88,11 @@ class Redirect
      * Build a GET query if required.
      *
      * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param Entity     $formData
      *
      * @return string
      */
-    protected function getRedirectQuery(FormConfig $formConfig, FormData $formData)
+    protected function getRedirectQuery(FormConfig $formConfig, Entity $formData)
     {
         $query = $formConfig->getFeedback()->getRedirectQuery();
         if ($query === null) {
@@ -122,11 +122,11 @@ class Redirect
      * Get the redirect response object.
      *
      * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param Entity     $formData
      *
      * @return RedirectResponse|false
      */
-    protected function getRedirectResponse(FormConfig $formConfig, FormData $formData)
+    protected function getRedirectResponse(FormConfig $formConfig, Entity $formData)
     {
         $redirect = $formConfig->getFeedback()->getRedirectTarget();
         $query = $this->getRedirectQuery($formConfig, $formData);

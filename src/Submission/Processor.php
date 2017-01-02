@@ -10,8 +10,8 @@ use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
-use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor\ProcessorInterface;
+use Bolt\Storage\Entity;
 use Exception;
 use Pimple as Container;
 use Psr\Log\LoggerInterface;
@@ -153,7 +153,7 @@ class Processor implements EventSubscriberInterface
         $formName = $formConfig->getName();
         /** @var Handler\PostRequest $requestHandler*/
         $requestHandler = $this->handlers['request'];
-        /** @var FormData $formData */
+        /** @var Entity\Entity $formData */
         $formData = $requestHandler->handle($formName, $this->boltForms, $this->dispatcher);
 
         if ($formData !== null && $reCaptchaResponse['success']) {
@@ -168,12 +168,12 @@ class Processor implements EventSubscriberInterface
     /**
      * Dispatch all the processing events.
      *
-     * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param FormConfig    $formConfig
+     * @param Entity\Entity $formData
      *
      * @throws Exception
      */
-    protected function dispatchProcessors(FormConfig $formConfig, FormData $formData)
+    protected function dispatchProcessors(FormConfig $formConfig, Entity\Entity $formData)
     {
         $formName = $formConfig->getName();
         /** @var Form $form */
@@ -198,7 +198,7 @@ class Processor implements EventSubscriberInterface
         }
 
         // Post processing event
-        $processorEvent = new ProcessorEvent($formName, $formData->all());
+        $processorEvent = new ProcessorEvent($formName, $formData);
         $this->dispatch(BoltFormsEvents::SUBMISSION_POST_PROCESSOR, $processorEvent);
 
         // Feedback notices

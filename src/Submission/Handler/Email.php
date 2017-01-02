@@ -5,9 +5,9 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Event;
 use Bolt\Extension\Bolt\BoltForms\Exception\InternalProcessorException;
-use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Extension\Bolt\EmailSpooler\EventListener\QueueListener;
+use Bolt\Storage\Entity;
 use Bolt\Storage\EntityManager;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -19,7 +19,6 @@ use Symfony\Component\Console\Helper;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig_Environment as TwigEnvironment;
@@ -125,10 +124,10 @@ class Email extends AbstractHandler
      * Create a notification message.
      *
      * @param Config\FormConfig $formConfig
-     * @param FormData          $formData
+     * @param Entity\Entity     $formData
      * @param Config\MetaData   $formMetaData
      */
-    public function handle(Config\FormConfig $formConfig, FormData $formData, Config\MetaData $formMetaData)
+    public function handle(Config\FormConfig $formConfig, Entity\Entity $formData, Config\MetaData $formMetaData)
     {
         $emailConfig = new Config\EmailConfig($formConfig, $formData);
 
@@ -147,11 +146,15 @@ class Email extends AbstractHandler
      *
      * @param Config\FormConfig  $formConfig
      * @param Config\EmailConfig $emailConfig
-     * @param FormData           $formData
+     * @param Entity\Entity      $formData
      * @param Config\MetaData    $formMetaData
      */
-    private function compose(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, FormData $formData, Config\MetaData $formMetaData)
-    {
+    private function compose(
+        Config\FormConfig $formConfig,
+        Config\EmailConfig $emailConfig,
+        Entity\Entity $formData,
+        Config\MetaData $formMetaData
+    ) {
         // If the form has it's own templates defined, use those, else the globals.
         $templateSubject = $formConfig->getTemplates()->getSubject() ?: $this->getConfig()->getTemplates()->get('subject');
         $templateEmail = $formConfig->getTemplates()->getEmail() ?: $this->getConfig()->getTemplates()->get('email');
@@ -205,14 +208,17 @@ class Email extends AbstractHandler
      *
      * @param Config\FormConfig  $formConfig
      * @param Config\EmailConfig $emailConfig
-     * @param FormData           $formData
+     * @param Entity\Entity      $formData
      *
      * @return array
      */
-    private function getBodyData(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, FormData $formData)
+    private function getBodyData(Config\FormConfig $formConfig, Config\EmailConfig $emailConfig, Entity\Entity $formData)
     {
         $bodyData = [];
-        foreach ($formData->all() as $fieldName => $value) {
+        foreach ($formData->toArray() as $fieldName => $value) {
+            if (!$formConfig->getFields()->has($fieldName)) {
+                continue;
+            }
             /** @var Config\Form\FieldBag $fieldConfig */
             $fieldConfig = $formConfig->getFields()->{$fieldName}();
             $formValue = $formData->get($fieldName);
@@ -256,8 +262,7 @@ class Email extends AbstractHandler
         }
 
         /** @var File $uploadedFile */
-        foreach ($formValues as $uploadedFile)
-        {
+        foreach ($formValues as $uploadedFile) {
             if ($uploadedFile instanceof File) {
                 $this->attachFile($uploadedFile);
             }

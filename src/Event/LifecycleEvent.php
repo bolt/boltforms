@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Event;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\MetaData;
 use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Storage\Entity\Entity;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\Button;
 
@@ -46,13 +47,13 @@ class LifecycleEvent extends Event
      * Constructor.
      *
      * @param FormConfig $formConfig
-     * @param FormData   $formData
+     * @param Entity     $formData
      * @param MetaData   $formMetaData
      * @param Button     $clickedButton
      */
     public function __construct(
         FormConfig $formConfig,
-        FormData $formData,
+        Entity $formData,
         MetaData $formMetaData,
         Button $clickedButton
     ) {
@@ -71,7 +72,7 @@ class LifecycleEvent extends Event
     }
 
     /**
-     * @return FormData
+     * @return Entity
      */
     public function getFormData()
     {

@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Event;
 
 use Bolt\Extension\Bolt\BoltForms\Config\EmailConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
-use Bolt\Extension\Bolt\BoltForms\FormData;
+use Bolt\Storage\Entity;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -36,10 +36,10 @@ class EmailEvent extends Event
     protected $emailConfig;
     /** @var FormConfig */
     protected $formConfig;
-    /** @var FormData */
+    /** @var Entity\Entity */
     protected $formData;
 
-    public function __construct(EmailConfig $emailConfig, FormConfig $formConfig, FormData $formData)
+    public function __construct(EmailConfig $emailConfig, FormConfig $formConfig, Entity\Entity $formData)
     {
         $this->emailConfig = $emailConfig;
         $this->formConfig = $formConfig;
@@ -67,9 +67,9 @@ class EmailEvent extends Event
     }
 
     /**
-     * Get the FormData object used in the email notification.
+     * Get the Entity object used in the email notification.
      *
-     * @return FormData
+     * @return Entity\Entity
      */
     public function getFormData()
     {

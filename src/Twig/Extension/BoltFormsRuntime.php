@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\BoltForms\Exception;
 use Bolt\Extension\Bolt\BoltForms\Factory\FormContext;
 use Bolt\Extension\Bolt\BoltForms\Submission\FeedbackTrait;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
+use Bolt\Storage\Entity;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -147,8 +148,15 @@ class BoltFormsRuntime
 
         // If defaults are passed in, set them in data but don't override the
         // data array that might also be passed in
-        if ($defaults !== null) {
-            $options['data'] = $defaults;
+        if ($data === null && $defaults !== null) {
+            $data = $defaults;
+        }
+        if (isset($options['data_class']) && $data && is_array($data)) {
+            $data['title'] = isset($data['title']) ? $data['title'] : null;
+            $data = new $options['data_class']($data);
+        } elseif ($data && is_array($data)) {
+            $data['title'] = isset($data['title']) ? $data['title'] : null;
+            $data = new Entity\Content($data);
         }
 
         // Set form runtime overrides
@@ -309,8 +317,8 @@ class BoltFormsRuntime
     /**
      * Render a form exception.
      *
-     * @param string            $formName
-     * @param FormContext       $compiler
+     * @param string           $formName
+     * @param FormContext      $compiler
      * @param Twig_Environment $twig
      *
      * @return string
@@ -325,7 +333,7 @@ class BoltFormsRuntime
 
     /**
      * @param Twig_Environment $twig
-     * @param string            $str
+     * @param string           $str
      *
      * @return string
      */

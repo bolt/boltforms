@@ -74,8 +74,9 @@ class Upload
      *
      * @param FlashBagInterface $feedback
      *
-     * @return File
      * @throws FileUploadException
+     *
+     * @return File
      */
     public function handle(FlashBagInterface $feedback)
     {
