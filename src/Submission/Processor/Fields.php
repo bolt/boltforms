@@ -63,6 +63,7 @@ class Fields extends AbstractProcessor
         $formData = $lifeEvent->getFormData();
 
         foreach ($formData->toArray() as $fieldName => $fieldValue) {
+            /** @var \Bolt\Extension\Bolt\BoltForms\Config\Form\FieldBag $fieldConf */
             $fieldConf = $formConfig->getFields()->get($fieldName);
             if ($fieldConf === null && $this->config->isDebug()) {
                 //$message = sprintf(
@@ -77,9 +78,17 @@ class Fields extends AbstractProcessor
                 continue;
             }
 
+            /** @var \Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag $fieldOptions */
+            $fieldOptions = $fieldConf->getOptions();
+            if ($fieldOptions->has('event') === false) {
+                continue;
+            }
+
             // Handle events for custom data
-            if ($fieldConf->getOptions()->has('event') && $fieldConf->getOptions()->get('event')->has('name')) {
-                $formData->set($fieldName, $this->dispatchCustomDataEvent($dispatcher, $fieldConf->getOptions()->get('event')));
+            $eventConfig = $fieldOptions->get('event');
+            if ($eventConfig->has('name')) {
+                $data = $this->dispatchCustomDataEvent($dispatcher, $eventConfig);
+                $formData->set($fieldName, $data);
             }
         }
     }
