@@ -12,7 +12,7 @@ use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
 use Bolt\Extension\Bolt\BoltForms\Form\Entity;
 use Bolt\Extension\Bolt\BoltForms\Form\ResolvedBoltForm;
 use Bolt\Extension\Bolt\BoltForms\Form\Type\BoltFormType;
-use Bolt\Extension\Bolt\BoltForms\Subscriber\BoltFormsSubscriber;
+use Bolt\Extension\Bolt\BoltForms\Subscriber\SymfonyFormProxySubscriber;
 use Silex\Application;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -119,7 +119,7 @@ class BoltForms
         /** @var FormBuilderInterface $builder */
         $builder = $this->app['form.factory']
             ->createNamedBuilder($formName, $type, $data, $options)
-            ->addEventSubscriber(new BoltFormsSubscriber($this->app))
+            ->addEventSubscriber(new SymfonyFormProxySubscriber())
         ;
         /** @var Form $form */
         $form = $builder->getForm();

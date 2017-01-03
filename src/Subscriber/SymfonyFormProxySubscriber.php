@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvent;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
-use Silex\Application;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -32,21 +32,8 @@ use Symfony\Component\Form\FormEvents;
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  * @license   http://opensource.org/licenses/LGPL-3.0 GNU Lesser General Public License 3.0
  */
-class BoltFormsSubscriber implements EventSubscriberInterface
+class SymfonyFormProxySubscriber implements EventSubscriberInterface
 {
-    /** @var Application */
-    private $app;
-
-    /**
-     * Constructor.
-     *
-     * @param Application $app
-     */
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * Events that BoltFormsSubscriber subscribes to
      *
@@ -66,23 +53,25 @@ class BoltFormsSubscriber implements EventSubscriberInterface
     /**
      * Event triggered on FormEvents::PRE_SET_DATA
      *
-     * @param FormEvent $event
-     * @param string    $eventName
+     * @param FormEvent       $event
+     * @param string          $eventName
+     * @param EventDispatcher $dispatcher
      */
-    public function preSetData(FormEvent $event, $eventName)
+    public function preSetData(FormEvent $event, $eventName, $dispatcher)
     {
-        $this->dispatch(BoltFormsEvents::PRE_SET_DATA, $event, $eventName);
+        $this->dispatch(BoltFormsEvents::PRE_SET_DATA, $event, $eventName, $dispatcher);
     }
 
     /**
      * Event triggered on FormEvents::POST_SET_DATA
      *
-     * @param FormEvent $event
-     * @param string    $eventName
+     * @param FormEvent       $event
+     * @param string          $eventName
+     * @param EventDispatcher $dispatcher
      */
-    public function postSetData(FormEvent $event, $eventName)
+    public function postSetData(FormEvent $event, $eventName, $dispatcher)
     {
-        $this->dispatch(BoltFormsEvents::POST_SET_DATA, $event, $eventName);
+        $this->dispatch(BoltFormsEvents::POST_SET_DATA, $event, $eventName, $dispatcher);
     }
 
     /**
@@ -94,52 +83,50 @@ class BoltFormsSubscriber implements EventSubscriberInterface
      *  $data = $event->getData();
      *  $event->setData($data);
      *
-     * @param FormEvent $event
-     * @param string    $eventName
+     * @param FormEvent       $event
+     * @param string          $eventName
+     * @param EventDispatcher $dispatcher
      */
-    public function preSubmit(FormEvent $event, $eventName)
+    public function preSubmit(FormEvent $event, $eventName, $dispatcher)
     {
-        $this->dispatch(BoltFormsEvents::PRE_SUBMIT, $event, $eventName);
+        $this->dispatch(BoltFormsEvents::PRE_SUBMIT, $event, $eventName, $dispatcher);
     }
 
     /**
      * Event triggered on FormEvents::SUBMIT
      *
-     * @param FormEvent $event
-     * @param string    $eventName
+     * @param FormEvent       $event
+     * @param string          $eventName
+     * @param EventDispatcher $dispatcher
      */
-    public function submit(FormEvent $event, $eventName)
+    public function submit(FormEvent $event, $eventName, $dispatcher)
     {
-        $this->dispatch(BoltFormsEvents::SUBMIT, $event, $eventName);
+        $this->dispatch(BoltFormsEvents::SUBMIT, $event, $eventName, $dispatcher);
     }
 
     /**
      * Event triggered on FormEvents::POST_SUBMIT
      *
-     * @param FormEvent $event
-     * @param string    $eventName
+     * @param FormEvent       $event
+     * @param string          $eventName
+     * @param EventDispatcher $dispatcher
      */
-    public function postSubmit(FormEvent $event, $eventName)
+    public function postSubmit(FormEvent $event, $eventName, $dispatcher)
     {
-        $this->dispatch(BoltFormsEvents::POST_SUBMIT, $event, $eventName);
+        $this->dispatch(BoltFormsEvents::POST_SUBMIT, $event, $eventName, $dispatcher);
     }
 
     /**
      * Dispatch event.
      *
-     * @param string    $eventName
-     * @param FormEvent $event
-     * @param string    $formsEventName
+     * @param string          $eventName
+     * @param FormEvent       $event
+     * @param string          $formsEventName
+     * @param EventDispatcher $dispatcher
      */
-    protected function dispatch($eventName, FormEvent $event, $formsEventName)
+    protected function dispatch($eventName, FormEvent $event, $formsEventName, EventDispatcher $dispatcher)
     {
-        if ($this->app['dispatcher']->hasListeners($eventName)) {
-            $event = new BoltFormsEvent($event, $formsEventName);
-            try {
-                $this->app['dispatcher']->dispatch($eventName, $event);
-            } catch (\Exception $e) {
-                $this->app['logger.system']->error("[BoltForms] $eventName subscriber had an error: " . $e->getMessage(), ['event' => 'extensions']);
-            }
-        }
+        $event = new BoltFormsEvent($event, $formsEventName);
+        $dispatcher->dispatch($eventName, $event);
     }
 }
