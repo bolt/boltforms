@@ -1,11 +1,12 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Form\Entity;
+namespace Bolt\Extension\Bolt\BoltForms\Form;
 
-use Bolt\Storage\Entity\Content as BoltContent;
+use Silex\Application;
+use Symfony\Component\Form\AbstractExtension;
 
 /**
- * Standard base entity data class.
+ * Symfony Form extension.
  *
  * Copyright (c) 2014-2016 Gawain Lynch
  *
@@ -27,21 +28,36 @@ use Bolt\Storage\Entity\Content as BoltContent;
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  * @license   http://opensource.org/licenses/LGPL-3.0 GNU Lesser General Public License 3.0
  */
-class Content extends BoltContent
+class BoltFormsExtension extends AbstractExtension
 {
+    /** @var Application */
+    protected $app;
+
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function getTitle()
+    protected function loadTypes()
     {
-        if (array_key_exists('title', $this->_fields)) {
-            return $this->_fields['title'];
-        }
+        return [];
+    }
 
-        if (property_exists($this, 'title')) {
-            return $this->title;
-        }
+    /**
+     * {@inheritdoc}
+     */
+    protected function loadTypeExtensions()
+    {
+        return [];
+    }
 
-        return null;
+    /**
+     * {@inheritdoc}
+     */
+    protected function loadTypeGuesser()
+    {
     }
 }

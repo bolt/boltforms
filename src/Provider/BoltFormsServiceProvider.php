@@ -6,6 +6,7 @@ use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\BoltFormsExtension;
 use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Factory;
+use Bolt\Extension\Bolt\BoltForms\Form;
 use Bolt\Extension\Bolt\BoltForms\Submission;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\DynamicDataSubscriber;
 use Bolt\Extension\Bolt\BoltForms\Twig;
@@ -44,6 +45,17 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
 {
     public function register(Application $app)
     {
+        $app['form.extensions'] = $app->share(
+            $app->extend(
+                'form.extensions',
+                function ($extensions, $app) {
+                    $extensions[] = new Form\BoltFormsExtension($app);
+
+                    return $extensions;
+                }
+            )
+        );
+
         $app['boltforms'] = $app->share(
             function ($app) {
                 $forms = new BoltForms($app);
