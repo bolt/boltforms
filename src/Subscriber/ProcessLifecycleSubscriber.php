@@ -1,11 +1,16 @@
 <?php
 
-namespace Bolt\Extension\Bolt\BoltForms\Submission;
+namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
+use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
+use Silex\Application;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Map of processor events to data.
+ * Internal subscriber to the processor events.
  *
  * Copyright (c) 2014-2016 Gawain Lynch
  *
@@ -27,22 +32,25 @@ use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  * @license   http://opensource.org/licenses/LGPL-3.0 GNU Lesser General Public License 3.0
  */
-class ProcessorMap
+class ProcessLifecycleSubscriber implements EventSubscriberInterface
 {
-    public static $eventMap = [
-        'fields'   => BoltFormsEvents::SUBMISSION_PROCESS_FIELDS,
-        'uploads'  => BoltFormsEvents::SUBMISSION_PROCESS_UPLOADS,
-        'content'  => BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE,
-        'database' => BoltFormsEvents::SUBMISSION_PROCESS_DATABASE,
-        'email'    => BoltFormsEvents::SUBMISSION_PROCESS_EMAIL,
-        'feedback' => BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK,
-        'redirect' => BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT,
-    ];
+    /** @var Application */
+    private $app;
 
     /**
-     * @return array
+     * Constructor.
+     *
+     * @param Application $app
      */
-    public static function subscribedEvents()
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
     {
         return [
             BoltFormsEvents::SUBMISSION_PROCESS_FIELDS      => ['onProcessLifecycleEvent', BoltFormsEvents::PRIORITY_INTERNAL],
@@ -56,22 +64,22 @@ class ProcessorMap
     }
 
     /**
-     * @return array
+     * Handle local processing of ProcessLifecycleEvents.
+     *
+     * @param LifecycleEvent           $lifeEvent
+     * @param string                   $eventName
+     * @param EventDispatcherInterface $dispatcher
      */
-    public static function eventNameToMethodName()
+    public function onProcessLifecycleEvent(LifecycleEvent $lifeEvent, $eventName, EventDispatcherInterface $dispatcher)
     {
-        return array_flip(self::$eventMap);
+        $this->getProcessorManager()->runInternalProcessor($lifeEvent, $eventName, $dispatcher);
     }
 
     /**
-     * @param string $name
-     *
-     * @return array|null
+     * @return Processor
      */
-    public static function getEventMethodName($name)
+    public function getProcessorManager()
     {
-        $map = array_flip(self::$eventMap);
-
-        return isset($map[$name]) && ($value = $map[$name]) ? $value : null;
+        return $this->app['boltforms.processor'];
     }
 }

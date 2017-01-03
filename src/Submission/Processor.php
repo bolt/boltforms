@@ -17,7 +17,6 @@ use Pimple as Container;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -45,7 +44,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  * @license   http://opensource.org/licenses/LGPL-3.0 GNU Lesser General Public License 3.0
  */
-class Processor implements EventSubscriberInterface
+class Processor
 {
     use FeedbackTrait;
 
@@ -71,6 +70,16 @@ class Processor implements EventSubscriberInterface
     private $result;
     /** @var bool */
     private $debug;
+
+    private static $eventMap = [
+        'fields'   => BoltFormsEvents::SUBMISSION_PROCESS_FIELDS,
+        'uploads'  => BoltFormsEvents::SUBMISSION_PROCESS_UPLOADS,
+        'content'  => BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE,
+        'database' => BoltFormsEvents::SUBMISSION_PROCESS_DATABASE,
+        'email'    => BoltFormsEvents::SUBMISSION_PROCESS_EMAIL,
+        'feedback' => BoltFormsEvents::SUBMISSION_PROCESS_FEEDBACK,
+        'redirect' => BoltFormsEvents::SUBMISSION_PROCESS_REDIRECT,
+    ];
 
     /**
      * Constructor.
@@ -106,23 +115,15 @@ class Processor implements EventSubscriberInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return ProcessorMap::subscribedEvents();
-    }
-
-    /**
      * Handle local processing of ProcessLifecycleEvents.
      *
      * @param LifecycleEvent           $lifeEvent
      * @param string                   $eventName
      * @param EventDispatcherInterface $dispatcher
      */
-    public function onProcessLifecycleEvent(LifecycleEvent $lifeEvent, $eventName, EventDispatcherInterface $dispatcher)
+    public function runInternalProcessor(LifecycleEvent $lifeEvent, $eventName, EventDispatcherInterface $dispatcher)
     {
-        $key = ProcessorMap::getEventMethodName($eventName);
+        $key = $this->getEventMethodName($eventName);
         if ($key === null) {
             throw new \RuntimeException(sprintf('No internal process mapping to "%s"', $eventName));
         }
@@ -248,6 +249,18 @@ class Processor implements EventSubscriberInterface
                 }
             }
         }
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return array|null
+     */
+    protected function getEventMethodName($name)
+    {
+        $map = array_flip(self::$eventMap);
+
+        return isset($map[$name]) && ($value = $map[$name]) ? $value : null;
     }
 
     /**

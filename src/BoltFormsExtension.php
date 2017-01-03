@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\BoltForms;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
+use Bolt\Extension\Bolt\BoltForms\Subscriber\ProcessLifecycleSubscriber;
 use Bolt\Extension\SimpleExtension;
 use Silex\Application;
 
@@ -51,7 +52,7 @@ class BoltFormsExtension extends SimpleExtension
         parent::boot($app);
 
         $dispatcher = $this->container['dispatcher'];
-        $dispatcher->addSubscriber($app['boltforms.processor']);
+        $dispatcher->addSubscriber(new ProcessLifecycleSubscriber($app));
     }
 
     /**
