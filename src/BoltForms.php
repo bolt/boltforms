@@ -114,17 +114,18 @@ class BoltForms
             throw new \RuntimeException(sprintf('A form of the name "%s" has already been created.', $formName));
         }
 
-        $options['csrf_protection'] = $this->config->isCsrf();
+        $this->resolveFormConfiguration($formName);
 
         /** @var FormBuilderInterface $builder */
         $builder = $this->createFormBuilder($formName, $type, $data, $options);
-        /** @var Form $form */
-        $form = $builder->getForm();
-
-        $this->resolveFormConfiguration($formName);
-
         /** @var Config\FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
+        foreach ($formConfig->getFields()->all() as $key => $field) {
+            $builder->add($key, $field['type'], $field['options']);
+        }
+
+        /** @var Form $form */
+        $form = $builder->getForm();
         $formMeta = new Config\MetaData();
         $this->forms[$formName] = new ResolvedBoltForm($form, $formConfig, $formMeta);
 
@@ -133,46 +134,7 @@ class BoltForms
             $request->attributes->set(static::META_FIELD_NAME, [$formName => $formMeta->getMetaId()]);
         }
 
-        foreach ($formConfig->getFields()->all() as $key => $field) {
-            $field['options'] = !empty($field['options']) ? $field['options'] : [];
-
-            if (!isset($field['type'])) {
-                throw new FormOptionException(sprintf('Missing "type" value for "%s" field in "%s" form.', $key, $formName));
-            }
-
-            $this->addField($formName, $key, $field['type'], $field['options']);
-        }
-
         return $this->forms[$formName];
-    }
-
-    /**
-     * Add a field to the form.
-     *
-     * @param string                $formName  Name of the form
-     * @param string                $fieldName
-     * @param string                $type
-     * @param array|FieldOptionsBag $options
-     *
-     * @throws FormOptionException
-     */
-    public function addField($formName, $fieldName, $type, $options)
-    {
-        if (is_array($options)) {
-            $options = new FieldOptionsBag($options);
-        }
-        if (!$options instanceof ParameterBag) {
-            throw new FormOptionException(sprintf('Options passed to %s must of of type array or %s', __METHOD__, ParameterBag::class));
-        }
-
-        try {
-            $this->get($formName)
-                ->getForm()
-                ->add($fieldName, $type, $options->all())
-            ;
-        } catch (InvalidConstraintException $e) {
-            $this->app['logger.system']->error($e->getMessage(), ['event' => 'extensions']);
-        }
     }
 
     /**
@@ -217,22 +179,6 @@ class BoltForms
             return;
         }
         $this->forms[$formName]->setMeta($meta);
-    }
-
-    /**
-     * Add an array of fields to the form.
-     *
-     * @param string $formName Name of the form
-     * @param array  $fields   Associative array keyed on field name => array('type' => '', 'options => array())
-     *
-     * @return void
-     */
-    public function addFieldArray($formName, array $fields)
-    {
-        foreach ($fields as $fieldName => $field) {
-            $field['options'] = empty($field['options']) ? [] : $field['options'];
-            $this->addField($formName, $fieldName, $field['type'], $field['options']);
-        }
     }
 
     /**

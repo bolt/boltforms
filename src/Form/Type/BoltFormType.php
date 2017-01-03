@@ -3,11 +3,13 @@
 namespace Bolt\Extension\Bolt\BoltForms\Form\Type;
 
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
+use Bolt\Extension\Bolt\BoltForms\Form\Entity;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Bolt\Extension\Bolt\BoltForms\Form\Entity;
+
 /**
  * BoltForms form type.
  *
@@ -63,7 +65,8 @@ class BoltFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Entity\Content::class,
+            'data_class'      => Entity\Content::class,
+            'csrf_protection' => $this->config->isCsrf(),
         ]);
     }
 }
