@@ -115,7 +115,6 @@ class BoltForms
         }
 
         $options['csrf_protection'] = $this->config->isCsrf();
-        $data = is_array($data) ? new Entity\Content() : $data;
 
         /** @var FormBuilderInterface $builder */
         $builder = $this->app['form.factory']

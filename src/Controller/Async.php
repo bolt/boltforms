@@ -7,9 +7,9 @@ use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Factory\FormContext;
+use Bolt\Extension\Bolt\BoltForms\Form\Type\BoltFormType;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -79,7 +79,7 @@ class Async implements ControllerProviderInterface
         /** @var BoltForms $boltForms */
         $boltForms = $app['boltforms'];
         $boltForms
-            ->create($formName, FormType::class, [], [])
+            ->create($formName, BoltFormType::class, [], [])
             ->setMeta($meta)
         ;
         /** @var Config\Config $config */
