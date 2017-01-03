@@ -15,6 +15,10 @@ class Content extends BoltContent
             return $this->_fields['title'];
         }
 
-        return $this->title;
+        if (property_exists($this, 'title')) {
+            return $this->title;
+        }
+
+        return null;
     }
 }
