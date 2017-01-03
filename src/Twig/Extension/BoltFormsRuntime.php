@@ -154,9 +154,13 @@ class BoltFormsRuntime
         } elseif ($data instanceof Legacy\Content) {
             $data = new Entity\Content($data->getValues());
         }
-        if (isset($options['data_class']) && $data && is_array($data)) {
-            $data['title'] = isset($data['title']) ? $data['title'] : null;
-            $data = new $options['data_class']($data);
+        if (is_array($data)) {
+            if (isset($options['data_class'])) {
+                $data['title'] = isset($data['title']) ? $data['title'] : null;
+                $data = new $options['data_class']($data);
+            } else {
+                $data = new Entity\Content($data);
+            }
         }
 
         // Set form runtime overrides
