@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Form;
 
 use Silex\Application;
 use Symfony\Component\Form\AbstractExtension;
-
+use Bolt\Extension\Bolt\BoltForms\Form\Type;
 /**
  * Symfony Form extension.
  *
@@ -43,7 +43,9 @@ class BoltFormsExtension extends AbstractExtension
      */
     protected function loadTypes()
     {
-        return [];
+        return [
+            new Type\BoltFormType($this->app['dispatcher'], $this->app['boltforms.config'])
+        ];
     }
 
     /**

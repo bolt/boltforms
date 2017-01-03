@@ -5,11 +5,11 @@ use Bolt\Asset\Snippet\Snippet;
 use Bolt\Asset\Target;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\BoltForms\Asset\ReCaptcha;
+use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
 use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
-use Bolt\Extension\Bolt\BoltForms\Form\Entity;
 use Bolt\Extension\Bolt\BoltForms\Form\ResolvedBoltForm;
 use Bolt\Extension\Bolt\BoltForms\Form\Type\BoltFormType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\SymfonyFormProxySubscriber;
@@ -49,7 +49,7 @@ class BoltForms
 
     /** @var Application */
     private $app;
-    /** @var ParameterBag */
+    /** @var Config\Config */
     private $config;
     /** @var ResolvedBoltForm[] */
     private $forms;
@@ -117,10 +117,7 @@ class BoltForms
         $options['csrf_protection'] = $this->config->isCsrf();
 
         /** @var FormBuilderInterface $builder */
-        $builder = $this->app['form.factory']
-            ->createNamedBuilder($formName, $type, $data, $options)
-            ->addEventSubscriber(new SymfonyFormProxySubscriber())
-        ;
+        $builder = $this->createFormBuilder($formName, $type, $data, $options);
         /** @var Form $form */
         $form = $builder->getForm();
 
@@ -350,7 +347,25 @@ class BoltForms
             $formConfig['fields'][$fieldName]['options'] = $resolverFactory($data['type'], (array) $data['options']);
         }
 
-        $resolvedFormConfig = new FormConfig($formName, $formConfig, $this->app['boltforms.config']);
+        $resolvedFormConfig = new FormConfig($formName, $formConfig, $this->config);
         $this->config->setResolvedFormConfig($formName, $resolvedFormConfig);
+    }
+
+    /**
+     * Returns a named form builder.
+     *
+     * @param string $formName
+     * @param string $type
+     * @param mixed  $data
+     * @param array  $options
+     *
+     * @return FormBuilderInterface
+     */
+    private function createFormBuilder($formName, $type = BoltFormType::class, $data = null, array $options = [])
+    {
+        return $this->app['form.factory']
+            ->createNamedBuilder($formName, $type, $data, $options)
+            ->addEventSubscriber(new SymfonyFormProxySubscriber())
+        ;
     }
 }

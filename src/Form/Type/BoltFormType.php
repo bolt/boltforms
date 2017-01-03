@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Form\Type;
 
+use Bolt\Extension\Bolt\BoltForms\Config\Config;
+use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,6 +33,23 @@ use Bolt\Extension\Bolt\BoltForms\Form\Entity;
  */
 class BoltFormType extends AbstractType
 {
+    /** @var TraceableEventDispatcherInterface */
+    protected $dispatcher;
+    /** @var  Config */
+    protected $config;
+
+    /**
+     * Constructor.
+     *
+     * @param TraceableEventDispatcherInterface $dispatcher
+     * @param Config                            $config
+     */
+    public function __construct(TraceableEventDispatcherInterface $dispatcher, Config $config)
+    {
+        $this->dispatcher = $dispatcher;
+        $this->config = $config;
+    }
+
     /**
      * {@inheritdoc}
      */
