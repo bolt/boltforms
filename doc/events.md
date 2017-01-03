@@ -78,7 +78,7 @@ BoltForms provides a `EmailEvent` that is dispatched immediately
 prior to emails being sent, and during the internal 
 `BoltFormsEvents::SUBMISSION_PROCESS_EMAIL` listener's execution.
 
-This event object will contain the EmailConfig, FormConfig and FormData objects.
+This event object will contain the EmailConfig, FormConfig and Entity objects.
 
 ```php
 //use Bolt\Extension\Bolt\BoltForms\Event\EmailEvent;
