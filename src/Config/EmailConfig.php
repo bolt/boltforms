@@ -42,6 +42,7 @@ class EmailConfig extends ParameterBag
         $this->set('attachFiles', $formConfig->getNotification()->get('attach_files', false));
         $this->set('debug', $formConfig->getNotification()->isDebug());
         $this->set('debugEmail', $formConfig->getNotification()->get('debug_address'));
+        $this->set('debugSmtp', $formConfig->getNotification()->get('debug_smtp'));
         $this->setEmailConfig($formConfig, $formData);
     }
 
@@ -53,6 +54,17 @@ class EmailConfig extends ParameterBag
     public function isDebug()
     {
         return $this->getBoolean('debug');
+    }
+
+
+    /**
+     * Debugging state.
+     *
+     * @return boolean
+     */
+    public function isDebugSmtp()
+    {
+        return $this->getBoolean('debugSmtp');
     }
 
     /**

@@ -390,7 +390,7 @@ class Email extends AbstractHandler
      */
     private function log(Config\EmailConfig $emailConfig)
     {
-        if (!$emailConfig->isDebug()) {
+        if (!$emailConfig->isDebug() || !$emailConfig->isDebugSmtp()) {
             return;
         }
 

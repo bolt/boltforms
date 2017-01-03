@@ -87,6 +87,26 @@ class NotificationOptionsBag extends AbstractCascadingBag
     }
 
     /**
+     * @return boolean
+     */
+    public function isDebugSmtp()
+    {
+        return  $this->getHierarchicalValue('debug_smtp');
+    }
+
+    /**
+     * @param boolean $debug
+     *
+     * @return NotificationOptionsBag
+     */
+    public function setDebugSmtp($debug)
+    {
+        $this->set('debug_smtp', $debug);
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getDebugAddress()
