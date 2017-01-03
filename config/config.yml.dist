@@ -146,7 +146,7 @@ contact:
         submit:
             type: submit
             options:
-                label: Submit my message &raquo;
+                label: Submit my message »
                 attr:
                     class: button primary
 
@@ -329,6 +329,6 @@ contact:
 #        submit:
 #            type: submit
 #            options:
-#                label: Submit my message &raquo;
+#                label: Submit my message »
 #                attr:
 #                    class: button primary
