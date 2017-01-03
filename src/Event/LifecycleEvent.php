@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Event;
 
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Config\MetaData;
-use Bolt\Extension\Bolt\BoltForms\FormData;
 use Bolt\Storage\Entity\Entity;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\Button;
@@ -36,7 +35,7 @@ class LifecycleEvent extends Event
 {
     /** @var FormConfig $formConfig */
     protected $formConfig;
-    /** @var FormData $formData */
+    /** @var Entity $formData */
     protected $formData;
     /** @var MetaData */
     private $formMetaData;
