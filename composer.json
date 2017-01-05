@@ -11,7 +11,8 @@
     ],
     "require": {
         "bolt/bolt": "^3.0",
-        "bolt/email-spooler": "^3.0"
+        "bolt/email-spooler": "^3.0",
+        "google/recaptcha": "^1.1.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.7"
@@ -35,8 +36,7 @@
         "psr-4": {
             "Bolt\\Extension\\Bolt\\BoltForms\\": [
                 "src/"
-            ],
-            "ReCaptcha\\": "lib/ReCaptcha/"
+            ]
         },
         "classmap": [
             "doc/example/"
