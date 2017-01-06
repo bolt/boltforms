@@ -6,10 +6,9 @@ use Bolt\Asset\Target;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\BoltForms\Asset\ReCaptcha;
 use Bolt\Extension\Bolt\BoltForms\Config;
-use Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag;
 use Bolt\Extension\Bolt\BoltForms\Config\FormConfig;
 use Bolt\Extension\Bolt\BoltForms\Exception\FormOptionException;
-use Bolt\Extension\Bolt\BoltForms\Exception\InvalidConstraintException;
+use Bolt\Extension\Bolt\BoltForms\Form\DataTransformer\EntityTransformer;
 use Bolt\Extension\Bolt\BoltForms\Form\ResolvedBoltForm;
 use Bolt\Extension\Bolt\BoltForms\Form\Type\BoltFormType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\SymfonyFormProxySubscriber;
@@ -17,7 +16,6 @@ use Silex\Application;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -312,6 +310,7 @@ class BoltForms
         return $this->app['form.factory']
             ->createNamedBuilder($formName, $type, $data, $options)
             ->addEventSubscriber(new SymfonyFormProxySubscriber())
+            ->addModelTransformer(new EntityTransformer())
         ;
     }
 }
