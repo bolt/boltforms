@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Form\Type;
 use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Form\Entity;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -43,10 +44,10 @@ class BoltFormType extends AbstractType
     /**
      * Constructor.
      *
-     * @param TraceableEventDispatcherInterface $dispatcher
-     * @param Config                            $config
+     * @param EventDispatcher $dispatcher
+     * @param Config          $config
      */
-    public function __construct(TraceableEventDispatcherInterface $dispatcher, Config $config)
+    public function __construct(EventDispatcher $dispatcher, Config $config)
     {
         $this->dispatcher = $dispatcher;
         $this->config = $config;
