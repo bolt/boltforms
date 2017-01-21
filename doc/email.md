@@ -37,6 +37,17 @@ my_form:
         from_email: email_address
 ```
 
+Uploaded Files
+--------------
+
+If your form uses file uploads, you can attach them to the email notifications
+by setting the `attach_files` parameter to `true`.
+
+```yaml
+my_form:
+    notification:
+        attach_files: true
+```
 
 Email Queues
 ------------
