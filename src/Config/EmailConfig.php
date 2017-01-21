@@ -56,7 +56,6 @@ class EmailConfig extends ParameterBag
         return $this->getBoolean('debug');
     }
 
-
     /**
      * Debugging state.
      *
