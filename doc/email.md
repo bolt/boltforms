@@ -74,7 +74,7 @@ Currently queued emails:
 
 ### Recovering Messages
 
-Occassionally during sending, the Swiftmailer component used by BoltForms will
+Occasionally during sending, the Swiftmailer component used by BoltForms will
 encounter a severe error when processing and sending emails and the queued
 message file will have the `.sending` suffix.
 
@@ -84,13 +84,13 @@ To re-add them to the queue for processing, you can just run `./app/nut email:sp
 ### Flushing (sending) Queues
 
 If you have queued emails due to SMTP server problems, of Bolt/BoltForms
-misconfiguration and wish to retry sending them, simplly execute the following command:
+misconfiguration and wish to retry sending them, simply execute the following command:
  
 `./app/nut email:spool --flush`
 
 ### Clearing (deleting) Queued Messages
 
-If you have stale message objects that you want to flush, e.g. debuging or 
+If you have stale message objects that you want to flush, e.g. debugging or 
 testing, you can clear the queued messages with:
 
 `./app/nut email:spool --clear`
