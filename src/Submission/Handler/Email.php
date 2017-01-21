@@ -20,6 +20,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig_Environment as TwigEnvironment;
 
@@ -234,7 +235,15 @@ class Email extends AbstractHandler
                 foreach ($files as $file) {
                     $relativePath = $file->getRelativePath();
                     $fileName = $file->getFilename();
-                    $link = $this->urlGenerator->generate('BoltFormsDownload', ['file' => $relativePath], UrlGeneratorInterface::ABSOLUTE_URL);
+                    try {
+                        $link = $this->urlGenerator->generate(
+                            'BoltFormsDownload',
+                            ['file' => $relativePath],
+                            UrlGeneratorInterface::ABSOLUTE_URL
+                        );
+                    } catch (RouteNotFoundException $e) {
+                        $link = '';
+                    }
                     $bodyData[$fieldName][$fileName] = $link;
                 }
             } elseif ($type === 'choice') {

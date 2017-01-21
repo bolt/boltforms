@@ -31,7 +31,11 @@
 {% endblock %}
 
 {% block file_field_value %}
-    <a href="{{ value }}">{{ name }}</a>
+    {%  if value == '' %}
+        {{ name }}
+    {% else %}
+        <a href="{{ value }}">{{ name }}</a>
+    {% endif %}
 {% endblock %}
 
 {% block value_array %}
