@@ -128,7 +128,8 @@ class FormData implements \ArrayAccess
         }
 
         if ($value instanceof \DateTime) {
-            return $value->format('c');
+            // 'Y-m-d H:i:s' we need a mysql compatible format here
+            return $value->format('Y-m-d H:i:s');
         }
 
         // Handle file storage preparation here
