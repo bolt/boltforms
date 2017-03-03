@@ -164,13 +164,18 @@ Below is an example of setting a field's data to upper case on submission:
 namespace Bolt\Extension\You\YourExtension;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Bolt\Extension\SimpleExtension;
 
-class Extension extends \Bolt\BaseExtension
+class Extension extends SimpleExtension
 {
-    public function initialize()
+    /**
+     * Define events to listen to here.
+     *
+     * @param EventDispatcherInterface $dispatcher
+     */
+    protected function subscribe(EventDispatcherInterface $dispatcher)
     {
-        // If you want to modify data, only use the BoltFormsEvents::PRE_SUBMIT event
-        $this->app['dispatcher']->addListener(BoltFormsEvents::PRE_SUBMIT,  array($this, 'myPostSubmit'));
+        $dispatcher->addListener(BoltFormsEvents::PRE_SUBMIT,  array($this, 'myPostSubmit'));
     }
     
     public function myPostSubmit($event)
