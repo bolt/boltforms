@@ -165,6 +165,7 @@ namespace Bolt\Extension\You\YourExtension;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\SimpleExtension;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Extension extends SimpleExtension
 {
