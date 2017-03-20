@@ -83,13 +83,15 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
             }
         );
 
-        $app['session'] = $app->extend(
-            'session',
-            function (SessionInterface $session) use ($app) {
-                $session->registerBag($app['boltforms.feedback']);
+        $app['session'] = $app->share(
+            $app->extend(
+                'session',
+                function (SessionInterface $session) use ($app) {
+                    $session->registerBag($app['boltforms.feedback']);
 
-                return $session;
-            }
+                    return $session;
+                }
+            )
         );
 
         $app['boltforms.form.context.factory'] = $app->protect(
