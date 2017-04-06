@@ -118,17 +118,18 @@ class BoltFormsRuntime
      * Twig function for form generation.
      *
      * @param Twig_Environment $twig
-     * @param string $formName Name of the BoltForm to render
-     * @param string $htmlPreSubmit HTML or template name to display BEFORE submit
-     * @param string $htmlPostSubmit HTML or template name to display AFTER successful submit
-     * @param array $data Data array passed to Symfony Forms
-     * @param array $options Options array passed to Symfony Forms
-     * @param array $defaults Default field values
-     * @param array $override Array of form parameters / fields to override settings for
-     * @param mixed $meta Meta data that is not transmitted with the form
-     * @param string|null $action
+     * @param string           $formName       Name of the BoltForm to render
+     * @param string           $htmlPreSubmit  HTML or template name to display BEFORE submit
+     * @param string           $htmlPostSubmit HTML or template name to display AFTER successful submit
+     * @param array            $data           Data array passed to Symfony Forms
+     * @param array            $options        Options array passed to Symfony Forms
+     * @param array            $defaults       Default field values
+     * @param array            $override       Array of form parameters / fields to override settings for
+     * @param mixed            $meta           Meta data that is not transmitted with the form
+     * @param string           $action
      *
      * @return Twig_Markup
+     * @throws \Exception
      */
     public function twigBoltForms(
         Twig_Environment $twig,
