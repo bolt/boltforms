@@ -118,14 +118,15 @@ class BoltFormsRuntime
      * Twig function for form generation.
      *
      * @param Twig_Environment $twig
-     * @param string           $formName       Name of the BoltForm to render
-     * @param string           $htmlPreSubmit  HTML or template name to display BEFORE submit
-     * @param string           $htmlPostSubmit HTML or template name to display AFTER successful submit
-     * @param array            $data           Data array passed to Symfony Forms
-     * @param array            $options        Options array passed to Symfony Forms
-     * @param array            $defaults       Default field values
-     * @param array            $override       Array of form parameters / fields to override settings for
-     * @param mixed            $meta           Meta data that is not transmitted with the form
+     * @param string $formName Name of the BoltForm to render
+     * @param string $htmlPreSubmit HTML or template name to display BEFORE submit
+     * @param string $htmlPostSubmit HTML or template name to display AFTER successful submit
+     * @param array $data Data array passed to Symfony Forms
+     * @param array $options Options array passed to Symfony Forms
+     * @param array $defaults Default field values
+     * @param array $override Array of form parameters / fields to override settings for
+     * @param mixed $meta Meta data that is not transmitted with the form
+     * @param string|null $action
      *
      * @return Twig_Markup
      */
@@ -138,7 +139,8 @@ class BoltFormsRuntime
         $options = [],
         $defaults = null,
         $override = null,
-        $meta = null
+        $meta = null,
+        $action = null
     ) {
         if (!$this->config->getBaseForms()->has($formName)) {
             return new Twig_Markup(
@@ -187,7 +189,7 @@ class BoltFormsRuntime
         $loadAjax = $formConfig->getSubmission()->isAjax();
 
         $formContext
-            ->setAction($this->getRelevantAction($formName, $loadAjax))
+            ->setAction($this->getRelevantAction($formName, $loadAjax, $action))
             ->setHtmlPreSubmit($this->getOptionalHtml($twig, $htmlPreSubmit))
             ->setHtmlPostSubmit($this->getOptionalHtml($twig, $htmlPostSubmit))
             ->setReCaptchaResponse($reCaptchaResponse)
@@ -347,14 +349,19 @@ class BoltFormsRuntime
      * Determine the form 'action' to be used.
      *
      * @param string $formName
-     * @param bool   $loadAjax
+     * @param bool $loadAjax
+     * @param $action
      *
      * @return string
      */
-    protected function getRelevantAction($formName, $loadAjax)
+    protected function getRelevantAction($formName, $loadAjax, $action = null)
     {
         if ($loadAjax) {
             return $this->urlGenerator->generate('boltFormsAsyncSubmit', ['form' => $formName]);
+        }
+
+        if ($action !== null) {
+            return $action;
         }
 
         return $this->requestStack->getCurrentRequest()->getRequestUri();
