@@ -118,7 +118,7 @@ class BoltForms
         /** @var Config\FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
         foreach ($formConfig->getFields()->all() as $key => $field) {
-            $builder->add($key, $field['type'], $field['options']);
+            $builder->add($key, $this->getTypeClassName($field['type']), $field['options']);
         }
 
         /** @var Form $form */
@@ -132,6 +132,23 @@ class BoltForms
         }
 
         return $this->forms[$formName];
+    }
+
+    /**
+     * Return the FQCN of the Symfony Form type, or just the string if not found.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    private function getTypeClassName($type)
+    {
+        $className = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\' . ucwords($type) . 'Type';
+        if (class_exists($className)) {
+            return $className;
+        }
+
+        return $type;
     }
 
     /**
