@@ -142,6 +142,11 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
         }
 
         $app['twig.runtime.boltforms'] = function ($app) {
+            $rootPath = version_compare(BoltVersion::forComposer(), '3.3.0', '<')
+                ? $app['resources']->getPath('root')
+                : $app['path_resolver']->resolve('%root%')
+            ;
+
             return new Twig\Extension\BoltFormsRuntime(
                 $app['boltforms'],
                 $app['boltforms.config'],
@@ -153,7 +158,7 @@ class BoltFormsServiceProvider implements ServiceProviderInterface
                 $app['logger.system'],
                 $app['url_generator'],
                 $app['extensions']->get('bolt/boltforms')->getWebDirectory()->getPath(),
-                $app['resources']->getPath('root')
+                $rootPath
             );
         };
 
