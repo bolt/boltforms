@@ -119,6 +119,15 @@ Or using template names:
     {{ boltforms('form_name', htmlPreSubmit = 'my_pre_template.twig', htmlPostSubmit = 'my_post_template.twig') }}  
 ```
 
+Overriding the Default Form Action
+----------------------------------
+
+By default the form action will point to the current request URL. Occasionally you
+may want to provide your own form action, to do so, just pass in an action variable:
+
+```twig
+   {{ boltforms('form_name', action = '/my/form/handler' }}
+```
 
 Templates for Custom Displays
 -----------------------------
