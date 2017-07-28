@@ -6,14 +6,16 @@
         <ul>
 
             {%- if values is iterable %}
-            <li>
-                {{ block('field_label') }}
-                {{ block('value_array') }}
-            </li>
-
+                <li>
+                    {{ block('field_label') }}
+                    {{ block('value_array') }}
+                </li>
+            {% elseif values.timestamp is defined %}
+                {%- set value = values %}
+                <li>{{ block('field_label') }}{{ block('field_date') }}</li>
             {%- else %}
-            {%- set value = values %}
-            <li>{{ block('field_label') }}{{ block('field_value') }}</li>
+                {%- set value = values %}
+                <li>{{ block('field_label') }}{{ block('field_value') }}</li>
 
             {%- endif %}
 
@@ -30,6 +32,10 @@
     {{- value }}
 {% endblock %}
 
+{% block field_date %}
+    {{- value|date() }}
+{% endblock %}
+
 {% block file_field_value %}
     {%  if value == '' %}
         {{ name }}
@@ -40,21 +46,21 @@
 
 {% block value_array %}
     <ul>
-    {%- for name, value in values %}
-        {%- if value is iterable %}
-            {{ block('value_array') }}
-        {%- else %}
-
-        <li>
-            {%- if field.type == 'file' %}
-                {{ block('file_field_value') }}
+        {%- for name, value in values %}
+            {%- if value is iterable %}
+                {{ block('value_array') }}
             {%- else %}
-                {{ block('field_value') }}
-            {%- endif %}
-        </li>
 
-        {%- endif %}
-    {%- endfor %}
+                <li>
+                    {%- if field.type == 'file' %}
+                        {{ block('file_field_value') }}
+                    {%- else %}
+                        {{ block('field_value') }}
+                    {%- endif %}
+                </li>
+
+            {%- endif %}
+        {%- endfor %}
 
     </ul>
 {% endblock %}
