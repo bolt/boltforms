@@ -198,7 +198,7 @@ class BoltFormsRuntime
         ;
 
         // Save to session for AJAX requests
-        if ($this->requestStack->getCurrentRequest()->isXmlHttpRequest()) {
+        if ($loadAjax) {
             $this->session->set('boltforms_compiler_' . $formName, $formContext);
         }
 
