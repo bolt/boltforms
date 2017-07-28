@@ -80,6 +80,27 @@ record lookups & event based lookups.
 
 **NOTE:** If you use the `array_assoc` style, the choices are inverted compared to the select fields in Bolt contenttypes.
 
+If you want to provide a default value for the choice type, then the syntax is slightly different than text inputs
+which use the `value` attribute. Instead pass a top-level option called `data` with the selected value. For example:
+
+```yml
+      array_assoc:
+          type: choice
+          options:
+              choices: { 'Fluffy Kittens': kittens, 'Cute Puppies': puppies }
+              data: puppies
+```
+
+For other fields based on the choice type, the same syntax applies.
+
+```yml
+        location:
+            type: country
+            options:
+                label: Where are you From?
+                data: GB
+```
+
 For more information on this field type, see the [choice fields documentation](fields/choice.md)
 
 
