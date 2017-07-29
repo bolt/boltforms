@@ -92,7 +92,7 @@ class FormContext
             'result'    => $this->result ?: new Result(),
             'templates' => $config->getForm($formName)->getTemplates(),
             'recaptcha' => [
-                'enabled'       => $reCaptchaConfig->isEnabled(),
+                'enabled'       => $reCaptchaConfig->isEnabled() && $config->getForm($formName)->getReCaptcha() !== false,
                 'label'         => $reCaptchaConfig->getLabel(),
                 'public_key'    => $reCaptchaConfig->getPublicKey(),
                 'theme'         => $reCaptchaConfig->getTheme(),
