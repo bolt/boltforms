@@ -221,7 +221,7 @@ class FormConfig
                 'subdirectory' => null,
             ],
             'fields' => [],
-            'recaptcha' => false,
+            'recaptcha' => true,
         ];
     }
 
