@@ -72,7 +72,7 @@ if (window.Element && !Element.prototype.closest) {
         };
 }
 
-(function () {
+function invisibleRecaptchaOnLoad() {
     var els = document.getElementsByClassName('g-recaptcha-button');
     for (var i = 0; i < els.length; ++i) {
         grecaptcha.render(els[i], {
@@ -85,4 +85,4 @@ if (window.Element && !Element.prototype.closest) {
             }
         });
     }
-})()
+}
