@@ -50,3 +50,28 @@ function handleFiles(files, preview) {
         }
     }
 }
+
+
+/**
+ * Polyfill for browsers that don't support element.closest()
+ * We need to use this to find the relevant form for a recaptcha-protected submit button.
+ *
+ */
+
+if (window.Element && !Element.prototype.closest) {
+    Element.prototype.closest =
+        function(s) {
+            var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+                i,
+                el = this;
+            do {
+                i = matches.length;
+                while (--i >= 0 && matches.item(i) !== el) {};
+            } while ((i < 0) && (el = el.parentElement));
+            return el;
+        };
+}
+
+function invisibleRecaptchaOnSubmit(token, el) {
+    console.log(token, el);
+}
