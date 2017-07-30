@@ -193,6 +193,7 @@ contact:
 #        table: bolt_secret_table    # Specific database table to write to
 #    uploads:
 #        subdirectory: showcase_files # The (optional) subdirectory for uploaded files
+#    recaptcha: false    # This setting is optional to use the overall default, false is the only valid value to disable for this form only.
 #    fields:
 #        subject:
 #            type: text
