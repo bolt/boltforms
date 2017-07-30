@@ -31,6 +31,8 @@ class ReCaptchaOptionsBag extends ParameterBag
 {
     /**
      * Constructor.
+     *
+     * @param array $parameter
      */
     public function __construct(array $parameter)
     {
@@ -153,6 +155,26 @@ class ReCaptchaOptionsBag extends ParameterBag
     public function setTheme($theme)
     {
         $this->set('theme', $theme);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->get('type', 'v2');
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return ReCaptchaOptionsBag
+     */
+    public function setType($type)
+    {
+        $this->set('type', $type);
 
         return $this;
     }
