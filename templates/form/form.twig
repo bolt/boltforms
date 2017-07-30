@@ -62,7 +62,21 @@
                 {% for key, value in fields  %}
                     {% if value.config.type.name == 'submit' %}
                         <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
-                            {{ form_widget(form[key]) }}
+                            {% if recaptcha.type == 'invisible' and recaptcha.enabled %}
+                                {{ form_widget(
+                                form[key],
+                                {
+                                    attr:
+                                    {
+                                        'class': form[key].vars.attr.class ~ ' g-recaptcha',
+                                        'data-sitekey': recaptcha.public_key,
+                                        'data-callback': 'invisibleRecaptchaOnSubmit'
+                                    }
+                                }
+                                ) }}
+                            {% else %}
+                                {{ form_widget(form[key]) }}
+                            {% endif %}
                         </div>
                     {% endif %}
                 {% endfor %}
