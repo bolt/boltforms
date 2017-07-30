@@ -7,9 +7,11 @@
             </ul>
         {% endif %}
 
-        <div class="boltform-row">
-            <label for="form_message" class="required">{{ recaptcha.label }}</label>
-            <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
-        </div>
+        {% if recaptcha.type == 'v2' %}
+            <div class="boltform-row">
+                <label for="form_message" class="required">{{ recaptcha.label }}</label>
+                <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
+            </div>
+        {% endif %}
     {% endif %}
 {% endmacro %}
