@@ -73,6 +73,16 @@ if (window.Element && !Element.prototype.closest) {
 }
 
 function invisibleRecaptchaOnLoad() {
+
+
+    function createHiddenElement(name, value) {
+        var input = document.createElement("input");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", name);
+        input.setAttribute("value", value);
+        return input;
+    }
+
     var els = document.getElementsByClassName('g-recaptcha-button');
     for (var i = 0; i < els.length; ++i) {
         var buttonElement = els[i];
@@ -81,9 +91,12 @@ function invisibleRecaptchaOnLoad() {
             size: 'invisible',
             callback: function(token) {
                 if (token) {
+                    buttonElement.closest('form').appendChild(createHiddenElement('g-recaptcha-response', token));
                     buttonElement.closest('form').submit();
                 }
             }
         });
     }
 }
+
+
