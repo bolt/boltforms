@@ -73,5 +73,16 @@ if (window.Element && !Element.prototype.closest) {
 }
 
 function invisibleRecaptchaOnSubmit(token, el) {
-    console.log(token, el);
+    var els = document.getElementsByClassName('g-recaptcha');
+    for (var i = 0; i < els.length; ++i) {
+        grecaptcha.render(els[i], {
+            sitekey: els[i].getAttribute('data-sitekey'),
+            size: 'invisible',
+            callback: function(token) {
+                if (token) {
+                    els[i].closest('form').submit();
+                }
+            }
+        });
+    }
 }
