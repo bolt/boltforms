@@ -73,7 +73,7 @@ if (window.Element && !Element.prototype.closest) {
 }
 
 function invisibleRecaptchaOnSubmit(token, el) {
-    var els = document.getElementsByClassName('g-recaptcha');
+    var els = document.getElementsByClassName('g-recaptcha-button');
     for (var i = 0; i < els.length; ++i) {
         grecaptcha.render(els[i], {
             sitekey: els[i].getAttribute('data-sitekey'),
