@@ -273,6 +273,7 @@ class BoltForms
         $reCaptcha = new ReCaptcha();
         $reCaptcha
             ->setHtmlLang($this->app['locale'])
+            ->setRenderType($this->config->getReCaptcha()->get('type'))
             ->setLocation(Target::END_OF_BODY)
             ->setZone(Zone::FRONTEND)
         ;

@@ -96,6 +96,7 @@ class FormContext
                 'label'         => $reCaptchaConfig->getLabel(),
                 'public_key'    => $reCaptchaConfig->getPublicKey(),
                 'theme'         => $reCaptchaConfig->getTheme(),
+                'type'          => $reCaptchaConfig->getType(),
                 'error_message' => $reCaptchaConfig->getErrorMessage(),
                 'error_codes'   => $this->reCaptchaResponse ? $this->reCaptchaResponse['errorCodes'] : null,
                 'valid'         => $this->reCaptchaResponse ? $this->reCaptchaResponse['success'] : null,
