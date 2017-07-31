@@ -11,3 +11,4 @@ BoltForms Documentation
   * [Email Notifications](email.md)
   * [Submission & Redirection](submission.md)
   * [Events](events.md)
+  * [Recaptcha](recaptcha.md)
