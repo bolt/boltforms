@@ -126,12 +126,13 @@ class BoltFormsExtension extends SimpleExtension
         return [
             'csrf'      => true,
             'recaptcha' => [
-                'enabled'       => false,
-                'label'         => "Please enter the CAPTCHA text to prove you're a human",
-                'public_key'    => '',
-                'private_key'   => '',
-                'error_message' => "The CAPTCHA wasn't entered correctly. Please try again.",
-                'theme'         => 'clean',
+                'enabled'        => false,
+                'label'          => "Please enter the CAPTCHA text to prove you're a human",
+                'public_key'     => '',
+                'private_key'    => '',
+                'error_message'  => "The CAPTCHA wasn't entered correctly. Please try again.",
+                'theme'          => 'clean',
+                'badge_location' => 'bottomright'
             ],
             'templates' => [
                 'ajax'       => '@BoltForms/asset/_ajax.twig',
