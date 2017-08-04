@@ -54,8 +54,7 @@ recaptcha:
 ```
 
 Setting the type attribute to `invisible` will use the correct service, you'll see that it
-is working via a small reCAPTCHA logo added to the bottom right of your page.
-
+is working via a small reCAPTCHA logo added to the bottom right of your page. You can change the position of the badge by adding badge_location to your config. You can use: bottomright, bottomleft or inline
 ### Disabling reCAPTCHA on some forms
 
 If you want reCAPTCHA enabled globally but want to disable it on a certain form you can do this

@@ -88,6 +88,14 @@ class ReCaptchaOptionsBag extends ParameterBag
     }
 
     /**
+     * @return string
+     */
+    public function getBadgeLocation()
+    {
+        return $this->get('badge_location');
+    }
+
+    /**
      * @param string $publicKey
      *
      * @return ReCaptchaOptionsBag
@@ -166,6 +174,8 @@ class ReCaptchaOptionsBag extends ParameterBag
     {
         return $this->get('type', 'v2');
     }
+
+
 
     /**
      * @param string $type
