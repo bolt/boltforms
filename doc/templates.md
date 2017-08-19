@@ -12,7 +12,7 @@ following to your template:
 Templates can be optionally customised by copying any needed template from
 `extensions/vendor/bolt/boltforms/templates/` to a location in your theme.
 
-For exmample if you were to add them to  `themes/my_theme/my_sub_directory/`
+For example if you were to add them to  `themes/my_theme/my_sub_directory/`
 you would update your `app/config/boltforms.bolt.yml` file parameters to
 match, e.g.:
 
