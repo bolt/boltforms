@@ -10,7 +10,7 @@
                 // Call the callback
                 callback(data);
                 // Output returned data
-                $('.boltform').html(data);
+                $('.boltform form[name="'+ $form.attr('name') +'"]').parent().replaceWith(data);
                 // Reactivate listener
                 addListener();
             },
