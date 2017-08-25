@@ -346,7 +346,7 @@ class EmailConfig extends ParameterBag
 
             return implode(' ', $parts);
         }
-        if (is_string($value) && $formData->has($value)) {
+        if (is_string($value) && isset($formData[$value])) {
             return $formData->get($value);
         }
 
