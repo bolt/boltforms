@@ -286,7 +286,7 @@ class Email extends AbstractHandler
     private function attachFile(File $uploadedFile)
     {
         $fromPath = $uploadedFile->getPathname();
-        $fileName = $uploadedFile->getBasename();
+        $fileName = $uploadedFile->getClientOriginalName();
         $attachment = \Swift_Attachment::fromPath($fromPath)->setFilename($fileName);
         $this->getEmailMessage()->attach($attachment);
     }
