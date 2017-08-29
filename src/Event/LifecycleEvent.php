@@ -54,7 +54,7 @@ class LifecycleEvent extends Event
         FormConfig $formConfig,
         Entity $formData,
         MetaData $formMetaData,
-        Button $clickedButton
+        Button $clickedButton = null
     ) {
         $this->formConfig = $formConfig;
         $this->formData = $formData;

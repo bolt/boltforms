@@ -180,7 +180,7 @@ class BoltFormsRuntime
 
         // Handle the POST
         $factory = $this->recaptureResponseFactory;
-        $reCaptchaResponse = $factory();
+        $reCaptchaResponse = $factory($formConfig->getRecaptcha());
         try {
             $this->handleFormRequest($formConfig, $formContext, $reCaptchaResponse);
         } catch (HttpException $e) {

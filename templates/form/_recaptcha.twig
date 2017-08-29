@@ -3,13 +3,15 @@
     {% if recaptcha.enabled %}
         {% if not recaptcha.valid %}
             <ul class="boltform-error">
-                <li class="boltform-errors">{{ recaptcha.error_message }}</li>
+                <li class="boltform-error">{{ recaptcha.error_message }}</li>
             </ul>
         {% endif %}
 
-        <div class="boltform-row">
-            <label for="form_message" class="required">{{ recaptcha.label }}</label>
-            <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
-        </div>
+        {% if recaptcha.type == 'v2' %}
+            <div class="boltform-row">
+                <label for="form_message" class="required">{{ recaptcha.label }}</label>
+                <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
+            </div>
+        {% endif %}
     {% endif %}
 {% endmacro %}

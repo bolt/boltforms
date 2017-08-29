@@ -43,6 +43,8 @@ class FormConfig
     protected $templates;
     /** @var Form\UploadsOptionsBag */
     protected $uploads;
+    /** @var string */
+    protected $formRecaptcha;
 
     /** @var Config */
     private $rootConfig;
@@ -69,6 +71,7 @@ class FormConfig
         $this->submission   = new Form\SubmissionOptionsBag($formConfig['submission']);
         $this->templates    = new Form\TemplateOptionsBag($formConfig['templates'], $rootConfig);
         $this->uploads      = new Form\UploadsOptionsBag($formConfig['uploads']);
+        $this->formRecaptcha = $formConfig['recaptcha'] == false ? false : true;
     }
 
     /**
@@ -160,6 +163,17 @@ class FormConfig
     }
 
     /**
+     * Get form recaptcha status.
+     *
+     * @return bool
+     */
+    public function getRecaptcha()
+    {
+        return $this->formRecaptcha;
+    }
+
+
+    /**
      * A set of default keys for a form's config.
      *
      * @return array
@@ -207,6 +221,7 @@ class FormConfig
                 'subdirectory' => null,
             ],
             'fields' => [],
+            'recaptcha' => true,
         ];
     }
 
@@ -225,7 +240,7 @@ class FormConfig
         foreach ($array2 as $key => &$value) {
             if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
                 $merged[$key] = self::mergeRecursiveDistinct($merged[$key], $value);
-            } elseif (!empty($value)) {
+            } elseif (!empty($value) || $value == false) {
                 $merged[$key] = $value;
             }
         }

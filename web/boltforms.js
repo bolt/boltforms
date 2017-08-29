@@ -50,3 +50,53 @@ function handleFiles(files, preview) {
         }
     }
 }
+
+
+/**
+ * Polyfill for browsers that don't support element.closest()
+ * We need to use this to find the relevant form for a recaptcha-protected submit button.
+ *
+ */
+
+if (window.Element && !Element.prototype.closest) {
+    Element.prototype.closest =
+        function(s) {
+            var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+                i,
+                el = this;
+            do {
+                i = matches.length;
+                while (--i >= 0 && matches.item(i) !== el) {};
+            } while ((i < 0) && (el = el.parentElement));
+            return el;
+        };
+}
+
+function invisibleRecaptchaOnLoad() {
+
+
+    function createHiddenElement(name, value) {
+        var input = document.createElement("input");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", name);
+        input.setAttribute("value", value);
+        return input;
+    }
+
+    var els = document.getElementsByClassName('g-recaptcha-button');
+    for (var i = 0; i < els.length; ++i) {
+        var buttonElement = els[i];
+        grecaptcha.render(buttonElement, {
+            sitekey: buttonElement.getAttribute('data-sitekey'),
+            size: 'invisible',
+            callback: function(token) {
+                if (token) {
+                    buttonElement.closest('form').appendChild(createHiddenElement('g-recaptcha-response', token));
+                    buttonElement.closest('form').submit();
+                }
+            }
+        });
+    }
+}
+
+

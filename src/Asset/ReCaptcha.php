@@ -32,13 +32,17 @@ class ReCaptcha extends JavaScript
     /** @var string */
     protected $htmlLang;
 
+    /** @var string */
+    protected $renderType;
+
     /**
      * {@inheritdoc}
      */
     public function __toString()
     {
+        $onLoad = ($this->getRenderType() == 'invisible') ? '&render=explicit&onload=invisibleRecaptchaOnLoad' : '';
         $theme =  sprintf('<script>var RecaptchaOptions = { theme : "" };</script>', 'clean');
-        $api =  sprintf('<script src="https://www.google.com/recaptcha/api.js?hl=%s" async defer></script>', $this->getHtmlLang());
+        $api =  sprintf('<script src="https://www.google.com/recaptcha/api.js?hl=%s%s" async defer></script>', $this->getHtmlLang(), $onLoad);
 
         return $theme . $api;
     }
@@ -59,6 +63,28 @@ class ReCaptcha extends JavaScript
     public function setHtmlLang($htmlLang)
     {
         $this->htmlLang = $htmlLang;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRenderType()
+    {
+        return $this->renderType;
+    }
+
+    /**
+     * @param $type
+     *
+     * @return ReCaptcha
+     * @internal param string $htmlLang
+     *
+     */
+    public function setRenderType($type)
+    {
+        $this->renderType = $type;
 
         return $this;
     }
