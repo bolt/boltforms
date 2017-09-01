@@ -1,6 +1,20 @@
 # Changelog for Bolt Forms
 
-* 4.0.0 (xxx-xx-xx)
+* 4.1.9 (2017-09-01)
+ * Fix: Incorrect dynamic replacement of email addresses (#182)
+
+* 4.1.1 (2017-08-02)
+ * Fix: #160 Fix for Ajax forms credit @craigmillerdev
+ * Docs: #161 and #162 adding documentation for choices and default values
+ * Added: #164 Allowing reCAPTCHA to be disabled on individual forms
+ * Fix: #159 Fix for date fields not being rendered correctly
+
+* 4.1.0 (2017-07-28)
+ * Added: Support for invisible ReCAPTCHA
+ * Fixed: CSS Styling of errors (#175)
+ * Fixed: Error with saving ajax submitted forms (#160)
+ 
+* 4.0.0 (2017-07-01)
  * Added: More details debug logging
  * Added: More complete exception handling
  * Added: Event driven choice selection
