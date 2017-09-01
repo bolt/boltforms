@@ -1,40 +1,40 @@
 # Changelog for Bolt Forms
 
 * 4.1.9 (2017-09-01)
- * Fix: Incorrect dynamic replacement of email addresses (#182)
+  * Fix: Incorrect dynamic replacement of email addresses (#182)
 
 * 4.1.1 (2017-08-02)
- * Fix: #160 Fix for Ajax forms credit @craigmillerdev
- * Docs: #161 and #162 adding documentation for choices and default values
- * Added: #164 Allowing reCAPTCHA to be disabled on individual forms
- * Fix: #159 Fix for date fields not being rendered correctly
+  * Fix: #160 Fix for Ajax forms credit @craigmillerdev
+  * Docs: #161 and #162 adding documentation for choices and default values
+  * Added: #164 Allowing reCAPTCHA to be disabled on individual forms
+  * Fix: #159 Fix for date fields not being rendered correctly
 
 * 4.1.0 (2017-07-28)
- * Added: Support for invisible ReCAPTCHA
- * Fixed: CSS Styling of errors (#175)
- * Fixed: Error with saving ajax submitted forms (#160)
+  * Added: Support for invisible ReCAPTCHA
+  * Fixed: CSS Styling of errors (#175)
+  * Fixed: Error with saving ajax submitted forms (#160)
  
 * 4.0.0 (2017-07-01)
- * Added: More details debug logging
- * Added: More complete exception handling
- * Added: Event driven choice selection
- * Added: Life cycle events for form processing
- * Added: Enable multiple submit buttons
- * Added: AJAX form submission
- * Added: More configuration objects
- * Added: File name fields are hyperlinked in emails
- * Added: Form configuration and field parameters can now be overridden in template
- * Added: Form meta data can be specificed at run-time
- * Fixed: Successfully submitted forms can no longer be resubmitted on page refresh
- * Fixed: File upload handling breakage
- * Changed: Cut over to Bolt v3 storage
- * Changed: Events renamed:
-   * BoltFormsChoiceEvent to ChoiceEvent
-   * BoltFormsCustomDataEvent to CustomDataEvent
-   * BoltFormsEmailEvent to EmailEvent
-   * BoltFormsProcessorEvent to ProcessorEvent
- * Break: Processor constructor signature changed, and logic moved into handlers & processors
- * Break: Choice field key/value pairs revierse to match Symfony
+  * Added: More details debug logging
+  * Added: More complete exception handling
+  * Added: Event driven choice selection
+  * Added: Life cycle events for form processing
+  * Added: Enable multiple submit buttons
+  * Added: AJAX form submission
+  * Added: More configuration objects
+  * Added: File name fields are hyperlinked in emails
+  * Added: Form configuration and field parameters can now be overridden in template
+  * Added: Form meta data can be specificed at run-time
+  * Fixed: Successfully submitted forms can no longer be resubmitted on page refresh
+  * Fixed: File upload handling breakage
+  * Changed: Cut over to Bolt v3 storage
+  * Changed: Events renamed:
+    * BoltFormsChoiceEvent to ChoiceEvent
+    * BoltFormsCustomDataEvent to CustomDataEvent
+    * BoltFormsEmailEvent to EmailEvent
+    * BoltFormsProcessorEvent to ProcessorEvent
+  * Break: Processor constructor signature changed, and logic moved into handlers & processors
+  * Break: Choice field key/value pairs revierse to match Symfony
 
 * 3.1.0 (2016-31-11)
  * Dual-license under GPL & LGPL
