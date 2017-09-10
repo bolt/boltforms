@@ -36,18 +36,9 @@ class ContentTypeResolver extends AbstractChoiceOptionResolver
     private $em;
     /** @var array */
     private $choices;
-    /** @var bool */
-    private $legacy;
 
     /**
      * Constructor.
-     *
-     * Legacy:
-     * Format of 'contenttype::name::labelfield::valuefield'
-     *  'contenttype' - String constant that always equals 'contenttype'
-     *  'name'        - Name of the contenttype itself
-     *  'labelfield'  - Field to use for the UI displayed to the user
-     *  'valuefield'  - Field to use for the value stored
      *
      * @param string        $formName     Name of the form containing the field
      * @param string        $fieldName    Name of the field
@@ -59,7 +50,6 @@ class ContentTypeResolver extends AbstractChoiceOptionResolver
         parent::__construct($formName, $fieldName, $fieldOptions);
 
         $this->em = $em;
-        $this->legacy = $legacy;
     }
 
     /**
@@ -81,10 +71,6 @@ class ContentTypeResolver extends AbstractChoiceOptionResolver
     {
         if ($this->choices !== null) {
             return $this->choices;
-        }
-
-        if ($this->legacy) {
-            return $this->choices = $this->getParameterValuesLegacy();
         }
 
         $params = isset($this->options['params'])

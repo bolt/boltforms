@@ -89,6 +89,6 @@ class FieldOptionsBag extends ParameterBag
             return $this->parameters[$name];
         }
 
-        throw new \BadMethodCallException(sprintf('%s ', __CLASS__));
+        throw new \BadMethodCallException(sprintf('Unknown field option parameter: %s ', $name));
     }
 }

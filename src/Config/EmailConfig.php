@@ -316,12 +316,12 @@ class EmailConfig extends ParameterBag
         ];
 
         foreach ($hashMap as $internalName => $keyName) {
-            $configValue = $this->getConfigValue($formData, $notifyConfig->get($keyName));
-            $value = $formData->get($configValue);
+            $value = $this->getConfigValue($formData, $notifyConfig->get($keyName));
             if ($value === null) {
-                $value = $notifyConfig->get($keyName);
+                $this->set($internalName, $notifyConfig->get($keyName));
+            } else {
+                $this->set($internalName, $value);
             }
-            $this->set($internalName, $value);
         }
     }
 
