@@ -175,8 +175,6 @@ class ReCaptchaOptionsBag extends ParameterBag
         return $this->get('type', 'v2');
     }
 
-
-
     /**
      * @param string $type
      *

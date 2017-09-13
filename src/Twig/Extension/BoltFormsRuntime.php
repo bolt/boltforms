@@ -128,8 +128,9 @@ class BoltFormsRuntime
      * @param mixed            $meta           Meta data that is not transmitted with the form
      * @param string           $action
      *
-     * @return Twig_Markup
      * @throws \Exception
+     *
+     * @return Twig_Markup
      */
     public function twigBoltForms(
         Twig_Environment $twig,
@@ -350,7 +351,7 @@ class BoltFormsRuntime
      * Determine the form 'action' to be used.
      *
      * @param string $formName
-     * @param bool $loadAjax
+     * @param bool   $loadAjax
      * @param $action
      *
      * @return string

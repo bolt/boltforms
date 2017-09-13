@@ -172,7 +172,6 @@ class FormConfig
         return $this->formRecaptcha;
     }
 
-
     /**
      * A set of default keys for a form's config.
      *
@@ -220,7 +219,7 @@ class FormConfig
             'uploads' => [
                 'subdirectory' => null,
             ],
-            'fields' => [],
+            'fields'    => [],
             'recaptcha' => true,
         ];
     }
