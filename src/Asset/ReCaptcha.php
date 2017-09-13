@@ -79,8 +79,6 @@ class ReCaptcha extends JavaScript
      * @param $type
      *
      * @return ReCaptcha
-     * @internal param string $htmlLang
-     *
      */
     public function setRenderType($type)
     {
