@@ -19,6 +19,7 @@ use Symfony\Component\Console\Helper;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -286,7 +287,11 @@ class Email extends AbstractHandler
     private function attachFile(File $uploadedFile)
     {
         $fromPath = $uploadedFile->getPathname();
-        $fileName = $uploadedFile->getClientOriginalName();
+        if ($uploadedFile instanceof UploadedFile) {
+            $fileName = $uploadedFile->getClientOriginalName();
+        } else {
+            $fileName = $uploadedFile->getFilename();
+        }
         $attachment = \Swift_Attachment::fromPath($fromPath)->setFilename($fileName);
         $this->getEmailMessage()->attach($attachment);
     }
