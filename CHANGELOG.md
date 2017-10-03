@@ -1,6 +1,6 @@
 # Changelog for Bolt Forms
 
-* 4.1.11 (2017-10-03)
+* 4.1.12 (2017-10-03)
   * Fix: Handle file uploads differently depending on whether they are saved or not (#196)
 
 * 4.1.9 (2017-09-01)
