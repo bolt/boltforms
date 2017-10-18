@@ -6,6 +6,7 @@ use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Submission\Handler;
 use Pimple as Container;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -77,7 +78,10 @@ class Redirect extends AbstractProcessor
         /** @var Handler\Redirect $handler */
         $handler = $this->handlers['redirect'];
         if ($formConfig->getFeedback()->getRedirectTarget() !== null) {
-            $handler->handle($formConfig, $formData);
+            $response = $handler->handle($formConfig, $formData);
+            if ($response instanceof RedirectResponse) {
+                return;
+            }
         }
 
         // Do a get on the page as it was probably POSTed
