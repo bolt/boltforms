@@ -305,7 +305,10 @@ class BoltForms
 
         foreach ($formConfig['fields'] as $fieldName => $data) {
             $this->config->assetValidField($formName, $fieldName, $data);
-            $formConfig['fields'][$fieldName]['options'] = $resolverFactory($data['type'], (array) $data['options']);
+            $formConfig['fields'][$fieldName]['options'] = $resolverFactory(
+                $data['type'],
+                isset($data['options']) ? (array) $data['options'] : []
+            );
         }
 
         $resolvedFormConfig = new FormConfig($formName, $formConfig, $this->config);
