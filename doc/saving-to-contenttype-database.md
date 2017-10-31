@@ -64,7 +64,7 @@ responses:
             label: Naam
 		animal:
             type: select
-            values: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
+	    values: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
         sent_message:
 			type: textarea
 	default_status: draft
