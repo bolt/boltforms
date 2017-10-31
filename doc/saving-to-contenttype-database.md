@@ -40,8 +40,8 @@ database:
             type: choice
 	    options:
 	        label: "Use your paw to select what you are"
-		choices: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
-		        expanded: false
+                choices: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
+                expanded: false
         message:
             type: textarea
         status:	 # Don't publish new record after submitting but leave that to the editor
@@ -61,12 +61,12 @@ responses:
     fields:
         title:
             type: text
-            label: Naam
-		animal:
+            label: Name
+        animal:
             type: select
 	    values: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
         sent_message:
-			type: textarea
+            type: textarea
 	default_status: draft
 ```
 
