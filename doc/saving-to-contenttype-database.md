@@ -22,31 +22,31 @@ There are basically 2 things you need to do:
 
 ```yaml
 database:
-	contenttype:
-		name: responses  				# ContentType record to create
-			field_map:
-				name: 'title'			# Form field "message" will be saved to the ContentType field "title"   
-				email: ~                # Do not try to save this field to the ContentType
-				animal: 'animal'		# Form field "animal" will be saved to the ContentType field "animal"  
-				message: 'sent_message' # Form field "message" will be saved to the ContentType field "sent_message"   
-	fields:
-		email:
-			type: email				
-		name:
-		    type: text
-		    options:
-		        label: "Your name"
-		animal:
-		    type: choice
-		    options:
-		        label: "Use your paw to select what you are"
-		        choices: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
-		        expanded: false
-		message:
-			type: textarea
-		status:	 # Don't publish new record after submitting but leave that to the editor
-            type: hidden
+    contenttype:
+        name: responses  				# ContentType record to create
+            field_map:
+                name: 'title'			# Form field "message" will be saved to the ContentType field "title"   
+                email: ~                # Do not try to save this field to the ContentType
+                animal: 'animal'		# Form field "animal" will be saved to the ContentType field "animal"  
+                message: 'sent_message' # Form field "message" will be saved to the ContentType field "sent_message"   
+    fields:
+        email:
+            type: email				
+        name:
+            type: text
             options:
+                label: "Your name"
+        animal:
+            type: choice
+	    options:
+	        label: "Use your paw to select what you are"
+		choices: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
+		        expanded: false
+        message:
+            type: textarea
+        status:	 # Don't publish new record after submitting but leave that to the editor
+            type: hidden
+	    options:
                 label: false
                 attr:
                     value: draft	                
