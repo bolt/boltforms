@@ -18,7 +18,7 @@ Simple Choice Selection
         options:
             label: Grouping Simple
             choices:
-                'Group Aye': { 'Item One': 'item_1', 'Item Two': 'item_2', }
+                'Group Aye': { 'Item One': 'item_1', 'Item Two': 'item_2' }
                 'Group Bee': { 'Item Eleven': 'item_11', 'Item Twelve': 'item_12' }
 ```
 
