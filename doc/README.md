@@ -10,5 +10,6 @@ BoltForms Documentation
   * [Templates](templates.md)
   * [Email Notifications](email.md)
   * [Submission & Redirection](submission.md)
+  * [Saving to a contenttype or a database](saving-to-contenttype-database.md)
   * [Events](events.md)
   * [Recaptcha](recaptcha.md)
