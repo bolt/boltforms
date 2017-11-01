@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\BoltForms\Submission;
 
 use ArrayAccess;
 use JsonSerializable;
-use Symfony\Component\HttpFoundation\File\File as HttpFile;
+use Symfony\Component\HttpFoundation\File\UploadedFile as HttpFile;
 
 /**
  * File uploaded via form.
