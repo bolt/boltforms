@@ -4,7 +4,7 @@ You can save form entries into a contenttype or a separate database.
 
 ## ContentTypes
 
-There are basically 2 things you need to do: 
+There are basically 2 things you need to do:
 
 - Prepare the ContentType that the data goes into.
 - Map which BoltForms field goes into which ContentType field.
@@ -23,33 +23,33 @@ There are basically 2 things you need to do:
 ```yaml
 database:
     contenttype:
-        name: responses  				# ContentType record to create
+        name: responses                 # ContentType record to create
             field_map:
-                name: 'title'			# Form field "message" will be saved to the ContentType field "title"   
+                name: 'title'           # Form field "message" will be saved to the ContentType field "title"
                 email: ~                # Do not try to save this field to the ContentType
-                animal: 'animal'		# Form field "animal" will be saved to the ContentType field "animal"  
-                message: 'sent_message' # Form field "message" will be saved to the ContentType field "sent_message"   
+                animal: 'animal'        # Form field "animal" will be saved to the ContentType field "animal"
+                message: 'sent_message' # Form field "message" will be saved to the ContentType field "sent_message"
     fields:
         email:
-            type: email				
+            type: email
         name:
             type: text
             options:
                 label: "Your name"
         animal:
             type: choice
-	    options:
-	        label: "Use your paw to select what you are"
+            options:
+                label: "Use your paw to select what you are"
                 choices: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
                 expanded: false
         message:
             type: textarea
-        status:	 # Don't publish new record after submitting but leave that to the editor
+        status: # Don't publish new record after submitting but leave that to the editor
             type: hidden
-	    options:
+            options:
                 label: false
                 attr:
-                    value: draft	                
+                    value: draft
 ```
 
 ###### (contenttypes.yml)
@@ -64,10 +64,10 @@ responses:
             label: Name
         animal:
             type: select
-	    values: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
+            values: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
         sent_message:
             type: textarea
-	default_status: draft
+    default_status: draft
 ```
 
 
