@@ -12,6 +12,11 @@
     {%- endif -%}
 {%- endblock form_widget_simple -%}
 
+{%- block markup_widget -%}
+    {%- set type = type|default('text') -%}
+    {{ attr.value|raw }}
+{%- endblock markup_widget -%}
+
 {# Misc #}
 
 {%- block form_errors -%}
