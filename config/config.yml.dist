@@ -327,6 +327,13 @@ contact:
 #            options:
 #                required: false
 #                label: Picture of your pet that you want us to add to our site
+#
+#        markup1:
+#            type: markup
+#            options:
+#                label: false
+#                attr:
+#                    value: "<hr><div><p>This will not create a form element.. it will only show you whatever is in the 'value' of this field.</p></div>"
 #        submit:
 #            type: submit
 #            options:
