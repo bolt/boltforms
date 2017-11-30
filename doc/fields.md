@@ -261,13 +261,14 @@ e.g.:
 ```twig
     {{ boltforms('form_name',
         override = {
-            'fields':
-                'non_config_field': {
-                    type: text
+            fields: {
+                non_config_field: {
+                    type: 'text',
                     options: {
                         label: 'Once upon a time…'
                     }
                 }
+            }
         })
     }}
 ```
