@@ -44,7 +44,8 @@ class BoltFormsExtension extends AbstractExtension
     protected function loadTypes()
     {
         return [
-            new Type\BoltFormType($this->app['dispatcher'], $this->app['boltforms.config']),
+          new Type\MarkupType(),
+          new Type\BoltFormType($this->app['dispatcher'], $this->app['boltforms.config']),
         ];
     }
 
