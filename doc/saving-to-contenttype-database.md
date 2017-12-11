@@ -73,9 +73,9 @@ responses:
 
 In most cases the fieldtype in `boltforms.bolt.yml` and `contenttypes.yml` can be the same, but note that you need a `select` field with `values` to save a `choice` BoltForms field with `choices`.
 
-## Change default status
+## Set the publication status
 
-If you would like to change the default status of an entry from published to something else, add the following field to your boltforms.bolt.yml: 
+If you would like to change the default status of an entry from `published` to something else, you can add a hidden field to your `boltforms.bolt.yml` to set the status. For example: 
 
 
 ```yaml
@@ -84,8 +84,11 @@ fields:
         type: hidden
         options:
             attr:
-                value: draft // replace "draft" with whatever status you would like to assign as default
+                value: draft
 ```
+
+In the above example, you can replace "draft" with whatever status you would like to assign newly inserted records.
+
 
 ## Regular Database Table
 
