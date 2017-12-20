@@ -13,10 +13,7 @@
     {%- if type != 'file' -%}
         <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
     {%- else -%}
-        {%- set html_id = 'handleFiles(this.files, "boltforms_preview_' ~ id ~ '")' -%}
-        {%- set attr = attr|merge({'onChange': html_id}) -%}
-        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-        <div class="boltforms-preview" id="boltforms_preview_{{ id }}"></div>
+        {{- block('file_upload_widget') -}}
     {%- endif -%}
 {%- endblock form_widget_simple -%}
 
@@ -98,6 +95,13 @@
 {%- block radio_widget -%}
     <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
 {%- endblock radio_widget -%}
+
+{%- block file_upload_widget -%}
+    {%- set html_id = 'handleFiles(this.files, "boltforms_preview_' ~ id ~ '")' -%}
+    {%- set attr = attr|merge({'onChange': html_id}) -%}
+    <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+    <div class="boltforms-preview" id="boltforms_preview_{{ id }}"></div>
+{%- endblock file_upload_widget -%}
 
 {%- block datetime_widget -%}
     {% if widget == 'single_text' %}
