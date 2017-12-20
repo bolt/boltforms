@@ -1,12 +1,18 @@
-{# Widgets #}
+{#
+How to customize the theme
 
-{%- block form_widget -%}
-    {% if compound %}
-        {{- block('form_widget_compound') -}}
-    {% else %}
-        {{- block('form_widget_simple') -}}
-    {% endif %}
-{%- endblock form_widget -%}
+Copy this file to the assets folder in your theme and:
+- add the following key to your global boltforms config
+or
+- add the following key to the templates section for a single form
+
+--
+templates:
+   formtheme: assets/_form_theme.twig
+--
+#}
+
+{# Widgets #}
 
 {%- block form_widget_simple -%}
     {%- set type = type|default('text') -%}
@@ -27,24 +33,9 @@
     </div>
 {%- endblock form_widget_compound -%}
 
-{%- block collection_widget -%}
-    {% if prototype is defined %}
-        {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
-    {% endif %}
-    {{- block('form_widget') -}}
-{%- endblock collection_widget -%}
-
 {%- block textarea_widget -%}
     <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
 {%- endblock textarea_widget -%}
-
-{%- block choice_widget -%}
-    {% if expanded %}
-        {{- block('choice_widget_expanded') -}}
-    {% else %}
-        {{- block('choice_widget_collapsed') -}}
-    {% endif %}
-{%- endblock choice_widget -%}
 
 {%- block choice_widget_expanded -%}
     <div {{ block('widget_container_attributes') }}>
@@ -297,7 +288,7 @@
 {%- endblock repeated_row -%}
 
 {%- block form_row -%}
-    <div>aaa
+    <div>
         {{- form_label(form) -}}
         {{- form_errors(form) -}}
         {{- form_widget(form) -}}
@@ -415,3 +406,28 @@
     {%- endfor -%}
 {%- endblock attributes -%}
 
+{# System Widgets #}
+{# These widgets are ususally not changed #}
+
+{%- block form_widget -%}
+    {% if compound %}
+        {{- block('form_widget_compound') -}}
+    {% else %}
+        {{- block('form_widget_simple') -}}
+    {% endif %}
+{%- endblock form_widget -%}
+
+{%- block collection_widget -%}
+    {% if prototype is defined %}
+        {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
+    {% endif %}
+    {{- block('form_widget') -}}
+{%- endblock collection_widget -%}
+
+{%- block choice_widget -%}
+    {% if expanded %}
+        {{- block('choice_widget_expanded') -}}
+    {% else %}
+        {{- block('choice_widget_collapsed') -}}
+    {% endif %}
+{%- endblock choice_widget -%}
