@@ -297,7 +297,7 @@
 {%- endblock repeated_row -%}
 
 {%- block form_row -%}
-    <div>
+    <div>aaa
         {{- form_label(form) -}}
         {{- form_errors(form) -}}
         {{- form_widget(form) -}}
@@ -403,7 +403,9 @@
 {% block attributes -%}
     {%- for attrname, attrvalue in attr -%}
         {{- " " -}}
-        {%- if attrname in ['placeholder', 'title'] -%}
+        {%- if attrname in ['prefix', 'suffix'] -%}
+            {# nope nope nope, these are reserved #}
+        {%- elseif attrname in ['placeholder', 'title'] -%}
             {{- attrname }}="{{ translation_domain is same as(false) ? attrvalue : attrvalue|trans({}, translation_domain) }}"
         {%- elseif attrvalue is same as(true) -%}
             {{- attrname }}="{{ attrname }}"
