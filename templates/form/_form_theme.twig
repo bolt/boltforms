@@ -403,7 +403,7 @@
 {% block attributes -%}
     {%- for attrname, attrvalue in attr -%}
         {{- " " -}}
-        {%- if attrname in ['prefix', 'suffix'] -%}
+        {%- if attrname in ['prefix', 'postfix'] -%}
             {# nope nope nope, these are reserved #}
         {%- elseif attrname in ['placeholder', 'title'] -%}
             {{- attrname }}="{{ translation_domain is same as(false) ? attrvalue : attrvalue|trans({}, translation_domain) }}"

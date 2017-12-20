@@ -56,8 +56,8 @@
                             <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
                             <span class="boltforms-value">{{ form_widget(form[key]) }}</span>
                         </div>
-                        {% if form[key].vars.attr.suffix is defined %}
-                            {{ form[key].vars.attr.suffix|raw }}
+                        {% if form[key].vars.attr.postfix is defined %}
+                            {{ form[key].vars.attr.postfix|raw }}
                         {% endif %}
                     {% endif %}
                 {% endfor %}
@@ -87,8 +87,8 @@
                                 {{ form_widget(form[key]) }}
                             {% endif %}
                         </div>
-                        {% if form[key].vars.attr.suffix is defined %}
-                            {{ form[key].vars.attr.suffix|raw }}
+                        {% if form[key].vars.attr.postfix is defined %}
+                            {{ form[key].vars.attr.postfix|raw }}
                         {% endif %}
                     {% endif %}
                 {% endfor %}
