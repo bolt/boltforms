@@ -12,6 +12,7 @@ Simple Choice Selection
             label: A very simple choice
             choices: { 'Item One': 'item_1', 'Item Two': 'item_2' }
 ```
+
 ```yaml
     group_simple:
         type: choice
@@ -25,7 +26,7 @@ Simple Choice Selection
 ContentType Record Data
 -----------------------
 
-ContentType choice value lookups can optionally be sorted (`sort:`), limited 
+ContentType choice value lookups can optionally be sorted (`sort:`), limited
 number of records retrieved (`limit:`), or filtered based upon one or more of
 the ContentType's field values (`filters:`).
 
@@ -38,32 +39,34 @@ the ContentType's field values (`filters:`).
             choices: content
             sort: title
             limit: 5
-            filters: 
+            filters:
                 by_kenny:
                     field: ownerid
                     value: 42
                 light_fur:
                     field: colour
-                    value: white || grey 
+                    value: white || grey
                 cute_factor:
                     field: checkbox
                     value: >11
 ```
 
 The `sort` option takes a field name. Sorting by default happens in assending
-order. To sort in a descending order, negate the field name, e.g. `-title` 
+order. To sort in a descending order, negate the field name, e.g. `-title`
 
 The `limit` option takes an integer that sets the maximum number of records to
 be return, and in turn the maximum number of options in the select list.
 
 The `filters` option takes an array of one or more associative arrays with
 `field` and `value` keys. These filters behave the same as `where` parameters
-in Bolt's twig function `{% setcontent %}` 
+in Bolt's twig function `{% setcontent %}`
 
-To use ContentType records for choice data, you need to specify a `params:` key with the following sub keys:
-  * `contenttype`
-  * `label`
-  * `value`
+To use ContentType records for choice data, you need to specify a `params:` key
+with the following sub keys:
+
+  - `contenttype`
+  - `label`
+  - `value`
 
 Other parameters are optional.
 
@@ -80,7 +83,7 @@ Other parameters are optional.
                 value: slug
                 limit: 4
                 sort: title
-                order: DESC            # "ASC" or "DESC"
+                order: DESC # "ASC" or "DESC"
                 where:
                     and: { 'koala': 'bear' }
                     or: { 'koala': 'dangerous' }
@@ -90,7 +93,7 @@ PHP Class Choices
 -----------------
 
 Choice data can be supplied via PHP objects. Examples of these object classes
-can be seen [in the examples directory](../example/Choice)
+can be seen [in the examples directory](../example/Choice).
 
 ```yaml
     choice_traversable_choices_class:
@@ -170,7 +173,7 @@ is dispatched, but that is customisable in the `choices:` key, e.g.:
         type: choice
         label: This will come from BoltFormsEvents::DATA_CHOICE_EVENT
         options:
-            choices: event            # This will dispatch on BoltFormsEvents::DATA_CHOICE_EVENT
+            choices: event # This will dispatch on BoltFormsEvents::DATA_CHOICE_EVENT
     event_based_custom:
         type: choice
         label: This will come from your own named listener
@@ -178,7 +181,7 @@ is dispatched, but that is customisable in the `choices:` key, e.g.:
             choices: event::my.custom.event
 ```
 
-In the above example the choices for the `event_based` field will be an array 
+In the above example the choices for the `event_based` field will be an array
 gathered from `BoltFormsEvents::DATA_CHOICE_EVENT`, and `event_based_custom`
 will be dispatched to listeners to the `my.custom.event` event.
 

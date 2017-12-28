@@ -1,9 +1,8 @@
 Text Based Fields with Examples
-======
+===============================
 
-**NOTE:** See [the Symfony Forms documentation](http://symfony.com/doc/current/reference/forms/types/form.html)
-for an always up-to-date list of field types and their options.
-
+**NOTE:** See [the Symfony Forms documentation][forms] for an always up-to-date
+list of field types and their options.
 
 Standard Text Field
 -------------------
@@ -18,7 +17,6 @@ Standard Text Field
                 placeholder: Enter some text…
                 value: A Default Value
 ```
-
 
 Textarea Field
 --------------
@@ -62,9 +60,10 @@ This renders an `<input type="number">` form element.
 ```
 
 Money Field
--------
+-----------
 
-This renders a number form element with a currency symbol before the input. Any ISO 3-Letter Currency code is supported.
+This renders a number form element with a currency symbol before the input. Any
+ISO 3-Letter Currency code is supported.
 
 ```yaml
     amount:
@@ -75,7 +74,7 @@ This renders a number form element with a currency symbol before the input. Any 
 ```
 
 Password Field
-------------
+--------------
 
 This renders am HTML password input.
 
@@ -89,8 +88,8 @@ This renders am HTML password input.
 Percent Field
 -------------
 
-This renders am HTML number input and converts the inputted percentage to a decimal value. It also adds a percentage sign
-after the form input.
+This renders an HTML number input and converts the inputted percentage to a
+decimal value. It also adds a percentage sign after the form input.
 
 ```yaml
     percentage:
@@ -102,7 +101,7 @@ after the form input.
 Search Field
 ------------
 
-This renders an HTML search input `<input type="search" />`
+This renders an HTML search input `<input type="search" />`.
 
 ```yaml
     query:
@@ -117,7 +116,7 @@ This renders an HTML search input `<input type="search" />`
 URL Field
 ---------
 
-This renders an HTML URL input `<input type="url" />`
+This renders an HTML URL input `<input type="url" />`.
 
 ```yaml
     website:
@@ -129,7 +128,7 @@ This renders an HTML URL input `<input type="url" />`
 Range Field
 -----------
 
-This renders an HTML URL range input `<input type="range" />`
+This renders an HTML URL range input `<input type="range" />`.
 
 ```yml
         amount:
@@ -142,5 +141,8 @@ This renders an HTML URL range input `<input type="range" />`
                     step: 5
 ```
 
-Note that by default the range has no UI to show the actual selected value, this is normally accomplished by
-listening to the `input` event on the range field and using javascript to update another element with the value.
+Note that by default the range has no UI to show the actual selected value,
+this is normally accomplished by listening to the `input` event on the range
+field and using javascript to update another element with the value.
+
+[forms]: http://symfony.com/doc/current/reference/forms/types/form.html

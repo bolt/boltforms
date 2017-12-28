@@ -4,20 +4,18 @@ Getting Started
 When you install BoltForms, the default configuration comes with a form called
 `contact`.
 
-You can safely remove, or comment out, this form if you don't need
-it. But it is a handy first place to look, this file will be located at
+You can safely remove (or comment out) this form if you don't need it. But it
+is a handy first place to look, this file will be located at
 `app/config/extensions/boltforms.bolt.yml`.
 
-**NOTE:**
-When first installed, BoltForms defaults to turning debugging on in the
-configuration.  This should be turned off when deployed in production.
+**NOTE:** When first installed, BoltForms defaults to turning debugging on in
+the configuration. This should be turned off when deployed in production.
 
 When debugging is on, all outbound emails are sent to the configured debug
 email address.
 
-
 Your First Form
---------------
+---------------
 
 For a first form, let us use a simple "anonymous-comments" form as an example.
 

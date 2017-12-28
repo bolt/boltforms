@@ -1,11 +1,11 @@
 reCAPTCHA Support
 =================
 
-BoltForms has support for Google's reCAPTCHA service which adds a level of spam protection
-to your forms, preventing automated bots from making submissions.
+BoltForms has support for Google's reCAPTCHA service which adds a level of spam
+protection to your forms, preventing automated bots from making submissions.
 
-If you look inside the configuration file you'll see some settings available that are
-initially commented out, they look like this:
+If you look inside the configuration file you'll see some settings available
+that are initially commented out, they look like this:
 
 ```yml
 recaptcha:
@@ -17,30 +17,34 @@ recaptcha:
     theme: clean
 ```
 
+Basic Setup
+-----------
 
-### Basic Setup
+To use the basic version of reCAPTCHA you will need to visit:
+https://www.google.com/recaptcha/admin and register your site. When asked the
+question: Choose the type of reCAPTCHA, use the option labelled: reCAPTCHA V2.
 
-To use the basic version of reCAPTCHA you will need to visit: https://www.google.com/recaptcha/admin
-and register your site. When asked the question: Choose the type of reCAPTCHA, use the option
-labelled: reCAPTCHA V2.
+When you have completed the setup form you will be given two keys, a public key
+and a private key. Both of these need to be added to the above configuration
+next to the appropriate setting.
 
-When you have completed the setup form you will be given two keys, a public key and a private
-key. Both of these need to be added to the above configuration next to the appropriate setting.
+Once you have done this, then set `enabled` to `true` and your forms will have
+the additional reCAPTCHA fields added to them.
 
-Once you have done this, then set `enabled` to `true` and your forms will have the additional
-reCAPTCHA fields added to them.
+Invisible Setup
+---------------
 
-### Invisible Setup
+BoltForms also has support for the new Invisible reCAPTCHA service which works
+similarly to the original service, but without the need for an additional form
+field. Instead Google analyses the behaviour of your visitors and automatically
+classifies them as genuine or not.
 
-BoltForms also has support for the new Invisible reCAPTCHA service which works similarly to the
-original service, but without the need for an additional form field. Instead Google analyses
-the behaviour of your visitors and automatically classifies them as genuine or not.
+To setup BoltForms in this way, you follow the same process as above but when
+signing up for a key but select the option labelled: Invisible reCAPTCHA on the
+setup form.
 
-To setup BoltForms in this way, you follow the same process as above but when signing up
-for a key but select the option labelled: Invisible reCAPTCHA on the setup form.
-
-You then need to add an additional `type` option to the configuration so your config will look
-something like this:
+You then need to add an additional `type` option to the configuration so your
+config will look something like this:
 
 ```yml
 recaptcha:
@@ -53,18 +57,20 @@ recaptcha:
     type: invisible
 ```
 
-Setting the type attribute to `invisible` will use the correct service, you'll see that it
-is working via a small reCAPTCHA logo added to the bottom right of your page. You can change
-the position of the badge by adding badge_location to your config. You can use: bottomright,
-bottomleft or inline
+Setting the type attribute to `invisible` will use the correct service, you'll
+see that it is working via a small reCAPTCHA logo added to the bottom right of
+your page. You can change the position of the badge by adding badge_location to
+your config. You can use: bottomright, bottomleft or inline
 
-### Disabling reCAPTCHA on some forms
+Disabling reCAPTCHA on some forms
+---------------------------------
 
-If you want reCAPTCHA enabled globally but want to disable it on a certain form you can do this
-by adding a setting to the form configuration:
+If you want reCAPTCHA enabled globally but want to disable it on a certain form
+you can do this by adding a setting to the form configuration:
 
-For example assuming that reCAPTCHA is enabled in the global settings but you don't want it
-added to your contact form, then you can setup the form like this:
+For example assuming that reCAPTCHA is enabled in the global settings but you
+don't want it added to your contact form, then you can setup the form like
+this:
 
 ```yml
 contact:
