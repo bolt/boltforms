@@ -1,13 +1,12 @@
 Email Notifications
 ===================
 
-
 From, To, CC, bCC & ReplyTo Values
 ----------------------------------
 
 Each of these values can be either a literal string, a field name.
- 
-In the case of the `*_name` values, an array of field names that will be 
+
+In the case of the `*_name` values, an array of field names that will be
 concatenated (space delimited) can also be specified.
 
 ### String Literal
@@ -52,13 +51,14 @@ my_form:
 Email Queues
 ------------
 
-BoltForms spools all emails to a file spool directory, and them dispatches
-them after the request has been sent to the client.
+BoltForms spools all emails to a file spool directory, and them dispatches them
+after the request has been sent to the client.
 
 
 ### Viewing Queued Messages
 
-Queued messages can be viewed but running the following `nut` command: `./app/nut email:spool --show` 
+Queued messages can be viewed but running the following `nut` command:
+`./app/nut email:spool --show`.
 
 Which will output a table of queued emails similar to:
 
@@ -71,30 +71,29 @@ Currently queued emails:
 +---+---------------------------+----------------------------------+-------------------------+
 ```
 
-
 ### Recovering Messages
 
 Occasionally during sending, the Swiftmailer component used by BoltForms will
 encounter a severe error when processing and sending emails and the queued
 message file will have the `.sending` suffix.
 
-To re-add them to the queue for processing, you can just run `./app/nut email:spool --recover`
-
+To re-add them to the queue for processing, you can just run
+`./app/nut email:spool --recover`.
 
 ### Flushing (sending) Queues
 
-If you have queued emails due to SMTP server problems, of Bolt/BoltForms
-misconfiguration and wish to retry sending them, simply execute the following command:
- 
+If you have queued emails due to SMTP server problems, or Bolt / BoltForms
+misconfiguration and wish to retry sending them, simply execute the following
+command:
+
 `./app/nut email:spool --flush`
 
 ### Clearing (deleting) Queued Messages
 
-If you have stale message objects that you want to flush, e.g. debugging or 
+If you have stale message objects that you want to flush, e.g. debugging or
 testing, you can clear the queued messages with:
 
 `./app/nut email:spool --clear`
 
-**NOTE:**
-This is a destructive action and will delete the messages, which generally 
-means they have not been sent.
+**NOTE:** This is a destructive action and will delete the messages, which
+generally means they have not been sent.
