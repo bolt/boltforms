@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>BoltForms</title>
+        <title>File Uploads &raquo; BoltForms</title>
 
         <link rel="stylesheet" href="https://bolt.github.io/boltforms/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://bolt.github.io/boltforms/css/font-awesome.min.css">
@@ -18,18 +18,16 @@
             <a class="navbar-brand" href="https://bolt.github.io/boltforms/">
                 BoltForms
                 <small class="hidden-xs hidden-sm">
-                    A Bolt extension to make forms.
+                    File Uploads
                 </small>
             </a>
 
             
-<form action="https://bolt.github.io/boltforms/search.html">
-<div class="tipue_search_left"><img src="https://bolt.github.io/boltforms/tipuesearch/search.png" class="tipue_search_icon"></div>
+<form action="search.html">
+<div class="tipue_search_left"><img src="tipuesearch/search.png" class="tipue_search_icon"></div>
 <div class="tipue_search_right"><input type="text" name="q" id="tipue_search_input" pattern=".{3,}" title="At least 3 characters" required></div>
 <div style="clear: both;"></div>
 </form>
-<div id="tipue_search_content"></div>
-
 
         </header>
 
@@ -39,7 +37,7 @@
                 
                 <section id="content" class="col-sm-12">
 
-                    <h1 id="file-upload">File Upload</h1>
+                    <h1 id="file-uploads">File Uploads</h1>
 <p>Handling file uploads is a very common attack vector used to compromise (hack)
 a server. BoltForms does a few things to help increase slightly the security of handling
 file uploads.</p>
@@ -133,6 +131,7 @@ form name into <code>boltforms_uploads()</code>, e.g.</p>
         </script>
 
         <link rel="stylesheet" href="https://bolt.github.io/boltforms/tipuesearch/css/tipuesearch.css">
+        <script src="https://bolt.github.io/boltforms/tipuesearch/tipuesearch_set.js"></script>
         <script src="https://bolt.github.io/boltforms/tipuesearch/tipuesearch.min.js"></script>
 
         <script>
@@ -146,8 +145,8 @@ form name into <code>boltforms_uploads()</code>, e.g.</p>
             $(document).ready(function() {
                 $('#tipue_search_input').tipuesearch({
                     'mode': 'live',
-                    'liveDescription': '.header',
-                    'liveContent': '.container'
+                    'liveDescription': '#content',
+                    'liveContent': '#content'
                 });
             });
 
