@@ -4,3 +4,4 @@ vendor/
 tests/tmp/
 app/
 extensions/
+.couscous
