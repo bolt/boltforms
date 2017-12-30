@@ -1,5 +1,5 @@
-File Upload
-===========
+File Uploads
+============
 
 Handling file uploads is a very common attack vector used to compromise (hack)
 a server. BoltForms does a few things to help increase slightly the security of handling

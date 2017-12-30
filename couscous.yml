@@ -2,7 +2,8 @@
 # See couscous.io for details.
 
 template:
-    url: https://github.com/CouscousPHP/Template-Light.git
+    directory: ../couscous-template
+    # url: https://github.com/CouscousPHP/Template-Light.git
     index: index.md
 
 include:
@@ -13,3 +14,37 @@ baseUrl: https://bolt.github.io/boltforms
 
 title: BoltForms
 subTitle: A Bolt extension to make forms.
+github:
+    user: bolt
+    repo: boltforms
+
+menu:
+    getting-started.md:
+        label: Getting Started
+    fields.md:
+        label: Fields
+    fields/text.md:
+        label: Basic Fields
+        class: sub
+    fields/choice.md:
+        label: Choice
+        class: sub
+    fields/upload.md:
+        label: Upload
+        class: sub
+    meta-data.md:
+        label: Meta data
+    templates.md:
+        label: Templates
+    email.md:
+        label: Email Notifications
+    submission.md:
+        label: Submission & Redirection
+    saving-to-contenttype-database.md:
+        label: Saving to a contenttype or a database
+    events.md:
+        label: Events
+    recaptcha.md:
+        label: Recaptcha
+    upgrading.md:
+        label: Upgrading

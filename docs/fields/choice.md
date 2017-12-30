@@ -1,7 +1,6 @@
 Choice Fields
 =============
 
-
 Simple Choice Selection
 -----------------------
 

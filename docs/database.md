@@ -1,5 +1,5 @@
-Using Database
-==============
+Using a Database
+================
 
 ## ContentTypes
 
