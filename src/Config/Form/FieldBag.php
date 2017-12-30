@@ -43,6 +43,9 @@ class FieldBag extends ParameterBag
         $this->fieldName = $fieldName;
         $parameters += ['type' => null, 'options' => null];
         $parameters['options'] = new FieldOptionsBag($parameters['options']);
+        if (isset($parameters['event'])) {
+            $parameters['event'] = new FieldOptionsBag($parameters['event']);
+        }
 
         parent::__construct($parameters);
     }
