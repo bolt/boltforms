@@ -71,6 +71,10 @@ header.navbar {
     margin-left: 10px;
 }
 
+.nav > li > a {
+    padding: 0 15px;
+}
+
 @media (min-width: 768px) {
     #sidebar {
         position:fixed;
