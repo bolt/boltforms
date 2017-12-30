@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>BoltForms</title>
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/highlight.dark.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top">
+
+            <a class="navbar-brand" href="/">
+                BoltForms
+                <small class="hidden-xs hidden-sm">
+                    A Bolt extension to make forms.
+                </small>
+            </a>
+
+            
+        </header>
+
+        <main class="container">
+            <div class="row">
+
+                
+                <section id="content" class="col-sm-12">
+                    <h1 id="email-notifications">Email Notifications</h1>
+<h2 id="from-to-cc-bcc-amp-replyto-values">From, To, CC, bCC &amp; ReplyTo Values</h2>
+<p>Each of these values can be either a literal string, a field name.</p>
+<p>In the case of the <code>*_name</code> values, an array of field names that will be
+concatenated (space delimited) can also be specified.</p>
+<h3 id="string-literal">String Literal</h3>
+<pre><code class="language-yaml">my_form:
+    notification:
+        from_name: Kenny Koala
+        from_email: kenny@koala.com</code></pre>
+<h3 id="field-names">Field Names</h3>
+<pre><code class="language-yaml">my_form:
+    notification:
+        from_name: full_name
+        from_email: email_address</code></pre>
+<h3 id="array-of-field-names">Array of Field Names</h3>
+<pre><code class="language-yaml">my_form:
+    notification:
+        from_name: [ first_name, last_name ]
+        from_email: email_address</code></pre>
+<h2 id="uploaded-files">Uploaded Files</h2>
+<p>If your form uses file uploads, you can attach them to the email notifications
+by setting the <code>attach_files</code> parameter to <code>true</code>.</p>
+<pre><code class="language-yaml">my_form:
+    notification:
+        attach_files: true</code></pre>
+<h2 id="email-queues">Email Queues</h2>
+<p>BoltForms spools all emails to a file spool directory, and them dispatches them
+after the request has been sent to the client.</p>
+<h3 id="viewing-queued-messages">Viewing Queued Messages</h3>
+<p>Queued messages can be viewed but running the following <code>nut</code> command:
+<code>./app/nut email:spool --show</code>.</p>
+<p>Which will output a table of queued emails similar to:</p>
+<pre><code>Currently queued emails:
++---+---------------------------+----------------------------------+-------------------------+
+|   | Date                      | Address                          | Subject                 |
++---+---------------------------+----------------------------------+-------------------------+
+| 1 | 2016-07-04T05:00:00+10:00 | Kenny Koala &lt;kenny@koala.com.au&gt; | Stock Order: Gum leaves |
++---+---------------------------+----------------------------------+-------------------------+</code></pre>
+<h3 id="recovering-messages">Recovering Messages</h3>
+<p>Occasionally during sending, the Swiftmailer component used by BoltForms will
+encounter a severe error when processing and sending emails and the queued
+message file will have the <code>.sending</code> suffix.</p>
+<p>To re-add them to the queue for processing, you can just run
+<code>./app/nut email:spool --recover</code>.</p>
+<h3 id="flushing-sending-queues">Flushing (sending) Queues</h3>
+<p>If you have queued emails due to SMTP server problems, or Bolt / BoltForms
+misconfiguration and wish to retry sending them, simply execute the following
+command:</p>
+<p><code>./app/nut email:spool --flush</code></p>
+<h3 id="clearing-deleting-queued-messages">Clearing (deleting) Queued Messages</h3>
+<p>If you have stale message objects that you want to flush, e.g. debugging or
+testing, you can clear the queued messages with:</p>
+<p><code>./app/nut email:spool --clear</code></p>
+<p><strong>NOTE:</strong> This is a destructive action and will delete the messages, which
+generally means they have not been sent.</p>
+                </section>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p class="text-muted">
+                    website generated with <a href="http://couscous.io" title="Markdown website generator">Couscous</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+
+    </body>
+</html>

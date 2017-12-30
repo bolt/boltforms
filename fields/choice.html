@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>BoltForms</title>
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/highlight.dark.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top">
+
+            <a class="navbar-brand" href="/">
+                BoltForms
+                <small class="hidden-xs hidden-sm">
+                    A Bolt extension to make forms.
+                </small>
+            </a>
+
+            
+        </header>
+
+        <main class="container">
+            <div class="row">
+
+                
+                <section id="content" class="col-sm-12">
+                    <h1 id="choice-fields">Choice Fields</h1>
+<h2 id="simple-choice-selection">Simple Choice Selection</h2>
+<pre><code class="language-yaml">    choice_simple:
+        type: choice
+        options:
+            label: A very simple choice
+            choices: { 'Item One': 'item_1', 'Item Two': 'item_2' }</code></pre>
+<pre><code class="language-yaml">    group_simple:
+        type: choice
+        options:
+            label: Grouping Simple
+            choices:
+                'Group Aye': { 'Item One': 'item_1', 'Item Two': 'item_2' }
+                'Group Bee': { 'Item Eleven': 'item_11', 'Item Twelve': 'item_12' }</code></pre>
+<h2 id="contenttype-record-data">ContentType Record Data</h2>
+<p>ContentType choice value lookups can optionally be sorted (<code>sort:</code>), limited
+number of records retrieved (<code>limit:</code>), or filtered based upon one or more of
+the ContentType's field values (<code>filters:</code>).</p>
+<pre><code class="language-yaml">    best_pet_page:
+        type: choice
+        options:
+            required: false
+            label: What is our best pets page?
+            choices: content
+            sort: title
+            limit: 5
+            filters:
+                by_kenny:
+                    field: ownerid
+                    value: 42
+                light_fur:
+                    field: colour
+                    value: white || grey
+                cute_factor:
+                    field: checkbox
+                    value: &gt;11</code></pre>
+<p>The <code>sort</code> option takes a field name. Sorting by default happens in assending
+order. To sort in a descending order, negate the field name, e.g. <code>-title</code></p>
+<p>The <code>limit</code> option takes an integer that sets the maximum number of records to
+be return, and in turn the maximum number of options in the select list.</p>
+<p>The <code>filters</code> option takes an array of one or more associative arrays with
+<code>field</code> and <code>value</code> keys. These filters behave the same as <code>where</code> parameters
+in Bolt's twig function <code>{% setcontent %}</code></p>
+<p>To use ContentType records for choice data, you need to specify a <code>params:</code> key
+with the following sub keys:</p>
+<ul>
+<li><code>contenttype</code></li>
+<li><code>label</code></li>
+<li><code>value</code></li>
+</ul>
+<p>Other parameters are optional.</p>
+<pre><code class="language-yaml">    contenttype_choice:
+        type: choice
+        options:
+            required: false
+            label: ContentType selection
+            choices: content
+            params:
+                contenttype: pages
+                label: title
+                value: slug
+                limit: 4
+                sort: title
+                order: DESC # "ASC" or "DESC"
+                where:
+                    and: { 'koala': 'bear' }
+                    or: { 'koala': 'dangerous' }</code></pre>
+<h2 id="php-class-choices">PHP Class Choices</h2>
+<p>Choice data can be supplied via PHP objects. Examples of these object classes
+can be seen <a href="../example/Choice">in the examples directory</a>.</p>
+<pre><code class="language-yaml">    choice_traversable_choices_class:
+        type: choice
+        options:
+            required: false
+            label: Traversable choices class with "group_b" passed to the constructor
+            choices: Example\TraversableChoice::group_b
+            choice_label: Example\StaticChoice::choiceLabel</code></pre>
+<pre><code class="language-yaml">    choice_static_choices_class:
+        type: choice
+        options:
+            required: false
+            label: Choices from the calls to a static class::function
+            choices: Example\StaticChoice::choices
+            choice_label: Example\StaticChoice::choiceLabel</code></pre>
+<pre><code class="language-yaml">    choice_with_attrib:
+        type: choice
+        options:
+            label: HTML attibutes added to each choice
+            choices: Example\StaticChoice::choices
+            choice_value: Example\StaticChoice::choiceValue
+            choice_label: Example\StaticChoice::choiceLabel
+            choice_attr: Example\StaticChoice::choiceAttr</code></pre>
+<pre><code class="language-yaml">    choice_group_callouts:
+        type: choice
+        options:
+            required: false
+            label: Grouping callouts
+            choices: Example\StaticChoice::choices
+            choice_label: Example\StaticChoice::choiceLabel
+            group_by: Example\StaticChoice::groupBy</code></pre>
+<pre><code class="language-yaml">    choice_group_callouts_preferred_choices:
+        type: choice
+        options:
+            required: false
+            label: Grouping callouts with preferred choices
+            choices: Example\StaticChoice::choices
+            choice_label: Example\StaticChoice::choiceLabel
+            preferred_choices: Example\StaticChoice::preferredChoices
+            multiple: false</code></pre>
+<pre><code class="language-yaml">    choice_group_callouts_preferred_choices:
+        type: choice
+        options:
+            required: false
+            label: Grouping callouts with preferred choices
+            choices: Example\StaticChoice::choices
+            choice_label: Example\StaticChoice::choiceLabel
+            preferred_choices: Example\StaticChoice::preferredChoices
+            multiple: false</code></pre>
+<h2 id="event-choice-data">Event Choice Data</h2>
+<p>Event based choice selectors are driven by Symfony Events. By default a
+<code>\Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents::DATA_CHOICE_EVENT</code>
+is dispatched, but that is customisable in the <code>choices:</code> key, e.g.:</p>
+<pre><code class="language-yaml">    event_based:
+        type: choice
+        label: This will come from BoltFormsEvents::DATA_CHOICE_EVENT
+        options:
+            choices: event # This will dispatch on BoltFormsEvents::DATA_CHOICE_EVENT
+    event_based_custom:
+        type: choice
+        label: This will come from your own named listener
+        options:
+            choices: event::my.custom.event</code></pre>
+<p>In the above example the choices for the <code>event_based</code> field will be an array
+gathered from <code>BoltFormsEvents::DATA_CHOICE_EVENT</code>, and <code>event_based_custom</code>
+will be dispatched to listeners to the <code>my.custom.event</code> event.</p>
+<p>Each listener will be passed in a <code>ChoiceEvent</code> event object to work
+with, that has getters for field name, options, and configured choices, as well
+as setters for an array of choices.</p>
+<pre><code class="language-php">    protected function subscribe(EventDispatcherInterface $dispatcher)
+    {
+        $dispatcher-&gt;addListener(BoltFormsEvents::DATA_CHOICE_EVENT, [$this, 'replyChoices']);
+        $dispatcher-&gt;addListener('my.custom.event', [$this, 'wantChoices']);
+    }
+
+    public function replyChoices(ChoiceEvent $event)
+    {
+        $event-&gt;setChoices(['yes' =&gt; 'Yes of course', 'no' =&gt; 'No way!']);
+    }
+
+    public function wantChoices(ChoiceEvent $event)
+    {
+        $event-&gt;setChoices(['yes' =&gt; 'Sure', 'no' =&gt; 'Not in this life']);
+    }</code></pre>
+                </section>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p class="text-muted">
+                    website generated with <a href="http://couscous.io" title="Markdown website generator">Couscous</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+
+    </body>
+</html>

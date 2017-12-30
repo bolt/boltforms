@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>BoltForms</title>
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/highlight.dark.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top">
+
+            <a class="navbar-brand" href="/">
+                BoltForms
+                <small class="hidden-xs hidden-sm">
+                    A Bolt extension to make forms.
+                </small>
+            </a>
+
+            
+        </header>
+
+        <main class="container">
+            <div class="row">
+
+                
+                <section id="content" class="col-sm-12">
+                    <h1 id="getting-started">Getting Started</h1>
+<p>When you install BoltForms, the default configuration comes with a form called
+<code>contact</code>.</p>
+<p>You can safely remove (or comment out) this form if you don't need it. But it
+is a handy first place to look, this file will be located at
+<code>app/config/extensions/boltforms.bolt.yml</code>.</p>
+<p><strong>NOTE:</strong> When first installed, BoltForms defaults to turning debugging on in
+the configuration. This should be turned off when deployed in production.</p>
+<p>When debugging is on, all outbound emails are sent to the configured debug
+email address.</p>
+<h2 id="your-first-form">Your First Form</h2>
+<p>For a first form, let us use a simple &quot;anonymous-comments&quot; form as an example.</p>
+<h3 id="configuration">Configuration</h3>
+<p>Under the <code>notification:</code> key we need to set <code>enabled: true</code> and then a set of
+email addresses, the minimum list shown below.</p>
+<p>Then we define two fields; a <code>comment</code> field that allows text entry, and
+the <code>submit</code> button.</p>
+<pre><code class="language-yaml">anonymous-comments:
+    notification:
+        enabled: true
+        subject: Someone said something into the ether…
+        from_name: BoltAnonymous
+        from_email: anon@example.com
+        to_name: Kenny Koala
+        to_email: kenny@example.com
+    fields:
+        comment:
+            type: text
+            options:
+                label: Leave an anonymous comment
+        submit:
+            type: submit</code></pre>
+<h3 id="template">Template</h3>
+<p>To render our anonymous comments form, we would just place it in the required
+location in the desired Twig template, e.g.:</p>
+<pre><code class="language-twig">{{ boltforms('anonymous-comments') }}</code></pre>
+                </section>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p class="text-muted">
+                    website generated with <a href="http://couscous.io" title="Markdown website generator">Couscous</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+
+    </body>
+</html>

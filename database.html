@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>BoltForms</title>
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/highlight.dark.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top">
+
+            <a class="navbar-brand" href="/">
+                BoltForms
+                <small class="hidden-xs hidden-sm">
+                    A Bolt extension to make forms.
+                </small>
+            </a>
+
+            
+        </header>
+
+        <main class="container">
+            <div class="row">
+
+                
+                <section id="content" class="col-sm-12">
+                    <h1 id="using-database">Using Database</h1>
+<h2 id="contenttypes">ContentTypes</h2>
+<h3 id="default">Default</h3>
+<pre><code class="language-yaml">    database:
+        contenttype: mycontenttype  # ContentType record to create</code></pre>
+<h3 id="mapped-fields">Mapped Fields</h3>
+<pre><code class="language-yaml">    database:
+        contenttype:
+           name: mycontenttype         # ContentType record to create
+           field_map:
+               email: ~                # Do not try to save this field to the ContentType
+               message: 'sent_message' # Form field "message" will be saved to the ContentType field "sent_message"</code></pre>
+<h2 id="regular-database-table">Regular Database Table</h2>
+<pre><code class="language-yaml">    database:
+        table: bolt_secret_table</code></pre>
+                </section>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p class="text-muted">
+                    website generated with <a href="http://couscous.io" title="Markdown website generator">Couscous</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+
+    </body>
+</html>

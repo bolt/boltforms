@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>BoltForms</title>
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/highlight.dark.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top">
+
+            <a class="navbar-brand" href="/">
+                BoltForms
+                <small class="hidden-xs hidden-sm">
+                    A Bolt extension to make forms.
+                </small>
+            </a>
+
+            
+        </header>
+
+        <main class="container">
+            <div class="row">
+
+                
+                <section id="content" class="col-sm-12">
+                    <h1 id="text-based-fields-with-examples">Text Based Fields with Examples</h1>
+<p><strong>NOTE:</strong> See <a href="http://symfony.com/doc/current/reference/forms/types/form.html">the Symfony Forms documentation</a> for an always up-to-date
+list of field types and their options.</p>
+<h2 id="standard-text-field">Standard Text Field</h2>
+<pre><code class="language-yaml">    mytextfield:
+        type: text
+        options:
+            required: true
+            label: My Text Field
+            attr:
+                placeholder: Enter some text…
+                value: A Default Value</code></pre>
+<h2 id="textarea-field">Textarea Field</h2>
+<pre><code class="language-yaml">    mytextareafield:
+        type: textarea
+        options:
+            label: My Textarea Field
+            attr:
+                placeholder: Enter some text…</code></pre>
+<h2 id="email-field">Email Field</h2>
+<p>This renders an <code>&lt;input type="email"&gt;</code> form element.</p>
+<pre><code class="language-yaml">    myemailfield:
+        type: email
+        options:
+            label: My Email Field
+            attr:
+                placeholder: you@example.com</code></pre>
+<h2 id="integer-field">Integer Field</h2>
+<p>This renders an <code>&lt;input type="number"&gt;</code> form element.</p>
+<pre><code class="language-yaml">    mynumber:
+        type: integer
+        options:
+            label: My Integer Field
+            attr:
+                min: 0
+                max: 1000</code></pre>
+<h2 id="money-field">Money Field</h2>
+<p>This renders a number form element with a currency symbol before the input. Any
+ISO 3-Letter Currency code is supported.</p>
+<pre><code class="language-yaml">    amount:
+        type: money
+        options:
+            label: How much does it cost?
+            currency: EUR</code></pre>
+<h2 id="password-field">Password Field</h2>
+<p>This renders am HTML password input.</p>
+<pre><code class="language-yaml">    password:
+        type: password
+        options:
+            label: Enter a secret word</code></pre>
+<h2 id="percent-field">Percent Field</h2>
+<p>This renders an HTML number input and converts the inputted percentage to a
+decimal value. It also adds a percentage sign after the form input.</p>
+<pre><code class="language-yaml">    percentage:
+        type: percent
+        options:
+            label: Percentage Increase?</code></pre>
+<h2 id="search-field">Search Field</h2>
+<p>This renders an HTML search input <code>&lt;input type="search" /&gt;</code>.</p>
+<pre><code class="language-yaml">    query:
+        type: search
+        options:
+            label: Search Term
+            attr:
+                value: Example Query</code></pre>
+<h2 id="url-field">URL Field</h2>
+<p>This renders an HTML URL input <code>&lt;input type="url" /&gt;</code>.</p>
+<pre><code class="language-yaml">    website:
+        type: url
+        options:
+            label: Your Website</code></pre>
+<h2 id="range-field">Range Field</h2>
+<p>This renders an HTML URL range input <code>&lt;input type="range" /&gt;</code>.</p>
+<pre><code class="language-yml">        amount:
+            type: range
+            options:
+                label: Enter a number
+                attr:
+                    min: 10
+                    max: 100
+                    step: 5</code></pre>
+<p>Note that by default the range has no UI to show the actual selected value,
+this is normally accomplished by listening to the <code>input</code> event on the range
+field and using javascript to update another element with the value.</p>
+                </section>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p class="text-muted">
+                    website generated with <a href="http://couscous.io" title="Markdown website generator">Couscous</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+
+    </body>
+</html>
