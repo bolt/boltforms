@@ -23,6 +23,14 @@
             </a>
 
             
+<form action="https://bolt.github.io/boltforms/search.html">
+<div class="tipue_search_left"><img src="https://bolt.github.io/boltforms/tipuesearch/search.png" class="tipue_search_icon"></div>
+<div class="tipue_search_right"><input type="text" name="q" id="tipue_search_input" pattern=".{3,}" title="At least 3 characters" required></div>
+<div style="clear: both;"></div>
+</form>
+<div id="tipue_search_content"></div>
+
+
         </header>
 
         <main class="container">
@@ -30,6 +38,7 @@
 
                 
                 <section id="content" class="col-sm-12">
+
                     <h1 id="boltforms-documentation">BoltForms Documentation</h1>
 <ul>
 <li><a href="getting-started.html">Getting Started</a></li>
@@ -46,6 +55,7 @@
 <li><a href="saving-to-contenttype-database.html">Saving to a contenttype or a database</a></li>
 <li><a href="events.html">Events</a></li>
 <li><a href="recaptcha.html">Recaptcha</a></li>
+<li><a href="upgrading.html">Upgrading</a></li>
 </ul>
                 </section>
 
@@ -60,16 +70,34 @@
             </div>
         </footer>
 
-        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
         <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
 
         <script>
+        var tipuesearch_pages = [
+                                    "https://bolt.github.io/boltforms/database.html" ,                             "https://bolt.github.io/boltforms/email.html" ,                             "https://bolt.github.io/boltforms/events.html" ,                             "https://bolt.github.io/boltforms/example/Choice" ,                             "https://bolt.github.io/boltforms/example/Choice/EventChoice.php" ,                             "https://bolt.github.io/boltforms/example/Choice/StaticChoice.php" ,                             "https://bolt.github.io/boltforms/example/Choice/TraversableChoice.php" ,                             "https://bolt.github.io/boltforms/fields/choice.html" ,                             "https://bolt.github.io/boltforms/fields/text.html" ,                             "https://bolt.github.io/boltforms/fields/upload.html" ,                             "https://bolt.github.io/boltforms/fields.html" ,                             "https://bolt.github.io/boltforms/getting-started.html" ,                             "https://bolt.github.io/boltforms/index.html" ,                             "https://bolt.github.io/boltforms/meta-data.html" ,                             "https://bolt.github.io/boltforms/recaptcha.html" ,                             "https://bolt.github.io/boltforms/submission.html" ,                             "https://bolt.github.io/boltforms/templates.html" ,                             "https://bolt.github.io/boltforms/upgrading.html"                             ];
+        </script>
+
+        <link rel="stylesheet" href="https://bolt.github.io/boltforms/tipuesearch/css/tipuesearch.css">
+        <script src="https://bolt.github.io/boltforms/tipuesearch/tipuesearch.min.js"></script>
+
+        <script>
+
             $(function() {
                 $("section>h1").wrap('<div class="page-header" />');
                 // Syntax highlighting
                 hljs.initHighlightingOnLoad();
             });
+
+            $(document).ready(function() {
+                $('#tipue_search_input').tipuesearch({
+                    'mode': 'live',
+                    'liveDescription': '.header',
+                    'liveContent': '.container'
+                });
+            });
+
         </script>
 
     </body>
