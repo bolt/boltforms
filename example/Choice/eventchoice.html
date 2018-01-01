@@ -1,11 +1,11 @@
-                                                                                                                                                                                        
+                                                                                                                                                                    
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Submission &amp; Redirection &raquo; BoltForms</title>
+        <title>BoltForms</title>
 
         <link rel="stylesheet" href="https://bolt.github.io/boltforms/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://bolt.github.io/boltforms/css/font-awesome.min.css">
@@ -19,7 +19,7 @@
             <a class="navbar-brand" href="https://bolt.github.io/boltforms/">
                 BoltForms
                 <small class="hidden-xs hidden-sm">
-                    Submission &amp; Redirection
+                    A Bolt extension to make forms.
                 </small>
             </a>
 
@@ -82,7 +82,7 @@
                                         Email Notifications
                                     </a>
                                 </li>
-                                                                                                                            <li class="active ">
+                                                                                                                            <li class=" ">
                                     <a href="https://bolt.github.io/boltforms/submission.html">
                                         Submission & Redirection
                                     </a>
@@ -113,39 +113,42 @@
 
                 
                 <section id="content" class="col-sm-offset-4 col-lg-offset-4 col-sm-8 col-lg-7">
-                    <h1 id="submission-amp-redirection">Submission &amp; Redirection</h1>
-<h2 id="redirect-on-success">Redirect on success</h2>
-<p>On successfull submit the user can be redirected to another Bolt page, or URL.
-The page for the redirect target must exist. The redirect is added to the
-<code>feedback</code> key of the form, for example:</p>
-<pre><code class="language-yaml">    feedback:
-        success: Form submission successful
-        error: There are errors in the form, please fix before trying to resubmit
-        redirect:
-            target: page/another-page  # A page path, or URL
-            query: [ name, email ]     # Optional keys for the GET parameters</code></pre>
-<p><strong>NOTE:</strong></p>
-<ul>
-<li><code>target:</code> — Either a route in the form of <code>contenttype/slug</code> or a full URL</li>
-<li><code>query:</code> — (optional) Either an indexed, or associative array
-<ul>
-<li><code>[ name, email ]</code> would create the query string <code>?name=value-of-name-field&amp;email=value-of-email-field</code></li>
-<li><code>{ name: 'foo', email: 'bar' }</code> would create the query string <code>?name=foo&amp;email=bar</code></li>
-</ul></li>
-</ul>
-<h2 id="ajax-beta">AJAX (beta)</h2>
-<p>Submissions can be done using AJAX request/responses. To enable this (beta)
-feature, simplly set <code>ajax: true</code> under the <code>submission:</code> key in your form's
-configuration, e.g.:</p>
-<pre><code>my_form:
-    submission:
-        ajax: true
-    fields:
-        # … and so on</code></pre>
-<p><strong>NOTE:</strong> This feature <em>currently requires</em> jQuery, and we will request Bolt to
-attempt to load it via its asset loader chain, i.e. if you're inserting a
-javascript file called <code>jquery.*.js</code> (note the wildcard), then Bolt shouldn't
-interfere.</p>
+                    <h1 id="eventchoice">EventChoice</h1>
+<pre><code class="language-php">&lt;?php
+
+namespace Example;
+
+use Bolt\Extension\Bolt\BoltForms\Event\ChoiceEvent;
+use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
+use Bolt\Extension\SimpleExtension;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+/**
+ * Class to demonstrate event listeners for option choice management.
+ *
+ * @author Gawain Lynch &lt;gawain.lynch@gmail.com&gt;
+ */
+class EventChoice extends SimpleExtension
+{
+    protected function subscribe(EventDispatcherInterface $dispatcher)
+    {
+        $dispatcher-&gt;addListener(BoltFormsEvents::DATA_CHOICE_EVENT, [$this, 'onDataChoiceEvent']);
+    }
+
+    public function onDataChoiceEvent(ChoiceEvent $event)
+    {
+        if ($event-&gt;getFormName() === 'contact' &amp;&amp; $event-&gt;getFieldName() === 'department') {
+            $choices = [
+                '' =&gt; null,
+                'Sales'     =&gt; 'dept_sales',
+                'Marketing' =&gt; 'dept_markt',
+                'support'   =&gt; 'dept_support',
+            ];
+
+            $event-&gt;setChoices($choices);
+        }
+    }
+}</code></pre>
                 </section>
 
             </div>

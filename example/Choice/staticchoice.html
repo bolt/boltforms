@@ -1,11 +1,11 @@
-                                                                                                                                                                                        
+                                                                                                                                                                    
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Submission &amp; Redirection &raquo; BoltForms</title>
+        <title>BoltForms</title>
 
         <link rel="stylesheet" href="https://bolt.github.io/boltforms/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://bolt.github.io/boltforms/css/font-awesome.min.css">
@@ -19,7 +19,7 @@
             <a class="navbar-brand" href="https://bolt.github.io/boltforms/">
                 BoltForms
                 <small class="hidden-xs hidden-sm">
-                    Submission &amp; Redirection
+                    A Bolt extension to make forms.
                 </small>
             </a>
 
@@ -82,7 +82,7 @@
                                         Email Notifications
                                     </a>
                                 </li>
-                                                                                                                            <li class="active ">
+                                                                                                                            <li class=" ">
                                     <a href="https://bolt.github.io/boltforms/submission.html">
                                         Submission & Redirection
                                     </a>
@@ -113,39 +113,155 @@
 
                 
                 <section id="content" class="col-sm-offset-4 col-lg-offset-4 col-sm-8 col-lg-7">
-                    <h1 id="submission-amp-redirection">Submission &amp; Redirection</h1>
-<h2 id="redirect-on-success">Redirect on success</h2>
-<p>On successfull submit the user can be redirected to another Bolt page, or URL.
-The page for the redirect target must exist. The redirect is added to the
-<code>feedback</code> key of the form, for example:</p>
-<pre><code class="language-yaml">    feedback:
-        success: Form submission successful
-        error: There are errors in the form, please fix before trying to resubmit
-        redirect:
-            target: page/another-page  # A page path, or URL
-            query: [ name, email ]     # Optional keys for the GET parameters</code></pre>
-<p><strong>NOTE:</strong></p>
-<ul>
-<li><code>target:</code> — Either a route in the form of <code>contenttype/slug</code> or a full URL</li>
-<li><code>query:</code> — (optional) Either an indexed, or associative array
-<ul>
-<li><code>[ name, email ]</code> would create the query string <code>?name=value-of-name-field&amp;email=value-of-email-field</code></li>
-<li><code>{ name: 'foo', email: 'bar' }</code> would create the query string <code>?name=foo&amp;email=bar</code></li>
-</ul></li>
-</ul>
-<h2 id="ajax-beta">AJAX (beta)</h2>
-<p>Submissions can be done using AJAX request/responses. To enable this (beta)
-feature, simplly set <code>ajax: true</code> under the <code>submission:</code> key in your form's
-configuration, e.g.:</p>
-<pre><code>my_form:
-    submission:
-        ajax: true
-    fields:
-        # … and so on</code></pre>
-<p><strong>NOTE:</strong> This feature <em>currently requires</em> jQuery, and we will request Bolt to
-attempt to load it via its asset loader chain, i.e. if you're inserting a
-javascript file called <code>jquery.*.js</code> (note the wildcard), then Bolt shouldn't
-interfere.</p>
+                    <h1 id="staticchoice">StaticChoice</h1>
+<pre><code class="language-php">&lt;?php
+
+namespace Example;
+
+/**
+ * Class to demonstrate static calls for option choice management.
+ *
+ * @author Gawain Lynch &lt;gawain.lynch@gmail.com&gt;
+ */
+class StaticChoice
+{
+    const ITEM_1 = 'item_1';
+    const ITEM_2 = 'item_2';
+    const ITEM_11 = 'item_11';
+    const ITEM_12 = 'item_12';
+
+    /**
+     * Singleton constructor.
+     */
+    private function __construct()
+    {
+    }
+
+    /**
+     * Returns the string "value" for each choice.
+     *
+     * This is used in the value attribute in HTML and submitted in the POST/PUT
+     * requests. You don't normally need to worry about this, but it might be
+     * handy when processing an API request (since you can configure the value
+     * that will be sent in the API request).
+     *
+     * @param string     $choicesValue Value in 'choices' array
+     * @param string|int $key          Array key of value in 'choices' array
+     * @param string     $index        The result of value()
+     *
+     * @return string
+     */
+    public static function choiceValue($choicesValue, $key = null, $index = null)
+    {
+        return 'your_prefix_' . $choicesValue;
+    }
+
+    /**
+     * Label text that's shown to the user.
+     *
+     * @param string     $choicesValue Value in 'choices' array
+     * @param string|int $key          Array key of value in 'choices' array
+     * @param string     $index        The result of value()
+     *
+     * @return string
+     */
+    public static function choiceLabel($choicesValue, $key, $index)
+    {
+        $labels = [
+            static::ITEM_1  =&gt; 'Item One',
+            static::ITEM_2  =&gt; 'Item Two',
+            // …and others
+            static::ITEM_11 =&gt; 'Item Eleven',
+            static::ITEM_12 =&gt; 'Item Twelve',
+        ];
+
+        if (isset($labels[$choicesValue])) {
+            return $labels[$choicesValue];
+        }
+
+        return ucwords($choicesValue);
+    }
+
+    /**
+     * Add additional HTML attributes to each choice.
+     *
+     * @param string     $choicesValue Value in 'choices' array
+     * @param string|int $key          Array key of value in 'choices' array
+     * @param string     $index        The result of value()
+     *
+     * @return array
+     */
+    public static function choiceAttr($choicesValue, $key, $index)
+    {
+        return [
+            'class' =&gt; 'doing_' . strtolower($key),
+        ];
+    }
+
+    /**
+     * Choice values grouping.
+     *
+     * @param string     $choicesValue Value in 'choices' array
+     * @param string|int $key          Array key of value in 'choices' array
+     * @param string     $index        The result of value()
+     *
+     * @return string|null
+     */
+    public static function groupBy($choicesValue, $key, $index)
+    {
+        // Assign items into groups
+        $itemGrouping = [
+            static::ITEM_1  =&gt; 'group_a',
+            static::ITEM_2  =&gt; 'group_a',
+            // …and others
+            static::ITEM_11 =&gt; 'group_b',
+            static::ITEM_12 =&gt; 'group_b',
+            // …and others
+        ];
+        // Assign groups labels
+        $groupLabels = [
+            'group_a' =&gt; 'Group Aye',
+            'group_b' =&gt; 'Group Bee',
+            // …and others
+        ];
+
+        if (isset($itemGrouping[$choicesValue])) {
+            $groupLabelKey = $itemGrouping[$choicesValue];
+
+            return $groupLabels[$groupLabelKey];
+        }
+
+        return null;
+    }
+
+    /**
+     * Allows you to move certain choices to the top of your list with a visual
+     * separator between them and the rest of the options.
+     *
+     * @param string     $choicesValue Value in 'choices' array
+     * @param string|int $key          Array key of value in 'choices' array
+     *
+     * @return bool
+     */
+    public static function preferredChoices($choicesValue, $key)
+    {
+        if ($choicesValue === static::ITEM_12) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Simple array of choices.
+     *
+     * @return array
+     */
+    public static function choices()
+    {
+        return [ 'item_1', 'item_2', 'item_11', 'item_12', 'koala_bear' ];
+    }
+}</code></pre>
                 </section>
 
             </div>

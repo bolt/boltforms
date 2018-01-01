@@ -3,7 +3,7 @@ html {
     min-height: 100%;
 }
 body {
-    font-size: 19px;
+    font-size: 17px;
 }
 
 @media (min-width: 1200px) {
@@ -40,8 +40,16 @@ footer p {
     margin: 0;
 }
 
+h1 {
+    font-size: 36px;
+}
+
+h2 {
+    font-size: 30px;
+}
+
 h3 {
-    font-size: 23px;
+    font-size: 24px;
 }
 
 li {
@@ -75,6 +83,10 @@ header.navbar {
     padding: 0 15px;
 }
 
+.nav .sub a::before {
+    content: " - ";
+}
+
 @media (min-width: 768px) {
     #sidebar {
         position:fixed;
@@ -102,7 +114,7 @@ pre {
     padding: 0;
     border-radius: 4px;
     margin: 15px;
-    font-size: 15px;
+    font-size: 13px;
 }
 pre code {
     border: none;
