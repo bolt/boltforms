@@ -41,7 +41,7 @@ menu:
     submission.md:
         label: Submission & Redirection
     saving-to-contenttype-database.md:
-        label: Saving to a contenttype or a database
+        label: Saving to ContentType or Database
     events.md:
         label: Events
     recaptcha.md:

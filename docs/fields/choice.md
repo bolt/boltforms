@@ -92,7 +92,11 @@ PHP Class Choices
 -----------------
 
 Choice data can be supplied via PHP objects. Examples of these object classes
-can be seen [in the examples directory](../example/Choice).
+can be seen here:
+
+  - [StaticChoice](../example/Choice/StaticChoice.md)
+  - [TraversableChoice](../example/Choice/TraversableChoice.md)
+  - [EventChoice](../example/Choice/EventChoice.md)
 
 ```yaml
     choice_traversable_choices_class:
