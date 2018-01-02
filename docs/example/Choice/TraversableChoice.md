@@ -1,3 +1,7 @@
+TraversableChoice
+=================
+
+```php
 <?php
 
 namespace Example;
@@ -87,3 +91,4 @@ class TraversableChoice implements \Iterator
         $this->position = 0;
     }
 }
+```

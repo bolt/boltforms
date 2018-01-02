@@ -1,3 +1,7 @@
+StaticChoice
+============
+
+```php
 <?php
 
 namespace Example;
@@ -146,3 +150,4 @@ class StaticChoice
         return [ 'item_1', 'item_2', 'item_11', 'item_12', 'koala_bear' ];
     }
 }
+```

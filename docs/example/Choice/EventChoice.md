@@ -1,3 +1,7 @@
+EventChoice
+===========
+
+```php
 <?php
 
 namespace Example;
@@ -33,3 +37,4 @@ class EventChoice extends SimpleExtension
         }
     }
 }
+```
