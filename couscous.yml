@@ -2,8 +2,9 @@
 # See couscous.io for details.
 
 template:
-    directory: ../couscous-template
-    # url: https://github.com/CouscousPHP/Template-Light.git
+    # The following assumes you have a checkout of the template folder in ../couscous-template
+    directory: ../couscous-template/public
+    # url: https://github.com/bolt/Extension-docs-template
     index: index.md
 
 include:
