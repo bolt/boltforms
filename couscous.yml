@@ -18,6 +18,7 @@ subTitle: A Bolt extension to make forms.
 github:
     user: bolt
     repo: boltforms
+    editlink: https://github.com/bolt/boltforms/edit/4.1/docs/
 
 menu:
     getting-started.md:
