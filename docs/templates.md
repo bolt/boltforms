@@ -18,10 +18,11 @@ e.g.:
 
 ```yaml
     templates:
-        form:    my_sub_directory/form.twig
-        email:   my_sub_directory/email.twig
-        subject: my_sub_directory/subject.twig
-        files:   my_sub_directory/file_browser.twig
+        form:       my_sub_directory/form.twig
+        email:      my_sub_directory/email.twig
+        subject:    my_sub_directory/subject.twig
+        files:      my_sub_directory/file_browser.twig
+        form_theme: my_sub_directory/_form_theme.twig
 ```
 
 Default data

@@ -202,6 +202,8 @@ contact:
 #                label: Subject of your message
 #                attr:
 #                    placeholder: Just a quick message...
+#                    prefix: '<p>A small HTML prefix</p>'
+#                    postfix: '<p>A small HTML postfix</p>'
 #                constraints: [ NotBlank, {Length: {'min': 3, 'max': 30}} ]
 #        name:
 #            type: text

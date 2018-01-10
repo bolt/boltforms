@@ -14,8 +14,28 @@ See [the Symfony documentation][forms] for more information.
             label: My Field
             attr:
                 placeholder: Enter some details…
-                class: my-css-class
             constraints: [ NotBlank, {Length: {'min': 3, 'max': 64}} ]
+```
+
+Extra attributes
+----------------
+
+You may use some extra attributes to add a _prefix_ or a _postfix_ to a field. 
+These two attributes will be displayed before and after the form widget
+
+Other attributes, like _data-example_ will be added to the input element.
+You may use these to add aria roles, data attributes and other custom elements.
+
+```yaml
+    field_name:
+        type: field_type
+        required: true|false
+        options:
+            label: My Field
+            attr:
+                data-example: example-value
+                prefix: '<p>A small HTML prefix</p>'
+                postfix: '<p>A small HTML postfix</p>'
 ```
 
 Field(s) default values
