@@ -37,10 +37,7 @@
             "Bolt\\Extension\\Bolt\\BoltForms\\": [
                 "src/"
             ]
-        },
-        "classmap": [
-            "doc/example/"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
