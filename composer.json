@@ -39,7 +39,7 @@
             ]
         },
         "classmap": [
-            "doc/example/"
+            "docs/example/"
         ]
     },
     "autoload-dev": {
