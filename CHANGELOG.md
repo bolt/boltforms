@@ -1,5 +1,11 @@
 # Changelog for Bolt Forms
 
+* 4.2.0
+  * Added: Introduce a default theme file that can be copied into local theme. (#224 credit @jadwigo)
+  * Added: Support for prefix and postfix html per-field in form theme. (#224 credit @jadwigo)
+  * Added: Improvements to docs and add publishing theme via CousCous (#228)
+  * Fix: Hidden Data Events fix which were not triggering on empty submit data. (#227) 
+
 * 4.1.12 (2017-10-03)
   * Fix: Handle file uploads differently depending on whether they are saved or not (#196)
 
