@@ -279,10 +279,10 @@ class BoltFormsRuntime
                 $result = $this->processor->process($formConfig, $reCaptchaResponse);
                 $compiler->setResult($result);
             } catch (Exception\FileUploadException $e) {
-                $this->message(Processor::FEEDBACK_ERROR, $e->getMessage());
+                $this->message($e->getMessage(), Processor::FEEDBACK_ERROR);
                 $this->exception($e, false, 'File upload exception: ');
             } catch (Exception\FormValidationException $e) {
-                $this->message(Processor::FEEDBACK_ERROR, $e->getMessage());
+                $this->message($e->getMessage(), Processor::FEEDBACK_ERROR);
                 $this->exception($e, false, 'Form validation exception: ');
             } catch (HttpException $e) {
                 throw $e;
@@ -381,8 +381,8 @@ class BoltFormsRuntime
     protected function handleException($formName, Exception\BoltFormsException $e, Twig_Environment $twig)
     {
         /** @var \Exception $e */
-        $this->message('debug', $this->getSafeTrace($e));
-        $this->message('error', $e->getMessage());
+        $this->message($this->getSafeTrace($e), 'debug');
+        $this->message($e->getMessage(), 'error');
 
         $this->requestStack->getCurrentRequest()->request->set($formName, true);
         $compiler = $this->getContextCompiler($formName);
