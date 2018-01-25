@@ -1,48 +1,40 @@
-
 <script>
-    function postForm($form, values, callback) {
+    document.addEventListener("DOMContentLoaded", function(event) {
+        // Select all forms
+        var forms = document.querySelectorAll("form");
+        Array.prototype.forEach.call(forms, function(el) {
 
-        $.ajax({
-            method:   $form.attr('method'),
-            url:      $form.attr('action'),
-            data:     values,
-            success:  function(data, textStatus, jqXHR) {
-                // Call the callback
-                callback(data);
-                // Output returned data
-                $('.boltform form[name="'+ $form.attr('name') +'"]').parent().replaceWith(data);
-                // Reactivate listener
-                addListener();
-            },
-            error:    function(jqXHR, textStatus, errorThrown) {
-                alert('Oh noes!');
-            },
-            complete: function(jqXHR, textStatus) {
-            }
-        });
-    }
-
-    function addListener() {
-        // On click we serialise the form data and add the button used form Symfony.
-        $(['[name="{{ form.vars.full_name }}"] button[type="submit"]'].join(',')).each(function() {
-            $(this).click(function(e) {
-                e.preventDefault();
-
-                var form = $(this).closest('form');
-                var formData = form.serializeArray();
-                formData.push({
-                    name:  $(this).attr('name'),
-                    value: $(this).val()
+            el.addEventListener("submit", function(event) {
+                event.preventDefault();
+                var XHR = new XMLHttpRequest();
+                // Bind the FormData object and the form element
+                var data = new FormData(el);
+                // Define what happens on successful data submission
+                XHR.addEventListener("load", function(e) {
+                    onFormSubmissed(el, e);
                 });
+                // Define what happens in case of error
+                XHR.addEventListener("error", function(e) {
+                    onFormSubmissed(el, e);
+                });
+                // Invoke callback function
+                onFormSubmissing(el);
+                // Set up our request
+                XHR.open("POST", window.location.href);
 
-                postForm(form, formData, function(response) {});
+                // The data sent is what the user provided in the form
+                XHR.send(data);
             });
         });
+    });
+
+    // Callback before form submission. Override at will
+    var onFormSubmissing = function(form) {
+        console.log(form);
+    }
+    // Callback afteer form submission. Override at will
+    var onFormSubmissed = function(form, request) {
+        console.log(request.target.textStatus);
     }
 
-    $(document).ready(
-        function() {
-            addListener();
-        }
-    );
 </script>
