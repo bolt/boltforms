@@ -322,7 +322,9 @@ class EmailConfig extends ParameterBag
             if (is_array($key)) {
                 $value = [];
                 foreach($key as $keyPart) {
-                    $value[] = $this->getConfigValue($formData, $keyPart);
+                    if ($this->getConfigValue($formData, $keyPart) != $keyPart) {
+                        $value[] = $this->getConfigValue($formData, $keyPart);
+                    }
                 }
                 $value = implode(" ", $value);
             } else {
