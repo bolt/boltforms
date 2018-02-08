@@ -1,7 +1,7 @@
 <script>
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function() {
         // Select all forms
-        var forms = document.querySelectorAll("form");
+        var forms = document.querySelectorAll("div.boltform form");
         Array.prototype.forEach.call(forms, function(el) {
 
             el.addEventListener("submit", function(event) {
@@ -10,17 +10,16 @@
                 // Bind the FormData object and the form element
                 var data = new FormData(el);
                 // Define what happens on successful data submission
-                XHR.addEventListener("load", function(e) {
-                    onFormSubmissed(el, e);
+                XHR.addEventListener("load", function() {
+                    boltFormSuccess(el, this);
                 });
                 // Define what happens in case of error
-                XHR.addEventListener("error", function(e) {
-                    onFormSubmissed(el, e);
+                XHR.addEventListener("error", function() {
+                    boltFormError(el, this);
                 });
-                // Invoke callback function
-                onFormSubmissing(el);
+
                 // Set up our request
-                XHR.open("POST", window.location.href);
+                XHR.open("POST", el.action);
 
                 // The data sent is what the user provided in the form
                 XHR.send(data);
@@ -29,12 +28,12 @@
     });
 
     // Callback before form submission. Override at will
-    var onFormSubmissing = function(form) {
-        console.log(form);
-    }
-    // Callback afteer form submission. Override at will
-    var onFormSubmissed = function(form, request) {
-        console.log(request.target.textStatus);
-    }
+    var boltFormError = function() {
+        alert("Error!");
+    };
+    // Callback after form submission. Override at will
+    var boltFormSuccess = function(form, request) {
+        form.parentNode.outerHTML = request.response;
+    };
 
 </script>
