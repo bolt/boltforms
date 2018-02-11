@@ -14,6 +14,7 @@ use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Legacy;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -243,6 +244,16 @@ class BoltFormsRuntime
         return new Twig_Markup($html, 'UTF-8');
     }
 
+    /**
+     * Twig test to determine if this is a root form object
+     *
+     * @param FormView $formView
+     * @return bool
+     */
+    public function twigIsRootForm(FormView $formView)
+    {
+        return null === $formView->parent;
+    }
     /**
      * Get the context compiler either from session, or factory.
      *
