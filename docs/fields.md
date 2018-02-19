@@ -299,7 +299,7 @@ e.g.:
 Controlling Field Rendering
 ---------------------------
 
-If you want to simply render the reamining fields, you can use the `form_rest`
+If you want to simply render the remaining fields, you can use the `form_rest`
 function, passing in the form variable, e.g.:
 
 ```twig
@@ -313,7 +313,7 @@ property for that field, e.g.:
 {% do form.your_field_name.setRendered %}
 ```
 
-If you know you have remaining fields, and you don't want them remdered, you
+If you know you have remaining fields, and you don't want them rendered, you
 can simply pass `form_end` the `render_rest: false` option, i.e.:
 
 ```twig
