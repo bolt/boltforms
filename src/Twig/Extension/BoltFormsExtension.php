@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Twig\Extension;
 use Twig_Extension as Extension;
 use Twig_SimpleFunction;
 use Twig_SimpleTest;
-use Twig_Test;
 
 /**
  * Twig extension for BoltForms
