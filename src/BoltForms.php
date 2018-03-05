@@ -115,7 +115,7 @@ class BoltForms
 
         /** @var Config\FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
-        // Merge options with default the resolved ones
+        // Merge options with the resolved, default ones
         $options += $formConfig->getOptions()->all();
         /** @var FormBuilderInterface $builder */
         $builder = $this->createFormBuilder($formName, $type, $data, $options);
