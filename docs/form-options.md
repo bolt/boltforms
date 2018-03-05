@@ -1,7 +1,7 @@
 Setting-up Form options
 =======================
 
-Should you want to set up your Form's global options, you can specify define
+Should you want to set up your Form's global options, you can specify
 them by setting the `options` key to it.
 
 This is useful for custom validation on the whole form, e.g: say you want to
