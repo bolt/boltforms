@@ -134,19 +134,75 @@
 
                 <div class="docs__main--body">
                     <section id="content" class="content">
-                        <h1 id="using-a-database">Using a Database</h1>
+                        <h1 id="saving-to-a-contenttype-or-database">Saving to a ContentType or Database</h1>
+<p>You can save form entries into a contenttype or a separate database.</p>
 <h2 id="contenttypes">ContentTypes</h2>
-<h3 id="default">Default</h3>
+<p>There are basically 2 things you need to do:</p>
+<ul>
+<li>Prepare the ContentType that the data goes into.</li>
+<li>Map which BoltForms field goes into which ContentType field.</li>
+</ul>
+<h3 id="prepare-the-contenttype">Prepare the ContentType</h3>
 <pre><code class="language-yaml">    database:
-        contenttype: mycontenttype  # ContentType record to create</code></pre>
+        contenttype: responses  # ContentType record to create</code></pre>
 <h3 id="mapped-fields">Mapped Fields</h3>
-<pre><code class="language-yaml">    database:
-        contenttype:
-           name: mycontenttype         # ContentType record to create
-           field_map:
-               email: ~                # Do not try to save this field to the ContentType
-               message: 'sent_message' # Form field "message" will be saved to the ContentType field "sent_message"</code></pre>
+<h6 id="boltformsboltyml">(boltforms.bolt.yml)</h6>
+<pre><code class="language-yaml">database:
+    contenttype:
+        name: responses                 # ContentType record to create
+            field_map:
+                name: 'title'           # Form field "message" will be saved to the ContentType field "title"
+                email: ~                # Do not try to save this field to the ContentType
+                animal: 'animal'        # Form field "animal" will be saved to the ContentType field "animal"
+                message: 'sent_message' # Form field "message" will be saved to the ContentType field "sent_message"
+    fields:
+        email:
+            type: email
+        name:
+            type: text
+            options:
+                label: "Your name"
+        animal:
+            type: choice
+            options:
+                label: "Use your paw to select what you are"
+                choices: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
+                expanded: false
+        message:
+            type: textarea
+        status: # Don't publish new record after submitting but leave that to the editor
+            type: hidden
+            options:
+                label: false
+                attr:
+                    value: draft</code></pre>
+<h6 id="contenttypesyml">(contenttypes.yml)</h6>
+<pre><code class="language-yaml">responses:
+    name: Responses
+    singular_name: Response
+    fields:
+        title:
+            type: text
+            label: Name
+        animal:
+            type: select
+            values: { "I am a cat" : "I am a cat", "I am a raccoon" : "I am a raccoon", "I am a Koala" : "I am a Koala" }
+        sent_message:
+            type: textarea
+    default_status: draft</code></pre>
+<p>In most cases the fieldtype in <code>boltforms.bolt.yml</code> and <code>contenttypes.yml</code> can be the same, but note that you need a <code>select</code> field with <code>values</code> to save a <code>choice</code> BoltForms field with <code>choices</code>.</p>
+<h2 id="set-the-publication-status">Set the publication status</h2>
+<p>If you would like to change the default status of an entry from <code>published</code> to something else, you can add a hidden field to your <code>boltforms.bolt.yml</code> to set the status. For example: </p>
+<pre><code class="language-yaml">fields:
+    status:
+        type: hidden
+        options:
+            attr:
+                value: draft</code></pre>
+<p>In the above example, you can replace &quot;draft&quot; with whatever status you would like to assign newly inserted records.</p>
 <h2 id="regular-database-table">Regular Database Table</h2>
+<p>If you want to keep form entries apart from your site's content, you may prefer a separate database to collect form entries.</p>
+<p><strong>(This part of the docs yet to be completed)</strong></p>
 <pre><code class="language-yaml">    database:
         table: bolt_secret_table</code></pre>
                     </section>

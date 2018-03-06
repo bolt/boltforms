@@ -145,8 +145,21 @@ directly to Symfony Forms.</p>
             label: My Field
             attr:
                 placeholder: Enter some details…
-                class: my-css-class
             constraints: [ NotBlank, {Length: {'min': 3, 'max': 64}} ]</code></pre>
+<h2 id="extra-attributes">Extra attributes</h2>
+<p>You may use some extra attributes to add a <em>prefix</em> or a <em>postfix</em> to a field.
+These two attributes will be displayed before and after the form widget</p>
+<p>Other attributes, like <em>data-example</em> will be added to the input element.
+You may use these to add aria roles, data attributes and other custom elements.</p>
+<pre><code class="language-yaml">    field_name:
+        type: field_type
+        required: true|false
+        options:
+            label: My Field
+            attr:
+                data-example: example-value
+                prefix: '&lt;p&gt;A small HTML prefix&lt;/p&gt;'
+                postfix: '&lt;p&gt;A small HTML postfix&lt;/p&gt;'</code></pre>
 <h2 id="fields-default-values">Field(s) default values</h2>
 <p>If you want a field to have a default value you can add it by using a <code>value</code>
 attribute. This value can be overwritten by the person who is submitting the
@@ -341,13 +354,13 @@ e.g.:</p>
         })
     }}</code></pre>
 <h2 id="controlling-field-rendering">Controlling Field Rendering</h2>
-<p>If you want to simply render the reamining fields, you can use the <code>form_rest</code>
+<p>If you want to simply render the remaining fields, you can use the <code>form_rest</code>
 function, passing in the form variable, e.g.:</p>
 <pre><code class="language-twig">{{ form_rest(form) }}</code></pre>
 <p>Should you want to exclude a single field, you can set the <code>setRendered</code>
 property for that field, e.g.:</p>
 <pre><code class="language-twig">{% do form.your_field_name.setRendered %}</code></pre>
-<p>If you know you have remaining fields, and you don't want them remdered, you
+<p>If you know you have remaining fields, and you don't want them rendered, you
 can simply pass <code>form_end</code> the <code>render_rest: false</code> option, i.e.:</p>
 <pre><code class="language-twig">{{ form_end(form, { 'render_rest': false }) }}</code></pre>
 <p>For more details, see Symfony's <a href="http://symfony.com/doc/2.8/reference/forms/twig_reference.html#form-rest-view-variables">Twig reference</a>.</p>

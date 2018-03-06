@@ -144,10 +144,11 @@ following to your template:</p>
 would update your <code>app/config/boltforms.bolt.yml</code> file parameters to match,
 e.g.:</p>
 <pre><code class="language-yaml">    templates:
-        form:    my_sub_directory/form.twig
-        email:   my_sub_directory/email.twig
-        subject: my_sub_directory/subject.twig
-        files:   my_sub_directory/file_browser.twig</code></pre>
+        form:       my_sub_directory/form.twig
+        email:      my_sub_directory/email.twig
+        subject:    my_sub_directory/subject.twig
+        files:      my_sub_directory/file_browser.twig
+        form_theme: my_sub_directory/_form_theme.twig</code></pre>
 <h2 id="default-data">Default data</h2>
 <p>You can also add parameters to the BoltForms invocation in Twig. In this case
 the value for the field &quot;field_1&quot; will be pre-set &quot;value_1&quot;</p>
