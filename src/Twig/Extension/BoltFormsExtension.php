@@ -3,6 +3,8 @@
 namespace Bolt\Extension\Bolt\BoltForms\Twig\Extension;
 
 use Twig_Extension as Extension;
+use Twig_SimpleFunction;
+use Twig_SimpleTest;
 
 /**
  * Twig extension for BoltForms
@@ -38,8 +40,19 @@ class BoltFormsExtension extends Extension
         $env  = ['needs_environment' => true];
 
         return [
-            new \Twig_SimpleFunction('boltforms', [BoltFormsRuntime::class, 'twigBoltForms'], $safe + $env),
-            new \Twig_SimpleFunction('boltforms_uploads', [BoltFormsRuntime::class, 'twigBoltFormsUploads']),
+            new Twig_SimpleFunction('boltforms', [BoltFormsRuntime::class, 'twigBoltForms'], $safe + $env),
+            new Twig_SimpleFunction('boltforms_uploads', [BoltFormsRuntime::class, 'twigBoltFormsUploads']),
         ];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTests()
+    {
+        return array(
+            new Twig_SimpleTest('rootform', [BoltFormsRuntime::class, 'twigIsRootForm']),
+        );
+    }
+
 }

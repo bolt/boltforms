@@ -62,30 +62,19 @@ class Fields extends AbstractProcessor
         $formConfig = $lifeEvent->getFormConfig();
         $formData = $lifeEvent->getFormData();
 
-        foreach ($formData->toArray() as $fieldName => $fieldValue) {
+        foreach ($formConfig->getFields() as $fieldName => $fieldConf) {
             /** @var \Bolt\Extension\Bolt\BoltForms\Config\Form\FieldBag $fieldConf */
-            $fieldConf = $formConfig->getFields()->get($fieldName);
-            if ($fieldConf === null && $this->config->isDebug()) {
-                //$message = sprintf(
-//    'Attempted to use an invalid field name "%s" on the form "%s". Available fields are: %s',
-//    $fieldName,
-//    $formConfig->getName(),
-//    implode(', ', $formConfig->getFields()->keys())
-//);
-//throw new FormOption\Exception($message);
-            }
             if ($fieldConf === null) {
                 continue;
             }
 
             /** @var \Bolt\Extension\Bolt\BoltForms\Config\Form\FieldOptionsBag $fieldOptions */
-            $fieldOptions = $fieldConf->getOptions();
-            if ($fieldOptions->has('event') === false) {
+            if ($fieldConf->has('event') === false) {
                 continue;
             }
 
             // Handle events for custom data
-            $eventConfig = $fieldOptions->get('event');
+            $eventConfig = $fieldConf->get('event');
             if ($eventConfig->has('name')) {
                 $data = $this->dispatchCustomDataEvent($dispatcher, $eventConfig);
                 $formData->set($fieldName, $data);

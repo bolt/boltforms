@@ -2,7 +2,7 @@ Templates
 =========
 
 
-Define a form in `app/config/extensions/boltforms.bolt.yml` and add the 
+Define a form in `app/config/extensions/boltforms.bolt.yml` and add the
 following to your template:
 
 ```twig
@@ -12,22 +12,23 @@ following to your template:
 Templates can be optionally customised by copying any needed template from
 `extensions/vendor/bolt/boltforms/templates/` to a location in your theme.
 
-For example if you were to add them to  `themes/my_theme/my_sub_directory/`
-you would update your `app/config/boltforms.bolt.yml` file parameters to
-match, e.g.:
+For example if you were to add them to `themes/my_theme/my_sub_directory/` you
+would update your `app/config/boltforms.bolt.yml` file parameters to match,
+e.g.:
 
 ```yaml
     templates:
-        form:    my_sub_directory/form.twig
-        email:   my_sub_directory/email.twig
-        subject: my_sub_directory/subject.twig
-        files:   my_sub_directory/file_browser.twig
+        form:       my_sub_directory/form.twig
+        email:      my_sub_directory/email.twig
+        subject:    my_sub_directory/subject.twig
+        files:      my_sub_directory/file_browser.twig
+        form_theme: my_sub_directory/_form_theme.twig
 ```
 
-### Default data
+Default data
+------------
 
-
-You can also add parameters to the BoltForms invocation in Twig. In this case 
+You can also add parameters to the BoltForms invocation in Twig. In this case
 the value for the field "field_1" will be pre-set "value_1"
 
 ```twig
@@ -46,10 +47,11 @@ Or
     }}
 ```
 
-### Configuration overrides
+Configuration overrides
+-----------------------
 
 Configuration parameters can be overridden at runtimeby passing them in using
-the `override` named parameter 
+the `override` named parameter
 
 e.g.
 
@@ -96,34 +98,35 @@ or
     }}
 ```
 
-**NOTE:** 
-Where the override array key matches a field name, the field name is
+**NOTE:** Where the override array key matches a field name, the field name is
 overridden, if it then matches a field configuration parameter, that will be
 the affected value.
 
 
-### Pre & Post Submission HTML
+Pre & Post Submission HTML
+--------------------------
 
-Twig will be passed a context variables that include `htmlPreSubmit` and 
+Twig will be passed a context variables that include `htmlPreSubmit` and
 `htmlPostSubmit`. These can be either HTML strings, or Twig template names.
 
 An example using HTML strings:
 
 ```twig
-    {{ boltforms('form_name', htmlPreSubmit = '<p>This will be shown before send</p>', htmlPostSubmit = '<p>Form sent to the ocean…</p>') }}  
+    {{ boltforms('form_name', htmlPreSubmit = '<p>This will be shown before send</p>', htmlPostSubmit = '<p>Form sent to the ocean…</p>') }}
 ```
 
 Or using template names:
 
 ```twig
-    {{ boltforms('form_name', htmlPreSubmit = 'my_pre_template.twig', htmlPostSubmit = 'my_post_template.twig') }}  
+    {{ boltforms('form_name', htmlPreSubmit = 'my_pre_template.twig', htmlPostSubmit = 'my_post_template.twig') }}
 ```
 
 Overriding the Default Form Action
 ----------------------------------
 
-By default the form action will point to the current request URL. Occasionally you
-may want to provide your own form action, to do so, just pass in an action variable:
+By default the form action will point to the current request URL. Occasionally
+you may want to provide your own form action, to do so, just pass in an action
+variable:
 
 ```twig
    {{ boltforms('form_name', action = '/my/form/handler' }}
@@ -132,25 +135,25 @@ may want to provide your own form action, to do so, just pass in an action varia
 Templates for Custom Displays
 -----------------------------
 
-BoltForms allow you to have full control over how your form is rendered. If 
-you would like to create a template for your theme, you can quickly do it for 
-each form.
+BoltForms allow you to have full control over how your form is rendered. If you
+would like to create a template for your theme, you can quickly do it for each
+form.
 
-To get started, you must first configure the template by adding the following 
-attribute: 
+To get started, you must first configure the template by adding the following
+attribute:
 
 ```yaml
     form_name:
-        templates: 
+        templates:
             form: partials/_contact.twig
     …
 ```
 
-BoltForms will now use the partials/_contact.twig in your theme folder as the 
-template for the form. You may create a basic form template by using the 
+BoltForms will now use the partials/_contact.twig in your theme folder as the
+template for the form. You may create a basic form template by using the
 included template under assets/boltforms_form.twig
 
-Individual attributes for each field can optionally be added easily in the Twig 
+Individual attributes for each field can optionally be added easily in the Twig
 template by doing the following:
 
 ```twig
@@ -161,6 +164,7 @@ template by doing the following:
 
 Replace `fieldName` with the name you used in the form for that field.
 
-More detailed information can be viewed at Symfony's 
-[How to Customize Form Rendering](http://symfony.com/doc/current/cookbook/form/form_customization.html) 
-page.
+More detailed information can be viewed at Symfony's
+[How to Customize Form Rendering][customize] page.
+
+[customize]: http://symfony.com/doc/current/cookbook/form/form_customization.html

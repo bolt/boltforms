@@ -1,11 +1,10 @@
 Fields
 ======
 
-Each field contains an `options` key that is an array of values that is passed 
-directly to Symfony Forms.  
+Each field contains an `options` key that is an array of values that is passed
+directly to Symfony Forms.
 
-See [the Symfony documentation](http://symfony.com/doc/current/reference/forms/types/form.html) 
-for more information. 
+See [the Symfony documentation][forms] for more information.
 
 ```yaml
     field_name:
@@ -15,15 +14,35 @@ for more information.
             label: My Field
             attr:
                 placeholder: Enter some details…
-                class: my-css-class
             constraints: [ NotBlank, {Length: {'min': 3, 'max': 64}} ]
+```
+
+Extra attributes
+----------------
+
+You may use some extra attributes to add a _prefix_ or a _postfix_ to a field. 
+These two attributes will be displayed before and after the form widget
+
+Other attributes, like _data-example_ will be added to the input element.
+You may use these to add aria roles, data attributes and other custom elements.
+
+```yaml
+    field_name:
+        type: field_type
+        required: true|false
+        options:
+            label: My Field
+            attr:
+                data-example: example-value
+                prefix: '<p>A small HTML prefix</p>'
+                postfix: '<p>A small HTML postfix</p>'
 ```
 
 Field(s) default values
 -----------------------
 
-If you want a field to have a default value you can add it by using a `value` 
-attribute. This value can be overwritten by the person who is submitting the 
+If you want a field to have a default value you can add it by using a `value`
+attribute. This value can be overwritten by the person who is submitting the
 form unless you have locked it.
 
 To lock the value, you may use the attribute `readonly: true`.
@@ -78,10 +97,12 @@ record lookups & event based lookups.
               choices: event::my.custom.event
 ```
 
-**NOTE:** If you use the `array_assoc` style, the choices are inverted compared to the select fields in Bolt contenttypes.
+**NOTE:** If you use the `array_assoc` style, the choices are inverted compared
+to the select fields in Bolt contenttypes.
 
-If you want to provide a default value for the choice type, then the syntax is slightly different than text inputs
-which use the `value` attribute. Instead pass a top-level option called `data` with the selected value. For example:
+If you want to provide a default value for the choice type, then the syntax is
+slightly different than text inputs which use the `value` attribute. Instead
+pass a top-level option called `data` with the selected value. For example:
 
 ```yml
       array_assoc:
@@ -103,11 +124,10 @@ For other fields based on the choice type, the same syntax applies.
 
 For more information on this field type, see the [choice fields documentation](fields/choice.md)
 
-
 Upload Types
 ------------
 
-#### SECURITY WARNING
+### SECURITY WARNING
 
 Handling file uploads is a very common attack vector used to compromise (hack)
 a server.
@@ -135,7 +155,7 @@ aid in file browsing. However "keep" should always be used with caution!
 
 ### Configuration Parameters
 
-```
+```yaml
 uploads:
     enabled: false                                 # The global on/off switch for upload handling
     base_directory: /full/path/for/uploaded/files/ # Outside web root and writable by the web server's user
@@ -144,15 +164,16 @@ uploads:
 ```
 
 
-For more information on this field type, see the [upload fields documentation](fields/upload.md)
+For more information on this field type, see the
+[upload fields documentation](fields/upload.md).
 
 
 Hidden field
 ------------
 
 If you want to have a hidden field with a default value you can add it by using
-the 'hidden' `type`, and setting a `value`.
-Use the option `label: false` to hide the field from the html output.
+the 'hidden' `type`, and setting a `value`. Use the option `label: false` to
+hide the field from the html output.
 
 ```yaml
     field_name:
@@ -166,14 +187,14 @@ Use the option `label: false` to hide the field from the html output.
 
 ### Hidden Field Data Providers
 
-**NOTE:** These filed values are set upon successful submission of the form, not during render!
+**NOTE:** These field values are set upon successful submission of the form,
+not during render!
 
 BoltForms allows you to specify, and customise, certain input data upon form
-submission. 
-
-This is done via event dispatchers.
+submission. This is done via event dispatchers.
 
 The default events that can be used to get field data are:
+
   - next_increment
   - random_string
   - server_value
@@ -182,7 +203,7 @@ The default events that can be used to get field data are:
 
 #### Examples
 
-Set the `remote_member_id` field value to the maximum value of the column, 
+Set the `remote_member_id` field value to the maximum value of the column,
 plus one, i.e. (`MAX(remote_member_id) + 1`), effectively working as an auto
 increment.
 
@@ -191,7 +212,7 @@ increment.
         type: hidden
         options:
             label: false
-        event: 
+        event:
             name: next_increment
             params:
                 contenttype: pages          # Optional
@@ -207,33 +228,35 @@ Set the `random_field` field value to a randomised string.
         type: hidden
         options:
             label: false
-        event: 
+        event:
             name: random_string
             params:
-                length: 12                  # Optional, defaults to 12
+                length: 12 # Optional, defaults to 12
 ```
 
-Set the `remote_ip` field value to the remote address (IP) from the $_SERVER variables
+Set the `remote_ip` field value to the remote address (IP) from the `$_SERVER`
+variables
 
 ```yaml
     remote_ip:
         type: hidden
         options:
             label: false
-        event: 
+        event:
             name: server_value
             params:
                 key: REMOTE_ADDR
 ```
 
-Set the `test_key` field value to the value for the session variable named "test_key"
+Set the `test_key` field value to the value for the session variable named
+"test_key"
 
 ```yaml
     test_key:
         type: hidden
         options:
             label: false
-        event: 
+        event:
             name: session_value
             params:
                 key: test_key
@@ -246,7 +269,7 @@ Set the `sent_on` field value to the current date and/or time as formatted.
         type: hidden
         options:
             label: false
-        event: 
+        event:
             name: timestamp
             params:
                 format: '%F %T'
@@ -261,22 +284,22 @@ e.g.:
 ```twig
     {{ boltforms('form_name',
         override = {
-            'fields':
-                'non_config_field': {
-                    type: text
+            fields: {
+                non_config_field: {
+                    type: 'text',
                     options: {
                         label: 'Once upon a time…'
                     }
                 }
+            }
         })
     }}
 ```
 
-
 Controlling Field Rendering
 ---------------------------
 
-If you want to simply render the reamining fields, you can use the `form_rest`
+If you want to simply render the remaining fields, you can use the `form_rest`
 function, passing in the form variable, e.g.:
 
 ```twig
@@ -290,11 +313,14 @@ property for that field, e.g.:
 {% do form.your_field_name.setRendered %}
 ```
 
-If you know you have remaining fields, and you don't want them remdered,
-you can simply pass `form_end` the `render_rest: false` option, i.e.:
+If you know you have remaining fields, and you don't want them rendered, you
+can simply pass `form_end` the `render_rest: false` option, i.e.:
 
 ```twig
 {{ form_end(form, { 'render_rest': false }) }}
 ```
 
-For more details, see Symfony's [Twig reference](http://symfony.com/doc/2.8/reference/forms/twig_reference.html#form-rest-view-variables).
+For more details, see Symfony's [Twig reference][twig].
+
+[forms]: http://symfony.com/doc/current/reference/forms/types/form.html
+[twig]: http://symfony.com/doc/2.8/reference/forms/twig_reference.html#form-rest-view-variables

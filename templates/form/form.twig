@@ -48,19 +48,27 @@
             {% block boltforms_form_fields %}
                 {% for key, value in fields  %}
                     {% if value.config.type.name != 'submit' %}
+                        {% if form[key].vars.attr.prefix is defined %}
+                            {{ form[key].vars.attr.prefix|raw }}
+                        {% endif %}
                         <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
                             <span class="boltforms-label">{{ form_label(form[key]) }}</span>
                             <span class="boltforms-error">{{ form_errors(form[key]) }}</span>
                             <span class="boltforms-value">{{ form_widget(form[key]) }}</span>
                         </div>
+                        {% if form[key].vars.attr.postfix is defined %}
+                            {{ form[key].vars.attr.postfix|raw }}
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
 
                 {{ spambot.recaptcha(recaptcha) }}
 
-                <br>
                 {% for key, value in fields  %}
                     {% if value.config.type.name == 'submit' %}
+                        {% if form[key].vars.attr.prefix is defined %}
+                            {{ form[key].vars.attr.prefix|raw }}
+                        {% endif %}
                         <div class="boltforms-row{% if form[key].vars.attr.class is defined %} boltforms-{{ form[key].vars.attr.class }}-row{% endif %}">
                             {% if recaptcha.type == 'invisible' and recaptcha.enabled %}
                                 {{ form_widget(
@@ -79,6 +87,9 @@
                                 {{ form_widget(form[key]) }}
                             {% endif %}
                         </div>
+                        {% if form[key].vars.attr.postfix is defined %}
+                            {{ form[key].vars.attr.postfix|raw }}
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             {% endblock boltforms_form_fields %}

@@ -52,13 +52,14 @@ class Redirect
      * Do a redirect.
      *
      * @param FormConfig $formConfig
-     * @param Entity     $formData
+     * @param Entity $formData
+     * @return RedirectResponse
      */
     public function handle(FormConfig $formConfig, Entity $formData)
     {
         $response = $this->getRedirectResponse($formConfig, $formData);
         if ($response instanceof RedirectResponse) {
-            $response->send();
+            return $response->send();
         }
     }
 

@@ -14,6 +14,7 @@ use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
 use Bolt\Legacy;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -244,6 +245,16 @@ class BoltFormsRuntime
     }
 
     /**
+     * Twig test to determine if this is a root form object
+     *
+     * @param FormView $formView
+     * @return bool
+     */
+    public function twigIsRootForm(FormView $formView)
+    {
+        return null === $formView->parent;
+    }
+    /**
      * Get the context compiler either from session, or factory.
      *
      * @param string $formName
@@ -279,10 +290,10 @@ class BoltFormsRuntime
                 $result = $this->processor->process($formConfig, $reCaptchaResponse);
                 $compiler->setResult($result);
             } catch (Exception\FileUploadException $e) {
-                $this->message(Processor::FEEDBACK_ERROR, $e->getMessage());
+                $this->message($e->getMessage(), Processor::FEEDBACK_ERROR);
                 $this->exception($e, false, 'File upload exception: ');
             } catch (Exception\FormValidationException $e) {
-                $this->message(Processor::FEEDBACK_ERROR, $e->getMessage());
+                $this->message($e->getMessage(), Processor::FEEDBACK_ERROR);
                 $this->exception($e, false, 'Form validation exception: ');
             } catch (HttpException $e) {
                 throw $e;
@@ -381,8 +392,8 @@ class BoltFormsRuntime
     protected function handleException($formName, Exception\BoltFormsException $e, Twig_Environment $twig)
     {
         /** @var \Exception $e */
-        $this->message('debug', $this->getSafeTrace($e));
-        $this->message('error', $e->getMessage());
+        $this->message($this->getSafeTrace($e), 'debug');
+        $this->message($e->getMessage(), 'error');
 
         $this->requestStack->getCurrentRequest()->request->set($formName, true);
         $compiler = $this->getContextCompiler($formName);

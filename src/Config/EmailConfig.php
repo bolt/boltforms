@@ -316,9 +316,23 @@ class EmailConfig extends ParameterBag
         ];
 
         foreach ($hashMap as $internalName => $keyName) {
-            $value = $this->getConfigValue($formData, $notifyConfig->get($keyName));
+            $key = $notifyConfig->get($keyName);
+
+            // Allow for both `replyto_email: email` as well as `from_name: [name, lastname]`
+            if (is_array($key)) {
+                $value = [];
+                foreach($key as $keyPart) {
+                    if ($this->getConfigValue($formData, $keyPart) != $keyPart) {
+                        $value[] = $this->getConfigValue($formData, $keyPart);
+                    }
+                }
+                $value = implode(" ", $value);
+            } else {
+                $value = $this->getConfigValue($formData, $key);
+            }
+
             if ($value === null) {
-                $this->set($internalName, $notifyConfig->get($keyName));
+                $this->set($internalName, $key);
             } else {
                 $this->set($internalName, $value);
             }

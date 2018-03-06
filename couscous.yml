@@ -1,0 +1,52 @@
+# This is the Couscous configuration file, used to generate the documentation
+# See couscous.io for details.
+
+template:
+    # The following assumes you have a checkout of the template folder in ../couscous-template
+    directory: ../couscous-template/public
+    # url: https://github.com/bolt/Extension-docs-template
+    index: index.md
+
+include:
+    - docs
+
+branch: gh-pages
+baseUrl: https://bolt.github.io/boltforms
+
+title: BoltForms
+subTitle: A Bolt extension to make forms.
+github:
+    user: bolt
+    repo: boltforms
+    editlink: https://github.com/bolt/boltforms/edit/4.1/docs/
+
+menu:
+    getting-started.md:
+        label: Getting Started
+    fields.md:
+        label: Fields
+    fields/text.md:
+        label: Basic Fields
+        class: sub
+    fields/choice.md:
+        label: Choice
+        class: sub
+    fields/upload.md:
+        label: Upload
+        class: sub
+    meta-data.md:
+        label: Meta data
+    templates.md:
+        label: Templates
+    email.md:
+        label: Email Notifications
+    submission.md:
+        label: Submission & Redirection
+    saving-to-contenttype-database.md:
+        label: Saving to ContentType or Database
+    events.md:
+        label: Events
+    recaptcha.md:
+        label: Recaptcha
+    upgrading.md:
+        label: Upgrading
