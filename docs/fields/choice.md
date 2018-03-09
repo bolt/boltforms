@@ -22,6 +22,21 @@ Simple Choice Selection
                 'Group Bee': { 'Item Eleven': 'item_11', 'Item Twelve': 'item_12' }
 ```
 
+Display As Radio Buttons
+------------------------
+
+By setting the options `expanded: true` and `multiple: false` you can turn the dropdown into a radio button group.
+
+```yaml
+    radio_button_group_simple:
+        type: choice
+        options:
+            label: A simple radio button group
+            expanded: true
+            multiple: false
+            choices: { 'YES': 'yes', 'NO': 'no' }
+```
+
 ContentType Record Data
 -----------------------
 
