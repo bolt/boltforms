@@ -151,7 +151,7 @@ attribute:
 
 BoltForms will now use the partials/_contact.twig in your theme folder as the
 template for the form. You may create a basic form template by using the
-included template under assets/boltforms_form.twig
+included template under templates/form/form.twig
 
 Individual attributes for each field can optionally be added easily in the Twig
 template by doing the following:
