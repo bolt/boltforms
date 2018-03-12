@@ -4,7 +4,7 @@ Submission & Redirection
 Redirect on success
 -------------------
 
-On successfull submit the user can be redirected to another Bolt page, or URL.
+On successful submit the user can be redirected to another Bolt page, or URL.
 The page for the redirect target must exist. The redirect is added to the
 `feedback` key of the form, for example:
 
