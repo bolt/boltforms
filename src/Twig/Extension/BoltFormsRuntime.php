@@ -182,7 +182,10 @@ class BoltFormsRuntime
 
         // Handle the POST
         $factory = $this->recaptureResponseFactory;
-        $reCaptchaResponse = $factory($formName, $formConfig->getRecaptcha());
+        $request = $this->requestStack->getCurrentRequest();
+        $recaptchaEnabled = $request->request->get($formName) === null ? false : $formConfig->getRecaptcha();
+        $reCaptchaResponse = $factory($recaptchaEnabled);
+
         try {
             $this->handleFormRequest($formConfig, $formContext, $reCaptchaResponse);
         } catch (HttpException $e) {
