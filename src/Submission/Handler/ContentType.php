@@ -70,6 +70,13 @@ class ContentType extends AbstractHandler
             }
 
             $fieldName = $fieldMap->get($name);
+
+            // A Catch for uploaded files which present as a serializable instance
+            if (is_subclass_of($data, 'JsonSerializable')) {
+                /** @var \JsonSerializable $data */
+                $data = $data->jsonSerialize();
+            }
+
             $record->set($fieldName, $data);
         }
 
