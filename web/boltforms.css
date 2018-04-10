@@ -1,3 +1,7 @@
+div.boltforms-row {
+    margin: 0.75em 0;
+}
+
 .boltform label.required:after {
     content: " *";
     color: #F00;
