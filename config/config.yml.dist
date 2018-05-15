@@ -6,8 +6,8 @@
 #
 # Global debugging on/off switch
 #
-# If enabled, ALL forms will go into debug mode.  However, when disabled an individual
-# form can still enable it's own debug — specific for and to that form
+# If enabled, ALL forms will go into debug mode.  
+# NOTE, setting the debug on a specific form will override these global settings — specific for and to that form.
 debug:
     enabled: true
     address: noreply@example.com
