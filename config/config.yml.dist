@@ -6,8 +6,10 @@
 #
 # Global debugging on/off switch
 #
-# If enabled, ALL forms will go into debug mode.  
-# NOTE, setting the debug on a specific form will override these global settings — specific for and to that form.
+# If enabled, ALL forms will go into debug mode.
+# NOTE: setting the debug on a specific form will override these global settings
+# — specific for and to that form. It is considered best practice to use only
+# this global setting.
 debug:
     enabled: true
     address: noreply@example.com
@@ -40,8 +42,7 @@ csrf: true
 
 ## reCAPTCHa set up
 #
-# Note:
-# You can get your keys from https://www.google.com/recaptcha/admin
+# NOTE: You can get your keys from https://www.google.com/recaptcha/admin
 # * `public_key` key will be labeled "Site key"
 # * `private_key` key will be labeled "Secret key"
 #
