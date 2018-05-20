@@ -1,6 +1,7 @@
 <?php
 
 namespace Bolt\Extension\Bolt\BoltForms\Config;
+use Bolt\Extension\Bolt\BoltForms\Config\Form\FormOptionsBag;
 
 /**
  * Form configuration for BoltForms
@@ -45,6 +46,8 @@ class FormConfig
     protected $uploads;
     /** @var string */
     protected $formRecaptcha;
+    /** @var FormOptionsBag */
+    private $options;
 
     /** @var Config */
     private $rootConfig;
@@ -71,6 +74,7 @@ class FormConfig
         $this->submission   = new Form\SubmissionOptionsBag($formConfig['submission']);
         $this->templates    = new Form\TemplateOptionsBag($formConfig['templates'], $rootConfig);
         $this->uploads      = new Form\UploadsOptionsBag($formConfig['uploads']);
+        $this->options      = new Form\FormOptionsBag($formConfig['options']);
         $this->formRecaptcha = $formConfig['recaptcha'] == false ? false : true;
     }
 
@@ -170,6 +174,16 @@ class FormConfig
     public function getRecaptcha()
     {
         return $this->formRecaptcha;
+    }
+
+    /**
+     * Get form options.
+     *
+     * @return FormOptionsBag
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 
     /**

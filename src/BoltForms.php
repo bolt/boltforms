@@ -113,10 +113,12 @@ class BoltForms
 
         $this->resolveFormConfiguration($formName);
 
-        /** @var FormBuilderInterface $builder */
-        $builder = $this->createFormBuilder($formName, $type, $data, $options);
         /** @var Config\FormConfig $formConfig */
         $formConfig = $this->config->getForm($formName);
+        // Merge options with the resolved, default ones
+        $options += $formConfig->getOptions()->all();
+        /** @var FormBuilderInterface $builder */
+        $builder = $this->createFormBuilder($formName, $type, $data, $options);
         foreach ($formConfig->getFields()->all() as $key => $field) {
             $builder->add($key, $this->getTypeClassName($field['type']), $field['options']);
         }
@@ -303,6 +305,7 @@ class BoltForms
         // Field option resolver factory
         $resolverFactory = $this->app['boltforms.form.field_options.factory'];
 
+        // Resolve fields' options
         foreach ($formConfig['fields'] as $fieldName => $data) {
             $this->config->assetValidField($formName, $fieldName, $data);
             $formConfig['fields'][$fieldName]['options'] = $resolverFactory(
@@ -310,6 +313,12 @@ class BoltForms
                 isset($data['options']) ? (array) $data['options'] : []
             );
         }
+
+        // Now, resolve global form's options
+        $formConfig['options'] = $resolverFactory(
+            BoltForms::class,
+            isset($formConfig['options']) ? (array) $formConfig['options'] : []
+        );
 
         $resolvedFormConfig = new FormConfig($formName, $formConfig, $this->config);
         $this->config->setResolvedFormConfig($formName, $resolvedFormConfig);
