@@ -135,6 +135,8 @@ variable:
 Templates for Custom Displays
 -----------------------------
 
+### Form
+
 **When customizing Bolt forms in this way, it will override the functionality of
 using the `boltforms` TWIG extension**
 
@@ -174,3 +176,8 @@ More detailed information can be viewed at Symfony's
 [How to Customize Form Rendering][customize] page.
 
 [customize]: http://symfony.com/doc/current/cookbook/form/form_customization.html
+
+### Feedback (Submission)
+
+Success, error, and debug messages can all be found in the following blocks messages_info, messages_error, and
+messages_debug. You can display the messages by viewing `templates/feedback/_messages.twig` for reference.
