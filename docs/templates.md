@@ -135,6 +135,12 @@ variable:
 Templates for Custom Displays
 -----------------------------
 
+**When customizing Bolt forms in this way, it will override the functionality of
+using the `boltforms` TWIG extension**
+
+For example, if you modify the `action` in `boltforms` like above, but have a `form_start` and
+closing tag, then the `form_start` tag will override the `action`.
+
 BoltForms allow you to have full control over how your form is rendered. If you
 would like to create a template for your theme, you can quickly do it for each
 form.
