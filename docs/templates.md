@@ -129,11 +129,19 @@ you may want to provide your own form action, to do so, just pass in an action
 variable:
 
 ```twig
-   {{ boltforms('form_name', action = '/my/form/handler' }}
+   {{ boltforms('form_name', action = '/my/form/handler') }}
 ```
 
 Templates for Custom Displays
 -----------------------------
+
+### Form
+
+**When customizing Bolt forms in this way, it will override the functionality of
+using the `boltforms` TWIG extension**
+
+For example, if you modify the `action` in `boltforms` like above, but have a `form_start` and
+closing tag, then the `form_start` tag will override the `action`.
 
 BoltForms allow you to have full control over how your form is rendered. If you
 would like to create a template for your theme, you can quickly do it for each
@@ -168,3 +176,8 @@ More detailed information can be viewed at Symfony's
 [How to Customize Form Rendering][customize] page.
 
 [customize]: http://symfony.com/doc/current/cookbook/form/form_customization.html
+
+### Feedback (Submission)
+
+Success, error, and debug messages can all be found in the following blocks messages_info, messages_error, and
+messages_debug. You can display the messages by viewing `templates/feedback/_messages.twig` for reference.
