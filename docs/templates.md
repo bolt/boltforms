@@ -1,7 +1,6 @@
 Templates
 =========
 
-
 Define a form in `app/config/extensions/boltforms.bolt.yml` and add the
 following to your template:
 
@@ -140,8 +139,9 @@ Templates for Custom Displays
 **When customizing Bolt forms in this way, it will override the functionality of
 using the `boltforms` TWIG extension**
 
-For example, if you modify the `action` in `boltforms` like above, but have a `form_start` and
-closing tag, then the `form_start` tag will override the `action`.
+For example, if you modify the `action` in `boltforms` like above, but have a
+`form_start` and closing tag, then the `form_start` tag will override the
+`action`.
 
 BoltForms allow you to have full control over how your form is rendered. If you
 would like to create a template for your theme, you can quickly do it for each
@@ -157,9 +157,9 @@ attribute:
     …
 ```
 
-BoltForms will now use the partials/_contact.twig in your theme folder as the
+BoltForms will now use the `partials/_contact.twig` in your theme folder as the
 template for the form. You may create a basic form template by using the
-included template under assets/boltforms_form.twig
+included template under `templates/form/form.twig`.
 
 Individual attributes for each field can optionally be added easily in the Twig
 template by doing the following:
@@ -175,9 +175,10 @@ Replace `fieldName` with the name you used in the form for that field.
 More detailed information can be viewed at Symfony's
 [How to Customize Form Rendering][customize] page.
 
-[customize]: http://symfony.com/doc/current/cookbook/form/form_customization.html
-
 ### Feedback (Submission)
 
-Success, error, and debug messages can all be found in the following blocks messages_info, messages_error, and
-messages_debug. You can display the messages by viewing `templates/feedback/_messages.twig` for reference.
+Success, error, and debug messages can all be found in the following blocks
+messages_info, messages_error, and messages_debug. You can display the messages
+by viewing `templates/feedback/_messages.twig` for reference.
+
+[customize]: http://symfony.com/doc/current/cookbook/form/form_customization.html
