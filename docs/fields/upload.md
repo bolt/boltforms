@@ -10,13 +10,13 @@ The following are the "global" options that apply to all form uploads:
 ```yaml
     uploads:
         enabled: true                           # The global on/off switch for upload handling
-        base_directory: /data/customer-uploads/ # Outside web root and writable by the web server's user
+        base_directory: /data/customer-uploads/ # Outside web root, absolute path and writable by the web server's user
         filename_handling: prefix               # Can be either "prefix", "suffix", or "keep"
         management_controller: true             # Enable a controller to handle browsing and downloading of uploaded files
 ```
 
 The directory that you specify for `base_directory` should **NOT** be a route
-accessible to the outside world. BoltForms provides a special route should you
+accessible to the outside world and have to be an **absolute path**. BoltForms provides a special route should you
 wish to make the files browsable after upload. This route can be enabled as a
 global setting via the `management_controller` option.
 
