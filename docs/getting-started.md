@@ -42,7 +42,7 @@ the `submit` button.
 
 We want the form to be send somewhere on submission:
 Under the `notification:` key we need to set `enabled: true` and then a set of
-email addresses, the minimum list shown below.
+email addresses, the minimum list shown below. [More on email notifications](../email.md)
 
 ```yaml
 contact:
@@ -72,9 +72,21 @@ contact:
 
 ### Include the form in your website
 
-To show our contact form, place the following tag in the desired Twig template where 
-we want the form to show:
+To show our contact form, place the following tag in the desired Twig template 
+where we want the form to show:
 
 ```twig
 {{ boltforms('contact') }}
 ```
+
+### Result: A contactform in your website
+
+Refresh the page and view your new form. Test by filling out the fields and 
+submitting the form. You should get a notification on either the debug address 
+(if `debug : true`) or on the to_email address (if `debug:false`).
+
+### Customization of your form
+Now you have your first form, you can continue and customize your Boltform in many ways:
+
+  - [Adding your own fields](../fields.md)
+  - [Customizing the email or formtemplates](../templates.md)
