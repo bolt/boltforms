@@ -1,6 +1,9 @@
 Text Based Fields with Examples
 ===============================
 
+Textfields are used to for basic sorts of information. 
+See below for all possible types of text fields.
+
 **NOTE:** See [the Symfony Forms documentation][forms] for an always up-to-date
 list of field types and their options.
 

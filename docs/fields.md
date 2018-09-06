@@ -4,13 +4,13 @@ Fields
 You use the fields to display all elements of your form. This might contain form fields
 as well as the submit buttons. 
 
-View the boltforms config at `app/config/extensions/boltforms.bolt.yml` for the 
+View the BoltForms config at `app/config/extensions/boltforms.bolt.yml` for the 
 Example Showcase Form that contains all possible fieldtypes.
 
 
 Fieldtypes
 ----------
-Boltforms contains several possible fieldtypes:
+BoltForms contains several possible fieldtypes. Most used are:
 `type: text` - A simple textfield (see [textfields](fields/text.md))
 `type: textarea` - A textarea (see [textfields](fields/text.md))
 `type: email` - A textfield, especially for an email address (see [textfields](fields/text.md))
@@ -19,6 +19,7 @@ Boltforms contains several possible fieldtypes:
 `type: hidden` - A hidden field (see [hidden fields](#hidden-field))
 `type: submit` - The submit button
 
+There several are more specific fieldtypes for textfields. See the [textfields](fields/text.md) page for those.
 
 
 Options
@@ -26,7 +27,7 @@ Options
 
 Each field also contains an `options` key that is an array of values.
 
-Boltforms is based on Symfony forms and uses many of its possibilities. 
+BoltForms is based on Symfony forms and uses many of its possibilities. 
 The options of the fields are passed directly to Symfony Forms.
 See [the Symfony documentation][forms] for more information.
 
@@ -152,17 +153,17 @@ Upload Types
 
 ### SECURITY WARNING
 
-Handling file uploads is a very common attack vector used to compromise (hack)
+Handling file uploads is a very common way to compromise (hack)
 a server.
 
 BoltForms does a few things to help increase slightly the security of handling
 file uploads:
 
-Firstly, the directory that you specify for "base_directory" below should NOT
+1 - The directory that you specify for "base_directory" below should NOT
 be an route accessible to the outside world. We provide a special route should
 you wish to make the files browsable after upload.
 
-Secondly, is the "filename_handling" parameter. If an attacker knows the
+2 - is the "filename_handling" parameter. If an attacker knows the
 uploaded file name, this can make their job a bit easier. So we provide three
 options, e.g. uploading the file kitten.jpg:
 
