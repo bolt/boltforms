@@ -1,6 +1,8 @@
 Choice Fields
 =============
 
+Choice fields are fields that will display as a selectfield.
+
 Simple Choice Selection
 -----------------------
 
@@ -37,52 +39,35 @@ By setting the options `expanded: true` and `multiple: false` you can turn the d
             choices: { 'YES': 'yes', 'NO': 'no' }
 ```
 
-ContentType Record Data
------------------------
+Display As Checkboxes
+------------------------
 
-ContentType choice value lookups can optionally be sorted (`sort:`), limited
-number of records retrieved (`limit:`), or filtered based upon one or more of
-the ContentType's field values (`filters:`).
+By setting the options `expanded: true` and `multiple: true` you can turn the dropdown into a group of checkboxes.
 
 ```yaml
-    best_pet_page:
+    checkbox_group_simple:
         type: choice
         options:
-            required: false
-            label: What is our best pets page?
-            choices: content
-            sort: title
-            limit: 5
-            filters:
-                by_kenny:
-                    field: ownerid
-                    value: 42
-                light_fur:
-                    field: colour
-                    value: white || grey
-                cute_factor:
-                    field: checkbox
-                    value: >11
+            label: A simple set of checkboxes
+            expanded: true
+            multiple: true
+            choices: { 'Kittens': 'kittens', 'Puppies': 'puppies', 'Birbs': 'birbs' }
 ```
 
-The `sort` option takes a field name. Sorting by default happens in assending
-order. To sort in a descending order, negate the field name, e.g. `-title`
 
-The `limit` option takes an integer that sets the maximum number of records to
-be return, and in turn the maximum number of options in the select list.
+Use contenttypes in choice fields
+---------------------------------
 
-The `filters` option takes an array of one or more associative arrays with
-`field` and `value` keys. These filters behave the same as `where` parameters
-in Bolt's twig function `{% setcontent %}`
+You can populate your choice options with content from your website.
 
 To use ContentType records for choice data, you need to specify a `params:` key
-with the following sub keys:
+with at least the following sub keys:
 
   - `contenttype`
   - `label`
   - `value`
 
-Other parameters are optional.
+Other parameters are optional. For example:
 
 ```yaml
     contenttype_choice:
@@ -102,6 +87,26 @@ Other parameters are optional.
                     and: { 'koala': 'bear' }
                     or: { 'koala': 'dangerous' }
 ```
+
+ContentType choice value lookups can optionally be sorted (`sort:` and `order`), limited
+number of records retrieved (`limit:`), or filtered based upon one or more of
+the ContentType's field values (`where:`).
+
+The `label` option allows you to select what field is used as a label.
+
+The `value` option allows you to select what field is used as the value.
+
+The `limit` option takes an integer that sets the maximum number of records to
+be return, and in turn the maximum number of options in the select list.
+
+The `sort` option takes a field name. Sorting by default happens in ascending
+order. To sort in a descending order, specify this in the `order` option.
+
+The `where` option takes an array of one or more associative arrays with
+`field` and `value` keys. This behaves the same as `where` parameters
+in Bolt's twig function `{% setcontent %}`.
+
+
 
 PHP Class Choices
 -----------------

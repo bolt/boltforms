@@ -1,9 +1,18 @@
 File Uploads
 ============
 
-Handling file uploads is a very common attack vector used to compromise (hack)
+You can make the visitor upload a file through the form, using the `type: file` fieldtype.
+
+First, a warning about security:
+
+Security
+--------
+
+Handling file uploads is a very common way used to compromise (hack)
 a server. BoltForms does a few things to help increase slightly the security of handling
 file uploads.
+
+### Store the files outside of the webroot
 
 The following are the "global" options that apply to all form uploads:
 
@@ -19,6 +28,8 @@ The directory that you specify for `base_directory` should **NOT** be a route
 accessible to the outside world and have to be an **absolute path**. BoltForms provides a special route should you
 wish to make the files browsable after upload. This route can be enabled as a
 global setting via the `management_controller` option.
+
+### Renaming the uploaded files
 
 Secondly, is the `filename_handling` parameter is an important consideration
 for your level of required site security. The reason this setting is important
@@ -37,6 +48,16 @@ something similar to the following table:
 
 We recommend `suffix`, as this is the most secure. Alternatively `prefix` will
 aid in file browsing. However, `keep` should always be used with caution!
+
+How to use upload
+-----------------
+
+First, set the global switch for uploads to true in the Boltforms.bolt.yml:
+
+```yaml
+    uploads:
+        enabled: true
+```
 
 Each form has individual options for uploads, such as whether to attach the
 uploaded file in the notification message, or whether to place the uploaded file
@@ -64,7 +85,7 @@ file_upload_form:
 Post-Upload Browsing
 --------------------
 
-When `management_controller` is enabled, a file in the `base_directory`
+When `management_controller` is enabled in the config, a file in the `base_directory`
 location is accessible via `http://your-site.com/boltforms/download?file=filename.ext`.
 
 These files can be listed via the Twig function `boltforms_uploads()`, e.g.

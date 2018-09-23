@@ -1,10 +1,32 @@
 Email Notifications
 ===================
 
+You use email notifications to do something after the visitor submits the form. 
+Most probable, you want it to send to an email address. Another option is, for example, [Saving it to a database](saving-to-contenttype-database.md). 
+
 From, To, CC, bCC & ReplyTo Values
 ----------------------------------
 
-Each of these values can be either a literal string, a field name.
+You can use the following values to send email:
+
+```yaml
+my_form:
+    notification:
+        from_name: full_name
+        from_email: email_address
+        to_name: Kenny Koala
+        to_email: kenny@koala.com
+        cc_name: Fanny Koala
+        cc_email: fanny@koala.com
+        bcc_name: Bob the Builder
+        bcc_email: bob@example.com
+        replyto_name: full_name
+        replyto_email: email_address
+```
+
+Each of these values can be either a literal string or the name of a field that you defined in your form.
+For instance, by using your `full_name` field as a value for `from_name`, the email is sent on behalf of 
+the name that your visitor submitted.
 
 In the case of the `*_name` values, an array of field names that will be
 concatenated (space delimited) can also be specified.
@@ -23,8 +45,8 @@ my_form:
 ```yaml
 my_form:
     notification:
-        from_name: full_name
-        from_email: email_address
+        from_name: full_name # using your field 'full_name'
+        from_email: email_address # using your field 'email_address'
 ```
 
 ### Array of Field Names
@@ -36,11 +58,11 @@ my_form:
         from_email: email_address
 ```
 
-Uploaded Files
---------------
+Email Uploaded Files
+--------------------
 
-If your form uses file uploads, you can attach them to the email notifications
-by setting the `attach_files` parameter to `true`.
+If your form uses file uploads, you can attach them to the emails by setting the 
+`attach_files` parameter to `true`.
 
 ```yaml
 my_form:
@@ -77,7 +99,8 @@ Occasionally during sending, the Swiftmailer component used by BoltForms will
 encounter a severe error when processing and sending emails and the queued
 message file will have the `.sending` suffix.
 
-To re-add them to the queue for processing, you can just run
+To re-add them to the queue for processing, you can just run the following 
+command in your terminal:
 `./app/nut email:spool --recover`.
 
 ### Flushing (sending) Queues

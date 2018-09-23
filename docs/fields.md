@@ -1,9 +1,34 @@
 Fields
 ======
 
-Each field contains an `options` key that is an array of values that is passed
-directly to Symfony Forms.
+You use the fields to display all elements of your form. This might contain form fields
+as well as the submit buttons. 
 
+View the BoltForms config at `app/config/extensions/boltforms.bolt.yml` for the 
+Example Showcase Form that contains all possible fieldtypes.
+
+
+Fieldtypes
+----------
+BoltForms contains several possible fieldtypes. Most used are:
+`type: text` - A simple textfield (see [textfields](fields/text.md))
+`type: textarea` - A textarea (see [textfields](fields/text.md))
+`type: email` - A textfield, especially for an email address (see [textfields](fields/text.md))
+`type: choice` - A checkbox or radiobutton (see [choice types](#choice-types))
+`type: file` - A file upload (see [upload-types](#upload-types))
+`type: hidden` - A hidden field (see [hidden fields](#hidden-field))
+`type: submit` - The submit button
+
+There several are more specific fieldtypes for textfields. See the [textfields](fields/text.md) page for those.
+
+
+Options
+-------
+
+Each field also contains an `options` key that is an array of values.
+
+BoltForms is based on Symfony forms and uses many of its possibilities. 
+The options of the fields are passed directly to Symfony Forms.
 See [the Symfony documentation][forms] for more information.
 
 ```yaml
@@ -17,10 +42,9 @@ See [the Symfony documentation][forms] for more information.
             constraints: [ NotBlank, {Length: {'min': 3, 'max': 64}} ]
 ```
 
-Extra attributes
-----------------
+### Extra attributes
 
-You may use some extra attributes to add a _prefix_ or a _postfix_ to a field. 
+You may use some extra attributes in the `options` to add a _prefix_ or a _postfix_ to a field. 
 These two attributes will be displayed before and after the form widget
 
 Other attributes, like _data-example_ will be added to the input element.
@@ -38,7 +62,7 @@ You may use these to add aria roles, data attributes and other custom elements.
                 postfix: '<p>A small HTML postfix</p>'
 ```
 
-Field(s) default values
+Default values
 -----------------------
 
 If you want a field to have a default value you can add it by using a `value`
@@ -60,7 +84,7 @@ To lock the value, you may use the attribute `readonly: true`.
                 value: My value
 ```
 
-Alternatively, you can pass in a parameter to the Twig function:
+Alternatively, you can pass in a parameter to the Twig function in your template:
 
 ```twig
     {{ boltforms('my_form', defaults={field_name: 'My value'}) }}
@@ -129,17 +153,17 @@ Upload Types
 
 ### SECURITY WARNING
 
-Handling file uploads is a very common attack vector used to compromise (hack)
+Handling file uploads is a very common way to compromise (hack)
 a server.
 
 BoltForms does a few things to help increase slightly the security of handling
-file uploads.
+file uploads:
 
-Firstly, the directory that you specify for "base_directory" below should NOT
+1 - The directory that you specify for "base_directory" below should NOT
 be an route accessible to the outside world. We provide a special route should
 you wish to make the files browsable after upload.
 
-Secondly, is the "filename_handling" parameter. If an attacker knows the
+2 - is the "filename_handling" parameter. If an attacker knows the
 uploaded file name, this can make their job a bit easier. So we provide three
 options, e.g. uploading the file kitten.jpg:
 
@@ -278,7 +302,8 @@ Set the `sent_on` field value to the current date and/or time as formatted.
 Dynamic Fields
 --------------
 
-You can dynamically add fields in a template when calling `{{ boltforms() }}`,
+Dynamic fields are fields that are _not_ in your BoltForms config, but are added from your template.
+You can dynamically add these fields when calling the BoltForms tag `{{ boltforms() }}`,
 e.g.:
 
 ```twig
