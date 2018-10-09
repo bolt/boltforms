@@ -150,6 +150,7 @@
                 <div class="docs__main--body">
                     <section id="content" class="content">
                         <h1 id="choice-fields">Choice Fields</h1>
+<p>Choice fields are fields that will display as a selectfield.</p>
 <h2 id="simple-choice-selection">Simple Choice Selection</h2>
 <pre><code class="language-yaml">    choice_simple:
         type: choice
@@ -172,43 +173,25 @@
             expanded: true
             multiple: false
             choices: { 'YES': 'yes', 'NO': 'no' }</code></pre>
-<h2 id="contenttype-record-data">ContentType Record Data</h2>
-<p>ContentType choice value lookups can optionally be sorted (<code>sort:</code>), limited
-number of records retrieved (<code>limit:</code>), or filtered based upon one or more of
-the ContentType's field values (<code>filters:</code>).</p>
-<pre><code class="language-yaml">    best_pet_page:
+<h2 id="display-as-checkboxes">Display As Checkboxes</h2>
+<p>By setting the options <code>expanded: true</code> and <code>multiple: true</code> you can turn the dropdown into a group of checkboxes.</p>
+<pre><code class="language-yaml">    checkbox_group_simple:
         type: choice
         options:
-            required: false
-            label: What is our best pets page?
-            choices: content
-            sort: title
-            limit: 5
-            filters:
-                by_kenny:
-                    field: ownerid
-                    value: 42
-                light_fur:
-                    field: colour
-                    value: white || grey
-                cute_factor:
-                    field: checkbox
-                    value: &gt;11</code></pre>
-<p>The <code>sort</code> option takes a field name. Sorting by default happens in assending
-order. To sort in a descending order, negate the field name, e.g. <code>-title</code></p>
-<p>The <code>limit</code> option takes an integer that sets the maximum number of records to
-be return, and in turn the maximum number of options in the select list.</p>
-<p>The <code>filters</code> option takes an array of one or more associative arrays with
-<code>field</code> and <code>value</code> keys. These filters behave the same as <code>where</code> parameters
-in Bolt's twig function <code>{% setcontent %}</code></p>
+            label: A simple set of checkboxes
+            expanded: true
+            multiple: true
+            choices: { 'Kittens': 'kittens', 'Puppies': 'puppies', 'Birbs': 'birbs' }</code></pre>
+<h2 id="use-contenttypes-in-choice-fields">Use contenttypes in choice fields</h2>
+<p>You can populate your choice options with content from your website.</p>
 <p>To use ContentType records for choice data, you need to specify a <code>params:</code> key
-with the following sub keys:</p>
+with at least the following sub keys:</p>
 <ul>
 <li><code>contenttype</code></li>
 <li><code>label</code></li>
 <li><code>value</code></li>
 </ul>
-<p>Other parameters are optional.</p>
+<p>Other parameters are optional. For example:</p>
 <pre><code class="language-yaml">    contenttype_choice:
         type: choice
         options:
@@ -225,6 +208,18 @@ with the following sub keys:</p>
                 where:
                     and: { 'koala': 'bear' }
                     or: { 'koala': 'dangerous' }</code></pre>
+<p>ContentType choice value lookups can optionally be sorted (<code>sort:</code> and <code>order</code>), limited
+number of records retrieved (<code>limit:</code>), or filtered based upon one or more of
+the ContentType's field values (<code>where:</code>).</p>
+<p>The <code>label</code> option allows you to select what field is used as a label.</p>
+<p>The <code>value</code> option allows you to select what field is used as the value.</p>
+<p>The <code>limit</code> option takes an integer that sets the maximum number of records to
+be return, and in turn the maximum number of options in the select list.</p>
+<p>The <code>sort</code> option takes a field name. Sorting by default happens in ascending
+order. To sort in a descending order, specify this in the <code>order</code> option.</p>
+<p>The <code>where</code> option takes an array of one or more associative arrays with
+<code>field</code> and <code>value</code> keys. This behaves the same as <code>where</code> parameters
+in Bolt's twig function <code>{% setcontent %}</code>.</p>
 <h2 id="php-class-choices">PHP Class Choices</h2>
 <p>Choice data can be supplied via PHP objects. Examples of these object classes
 can be seen here:</p>

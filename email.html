@@ -150,8 +150,25 @@
                 <div class="docs__main--body">
                     <section id="content" class="content">
                         <h1 id="email-notifications">Email Notifications</h1>
+<p>You use email notifications to do something after the visitor submits the form.
+Most probable, you want it to send to an email address. Another option is, for example, <a href="saving-to-contenttype-database.html">Saving it to a database</a>. </p>
 <h2 id="from-to-cc-bcc-amp-replyto-values">From, To, CC, bCC &amp; ReplyTo Values</h2>
-<p>Each of these values can be either a literal string, a field name.</p>
+<p>You can use the following values to send email:</p>
+<pre><code class="language-yaml">my_form:
+    notification:
+        from_name: full_name
+        from_email: email_address
+        to_name: Kenny Koala
+        to_email: kenny@koala.com
+        cc_name: Fanny Koala
+        cc_email: fanny@koala.com
+        bcc_name: Bob the Builder
+        bcc_email: bob@example.com
+        replyto_name: full_name
+        replyto_email: email_address</code></pre>
+<p>Each of these values can be either a literal string or the name of a field that you defined in your form.
+For instance, by using your <code>full_name</code> field as a value for <code>from_name</code>, the email is sent on behalf of
+the name that your visitor submitted.</p>
 <p>In the case of the <code>*_name</code> values, an array of field names that will be
 concatenated (space delimited) can also be specified.</p>
 <h3 id="string-literal">String Literal</h3>
@@ -162,16 +179,16 @@ concatenated (space delimited) can also be specified.</p>
 <h3 id="field-names">Field Names</h3>
 <pre><code class="language-yaml">my_form:
     notification:
-        from_name: full_name
-        from_email: email_address</code></pre>
+        from_name: full_name # using your field 'full_name'
+        from_email: email_address # using your field 'email_address'</code></pre>
 <h3 id="array-of-field-names">Array of Field Names</h3>
 <pre><code class="language-yaml">my_form:
     notification:
         from_name: [ first_name, last_name ]
         from_email: email_address</code></pre>
-<h2 id="uploaded-files">Uploaded Files</h2>
-<p>If your form uses file uploads, you can attach them to the email notifications
-by setting the <code>attach_files</code> parameter to <code>true</code>.</p>
+<h2 id="email-uploaded-files">Email Uploaded Files</h2>
+<p>If your form uses file uploads, you can attach them to the emails by setting the
+<code>attach_files</code> parameter to <code>true</code>.</p>
 <pre><code class="language-yaml">my_form:
     notification:
         attach_files: true</code></pre>
@@ -192,7 +209,8 @@ after the request has been sent to the client.</p>
 <p>Occasionally during sending, the Swiftmailer component used by BoltForms will
 encounter a severe error when processing and sending emails and the queued
 message file will have the <code>.sending</code> suffix.</p>
-<p>To re-add them to the queue for processing, you can just run
+<p>To re-add them to the queue for processing, you can just run the following
+command in your terminal:
 <code>./app/nut email:spool --recover</code>.</p>
 <h3 id="flushing-sending-queues">Flushing (sending) Queues</h3>
 <p>If you have queued emails due to SMTP server problems, or Bolt / BoltForms

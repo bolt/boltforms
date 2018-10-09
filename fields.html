@@ -150,9 +150,25 @@
                 <div class="docs__main--body">
                     <section id="content" class="content">
                         <h1 id="fields">Fields</h1>
-<p>Each field contains an <code>options</code> key that is an array of values that is passed
-directly to Symfony Forms.</p>
-<p>See <a href="http://symfony.com/doc/current/reference/forms/types/form.html">the Symfony documentation</a> for more information.</p>
+<p>You use the fields to display all elements of your form. This might contain form fields
+as well as the submit buttons. </p>
+<p>View the BoltForms config at <code>app/config/extensions/boltforms.bolt.yml</code> for the
+Example Showcase Form that contains all possible fieldtypes.</p>
+<h2 id="fieldtypes">Fieldtypes</h2>
+<p>BoltForms contains several possible fieldtypes. Most used are:
+<code>type: text</code> - A simple textfield (see <a href="fields/text.html">textfields</a>)
+<code>type: textarea</code> - A textarea (see <a href="fields/text.html">textfields</a>)
+<code>type: email</code> - A textfield, especially for an email address (see <a href="fields/text.html">textfields</a>)
+<code>type: choice</code> - A checkbox or radiobutton (see <a href="#choice-types">choice types</a>)
+<code>type: file</code> - A file upload (see <a href="#upload-types">upload-types</a>)
+<code>type: hidden</code> - A hidden field (see <a href="#hidden-field">hidden fields</a>)
+<code>type: submit</code> - The submit button</p>
+<p>There several are more specific fieldtypes for textfields. See the <a href="fields/text.html">textfields</a> page for those.</p>
+<h2 id="options">Options</h2>
+<p>Each field also contains an <code>options</code> key that is an array of values.</p>
+<p>BoltForms is based on Symfony forms and uses many of its possibilities.
+The options of the fields are passed directly to Symfony Forms.
+See <a href="http://symfony.com/doc/current/reference/forms/types/form.html">the Symfony documentation</a> for more information.</p>
 <pre><code class="language-yaml">    field_name:
         type: field_type
         required: true|false
@@ -161,8 +177,8 @@ directly to Symfony Forms.</p>
             attr:
                 placeholder: Enter some details…
             constraints: [ NotBlank, {Length: {'min': 3, 'max': 64}} ]</code></pre>
-<h2 id="extra-attributes">Extra attributes</h2>
-<p>You may use some extra attributes to add a <em>prefix</em> or a <em>postfix</em> to a field.
+<h3 id="extra-attributes">Extra attributes</h3>
+<p>You may use some extra attributes in the <code>options</code> to add a <em>prefix</em> or a <em>postfix</em> to a field.
 These two attributes will be displayed before and after the form widget</p>
 <p>Other attributes, like <em>data-example</em> will be added to the input element.
 You may use these to add aria roles, data attributes and other custom elements.</p>
@@ -175,7 +191,7 @@ You may use these to add aria roles, data attributes and other custom elements.<
                 data-example: example-value
                 prefix: '&lt;p&gt;A small HTML prefix&lt;/p&gt;'
                 postfix: '&lt;p&gt;A small HTML postfix&lt;/p&gt;'</code></pre>
-<h2 id="fields-default-values">Field(s) default values</h2>
+<h2 id="default-values">Default values</h2>
 <p>If you want a field to have a default value you can add it by using a <code>value</code>
 attribute. This value can be overwritten by the person who is submitting the
 form unless you have locked it.</p>
@@ -189,7 +205,7 @@ form unless you have locked it.</p>
             attr:
                 readonly: true      # optional attribute if you want a readonly field
                 value: My value</code></pre>
-<p>Alternatively, you can pass in a parameter to the Twig function:</p>
+<p>Alternatively, you can pass in a parameter to the Twig function in your template:</p>
 <pre><code class="language-twig">    {{ boltforms('my_form', defaults={field_name: 'My value'}) }}</code></pre>
 <h2 id="choice-types">Choice Types</h2>
 <p>Choice types in BoltForms provide several different options for choice values.
@@ -235,14 +251,14 @@ pass a top-level option called <code>data</code> with the selected value. For ex
 <p>For more information on this field type, see the <a href="fields/choice.html">choice fields documentation</a></p>
 <h2 id="upload-types">Upload Types</h2>
 <h3 id="security-warning">SECURITY WARNING</h3>
-<p>Handling file uploads is a very common attack vector used to compromise (hack)
+<p>Handling file uploads is a very common way to compromise (hack)
 a server.</p>
 <p>BoltForms does a few things to help increase slightly the security of handling
-file uploads.</p>
-<p>Firstly, the directory that you specify for &quot;base_directory&quot; below should NOT
+file uploads:</p>
+<p>1 - The directory that you specify for &quot;base_directory&quot; below should NOT
 be an route accessible to the outside world. We provide a special route should
 you wish to make the files browsable after upload.</p>
-<p>Secondly, is the &quot;filename_handling&quot; parameter. If an attacker knows the
+<p>2 - is the &quot;filename_handling&quot; parameter. If an attacker knows the
 uploaded file name, this can make their job a bit easier. So we provide three
 options, e.g. uploading the file kitten.jpg:</p>
 <table>
@@ -354,7 +370,8 @@ variables</p>
             params:
                 format: '%F %T'</code></pre>
 <h2 id="dynamic-fields">Dynamic Fields</h2>
-<p>You can dynamically add fields in a template when calling <code>{{ boltforms() }}</code>,
+<p>Dynamic fields are fields that are <em>not</em> in your BoltForms config, but are added from your template.
+You can dynamically add these fields when calling the BoltForms tag <code>{{ boltforms() }}</code>,
 e.g.:</p>
 <pre><code class="language-twig">    {{ boltforms('form_name',
         override = {
