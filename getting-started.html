@@ -173,12 +173,13 @@ function the same, but will give less information on screen after sending.</p>
 <h2 id="your-first-form">Your First Form</h2>
 <p>For a first form, let us use a simplified version of the &quot;contact&quot; form as an example.</p>
 <h3 id="configuration">Configuration</h3>
-<p>We want some fields that the visitor can fill out:
-Then we define two fields; a <code>comment</code> field that allows text entry, and
-the <code>submit</code> button.</p>
-<p>We want the form to be send somewhere on submission:
-Under the <code>notification:</code> key we need to set <code>enabled: true</code> and then a set of
-email addresses, the minimum list shown below. <a href="../email.html">More on email notifications</a></p>
+<p>To make the form actually <em>do</em> stuff, we will edit the configuration of the form in the config.</p>
+<ul>
+<li>
+<p><strong>Define fields for the visitor to fill out.</strong> We define two fields; a <code>comment</code> field that allows text entry, and the <code>submit</code> button.</p>
+</li>
+<li><strong>Send the form somewhere on submission</strong> . Under the <code>notification:</code> key we need to set <code>enabled: true</code> and then a set of email addresses, the minimum list shown below. <a href="./email.html">More on email notifications</a></li>
+</ul>
 <pre><code class="language-yaml">contact:
     notification:
         enabled: true
@@ -213,8 +214,8 @@ submitting the form. You should get a notification on either the debug address
 <h3 id="customization-of-your-form">Customization of your form</h3>
 <p>Now you have your first form, you can continue and customize your Boltform in many ways:</p>
 <ul>
-<li><a href="../fields.html">Adding your own fields</a></li>
-<li><a href="../templates.html">Customizing the email or formtemplates</a></li>
+<li><a href="./fields.html">Adding your own fields</a></li>
+<li><a href="./templates.html">Customizing the email or formtemplates</a></li>
 </ul>
                     </section>
                 </div>
