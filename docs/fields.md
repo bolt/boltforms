@@ -11,13 +11,13 @@ Example Showcase Form that contains all possible fieldtypes.
 Fieldtypes
 ----------
 BoltForms contains several possible fieldtypes. Most used are:
-`type: text` - A simple textfield (see [textfields](fields/text.md))
-`type: textarea` - A textarea (see [textfields](fields/text.md))
-`type: email` - A textfield, especially for an email address (see [textfields](fields/text.md))
-`type: choice` - A checkbox or radiobutton (see [choice types](#choice-types))
-`type: file` - A file upload (see [upload-types](#upload-types))
-`type: hidden` - A hidden field (see [hidden fields](#hidden-field))
-`type: submit` - The submit button
+  - `type: text` - A simple textfield (see [textfields](fields/text.md))
+  - `type: textarea` - A textarea (see [textfields](fields/text.md))
+  - `type: email` - A textfield, especially for an email address (see [textfields](fields/text.md))
+  - `type: choice` - A checkbox or radiobutton (see [choice types](#choice-types))
+  - `type: file` - A file upload (see [upload-types](#upload-types))
+  - `type: hidden` - A hidden field (see [hidden fields](#hidden-field))
+  - `type: submit` - The submit button
 
 There several are more specific fieldtypes for textfields. See the [textfields](fields/text.md) page for those.
 
