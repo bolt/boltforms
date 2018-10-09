@@ -28,21 +28,18 @@ email address.
 **NOTE:** When the debug of _BOLT_ in the bolt config is set to `false`, debug will
 function the same, but will give less information on screen after sending.
 
-
 Your First Form
 ---------------
 
 For a first form, let us use a simplified version of the "contact" form as an example.
 
 ### Configuration
+To make the form actually _do_ stuff, we will edit the configuration of the form in the config.
 
-We want some fields that the visitor can fill out:
-Then we define two fields; a `comment` field that allows text entry, and
-the `submit` button.
+- **Define fields for the visitor to fill out.** We define two fields; a `comment` field that allows text entry, and the `submit` button.
 
-We want the form to be send somewhere on submission:
-Under the `notification:` key we need to set `enabled: true` and then a set of
-email addresses, the minimum list shown below. [More on email notifications](../email.md)
+- **Send the form somewhere on submission** . Under the `notification:` key we need to set `enabled: true` and then a set of email addresses, the minimum list shown below. [More on email notifications](./email.md)
+
 
 ```yaml
 contact:
@@ -88,5 +85,5 @@ submitting the form. You should get a notification on either the debug address
 ### Customization of your form
 Now you have your first form, you can continue and customize your Boltform in many ways:
 
-  - [Adding your own fields](../fields.md)
-  - [Customizing the email or formtemplates](../templates.md)
+  - [Adding your own fields](./fields.md)
+  - [Customizing the email or formtemplates](./templates.md)
