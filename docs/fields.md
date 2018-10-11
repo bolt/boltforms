@@ -34,8 +34,8 @@ See [the Symfony documentation][forms] for more information.
 ```yaml
     field_name:
         type: field_type
-        required: true|false
         options:
+            required: true|false
             label: My Field
             attr:
                 placeholder: Enter some details…
