@@ -67,12 +67,13 @@ class Redirect
      * Refresh the current page.
      *
      * @param Request $request
+     * @return RedirectResponse
      */
     public function refresh(Request $request)
     {
         $response = new RedirectResponse($request->getRequestUri());
 
-        $response->send();
+        return $response->send();
     }
 
     /**
