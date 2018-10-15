@@ -86,7 +86,11 @@ class Redirect extends AbstractProcessor
 
         // Do a get on the page as it was probably POSTed
         $request = $this->requestStack->getCurrentRequest();
-        $handler->refresh($request);
+
+        $response = $handler->refresh($request);
+        if ($response instanceof RedirectResponse) {
+            return;
+        }
 
         throw new HttpException(Response::HTTP_FOUND, '', null, []);
     }
