@@ -25,7 +25,7 @@ database:
     contenttype:
         name: responses                 # ContentType record to create
             field_map:
-                name: 'title'           # Form field "message" will be saved to the ContentType field "title"
+                name: 'title'           # Form field "name" will be saved to the ContentType field "title"
                 email: ~                # Do not try to save this field to the ContentType
                 animal: 'animal'        # Form field "animal" will be saved to the ContentType field "animal"
                 message: 'sent_message' # Form field "message" will be saved to the ContentType field "sent_message"
