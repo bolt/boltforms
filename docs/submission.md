@@ -19,7 +19,9 @@ The page for the redirect target must exist. The redirect is added to the
 
 **NOTE:**
 
-  - `target:` — Either a route in the form of `contenttype/slug` or a full URL
+  - `target:` — Either a route in the form of `contenttype/slug`, a full URL like 
+    `https://example.org/foo/bar` or an anchor like `'#contactform'` to return to 
+    a specific location on the originating page.
   - `query:` — (optional) Either an indexed, or associative array
     - `[ name, email ]` would create the query string `?name=value-of-name-field&email=value-of-email-field`
     - `{ name: 'foo', email: 'bar' }` would create the query string `?name=foo&email=bar`
