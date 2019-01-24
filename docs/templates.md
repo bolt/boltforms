@@ -135,6 +135,7 @@ e.g.:
         subject:    my_sub_directory/subject.twig
         files:      my_sub_directory/file_browser.twig
         form_theme: my_sub_directory/_form_theme.twig
+        messages:   my_sub_directory/_messages.twig
 ```
 
 You can override the form templates for all your forms in the top of config. To do this, 
@@ -201,6 +202,32 @@ create your own email.twig template. To start, you can copy and edit the include
 
 Success, error, and debug messages can all be found in the following blocks
 messages_info, messages_error, and messages_debug. You can display the messages
-by viewing `templates/feedback/_messages.twig` for reference.
+by viewing `templates/feedback/_messages.twig` for reference. If you want to edit 
+the feedback and messages template, be sure to override them in the config using:
+
+```yaml
+templates:
+    messages:   my_sub_directory/_messages.twig
+```
+
+
+
+### Translation
+
+**NOTE: Install the Translate and Labels extension for this**
+
+If you want to use multilanguage in your forms, be sure to install both the 
+`Translate` and `Labels` extensions in your site. The Translate extension has a template 
+overriding the default form and adding translatable labels. [See the Translate docs for this][translate] 
+
+To translate the messages edit the `_messages.twig` template as below:
+
+change this: `<p class="boltform-info boltform-message">{{ info }}</p>`
+
+into this: `<p class="boltform-info boltform-message">{{ l(info) }}</p>`
+
+This adds all feedback messages to your labels.yml to translate.
+
 
 [customize]: http://symfony.com/doc/current/cookbook/form/form_customization.html
+[translate]: https://bolttranslate.github.io/Translate/configuration.html
