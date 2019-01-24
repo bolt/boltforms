@@ -133,7 +133,7 @@ class Redirect
         $redirect = $formConfig->getFeedback()->getRedirectTarget();
         $query = $this->getRedirectQuery($formConfig, $formData);
 
-        if (strpos($redirect, 'http') === 0) {
+        if ((strpos($redirect, 'http') === 0) || (strpos($redirect, '#') === 0)) {
             return new RedirectResponse($redirect . $query);
         } else {
             try {
