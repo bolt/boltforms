@@ -171,7 +171,7 @@ use Bolt\Extension\SimpleExtension;
 use Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class extension extends SimpleExtension
+class Extension extends SimpleExtension
 {
     /**
      * Define events to listen to here.
@@ -180,11 +180,8 @@ class extension extends SimpleExtension
      */
 
     public function subscribe(EventDispatcherInterface $dispatcher)
-
    {
-
        $dispatcher->addListener(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, [$this, "myCallback"]);
-
    }
 
 
@@ -194,7 +191,8 @@ class extension extends SimpleExtension
 
             // Get the data from the event
             $data = $event->getData();
-
+             
+            // Set some data values to upper case
             $data['my_field'] = strtoupper($data['my_field']);
 
             // Save the data back
