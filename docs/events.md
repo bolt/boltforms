@@ -168,6 +168,7 @@ namespace Bolt\Extension\You\YourExtension;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\SimpleExtension;
+use Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Extension extends SimpleExtension
@@ -177,17 +178,20 @@ class Extension extends SimpleExtension
      *
      * @param EventDispatcherInterface $dispatcher
      */
-    protected function subscribe(EventDispatcherInterface $dispatcher)
-    {
-        $dispatcher->addListener(BoltFormsEvents::PRE_SUBMIT,  array($this, 'myPostSubmit'));
-    }
 
-    public function myPostSubmit($event)
+    public function subscribe(EventDispatcherInterface $dispatcher)
+   {
+       $dispatcher->addListener(BoltFormsEvents::SUBMISSION_PRE_PROCESSOR, [$this, "myCallback"]);
+   }
+
+
+    public function myCallback(ProcessorEvent $event)
     {
-        if ($event->getForm()->getName() === 'my_form') {
+        if ($event->getFormName() === 'my_form') {
+
             // Get the data from the event
             $data = $event->getData();
-
+             
             // Set some data values to upper case
             $data['my_field'] = strtoupper($data['my_field']);
 
@@ -196,4 +200,5 @@ class Extension extends SimpleExtension
         }
     }
 }
+
 ```
