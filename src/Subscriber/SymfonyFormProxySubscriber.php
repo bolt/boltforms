@@ -8,6 +8,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Silex\Application;
 
 /**
  * Dedicated subscriber interface for BoltForms
@@ -34,6 +35,19 @@ use Symfony\Component\Form\FormEvents;
  */
 class SymfonyFormProxySubscriber implements EventSubscriberInterface
 {
+    /** @var Application $app */
+    protected $app;
+
+    /**
+     * SymfonyFormProxySubscriber constructor.
+     *
+     * @param Application $app
+     */
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
+
     /**
      * Events that BoltFormsSubscriber subscribes to
      *
@@ -127,6 +141,6 @@ class SymfonyFormProxySubscriber implements EventSubscriberInterface
     protected function dispatch($eventName, FormEvent $event, $formsEventName, EventDispatcher $dispatcher)
     {
         $event = new BoltFormsEvent($event, $formsEventName);
-        $dispatcher->dispatch($eventName, $event);
+        $this->app['dispatcher']->dispatch($eventName, $event);
     }
 }
