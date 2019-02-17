@@ -339,7 +339,7 @@ class BoltForms
     {
         return $this->app['form.factory']
             ->createNamedBuilder($formName, $type, $data, $options)
-            ->addEventSubscriber(new SymfonyFormProxySubscriber())
+            ->addEventSubscriber(new SymfonyFormProxySubscriber($this->app))
             ->addModelTransformer(new EntityTransformer())
         ;
     }
