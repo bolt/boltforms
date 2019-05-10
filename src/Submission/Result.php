@@ -38,6 +38,8 @@ class Result
     public function __construct()
     {
         $this->result = [
+            BoltFormsEvents::SUBMISSION_PRE_PROCESSOR       => false,
+            BoltFormsEvents::SUBMISSION_POST_PROCESSOR      => false,
             BoltFormsEvents::SUBMISSION_PROCESS_FIELDS      => false,
             BoltFormsEvents::SUBMISSION_PROCESS_UPLOADS     => false,
             BoltFormsEvents::SUBMISSION_PROCESS_CONTENTTYPE => false,
