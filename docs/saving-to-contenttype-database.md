@@ -21,9 +21,9 @@ There are basically 2 things you need to do:
 ###### (boltforms.bolt.yml)
 
 ```yaml
-database:
-    contenttype:
-        name: responses                 # ContentType record to create
+    database:
+        contenttype:
+            name: responses             # ContentType record to create
             field_map:
                 name: 'title'           # Form field "name" will be saved to the ContentType field "title"
                 email: ~                # Do not try to save this field to the ContentType
