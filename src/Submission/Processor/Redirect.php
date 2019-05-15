@@ -78,20 +78,17 @@ class Redirect extends AbstractProcessor
         /** @var Handler\Redirect $handler */
         $handler = $this->handlers['redirect'];
         if ($formConfig->getFeedback()->getRedirectTarget() !== null) {
-            $response = $handler->handle($formConfig, $formData);
-            if ($response instanceof RedirectResponse) {
-                return;
-            }
+            $handler->handle($formConfig, $formData);
         }
 
         // Do a get on the page as it was probably POSTed
         $request = $this->requestStack->getCurrentRequest();
 
-        $response = $handler->refresh($request);
-        if ($response instanceof RedirectResponse) {
-            return;
-        }
+        $handler->refresh($request);
 
-        throw new HttpException(Response::HTTP_FOUND, '', null, []);
+        // Just 'exit'-ing is bad practice, but in this case it prevents an oscure error. 
+        // @see https://github.com/bolt/boltforms/pull/284 for details
+        exit;
+        // throw new HttpException(Response::HTTP_FOUND, '', null, []);
     }
 }
