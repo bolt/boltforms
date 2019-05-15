@@ -86,6 +86,8 @@ class Redirect extends AbstractProcessor
 
         $handler->refresh($request);
 
+        // Just 'exit'-ing is bad practice, but in this case it prevents an oscure error. 
+        // @see https://github.com/bolt/boltforms/pull/284 for details
         exit;
         // throw new HttpException(Response::HTTP_FOUND, '', null, []);
     }
