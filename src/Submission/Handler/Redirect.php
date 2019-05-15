@@ -53,13 +53,12 @@ class Redirect
      *
      * @param FormConfig $formConfig
      * @param Entity $formData
-     * @return RedirectResponse
      */
     public function handle(FormConfig $formConfig, Entity $formData)
     {
         $response = $this->getRedirectResponse($formConfig, $formData);
         if ($response instanceof RedirectResponse) {
-            return $response->send();
+            $response->send();
         }
     }
 
@@ -67,13 +66,12 @@ class Redirect
      * Refresh the current page.
      *
      * @param Request $request
-     * @return RedirectResponse
      */
     public function refresh(Request $request)
     {
         $response = new RedirectResponse($request->getRequestUri());
 
-        return $response->send();
+        $response->send();
     }
 
     /**
