@@ -9,7 +9,9 @@
 
         {% if recaptcha.type == 'v2' %}
             <div class="boltforms-row">
-                <label for="form_message" class="required">{{ recaptcha.label }}</label>
+                <span class="boltforms-label">
+                    <label for="form_message" class="required">{{ recaptcha.label }}</label>
+                </span>
                 <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
             </div>
         {% endif %}
