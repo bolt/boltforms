@@ -8,7 +8,7 @@
         {% endif %}
 
         {% if recaptcha.type == 'v2' %}
-            <div class="boltform-row">
+            <div class="boltforms-row">
                 <label for="form_message" class="required">{{ recaptcha.label }}</label>
                 <div class="g-recaptcha" data-sitekey="{{ recaptcha.public_key }}"></div>
             </div>
