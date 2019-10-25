@@ -108,7 +108,7 @@ class Redirect
                 }
             } else {
                 foreach ($query as $id => $param) {
-                    $queryParams[$id] = $formData->get($param);
+                    $queryParams[$id] = $param;
                 }
             }
         } else {
