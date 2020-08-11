@@ -94,7 +94,7 @@ class Email
             $fieldmap['data']    => $formData,
         ]);
 
-        $subject = new \Twig_Markup($html, 'UTF-8');
+        $subject = new \Twig_Markup($html->getContent(), 'UTF-8');
 
         /*
          * Body
@@ -105,7 +105,7 @@ class Email
             $fieldmap['data']   => $this->getBodyData($emailConfig, $formData),
         ]);
 
-        $body = new \Twig_Markup($html, 'UTF-8');
+        $body = new \Twig_Markup($html->getContent(), 'UTF-8');
 
         $text = preg_replace('/<style\\b[^>]*>(.*?)<\\/style>/s', '', $body);
 
