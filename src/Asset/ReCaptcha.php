@@ -35,13 +35,16 @@ class ReCaptcha extends JavaScript
     /** @var string */
     protected $renderType;
 
+    /** @var string */
+    protected $theme;
+
     /**
      * {@inheritdoc}
      */
     public function __toString()
     {
         $onLoad = ($this->getRenderType() == 'invisible') ? '&render=explicit&onload=invisibleRecaptchaOnLoad' : '';
-        $theme =  sprintf('<script>var RecaptchaOptions = { theme : "" };</script>', 'clean');
+        $theme =  sprintf('<script>var RecaptchaOptions = { theme : "%s" };</script>', $this->getTheme());
         $api =  sprintf('<script src="https://www.google.com/recaptcha/api.js?hl=%s%s" async defer></script>', $this->getHtmlLang(), $onLoad);
 
         return $theme . $api;
@@ -83,6 +86,25 @@ class ReCaptcha extends JavaScript
     public function setRenderType($type)
     {
         $this->renderType = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+
+    /**
+     * @param string $theme
+     * @return ReCaptcha
+     */
+    public function setTheme($theme)
+    {
+        $this->theme = $theme;
 
         return $this;
     }

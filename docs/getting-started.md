@@ -15,7 +15,7 @@ is a handy first place to start.
 Debugging
 ---------
 **NOTE:** When first installed, BoltForms defaults to `debug : true` in
-the configuration. This should be set `false` to when deployed in production.
+the configuration. This should be set to `false` when deployed in production.
 
 You can set debug on two levels:
 - for all forms (top of the config)
