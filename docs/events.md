@@ -153,7 +153,8 @@ BoltForms exposes a number of listeners, that proxy Symfony Forms listeners:
   - `BoltFormsEvents::PRE_SET_DATA`
   - `BoltFormsEvents::POST_SET_DATA`
 
-Each of these match Symfony's constants, just with the BoltForms class name/prefix.
+Each of these match Symfony's constants, just with the BoltForms class name/prefix. 
+**Please note that the class `BoltFormsEvents` wraps around the Symfony `FormEvents`.**
 
 There are also events that trigger during the data processing:
 
@@ -185,9 +186,9 @@ class Extension extends SimpleExtension
    }
 
 
-    public function myCallback(ProcessorEvent $event)
+    public function myCallback(BoltFormsEvent $event)
     {
-        if ($event->getFormName() === 'my_form') {
+        if ($event->getEvent()->getFormName() === 'my_form') {
 
             // Get the data from the event
             $data = $event->getData();
