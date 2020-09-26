@@ -1,0 +1,9 @@
+boltFormsAsyncSubmit:
+    prefix: '%bolt.backend_url%/async'
+    path:       /submit
+    controller: 'Bolt\Extension\Bolt\BoltForms\Controller\Async::submit'
+    methods: POST
+
+boltFormsDownload:
+    path: /boltforms/download
+    controller: 'Bolt\Extension\Bolt\BoltForms\Controller\UploadManagement::download'

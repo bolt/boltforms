@@ -1,0 +1,33 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Bolt\Extension\Bolt\BoltForms\Twig\Extension\BoltFormsRuntime:
+        arguments:
+            $webPath: '%kernel.project_dir%/vendor/bolt/boltforms/web'
+            $rootPath: '%kernel.project_dir%/'
+
+    Bolt\Extension\Bolt\BoltForms\Submission\Processor:
+        arguments:
+            $handlers: '@boltforms.handlers'
+            $processors: '@boltforms.processors'
+
+
+parameters:
+    boltforms.handlers:
+        - Bolt\Extension\Bolt\BoltForms\Submission\Handler\ContentType
+        - Bolt\Extension\Bolt\BoltForms\Submission\Handler\DatabaseTable
+        - Bolt\Extension\Bolt\BoltForms\Submission\Handler\Email
+        - Bolt\Extension\Bolt\BoltForms\Submission\Handler\PostRequest
+        - Bolt\Extension\Bolt\BoltForms\Submission\Handler\Redirect
+        - Bolt\Extension\Bolt\BoltForms\Submission\Handler\Upload
+    boltforms.processors:
+        - Bolt\Extension\Bolt\BoltForms\Submission\Processor\ContentType
+        - Bolt\Extension\Bolt\BoltForms\Submission\Processor\DatabaseTable
+        - Bolt\Extension\Bolt\BoltForms\Submission\Processor\Email
+        - Bolt\Extension\Bolt\BoltForms\Submission\Processor\Feedback
+        - Bolt\Extension\Bolt\BoltForms\Submission\Processor\Fields
+        - Bolt\Extension\Bolt\BoltForms\Submission\Processor\Redirect
+        - Bolt\Extension\Bolt\BoltForms\Submission\Processor\Uploads
