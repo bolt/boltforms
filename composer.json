@@ -10,12 +10,11 @@
         "uploads"
     ],
     "require": {
-        "bolt/bolt": "^3.0",
-        "bolt/email-spooler": "^3.0",
+        "bolt/core": "^4.0",
         "google/recaptcha": "^1.1.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.7"
+        "phpunit/phpunit": "^9"
     },
     "suggest": {
         "rossriley/formeditor": "A UI editor for form configuration."
@@ -28,6 +27,10 @@
         {
             "name": "Gawain Lynch",
             "email": "gawain.lynch@gmail.com"
+        },
+        {
+            "name": "Ross Riley",
+            "email": "riley.ross@gmail.com"
         }
     ],
     "minimum-stability": "dev",
@@ -51,9 +54,6 @@
     "extra": {
         "bolt-assets": "web",
         "bolt-class": "Bolt\\Extension\\Bolt\\BoltForms\\BoltFormsExtension",
-        "bolt-icon": "icon-boltforms.png",
-        "branch-alias": {
-            "dev-4.0": "4.0.x-dev"
-        }
+        "bolt-icon": "icon-boltforms.png"
     }
 }
