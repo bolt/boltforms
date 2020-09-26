@@ -5,8 +5,11 @@ namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\CustomDataEvent;
 use Doctrine\DBAL\DBALException;
+use Exception;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Custom data functions for BoltForms
@@ -33,17 +36,23 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class DynamicDataSubscriber implements EventSubscriberInterface
 {
-    /** @var Application */
-    private $app;
+
+    /** @var SessionInterface */
+    private $session;
+
+    /** @var RequestStack */
+    private $requestStack;
 
     /**
      * Constructor.
      *
-     * @param Application $app
+     * @param SessionInterface $session
+     * @param RequestStack $requestStack
      */
-    public function __construct(Application $app)
+    public function __construct(SessionInterface $session, RequestStack $requestStack)
     {
-        $this->app = $app;
+        $this->session = $session;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -74,8 +83,9 @@ class DynamicDataSubscriber implements EventSubscriberInterface
      * Create a random string.
      *
      * @param CustomDataEvent $event
+     * @throws Exception
      */
-    public function randomString(CustomDataEvent $event)
+    public function randomString(CustomDataEvent $event): void
     {
         $params = $event->getParameters();
         $length = $params->getInt('length', 12);
@@ -87,15 +97,16 @@ class DynamicDataSubscriber implements EventSubscriberInterface
      *
      * @param CustomDataEvent $event
      */
-    public function serverValue(CustomDataEvent $event)
+    public function serverValue(CustomDataEvent $event): void
     {
+        $request = $this->requestStack->getCurrentRequest();
         $params = $event->getParameters();
         $key = $params->get('key');
         if ($key === null) {
             return;
         }
 
-        $event->setData($this->app['request']->server->get($key));
+        $event->setData($request->server->get($key));
     }
 
     /**
@@ -103,7 +114,7 @@ class DynamicDataSubscriber implements EventSubscriberInterface
      *
      * @param CustomDataEvent $event
      */
-    public function sessionValue(CustomDataEvent $event)
+    public function sessionValue(CustomDataEvent $event): void
     {
         $params = $event->getParameters();
         $key = $params->get('key');
@@ -111,7 +122,7 @@ class DynamicDataSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->setData($this->app['session']->get($key));
+        $event->setData($this->session->get($key));
     }
 
     /**
@@ -119,7 +130,7 @@ class DynamicDataSubscriber implements EventSubscriberInterface
      *
      * @param CustomDataEvent $event
      */
-    public function timestamp(CustomDataEvent $event)
+    public function timestamp(CustomDataEvent $event): void
     {
         $params = $event->getParameters();
         $format = $params->get('format');

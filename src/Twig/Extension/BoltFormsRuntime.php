@@ -21,8 +21,11 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Twig_Environment;
-use Twig_Markup;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twig\Markup;
 
 /**
  * Twig function helpers.
@@ -77,17 +80,17 @@ class BoltFormsRuntime
     /**
      * Constructor.
      *
-     * @param BoltForms             $boltForms
-     * @param Config                $config
-     * @param Processor             $processor
-     * @param callable              $contextFactory
-     * @param callable              $recaptureResponseFactory
-     * @param SessionInterface      $session
-     * @param RequestStack          $requestStack
-     * @param LoggerInterface       $logger
+     * @param BoltForms $boltForms
+     * @param Config $config
+     * @param Processor $processor
+     * @param callable $contextFactory
+     * @param callable $recaptureResponseFactory
+     * @param SessionInterface $session
+     * @param RequestStack $requestStack
+     * @param LoggerInterface $logger
      * @param UrlGeneratorInterface $urlGenerator
-     * @param string                $webPath
-     * @param string                $rootPath
+     * @param string $webPath
+     * @param string $rootPath
      */
     public function __construct(
         BoltForms $boltForms,
@@ -99,8 +102,8 @@ class BoltFormsRuntime
         RequestStack $requestStack,
         LoggerInterface $logger,
         UrlGeneratorInterface $urlGenerator,
-        $webPath,
-        $rootPath
+        string $webPath,
+        string $rootPath
     ) {
         $this->boltForms = $boltForms;
         $this->config = $config;
@@ -118,24 +121,23 @@ class BoltFormsRuntime
     /**
      * Twig function for form generation.
      *
-     * @param Twig_Environment $twig
-     * @param string           $formName       Name of the BoltForm to render
-     * @param string           $htmlPreSubmit  HTML or template name to display BEFORE submit
-     * @param string           $htmlPostSubmit HTML or template name to display AFTER successful submit
-     * @param array            $data           Data array passed to Symfony Forms
-     * @param array            $options        Options array passed to Symfony Forms
-     * @param array            $defaults       Default field values
-     * @param array            $override       Array of form parameters / fields to override settings for
-     * @param mixed            $meta           Meta data that is not transmitted with the form
-     * @param string           $action
+     * @param Environment $twig
+     * @param string $formName Name of the BoltForm to render
+     * @param null $htmlPreSubmit HTML or template name to display BEFORE submit
+     * @param null $htmlPostSubmit HTML or template name to display AFTER successful submit
+     * @param null $data Data array passed to Symfony Forms
+     * @param array $options Options array passed to Symfony Forms
+     * @param null $defaults Default field values
+     * @param null $override Array of form parameters / fields to override settings for
+     * @param mixed $meta Meta data that is not transmitted with the form
+     * @param null $action
      *
+     * @return Markup
      * @throws \Exception
-     *
-     * @return Twig_Markup
      */
     public function twigBoltForms(
-        Twig_Environment $twig,
-        $formName,
+        Environment $twig,
+        string $formName,
         $htmlPreSubmit = null,
         $htmlPostSubmit = null,
         $data = null,
@@ -146,7 +148,7 @@ class BoltFormsRuntime
         $action = null
     ) {
         if (!$this->config->getBaseForms()->has($formName)) {
-            return new Twig_Markup(
+            return new Markup(
                 "<p><strong>BoltForms is missing the configuration for the form named '$formName'!</strong></p>",
                 'UTF-8'
             );
@@ -213,17 +215,20 @@ class BoltFormsRuntime
     /**
      * Twig function to display uploaded files, downloadable via the controller.
      *
-     * @param Twig_Environment $twig
-     * @param string           $formName
+     * @param Environment $twig
+     * @param null $formName
      *
-     * @return Twig_Markup
+     * @return Markup
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    public function twigBoltFormsUploads(Twig_Environment $twig, $formName = null)
+    public function twigBoltFormsUploads(Environment $twig, $formName = null)
     {
         $uploadConfig = $this->config->getUploads();
         $dir = realpath($uploadConfig->get('base_directory') . DIRECTORY_SEPARATOR . $formName);
         if ($dir === false) {
-            return new Twig_Markup('<p><strong>Invalid upload directory</strong></p>', 'UTF-8');
+            return new Markup('<p><strong>Invalid upload directory</strong></p>', 'UTF-8');
         }
 
         $finder = new Finder();
@@ -244,7 +249,7 @@ class BoltFormsRuntime
         // Render the Twig
         $html = $twig->render($this->config->getTemplates()->get('files'), $context);
 
-        return new Twig_Markup($html, 'UTF-8');
+        return new Markup($html, 'UTF-8');
     }
 
     /**
@@ -316,28 +321,28 @@ class BoltFormsRuntime
      * @param FormContext $compiler
      * @param bool        $loadAjax
      *
-     * @return Twig_Markup
+     * @return Markup
      */
-    protected function getFormRender($formName, FormConfig $formConfig, FormContext $compiler, $loadAjax)
+    protected function getFormRender($formName, FormConfig $formConfig, FormContext $compiler, $loadAjax): Markup
     {
         // If the form has it's own templates defined, use those, else the globals.
         $template = $formConfig->getTemplates()->getForm();
         $context = $compiler->build($this->boltForms, $this->config, $formName, $this->getFeedback());
 
-        // Render the Twig_Markup
+        // Render the Twig/Markup
         return $this->boltForms->render($formName, $template, $context, $loadAjax);
     }
 
     /**
      * Render a form exception.
      *
-     * @param string           $formName
-     * @param FormContext      $compiler
-     * @param Twig_Environment $twig
+     * @param string $formName
+     * @param FormContext $compiler
+     * @param Environment $twig
      *
      * @return string
      */
-    protected function getExceptionRender($formName, FormContext $compiler, Twig_Environment $twig)
+    protected function getExceptionRender(string $formName, FormContext $compiler, Environment $twig): string
     {
         $template = $this->config->getTemplates()->getException();
         $context = $compiler->build($this->boltForms, $this->config, $formName, $this->getFeedback());
@@ -346,12 +351,12 @@ class BoltFormsRuntime
     }
 
     /**
-     * @param Twig_Environment $twig
+     * @param Environment $twig
      * @param string           $str
      *
      * @return string
      */
-    protected function getOptionalHtml(Twig_Environment $twig, $str)
+    protected function getOptionalHtml(Environment $twig, $str): string
     {
         $fileInfo = new \SplFileInfo($str);
         if ($fileInfo->getExtension() === 'twig' || $fileInfo->getExtension() === 'html') {
@@ -370,7 +375,7 @@ class BoltFormsRuntime
      *
      * @return string
      */
-    protected function getRelevantAction($formName, $loadAjax, $action = null)
+    protected function getRelevantAction($formName, $loadAjax, $action = null): string
     {
         if ($loadAjax) {
             return $this->urlGenerator->generate('boltFormsAsyncSubmit', ['form' => $formName]);
@@ -386,13 +391,13 @@ class BoltFormsRuntime
     /**
      * Handle an exception and render something user friendly.
      *
-     * @param string                       $formName
+     * @param string $formName
      * @param Exception\BoltFormsException $e
-     * @param Twig_Environment             $twig
+     * @param Environment $twig
      *
-     * @return Twig_Markup
+     * @return Markup
      */
-    protected function handleException($formName, Exception\BoltFormsException $e, Twig_Environment $twig)
+    protected function handleException(string $formName, Exception\BoltFormsException $e, Environment $twig): Markup
     {
         /** @var \Exception $e */
         $this->message($this->getSafeTrace($e), 'debug');
@@ -402,7 +407,7 @@ class BoltFormsRuntime
         $compiler = $this->getContextCompiler($formName);
         $html = $this->getExceptionRender($formName, $compiler, $twig);
 
-        return new Twig_Markup($html, 'UTF-8');
+        return new Markup($html, 'UTF-8');
     }
 
     /**
@@ -412,26 +417,25 @@ class BoltFormsRuntime
      *
      * @return string
      */
-    protected function getSafeTrace(\Exception $e)
+    protected function getSafeTrace(\Exception $e): string
     {
         $rootDir = $this->rootPath;
         $trace = explode("\n", $e->getTraceAsString());
         $trace = array_slice($trace, 0, 10);
         $trace = implode("\n", $trace);
         $trace = str_replace($rootDir, '{root}', $trace);
-        $message = sprintf(
+
+        return sprintf(
             "%s\n%s",
             $e->getMessage(),
             $trace
         );
-
-        return $message;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getFeedback()
+    protected function getFeedback(): FlashBagInterface
     {
         /** @var FlashBagInterface $feedback */
         $feedback = $this->session->getBag('boltforms');
@@ -442,7 +446,7 @@ class BoltFormsRuntime
     /**
      * {@inheritdoc}
      */
-    protected function getLogger()
+    protected function getLogger(): LoggerInterface
     {
         return $this->logger;
     }

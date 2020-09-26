@@ -31,7 +31,7 @@ use Psr\Log\LogLevel;
  */
 abstract class AbstractProcessor implements ProcessorInterface
 {
-    /** @var Container */
+    /** @var array */
     protected $handlers;
     /** @var array */
     protected $messages;
@@ -39,9 +39,9 @@ abstract class AbstractProcessor implements ProcessorInterface
     /**
      * Constructor.
      *
-     * @param Container $handlers
+     * @param array $handlers
      */
-    public function __construct(Container $handlers)
+    public function __construct(array $handlers)
     {
         $this->handlers = $handlers;
     }

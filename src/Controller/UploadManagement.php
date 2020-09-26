@@ -52,7 +52,7 @@ class UploadManagement implements ControllerProviderInterface
         return $ctr;
     }
 
-    public function download(Application $app, Request $request)
+    public function download(Request $request)
     {
         $fs = new Filesystem();
         $file = $request->query->get('file');

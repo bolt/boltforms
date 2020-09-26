@@ -1,28 +1,4 @@
 {
-    "name": "bolt/boltforms",
-    "description": "Powerful and flexible HTML form generator for Bolt based on Symfony Forms",
-    "type": "bolt-extension",
-    "keywords": [
-        "forms",
-        "contact",
-        "comments",
-        "reCaptcha",
-        "uploads"
-    ],
-    "require": {
-        "bolt/core": "^4.0",
-        "google/recaptcha": "^1.1.2"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9"
-    },
-    "suggest": {
-        "rossriley/formeditor": "A UI editor for form configuration."
-    },
-    "license": [
-        "GPL-3.0+",
-        "LGPL-3.0+"
-    ],
     "authors": [
         {
             "name": "Gawain Lynch",
@@ -33,8 +9,6 @@
             "email": "riley.ross@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Bolt\\Extension\\Bolt\\BoltForms\\": [
@@ -51,7 +25,34 @@
             "Bolt\\Tests\\": "vendor/bolt/bolt/tests/phpunit/unit/"
         }
     },
+    "description": "Powerful and flexible HTML form generator for Bolt based on Symfony Forms",
     "extra": {
         "entrypoint": "Bolt\\Extension\\Bolt\\BoltForms\\BoltFormsExtension"
-    }
+    },
+    "keywords": [
+        "forms",
+        "contact",
+        "comments",
+        "reCaptcha",
+        "uploads"
+    ],
+    "license": [
+        "GPL-3.0+",
+        "LGPL-3.0+"
+    ],
+    "minimum-stability": "dev",
+    "name": "bolt/boltforms",
+    "prefer-stable": true,
+    "require": {
+        "bolt/core": "^4.0",
+        "google/recaptcha": "^1.1.2"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master",
+        "phpunit/phpunit": "^9"
+    },
+    "suggest": {
+        "rossriley/formeditor": "A UI editor for form configuration."
+    },
+    "type": "bolt-extension"
 }

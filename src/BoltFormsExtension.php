@@ -2,10 +2,9 @@
 
 namespace Bolt\Extension\Bolt\BoltForms;
 
-use Bolt\Extension\Bolt\BoltForms\Config\FieldMap;
+use Bolt\Extension\Bolt\BoltForms\Config\Config;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\ProcessLifecycleSubscriber;
-use Bolt\Extension\SimpleExtension;
-use Silex\Application;
+use Bolt\Extension\BaseExtension;
 
 /**
  * BoltForms a Symfony Forms interface for Bolt
@@ -30,29 +29,21 @@ use Silex\Application;
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  * @license   http://opensource.org/licenses/LGPL-3.0 GNU Lesser General Public License 3.0
  */
-class BoltFormsExtension extends SimpleExtension
+class BoltFormsExtension extends BaseExtension
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getServiceProviders()
+    /** @var ProcessLifecycleSubscriber  */
+    private $processLifecycleSubscriber;
+
+
+    public function initialize(): void
     {
-        return [
-            $this,
-            new Provider\BoltFormsServiceProvider(),
-            new Provider\RecaptchaServiceProvider(),
-        ];
+        $this->setupListeners();
+        $this->setupTwig();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function boot(Application $app)
+    public function getName(): string
     {
-        parent::boot($app);
-
-        $dispatcher = $this->container['dispatcher'];
-        $dispatcher->addSubscriber(new ProcessLifecycleSubscriber($app));
+        return 'Bolt Forms';
     }
 
     /**
@@ -72,97 +63,24 @@ class BoltFormsExtension extends SimpleExtension
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function registerFrontendControllers()
+    public function getFormsConfig(): Config
     {
-        $app = $this->getContainer();
-        $controllers = [
-            '/async/boltforms' => new Controller\Async(),
-        ];
+        $raw = $this->getConfig()->toArray();
 
-        if ($this->getConfig()['uploads']['management_controller']) {
-            $url = $app['boltforms.config']->getUploads()->get('base_uri');
-            $controllers[$url] = new Controller\UploadManagement();
-        }
-
-        return $controllers;
+        return new Config($raw);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfig()
+
+    protected function setupListeners(): void
     {
-        return parent::getConfig();
+        $this->processLifecycleSubscriber = $this->container->get(ProcessLifecycleSubscriber::class);
+        $dispatcher = $this->getEventDispatcher();
+        $dispatcher->addSubscriber($this->processLifecycleSubscriber);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function registerTwigPaths()
+    protected function setupTwig(): void
     {
-        return [
-            'templates' => ['namespace' => 'BoltForms'],
-        ];
+        $this->addTwigNamespace('boltForms', 'templates');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function isSafe()
-    {
-        return true;
-    }
-
-    /**
-     * Set the defaults for configuration parameters.
-     *
-     * {@inheritdoc}
-     */
-    protected function getDefaultConfig()
-    {
-        return [
-            'csrf'      => true,
-            'recaptcha' => [
-                'enabled'        => false,
-                'label'          => "Please enter the CAPTCHA text to prove you're a human",
-                'public_key'     => '',
-                'private_key'    => '',
-                'error_message'  => "The CAPTCHA wasn't entered correctly. Please try again.",
-                'theme'          => 'clean',
-                'badge_location' => 'bottomright',
-            ],
-            'templates' => [
-                'ajax'       => '@BoltForms/asset/_ajax.twig',
-                'css'        => '@BoltForms/asset/_css.twig',
-                'js'         => '@BoltForms/asset/_js.twig',
-                'email'      => '@BoltForms/email/email.twig',
-                'subject'    => '@BoltForms/email/subject.twig',
-                'messages'   => '@BoltForms/feedback/_messages.twig',
-                'exception'  => '@BoltForms/feedback/_exception.twig',
-                'files'      => '@BoltForms/file/browser.twig',
-                'form'       => '@BoltForms/form/form.twig',
-                'form_theme' => '@BoltForms/form/_form_theme.twig',
-                'fields'     => '@BoltForms/form/_fields.twig',
-                'recaptcha'  => '@BoltForms/form/_recaptcha.twig',
-                'macros'     => '@BoltForms/_macros.twig',
-            ],
-            'debug' => [
-                'enabled' => false,
-                'address' => '',
-            ],
-            'uploads' => [
-                'enabled'               => false,
-                'base_directory'        => '/tmp/',
-                'filename_handling'     => 'suffix',
-                'management_controller' => false,
-                'base_uri'              => 'boltforms',
-            ],
-            'fieldmap' => [
-                'email' => new FieldMap\Email(),
-            ],
-        ];
-    }
 }

@@ -2,9 +2,9 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Twig\Extension;
 
-use Twig_Extension as Extension;
-use Twig_SimpleFunction;
-use Twig_SimpleTest;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+use Twig\TwigTest;
 
 /**
  * Twig extension for BoltForms
@@ -29,7 +29,7 @@ use Twig_SimpleTest;
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  * @license   http://opensource.org/licenses/LGPL-3.0 GNU Lesser General Public License 3.0
  */
-class BoltFormsExtension extends Extension
+class BoltFormsExtension extends AbstractExtension
 {
     /**
      * {@inheritdoc}
@@ -40,8 +40,8 @@ class BoltFormsExtension extends Extension
         $env  = ['needs_environment' => true];
 
         return [
-            new Twig_SimpleFunction('boltforms', [BoltFormsRuntime::class, 'twigBoltForms'], $safe + $env),
-            new Twig_SimpleFunction('boltforms_uploads', [BoltFormsRuntime::class, 'twigBoltFormsUploads']),
+            new TwigFunction('boltforms', [BoltFormsRuntime::class, 'twigBoltForms'], $safe + $env),
+            new TwigFunction('boltforms_uploads', [BoltFormsRuntime::class, 'twigBoltFormsUploads']),
         ];
     }
 
@@ -51,7 +51,7 @@ class BoltFormsExtension extends Extension
     public function getTests()
     {
         return array(
-            new Twig_SimpleTest('rootform', [BoltFormsRuntime::class, 'twigIsRootForm']),
+            new TwigTest('rootform', [BoltFormsRuntime::class, 'twigIsRootForm']),
         );
     }
 

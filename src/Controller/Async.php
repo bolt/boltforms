@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\BoltForms\Controller;
 
+use Bolt\Controller\Backend\Async\AsyncZoneInterface;
 use Bolt\Extension\Bolt\BoltForms\BoltForms;
 use Bolt\Extension\Bolt\BoltForms\Config;
 use Bolt\Extension\Bolt\BoltForms\Exception\FileUploadException;
@@ -13,6 +14,7 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Asynchronous route handling.
@@ -37,30 +39,27 @@ use Symfony\Component\HttpFoundation\Response;
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  * @license   http://opensource.org/licenses/LGPL-3.0 GNU Lesser General Public License 3.0
  */
-class Async implements ControllerProviderInterface
+class Async implements AsyncZoneInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function connect(Application $app)
+
+    /** @var BoltForms */
+    private $boltForms;
+
+    /**  @var SessionInterface */
+    private $session;
+
+    public function __construct(BoltForms $boltForms, SessionInterface $session)
     {
-        /** @var $ctr \Silex\ControllerCollection */
-        $ctr = $app['controllers_factory'];
-
-        $ctr->match('submit', [$this, 'submit'])
-            ->bind('boltFormsAsyncSubmit')
-            ->method(Request::METHOD_POST);
-
-        return $ctr;
+        $this->boltForms = $boltForms;
+        $this->session = $session;
     }
 
     /**
-     * @param Application $app
      * @param Request     $request
      *
      * @return JsonResponse|\Twig_Markup
      */
-    public function submit(Application $app, Request $request)
+    public function submit(Request $request)
     {
         $formName = $request->query->get('form', null);
         if ($formName === null) {
@@ -68,22 +67,20 @@ class Async implements ControllerProviderInterface
         }
 
         /** @var FormContext $formContext */
-        $formContext = $app['session']->get('boltforms_compiler_' . $formName);
+        $formContext = $this->session->get('boltforms_compiler_' . $formName);
         if ($formContext === null) {
             return new JsonResponse(['Invalid compiler'], Response::HTTP_BAD_REQUEST);
         }
 
-        $meta = $app['session']->get(BoltForms::META_FIELD_NAME);
-        $app['session']->remove(BoltForms::META_FIELD_NAME);
+        $meta = $this->session->get(BoltForms::META_FIELD_NAME);
+        $this->session->remove(BoltForms::META_FIELD_NAME);
 
-        /** @var BoltForms $boltForms */
-        $boltForms = $app['boltforms'];
-        $boltForms
+        $this->boltForms
             ->create($formName, BoltFormType::class, [], [])
             ->setMeta($meta)
         ;
         /** @var Config\Config $config */
-        $config = $app['boltforms.config'];
+        $config = $this->boltForms->getConfig();
         /** @var Config\FormConfig $formConfig */
         $formConfig = $config->getForm($formName);
 
@@ -98,11 +95,11 @@ class Async implements ControllerProviderInterface
             $app['logger.system']->debug('[BoltForms] Form validation exception: ' . $e->getMessage(), ['event' => 'extensions']);
         }
 
-        $context = $formContext->build($boltForms, $config, $formName, $app['boltforms.feedback']);
+        $context = $formContext->build($this->boltForms, $config, $formName, $app['boltforms.feedback']);
         $template = $config->getForm($formName)->getTemplates()->getForm();
 
         // Render the Twig_Markup
-        $output = $boltForms->render($formName, $template, $context, false);
+        $output = $this->boltForms->render($formName, $template, $context, false);
 
         // Because this handles the response via ajax, we don't want the feedback to persist over another request so
         // we clear it here after the ajax response has been rendered.

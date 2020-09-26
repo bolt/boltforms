@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\BoltForms\Subscriber;
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\LifecycleEvent;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor;
-use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -34,17 +33,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class ProcessLifecycleSubscriber implements EventSubscriberInterface
 {
-    /** @var Application */
-    private $app;
+    /** @var Processor */
+    private $processor;
 
-    /**
-     * Constructor.
-     *
-     * @param Application $app
-     */
-    public function __construct(Application $app)
+    public function __construct(Processor $processor)
     {
-        $this->app = $app;
+        $this->processor = $processor;
     }
 
     /**
@@ -66,20 +60,21 @@ class ProcessLifecycleSubscriber implements EventSubscriberInterface
     /**
      * Handle local processing of ProcessLifecycleEvents.
      *
-     * @param LifecycleEvent           $lifeEvent
-     * @param string                   $eventName
+     * @param LifecycleEvent $lifeEvent
+     * @param string $eventName
      * @param EventDispatcherInterface $dispatcher
      */
-    public function onProcessLifecycleEvent(LifecycleEvent $lifeEvent, $eventName, EventDispatcherInterface $dispatcher)
+    public function onProcessLifecycleEvent(
+        LifecycleEvent $lifeEvent,
+        string $eventName,
+        EventDispatcherInterface $dispatcher
+    )
     {
         $this->getProcessorManager()->runInternalProcessor($lifeEvent, $eventName, $dispatcher);
     }
 
-    /**
-     * @return Processor
-     */
-    public function getProcessorManager()
+    public function getProcessorManager(): Processor
     {
-        return $this->app['boltforms.processor'];
+        return $this->processor;
     }
 }

@@ -13,7 +13,6 @@ use Bolt\Extension\Bolt\BoltForms\Exception\FormValidationException;
 use Bolt\Extension\Bolt\BoltForms\Submission\Processor\ProcessorInterface;
 use Bolt\Storage\Entity;
 use Exception;
-use Pimple as Container;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -54,9 +53,9 @@ class Processor
 
     /** @var BoltForms */
     private $boltForms;
-    /** @var Container */
+    /** @var array */
     private $handlers;
-    /** @var Container */
+    /** @var array */
     private $processors;
     /** @var EventDispatcherInterface */
     private $dispatcher;
@@ -84,24 +83,24 @@ class Processor
     /**
      * Constructor.
      *
-     * @param BoltForms                $boltForms
-     * @param Config                   $config
-     * @param Container                $processors
-     * @param Container                $handlers
+     * @param BoltForms $boltForms
+     * @param Config $config
+     * @param array $processors
+     * @param array $handlers
      * @param EventDispatcherInterface $dispatcher
-     * @param LoggerInterface          $loggerSystem
-     * @param FlashBagInterface        $feedback
-     * @param bool                     $debug
+     * @param LoggerInterface $loggerSystem
+     * @param FlashBagInterface $feedback
+     * @param bool|null $debug
      */
     public function __construct(
         BoltForms $boltForms,
         Config $config,
-        Container $processors,
-        Container $handlers,
+        array $processors,
+        array $handlers,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $loggerSystem,
         FlashBagInterface $feedback,
-        $debug
+        ?bool $debug = null
     ) {
         $this->boltForms = $boltForms;
         $this->config = $config;

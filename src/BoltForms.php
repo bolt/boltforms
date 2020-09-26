@@ -11,11 +11,12 @@ use Bolt\Extension\Bolt\BoltForms\Form\DataTransformer\EntityTransformer;
 use Bolt\Extension\Bolt\BoltForms\Form\ResolvedBoltForm;
 use Bolt\Extension\Bolt\BoltForms\Form\Type\BoltFormType;
 use Bolt\Extension\Bolt\BoltForms\Subscriber\SymfonyFormProxySubscriber;
-use Silex\Application;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Twig\Markup;
 
 /**
  * Core API functions for BoltForms
@@ -55,17 +56,12 @@ class BoltForms
     /** @var boolean */
     private $queuedReCaptcha;
 
-    /**
-     * Constructor.
-     *
-     * @param Application $app
-     */
-    public function __construct(Application $app)
+    public function __construct(BoltFormsExtension $extension)
     {
-        $this->app = $app;
-        $this->config = $app['boltforms.config'];
-
-        $app->after([$this, 'onResponse']);
+        $this->config = $extension->getFormsConfig();
+        /** @var EventDispatcher $dp */
+        $dp = $extension->getEventDispatcher();
+        $dp->addListener('kernel.response', [$this, 'onResponse']);
     }
 
     /**
@@ -73,7 +69,7 @@ class BoltForms
      *
      * @param Request $request
      */
-    public function onResponse(Request $request)
+    public function onResponse(Request $request): void
     {
         $metaKey = $request->attributes->get(static::META_FIELD_NAME);
         if ($metaKey === null) {
@@ -90,22 +86,21 @@ class BoltForms
         }
 
         $meta = $this->get($formName)->getMeta();
-        $this->app['session']->set(static::META_FIELD_NAME, $meta);
+        $request->getSession()->set(static::META_FIELD_NAME, $meta);
     }
 
     /**
      * Initial form object constructor.
      *
-     * @param string                   $formName
+     * @param string $formName
      * @param string|FormTypeInterface $type
-     * @param mixed                    $data
-     * @param array                    $options
-     *
-     * @throws FormOptionException
+     * @param mixed $data
+     * @param array $options
      *
      * @return ResolvedBoltForm
+     * @throws FormOptionException
      */
-    public function create($formName, $type = BoltFormType::class, $data = null, $options = [])
+    public function create(string $formName, $type = BoltFormType::class, $data = null, $options = []): ResolvedBoltForm
     {
         if (isset($this->forms[$formName])) {
             throw new \RuntimeException(sprintf('A form of the name "%s" has already been created.', $formName));
@@ -117,7 +112,6 @@ class BoltForms
         $formConfig = $this->config->getForm($formName);
         // Merge options with the resolved, default ones
         $options += $formConfig->getOptions()->all();
-        /** @var FormBuilderInterface $builder */
         $builder = $this->createFormBuilder($formName, $type, $data, $options);
         foreach ($formConfig->getFields()->all() as $key => $field) {
             $builder->add($key, $this->getTypeClassName($field['type']), $field['options']);
@@ -143,7 +137,7 @@ class BoltForms
      *
      * @return string
      */
-    private function getTypeClassName($type)
+    private function getTypeClassName($type): string
     {
         $className = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\' . ucwords($type) . 'Type';
         if (class_exists($className)) {
@@ -160,7 +154,7 @@ class BoltForms
      *
      * @return ResolvedBoltForm
      */
-    public function get($formName)
+    public function get(string $formName): ResolvedBoltForm
     {
         if ($this->has($formName)) {
             return $this->forms[$formName];
@@ -176,7 +170,7 @@ class BoltForms
      *
      * @return bool
      */
-    public function has($formName)
+    public function has(string $formName): bool
     {
         return isset($this->forms[$formName]) && $this->forms[$formName]->getForm() !== null;
     }
@@ -185,9 +179,9 @@ class BoltForms
      * Set a form on the forms array.
      *
      * @param Form  $form
-     * @param array $meta
+     * @param array|null $meta
      */
-    public function set(Form $form, $meta = null)
+    public function set(Form $form, $meta = null): void
     {
         $formName = $form->getName();
         $this->forms[$formName]->setForm($form);
@@ -202,12 +196,12 @@ class BoltForms
      *
      * @param string $formName Name of the form
      * @param string $template A Twig template file name in Twig's path
-     * @param array  $context  Associative array of key/value pairs to pass to Twig's render of $template
-     * @param bool   $loadAjax Load JavaScript for AJAX form handling
+     * @param array $context Associative array of key/value pairs to pass to Twig's render of $template
+     * @param bool $loadAjax Load JavaScript for AJAX form handling
      *
-     * @return \Twig_Markup
+     * @return Markup
      */
-    public function render($formName, $template = '', array $context = [], $loadAjax = false)
+    public function render(string $formName, $template = '', array $context = [], $loadAjax = false): Markup
     {
         if (empty($template)) {
             $template = $this->config->getTemplates()->get('form');
@@ -235,7 +229,7 @@ class BoltForms
         $this->app['session']->remove($sessionKey);
 
         // Return the result
-        return new \Twig_Markup($html, 'UTF-8');
+        return new Markup($html, 'UTF-8');
     }
 
     /**
