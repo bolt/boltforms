@@ -52,8 +52,6 @@
         }
     },
     "extra": {
-        "bolt-assets": "web",
-        "bolt-class": "Bolt\\Extension\\Bolt\\BoltForms\\BoltFormsExtension",
-        "bolt-icon": "icon-boltforms.png"
+        "entrypoint": "Bolt\\Extension\\Bolt\\BoltForms\\BoltFormsExtension"
     }
 }
