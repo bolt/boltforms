@@ -1,7 +1,7 @@
 | :warning: Note - Not the latest version |
 |:----------------------------------------|
 | This is the repository for Boltforms for Bolt 3. Please know <br>that <strong>Bolt 5 has been released</strong>. If you are starting a new <br>project, please use the following:                                
-| - [Bolt 5 Forms repository](https://github.com/bolt/form)   |
+| - [Bolt 5 Forms repository](https://github.com/bolt/forms)   |
 
 
 
